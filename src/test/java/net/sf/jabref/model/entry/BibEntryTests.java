@@ -401,4 +401,48 @@ public class BibEntryTests {
         be.clearField("author");
         assertEquals(Optional.empty(), be.getField("author"));
     }
+
+    /*Testes - Validação do nome do autor*/
+    @Test //[ERRO] Caracter especial
+    public void testAuthorName1() {
+        BibEntry be = new BibEntry();
+        be.setField("author", "Jessic@");
+        assertEquals(Optional.empty(), be.getField("author"));
+    }
+    @Test //[ERRO] Caracter numérico
+    public void testAuthorName2() {
+        BibEntry be = new BibEntry();
+        be.setField("author", "Jessica 1");
+        assertEquals(Optional.empty(), be.getField("author"));
+    }
+    @Test //[ERRO] Caracter numérico
+    public void testAuthorName3() {
+        BibEntry be = new BibEntry();
+        be.setField("author", "2017Jessica");
+        assertEquals(Optional.empty(), be.getField("author"));
+    }
+    @Test //[ERRO] Caracter numérico
+    public void testAuthorName4() {
+        BibEntry be = new BibEntry();
+        be.setField("author", "Jessica;1 Caroline");
+        assertEquals(Optional.empty(), be.getField("author"));
+    }
+    @Test //[OK] Caracter ;
+    public void testAuthorName5() {
+        BibEntry be = new BibEntry();
+        be.setField("author", "Jessica; Caroline Dias");
+        assertEquals(Optional.of("Jessica; Caroline Dias"), be.getField("author"));
+    }
+    @Test //[OK] Caracter ; e ,
+    public void testAuthorName6() {
+        BibEntry be = new BibEntry();
+        be.setField("author", "Jessica; Caroline, Dias");
+        assertEquals(Optional.of("Jessica; Caroline, Dias"), be.getField("author"));
+    }
+    @Test //[OK] Caracter .
+    public void testAuthorName7() {
+        BibEntry be = new BibEntry();
+        be.setField("author", "Jessica C. Dias");
+        assertEquals(Optional.of("Jessica C. Dias"), be.getField("author"));
+    }
 }
