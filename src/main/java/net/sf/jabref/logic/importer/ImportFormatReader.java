@@ -63,13 +63,7 @@ public class ImportFormatReader {
         }
     }
 
-    public static Reader getReaderDefaultEncoding(InputStream in) {
-        InputStreamReader reader;
-        reader = new InputStreamReader(in, Globals.prefs.getDefaultEncoding());
-
-        return reader;
-    }
-
+ 
     /**
      * Format for a given CLI-ID.
      * <p>
