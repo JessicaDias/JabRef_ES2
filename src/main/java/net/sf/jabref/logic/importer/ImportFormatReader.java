@@ -1,6 +1,9 @@
 package net.sf.jabref.logic.importer;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
@@ -8,25 +11,8 @@ import java.util.Optional;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import net.sf.jabref.logic.importer.fileformat.BibTeXMLImporter;
-import net.sf.jabref.logic.importer.fileformat.BiblioscapeImporter;
-import net.sf.jabref.logic.importer.fileformat.BibtexImporter;
-import net.sf.jabref.logic.importer.fileformat.CopacImporter;
-import net.sf.jabref.logic.importer.fileformat.CustomImporter;
-import net.sf.jabref.logic.importer.fileformat.EndnoteImporter;
-import net.sf.jabref.logic.importer.fileformat.FreeCiteImporter;
-import net.sf.jabref.logic.importer.fileformat.InspecImporter;
-import net.sf.jabref.logic.importer.fileformat.IsiImporter;
-import net.sf.jabref.logic.importer.fileformat.MedlineImporter;
-import net.sf.jabref.logic.importer.fileformat.MedlinePlainImporter;
-import net.sf.jabref.logic.importer.fileformat.ModsImporter;
-import net.sf.jabref.logic.importer.fileformat.MsBibImporter;
-import net.sf.jabref.logic.importer.fileformat.OvidImporter;
-import net.sf.jabref.logic.importer.fileformat.PdfContentImporter;
-import net.sf.jabref.logic.importer.fileformat.PdfXmpImporter;
-import net.sf.jabref.logic.importer.fileformat.RepecNepImporter;
-import net.sf.jabref.logic.importer.fileformat.RisImporter;
-import net.sf.jabref.logic.importer.fileformat.SilverPlatterImporter;
+import net.sf.jabref.Globals;
+import net.sf.jabref.logic.importer.fileformat.*;
 import net.sf.jabref.logic.l10n.Localization;
 import net.sf.jabref.logic.xmp.XMPPreferences;
 import net.sf.jabref.model.database.BibDatabases;
@@ -55,6 +41,7 @@ public class ImportFormatReader {
         formats.add(new BibtexImporter(importFormatPreferences));
         formats.add(new BibTeXMLImporter());
         formats.add(new CopacImporter());
+        formats.add(new CSVImporter());
         formats.add(new EndnoteImporter(importFormatPreferences));
         formats.add(new FreeCiteImporter(importFormatPreferences));
         formats.add(new InspecImporter());
@@ -74,6 +61,13 @@ public class ImportFormatReader {
         for (CustomImporter importer : importFormatPreferences.getCustomImportList()) {
             formats.add(importer);
         }
+    }
+
+    public static Reader getReaderDefaultEncoding(InputStream in) {
+        InputStreamReader reader;
+        reader = new InputStreamReader(in, Globals.prefs.getDefaultEncoding());
+
+        return reader;
     }
 
     /**
@@ -145,6 +139,7 @@ public class ImportFormatReader {
 
         return sb.toString();
     }
+
 
     public static class UnknownFormatImport {
 
