@@ -1,0 +1,19 @@
+@article{small,
+  __markedentry = {[jabref:6]},
+  author = {Guerra, B. D.},
+  journal = {O journal do Auri},
+  note = {to appear},
+  title = {ES2 é Amor},
+  volume = {-1},
+  year = {2017}
+}
+
+@article{big,
+  __markedentry = {[jabref:6]},
+  author = {Marx, Karl},
+  journal = {JOURNAL OF THE COMMUNISM WILL WIN},
+  title = {A big communist paper},
+  volume = {MCMXCVII},
+  year = {1994}
+}
+
