@@ -1,0 +1,398 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: BibtexNameFormatter</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.bst</a> ]
+</div>
+
+<h1>Coverage Summary for Class: BibtexNameFormatter (net.sf.jabref.logic.bst)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">BibtexNameFormatter</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 160)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.bst;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.Arrays;
+<i>4</i>&nbsp;import java.util.Optional;
+<i>5</i>&nbsp;import java.util.stream.Collectors;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import net.sf.jabref.model.entry.Author;
+<i>8</i>&nbsp;import net.sf.jabref.model.entry.AuthorList;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;/**
+<i>11</i>&nbsp; * From Bibtex:
+<i>12</i>&nbsp; *
+<i>13</i>&nbsp; * &quot;The |built_in| function {\.{format.name\$}} pops the
+<i>14</i>&nbsp; * top three literals (they are a string, an integer, and a string
+<i>15</i>&nbsp; * literal, in that order). The last string literal represents a
+<i>16</i>&nbsp; * name list (each name corresponding to a person), the integer
+<i>17</i>&nbsp; * literal specifies which name to pick from this list, and the
+<i>18</i>&nbsp; * first string literal specifies how to format this name, as
+<i>19</i>&nbsp; * described in the \BibTeX\ documentation. Finally, this function
+<i>20</i>&nbsp; * pushes the formatted name. If any of the types is incorrect, it
+<i>21</i>&nbsp; * complains and pushes the null string.&quot;
+<i>22</i>&nbsp; *
+<i>23</i>&nbsp; * Sounds easy - is a nightmare... X-(
+<i>24</i>&nbsp; *
+<i>25</i>&nbsp; */
+<b class="nc"><i>26</i>&nbsp;public class BibtexNameFormatter {</b>
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;    public static String formatName(String authorsNameList, int whichName, String formatString, Warn warn) {
+<b class="nc"><i>29</i>&nbsp;        AuthorList al = AuthorList.parse(authorsNameList);</b>
+<i>30</i>&nbsp;
+<b class="nc"><i>31</i>&nbsp;        if ((whichName &lt; 1) &amp;&amp; (whichName &gt; al.getNumberOfAuthors())) {</b>
+<b class="nc"><i>32</i>&nbsp;            warn.warn(&quot;AuthorList &quot; + authorsNameList + &quot; does not contain an author with number &quot; + whichName);</b>
+<b class="nc"><i>33</i>&nbsp;            return &quot;&quot;;</b>
+<i>34</i>&nbsp;        }
+<b class="nc"><i>35</i>&nbsp;        return BibtexNameFormatter.formatName(al.getAuthor(whichName - 1), formatString, warn);</b>
+<i>36</i>&nbsp;    }
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;    /**
+<i>39</i>&nbsp;     *
+<i>40</i>&nbsp;     * @param author
+<i>41</i>&nbsp;     * @param format
+<i>42</i>&nbsp;     * @param warn may-be-null
+<i>43</i>&nbsp;     * @return
+<i>44</i>&nbsp;     */
+<i>45</i>&nbsp;    public static String formatName(Author author, String format, Warn warn) {
+<i>46</i>&nbsp;
+<b class="nc"><i>47</i>&nbsp;        StringBuilder sb = new StringBuilder();</b>
+<i>48</i>&nbsp;
+<b class="nc"><i>49</i>&nbsp;        char[] c = format.toCharArray();</b>
+<b class="nc"><i>50</i>&nbsp;        int n = c.length;</b>
+<b class="nc"><i>51</i>&nbsp;        int braceLevel = 0;</b>
+<b class="nc"><i>52</i>&nbsp;        int group = 0;</b>
+<i>53</i>&nbsp;
+<b class="nc"><i>54</i>&nbsp;        int i = 0;</b>
+<b class="nc"><i>55</i>&nbsp;        while (i &lt; n) {</b>
+<b class="nc"><i>56</i>&nbsp;            if (c[i] == &#39;{&#39;) {</b>
+<b class="nc"><i>57</i>&nbsp;                group++;</b>
+<b class="nc"><i>58</i>&nbsp;                i++;</b>
+<b class="nc"><i>59</i>&nbsp;                braceLevel++;</b>
+<b class="nc"><i>60</i>&nbsp;                StringBuilder level1Chars = new StringBuilder();</b>
+<b class="nc"><i>61</i>&nbsp;                StringBuilder wholeChar = new StringBuilder();</b>
+<b class="nc"><i>62</i>&nbsp;                while ((i &lt; n) &amp;&amp; (braceLevel &gt; 0)) {</b>
+<b class="nc"><i>63</i>&nbsp;                    wholeChar.append(c[i]);</b>
+<b class="nc"><i>64</i>&nbsp;                    if (c[i] == &#39;{&#39;) {</b>
+<b class="nc"><i>65</i>&nbsp;                        braceLevel++;</b>
+<b class="nc"><i>66</i>&nbsp;                        i++;</b>
+<b class="nc"><i>67</i>&nbsp;                        continue;</b>
+<i>68</i>&nbsp;                    }
+<b class="nc"><i>69</i>&nbsp;                    if (c[i] == &#39;}&#39;) {</b>
+<b class="nc"><i>70</i>&nbsp;                        braceLevel--;</b>
+<b class="nc"><i>71</i>&nbsp;                        i++;</b>
+<b class="nc"><i>72</i>&nbsp;                        continue;</b>
+<i>73</i>&nbsp;                    }
+<b class="nc"><i>74</i>&nbsp;                    if ((braceLevel == 1) &amp;&amp; Character.isLetter(c[i])) {</b>
+<b class="nc"><i>75</i>&nbsp;                        if (&quot;fvlj&quot;.indexOf(c[i]) == -1) {</b>
+<b class="nc"><i>76</i>&nbsp;                            if (warn != null) {</b>
+<b class="nc"><i>77</i>&nbsp;                                warn.warn(</b>
+<i>78</i>&nbsp;                                        &quot;Format string in format.name$ may only contain fvlj on brace level 1 in group &quot;
+<i>79</i>&nbsp;                                                + group + &quot;: &quot; + format);
+<i>80</i>&nbsp;                            }
+<i>81</i>&nbsp;                        } else {
+<b class="nc"><i>82</i>&nbsp;                            level1Chars.append(c[i]);</b>
+<i>83</i>&nbsp;                        }
+<i>84</i>&nbsp;                    }
+<b class="nc"><i>85</i>&nbsp;                    i++;</b>
+<i>86</i>&nbsp;                }
+<b class="nc"><i>87</i>&nbsp;                i--; // unskip last brace (for last i++ at the end)</b>
+<b class="nc"><i>88</i>&nbsp;                String control = level1Chars.toString().toLowerCase();</b>
+<i>89</i>&nbsp;
+<b class="nc"><i>90</i>&nbsp;                if (control.isEmpty()) {</b>
+<b class="nc"><i>91</i>&nbsp;                    continue;</b>
+<i>92</i>&nbsp;                }
+<i>93</i>&nbsp;
+<b class="nc"><i>94</i>&nbsp;                if ((control.length() &gt; 2) &amp;&amp; (warn != null)) {</b>
+<b class="nc"><i>95</i>&nbsp;                    warn.warn(&quot;Format string in format.name$ may only be one or two character long on brace level 1 in group &quot; + group + &quot;: &quot; + format);</b>
+<i>96</i>&nbsp;                }
+<i>97</i>&nbsp;
+<b class="nc"><i>98</i>&nbsp;                char type = control.charAt(0);</b>
+<i>99</i>&nbsp;
+<i>100</i>&nbsp;                Optional&lt;String&gt; tokenS;
+<b class="nc"><i>101</i>&nbsp;                switch (type) {</b>
+<i>102</i>&nbsp;                case &#39;f&#39;:
+<b class="nc"><i>103</i>&nbsp;                    tokenS = author.getFirst();</b>
+<b class="nc"><i>104</i>&nbsp;                    break;</b>
+<i>105</i>&nbsp;                case &#39;v&#39;:
+<b class="nc"><i>106</i>&nbsp;                    tokenS = author.getVon();</b>
+<b class="nc"><i>107</i>&nbsp;                    break;</b>
+<i>108</i>&nbsp;                case &#39;l&#39;:
+<b class="nc"><i>109</i>&nbsp;                    tokenS = author.getLast();</b>
+<b class="nc"><i>110</i>&nbsp;                    break;</b>
+<i>111</i>&nbsp;                case &#39;j&#39;:
+<b class="nc"><i>112</i>&nbsp;                    tokenS = author.getJr();</b>
+<b class="nc"><i>113</i>&nbsp;                    break;</b>
+<i>114</i>&nbsp;                default:
+<b class="nc"><i>115</i>&nbsp;                    throw new VMException(&quot;Internal error&quot;);</b>
+<i>116</i>&nbsp;                }
+<i>117</i>&nbsp;
+<b class="nc"><i>118</i>&nbsp;                if (!tokenS.isPresent()) {</b>
+<b class="nc"><i>119</i>&nbsp;                    i++;</b>
+<b class="nc"><i>120</i>&nbsp;                    continue;</b>
+<i>121</i>&nbsp;                }
+<b class="nc"><i>122</i>&nbsp;                String[] tokens = tokenS.get().split(&quot; &quot;);</b>
+<i>123</i>&nbsp;
+<b class="nc"><i>124</i>&nbsp;                boolean abbreviateThatIsSingleLetter = true;</b>
+<i>125</i>&nbsp;
+<b class="nc"><i>126</i>&nbsp;                if (control.length() == 2) {</b>
+<b class="nc"><i>127</i>&nbsp;                    if (control.charAt(1) == control.charAt(0)) {</b>
+<b class="nc"><i>128</i>&nbsp;                        abbreviateThatIsSingleLetter = false;</b>
+<i>129</i>&nbsp;                    } else {
+<b class="nc"><i>130</i>&nbsp;                        if (warn != null) {</b>
+<b class="nc"><i>131</i>&nbsp;                            warn.warn(&quot;Format string in format.name$ may only contain one type of vlfj on brace level 1 in group &quot; + group + &quot;: &quot; + format);</b>
+<i>132</i>&nbsp;                        }
+<i>133</i>&nbsp;                    }
+<i>134</i>&nbsp;                }
+<i>135</i>&nbsp;
+<i>136</i>&nbsp;                // Now we know what to do
+<i>137</i>&nbsp;
+<b class="nc"><i>138</i>&nbsp;                if ((braceLevel == 0) &amp;&amp; (wholeChar.charAt(wholeChar.length() - 1) == &#39;}&#39;)) {</b>
+<b class="nc"><i>139</i>&nbsp;                    wholeChar.deleteCharAt(wholeChar.length() - 1);</b>
+<i>140</i>&nbsp;                }
+<i>141</i>&nbsp;
+<b class="nc"><i>142</i>&nbsp;                char[] d = wholeChar.toString().toCharArray();</b>
+<i>143</i>&nbsp;
+<b class="nc"><i>144</i>&nbsp;                int bLevel = 1;</b>
+<i>145</i>&nbsp;
+<b class="nc"><i>146</i>&nbsp;                String interToken = null;</b>
+<b class="nc"><i>147</i>&nbsp;                int groupStart = sb.length();</b>
+<i>148</i>&nbsp;
+<b class="nc"><i>149</i>&nbsp;                for (int j = 0; j &lt; d.length; j++) {</b>
+<i>150</i>&nbsp;
+<b class="nc"><i>151</i>&nbsp;                    if (Character.isLetter(d[j]) &amp;&amp; (bLevel == 1)) {</b>
+<b class="nc"><i>152</i>&nbsp;                        groupStart = sb.length();</b>
+<b class="nc"><i>153</i>&nbsp;                        if (!abbreviateThatIsSingleLetter) {</b>
+<b class="nc"><i>154</i>&nbsp;                            j++;</b>
+<i>155</i>&nbsp;                        }
+<b class="nc"><i>156</i>&nbsp;                        if (((j + 1) &lt; d.length) &amp;&amp; (d[j + 1] == &#39;{&#39;)) {</b>
+<b class="nc"><i>157</i>&nbsp;                            StringBuilder interTokenSb = new StringBuilder();</b>
+<b class="nc"><i>158</i>&nbsp;                            j = BibtexNameFormatter.consumeToMatchingBrace(interTokenSb, d, j + 1);</b>
+<b class="nc"><i>159</i>&nbsp;                            interToken = interTokenSb.substring(1, interTokenSb.length() - 1);</b>
+<i>160</i>&nbsp;                        }
+<i>161</i>&nbsp;
+<b class="nc"><i>162</i>&nbsp;                        for (int k = 0; k &lt; tokens.length; k++) {</b>
+<b class="nc"><i>163</i>&nbsp;                            String token = tokens[k];</b>
+<b class="nc"><i>164</i>&nbsp;                            if (abbreviateThatIsSingleLetter) {</b>
+<b class="nc"><i>165</i>&nbsp;                                String[] dashes = token.split(&quot;-&quot;);</b>
+<i>166</i>&nbsp;
+<b class="nc"><i>167</i>&nbsp;                                token = Arrays.asList(dashes).stream().map(BibtexNameFormatter::getFirstCharOfString)</b>
+<b class="nc"><i>168</i>&nbsp;                                        .collect(Collectors.joining(&quot;.-&quot;));</b>
+<i>169</i>&nbsp;                            }
+<i>170</i>&nbsp;
+<i>171</i>&nbsp;                            // Output token
+<b class="nc"><i>172</i>&nbsp;                            sb.append(token);</b>
+<i>173</i>&nbsp;
+<b class="nc"><i>174</i>&nbsp;                            if (k &lt; (tokens.length - 1)) {</b>
+<i>175</i>&nbsp;                                // Output Intertoken String
+<b class="nc"><i>176</i>&nbsp;                                if (interToken == null) {</b>
+<b class="nc"><i>177</i>&nbsp;                                    if (abbreviateThatIsSingleLetter) {</b>
+<b class="nc"><i>178</i>&nbsp;                                        sb.append(&#39;.&#39;);</b>
+<i>179</i>&nbsp;                                    }
+<i>180</i>&nbsp;                                    // No clue what this means (What the hell are tokens anyway???
+<i>181</i>&nbsp;                                    // if (lex_class[name_sep_char[cur_token]] = sep_char) then
+<i>182</i>&nbsp;                                    //    append_ex_buf_char_and_check (name_sep_char[cur_token])
+<b class="nc"><i>183</i>&nbsp;                                    if ((k == (tokens.length - 2)) || (BibtexNameFormatter.numberOfChars(sb.substring(groupStart, sb.length()), 3) &lt; 3)) {</b>
+<b class="nc"><i>184</i>&nbsp;                                        sb.append(&#39;~&#39;);</b>
+<i>185</i>&nbsp;                                    } else {
+<b class="nc"><i>186</i>&nbsp;                                        sb.append(&#39; &#39;);</b>
+<i>187</i>&nbsp;                                    }
+<i>188</i>&nbsp;                                } else {
+<b class="nc"><i>189</i>&nbsp;                                    sb.append(interToken);</b>
+<i>190</i>&nbsp;                                }
+<i>191</i>&nbsp;                            }
+<i>192</i>&nbsp;                        }
+<b class="nc"><i>193</i>&nbsp;                    } else if (d[j] == &#39;}&#39;) {</b>
+<b class="nc"><i>194</i>&nbsp;                        bLevel--;</b>
+<b class="nc"><i>195</i>&nbsp;                        if (bLevel &gt; 0) {</b>
+<b class="nc"><i>196</i>&nbsp;                            sb.append(&#39;}&#39;);</b>
+<i>197</i>&nbsp;                        }
+<b class="nc"><i>198</i>&nbsp;                    } else if (d[j] == &#39;{&#39;) {</b>
+<b class="nc"><i>199</i>&nbsp;                        bLevel++;</b>
+<b class="nc"><i>200</i>&nbsp;                        sb.append(&#39;{&#39;);</b>
+<i>201</i>&nbsp;                    } else {
+<b class="nc"><i>202</i>&nbsp;                        sb.append(d[j]);</b>
+<i>203</i>&nbsp;                    }
+<i>204</i>&nbsp;                }
+<b class="nc"><i>205</i>&nbsp;                if (sb.length() &gt; 0) {</b>
+<b class="nc"><i>206</i>&nbsp;                    boolean noDisTie = false;</b>
+<b class="nc"><i>207</i>&nbsp;                    if ((sb.charAt(sb.length() - 1) == &#39;~&#39;) &amp;&amp;</b>
+<b class="nc"><i>208</i>&nbsp;                            ((BibtexNameFormatter.numberOfChars(sb.substring(groupStart, sb.length()), 4) &gt;= 4) ||</b>
+<b class="nc"><i>209</i>&nbsp;                            ((sb.length() &gt; 1) &amp;&amp; (noDisTie = sb.charAt(sb.length() - 2) == &#39;~&#39;)))) {</b>
+<b class="nc"><i>210</i>&nbsp;                        sb.deleteCharAt(sb.length() - 1);</b>
+<b class="nc"><i>211</i>&nbsp;                        if (!noDisTie) {</b>
+<b class="nc"><i>212</i>&nbsp;                            sb.append(&#39; &#39;);</b>
+<i>213</i>&nbsp;                        }
+<i>214</i>&nbsp;                    }
+<i>215</i>&nbsp;                }
+<b class="nc"><i>216</i>&nbsp;            } else if (c[i] == &#39;}&#39;) {</b>
+<b class="nc"><i>217</i>&nbsp;                if (warn != null) {</b>
+<b class="nc"><i>218</i>&nbsp;                    warn.warn(&quot;Unmatched brace in format string: &quot; + format);</b>
+<i>219</i>&nbsp;                }
+<i>220</i>&nbsp;            } else {
+<b class="nc"><i>221</i>&nbsp;                sb.append(c[i]); // verbatim</b>
+<i>222</i>&nbsp;            }
+<b class="nc"><i>223</i>&nbsp;            i++;</b>
+<i>224</i>&nbsp;        }
+<b class="nc"><i>225</i>&nbsp;        if ((braceLevel != 0) &amp;&amp; (warn != null)) {</b>
+<b class="nc"><i>226</i>&nbsp;            warn.warn(&quot;Unbalanced brace in format string for nameFormat: &quot; + format);</b>
+<i>227</i>&nbsp;        }
+<i>228</i>&nbsp;
+<b class="nc"><i>229</i>&nbsp;        return sb.toString();</b>
+<i>230</i>&nbsp;    }
+<i>231</i>&nbsp;
+<i>232</i>&nbsp;    /**
+<i>233</i>&nbsp;     * Including the matching brace.
+<i>234</i>&nbsp;     *
+<i>235</i>&nbsp;     * @param interTokenSb
+<i>236</i>&nbsp;     * @param c
+<i>237</i>&nbsp;     * @param pos
+<i>238</i>&nbsp;     * @return
+<i>239</i>&nbsp;     */
+<i>240</i>&nbsp;    public static int consumeToMatchingBrace(StringBuilder interTokenSb, char[] c, int pos) {
+<i>241</i>&nbsp;
+<b class="nc"><i>242</i>&nbsp;        int braceLevel = 0;</b>
+<i>243</i>&nbsp;
+<b class="nc"><i>244</i>&nbsp;        for (int i = pos; i &lt; c.length; i++) {</b>
+<b class="nc"><i>245</i>&nbsp;            if (c[i] == &#39;}&#39;) {</b>
+<b class="nc"><i>246</i>&nbsp;                braceLevel--;</b>
+<b class="nc"><i>247</i>&nbsp;                if (braceLevel == 0) {</b>
+<b class="nc"><i>248</i>&nbsp;                    interTokenSb.append(&#39;}&#39;);</b>
+<b class="nc"><i>249</i>&nbsp;                    return i;</b>
+<i>250</i>&nbsp;                }
+<b class="nc"><i>251</i>&nbsp;            } else if (c[i] == &#39;{&#39;) {</b>
+<b class="nc"><i>252</i>&nbsp;                braceLevel++;</b>
+<i>253</i>&nbsp;            }
+<b class="nc"><i>254</i>&nbsp;            interTokenSb.append(c[i]);</b>
+<i>255</i>&nbsp;        }
+<b class="nc"><i>256</i>&nbsp;        return c.length;</b>
+<i>257</i>&nbsp;    }
+<i>258</i>&nbsp;
+<i>259</i>&nbsp;    /**
+<i>260</i>&nbsp;     * Takes care of special characters too
+<i>261</i>&nbsp;     *
+<i>262</i>&nbsp;     * @param s
+<i>263</i>&nbsp;     * @return
+<i>264</i>&nbsp;     */
+<i>265</i>&nbsp;    public static String getFirstCharOfString(String s) {
+<b class="nc"><i>266</i>&nbsp;        char[] c = s.toCharArray();</b>
+<b class="nc"><i>267</i>&nbsp;        for (int i = 0; i &lt; c.length; i++) {</b>
+<b class="nc"><i>268</i>&nbsp;            if (Character.isLetter(c[i])) {</b>
+<b class="nc"><i>269</i>&nbsp;                return String.valueOf(c[i]);</b>
+<i>270</i>&nbsp;            }
+<b class="nc"><i>271</i>&nbsp;            if ((c[i] == &#39;{&#39;) &amp;&amp; ((i + 1) &lt; c.length) &amp;&amp; (c[i + 1] == &#39;\\&#39;)) {</b>
+<b class="nc"><i>272</i>&nbsp;                StringBuilder sb = new StringBuilder();</b>
+<b class="nc"><i>273</i>&nbsp;                BibtexNameFormatter.consumeToMatchingBrace(sb, c, i);</b>
+<b class="nc"><i>274</i>&nbsp;                return sb.toString();</b>
+<i>275</i>&nbsp;            }
+<i>276</i>&nbsp;        }
+<b class="nc"><i>277</i>&nbsp;        return &quot;&quot;;</b>
+<i>278</i>&nbsp;    }
+<i>279</i>&nbsp;
+<i>280</i>&nbsp;    public static int numberOfChars(String token, int inStop) {
+<b class="nc"><i>281</i>&nbsp;        int stop = inStop;</b>
+<b class="nc"><i>282</i>&nbsp;        if (stop &lt; 0) {</b>
+<b class="nc"><i>283</i>&nbsp;            stop = Integer.MAX_VALUE;</b>
+<i>284</i>&nbsp;        }
+<i>285</i>&nbsp;
+<b class="nc"><i>286</i>&nbsp;        int result = 0;</b>
+<b class="nc"><i>287</i>&nbsp;        int i = 0;</b>
+<b class="nc"><i>288</i>&nbsp;        char[] c = token.toCharArray();</b>
+<b class="nc"><i>289</i>&nbsp;        int n = c.length;</b>
+<i>290</i>&nbsp;
+<b class="nc"><i>291</i>&nbsp;        int braceLevel = 0;</b>
+<b class="nc"><i>292</i>&nbsp;        while ((i &lt; n) &amp;&amp; (result &lt; stop)) {</b>
+<b class="nc"><i>293</i>&nbsp;            i++;</b>
+<b class="nc"><i>294</i>&nbsp;            if (c[i - 1] == &#39;{&#39;) {</b>
+<b class="nc"><i>295</i>&nbsp;                braceLevel++;</b>
+<b class="nc"><i>296</i>&nbsp;                if ((braceLevel == 1) &amp;&amp; (i &lt; n) &amp;&amp; (c[i] == &#39;\\&#39;)) {</b>
+<b class="nc"><i>297</i>&nbsp;                    i++;</b>
+<b class="nc"><i>298</i>&nbsp;                    while ((i &lt; n) &amp;&amp; (braceLevel &gt; 0)) {</b>
+<b class="nc"><i>299</i>&nbsp;                        if (c[i] == &#39;}&#39;) {</b>
+<b class="nc"><i>300</i>&nbsp;                            braceLevel--;</b>
+<b class="nc"><i>301</i>&nbsp;                        } else if (c[i] == &#39;{&#39;) {</b>
+<b class="nc"><i>302</i>&nbsp;                            braceLevel++;</b>
+<i>303</i>&nbsp;                        }
+<b class="nc"><i>304</i>&nbsp;                        i++;</b>
+<i>305</i>&nbsp;                    }
+<i>306</i>&nbsp;                }
+<b class="nc"><i>307</i>&nbsp;            } else if (c[i - 1] == &#39;}&#39;) {</b>
+<b class="nc"><i>308</i>&nbsp;                braceLevel--;</b>
+<i>309</i>&nbsp;            }
+<b class="nc"><i>310</i>&nbsp;            result++;</b>
+<i>311</i>&nbsp;        }
+<b class="nc"><i>312</i>&nbsp;        return result;</b>
+<i>313</i>&nbsp;    }
+<i>314</i>&nbsp;
+<i>315</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

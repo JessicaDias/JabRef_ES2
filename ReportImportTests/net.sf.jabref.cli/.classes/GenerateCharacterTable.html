@@ -1,0 +1,132 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: GenerateCharacterTable</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.cli</a> ]
+</div>
+
+<h1>Coverage Summary for Class: GenerateCharacterTable (net.sf.jabref.cli)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GenerateCharacterTable</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 36)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.cli;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.Map;
+<i>4</i>&nbsp;import java.util.TreeMap;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import net.sf.jabref.model.strings.HTMLUnicodeConversionMaps;
+<i>7</i>&nbsp;
+<b class="nc"><i>8</i>&nbsp;public class GenerateCharacterTable {</b>
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;    public static void main(String[] args) {
+<b class="nc"><i>11</i>&nbsp;        Map&lt;Integer, String&gt; characterMap = new TreeMap&lt;&gt;(HTMLUnicodeConversionMaps.NUMERICAL_LATEX_CONVERSION_MAP);</b>
+<b class="nc"><i>12</i>&nbsp;        System.out.println(&quot;\\documentclass[10pt, a4paper]{article}&quot;);</b>
+<b class="nc"><i>13</i>&nbsp;        System.out.println(&quot;\\usepackage[T5,T1]{fontenc}&quot;);</b>
+<b class="nc"><i>14</i>&nbsp;        System.out.println(&quot;\\usepackage{amssymb}&quot;);</b>
+<b class="nc"><i>15</i>&nbsp;        System.out.println(&quot;\\usepackage{amsmath}&quot;);</b>
+<b class="nc"><i>16</i>&nbsp;        System.out.println(&quot;\\usepackage{txfonts}&quot;);</b>
+<b class="nc"><i>17</i>&nbsp;        System.out.println(&quot;\\usepackage{xfrac}&quot;);</b>
+<b class="nc"><i>18</i>&nbsp;        System.out.println(&quot;\\usepackage{combelow}&quot;);</b>
+<b class="nc"><i>19</i>&nbsp;        System.out.println(&quot;\\usepackage{textcomp}&quot;);</b>
+<b class="nc"><i>20</i>&nbsp;        System.out.println(&quot;\\usepackage{mathspec}&quot;);</b>
+<b class="nc"><i>21</i>&nbsp;        System.out.println(&quot;\\usepackage{fontspec}&quot;);</b>
+<b class="nc"><i>22</i>&nbsp;        System.out.println(&quot;\\usepackage[a4paper,margin=1cm]{geometry}&quot;);</b>
+<b class="nc"><i>23</i>&nbsp;        System.out.println(&quot;\\usepackage{supertabular}&quot;);</b>
+<b class="nc"><i>24</i>&nbsp;        System.out.println(&quot;\\usepackage{mathabx}&quot;);</b>
+<b class="nc"><i>25</i>&nbsp;        System.out.println(&quot;\\fontspec{Cambria}&quot;);</b>
+<b class="nc"><i>26</i>&nbsp;        System.out.println(&quot;\\DeclareTextSymbolDefault{\\OHORN}{T5}&quot;);</b>
+<b class="nc"><i>27</i>&nbsp;        System.out.println(&quot;\\DeclareTextSymbolDefault{\\UHORN}{T5}&quot;);</b>
+<b class="nc"><i>28</i>&nbsp;        System.out.println(&quot;\\DeclareTextSymbolDefault{\\ohorn}{T5}&quot;);</b>
+<b class="nc"><i>29</i>&nbsp;        System.out.println(&quot;\\DeclareTextSymbolDefault{\\uhorn}{T5}&quot;);</b>
+<b class="nc"><i>30</i>&nbsp;        System.out.println(&quot;\\begin{document}&quot;);</b>
+<b class="nc"><i>31</i>&nbsp;        System.out.println(&quot;\\twocolumn&quot;);</b>
+<b class="nc"><i>32</i>&nbsp;        System.out.println(&quot;\\begin{supertabular}{c|c|c|c|c}&quot;);</b>
+<b class="nc"><i>33</i>&nbsp;        System.out.println(&quot;No. &amp; Uni &amp; Symb &amp; \\LaTeX &amp; Code \\\\ \n \\hline&quot;);</b>
+<i>34</i>&nbsp;
+<b class="nc"><i>35</i>&nbsp;        for (Map.Entry&lt;Integer, String&gt; character : characterMap.entrySet()) {</b>
+<b class="nc"><i>36</i>&nbsp;            System.out</b>
+<b class="nc"><i>37</i>&nbsp;                    .println(</b>
+<b class="nc"><i>38</i>&nbsp;                            character.getKey() + &quot; &amp; &quot;</b>
+<b class="nc"><i>39</i>&nbsp;                                    + ((character.getKey() &gt; 128) ? String</b>
+<b class="nc"><i>40</i>&nbsp;                                            .valueOf(Character.toChars(character.getKey())) : &quot;&quot;)</b>
+<b class="nc"><i>41</i>&nbsp;                                    + &quot; &amp; \\symbol{&quot; + Integer.toString(character.getKey()) + &quot;} &amp; &quot;</b>
+<b class="nc"><i>42</i>&nbsp;                                    + character.getValue() + &quot; &amp; \\verb¤&quot; + character.getValue() + &quot;¤ \\\\&quot;);</b>
+<b class="nc"><i>43</i>&nbsp;        }</b>
+<b class="nc"><i>44</i>&nbsp;        System.out.println(&quot;\\end{supertabular}&quot;);</b>
+<b class="nc"><i>45</i>&nbsp;        System.out.println(&quot;\\end{document}&quot;);</b>
+<i>46</i>&nbsp;
+<b class="nc"><i>47</i>&nbsp;    }</b>
+<i>48</i>&nbsp;
+<i>49</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

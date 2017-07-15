@@ -1,0 +1,127 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: MnemonicAwareAction</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.actions</a> ]
+</div>
+
+<h1>Coverage Summary for Class: MnemonicAwareAction (net.sf.jabref.gui.actions)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MnemonicAwareAction</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 18)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.actions;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import javax.swing.AbstractAction;
+<i>4</i>&nbsp;import javax.swing.Action;
+<i>5</i>&nbsp;import javax.swing.Icon;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import net.sf.jabref.gui.IconTheme;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;/**
+<i>10</i>&nbsp; * This class extends {@link AbstractAction} with the ability to set
+<i>11</i>&nbsp; * the mnemonic key based on a &#39;&amp;&#39; character inserted in front of
+<i>12</i>&nbsp; * the desired mnemonic letter. This is done by setting the action&#39;s
+<i>13</i>&nbsp; * name using putValue(NAME, actionname).
+<i>14</i>&nbsp; * This facilitates localized mnemonics.
+<i>15</i>&nbsp; */
+<i>16</i>&nbsp;public abstract class MnemonicAwareAction extends AbstractAction {
+<i>17</i>&nbsp;
+<b class="nc"><i>18</i>&nbsp;    public MnemonicAwareAction() {}</b>
+<i>19</i>&nbsp;
+<b class="nc"><i>20</i>&nbsp;    public MnemonicAwareAction(Icon icon) {</b>
+<b class="nc"><i>21</i>&nbsp;        if(icon instanceof IconTheme.FontBasedIcon) {</b>
+<b class="nc"><i>22</i>&nbsp;            putValue(Action.SMALL_ICON, ((IconTheme.FontBasedIcon) icon).createSmallIcon());</b>
+<b class="nc"><i>23</i>&nbsp;            putValue(Action.LARGE_ICON_KEY, icon);</b>
+<i>24</i>&nbsp;        } else {
+<b class="nc"><i>25</i>&nbsp;            putValue(Action.SMALL_ICON, icon);</b>
+<i>26</i>&nbsp;        }
+<b class="nc"><i>27</i>&nbsp;    }</b>
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;    @Override
+<i>30</i>&nbsp;    public void putValue(String key, Object value) {
+<b class="nc"><i>31</i>&nbsp;        if (key.equals(Action.NAME)) {</b>
+<b class="nc"><i>32</i>&nbsp;            String name = value.toString();</b>
+<b class="nc"><i>33</i>&nbsp;            int i = name.indexOf(&#39;&amp;&#39;);</b>
+<b class="nc"><i>34</i>&nbsp;            if (i &gt;= 0) {</b>
+<b class="nc"><i>35</i>&nbsp;                char mnemonic = Character.toUpperCase(name.charAt(i + 1));</b>
+<b class="nc"><i>36</i>&nbsp;                putValue(Action.MNEMONIC_KEY, (int) mnemonic);</b>
+<b class="nc"><i>37</i>&nbsp;                value = name.substring(0, i) + name.substring(i + 1);</b>
+<b class="nc"><i>38</i>&nbsp;            } else {</b>
+<b class="nc"><i>39</i>&nbsp;                value = name;</b>
+<i>40</i>&nbsp;            }
+<i>41</i>&nbsp;        }
+<b class="nc"><i>42</i>&nbsp;        super.putValue(key, value);</b>
+<b class="nc"><i>43</i>&nbsp;    }</b>
+<i>44</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

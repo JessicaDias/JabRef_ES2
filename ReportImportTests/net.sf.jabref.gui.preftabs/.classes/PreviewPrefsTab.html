@@ -1,0 +1,372 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: PreviewPrefsTab</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.preftabs</a> ]
+</div>
+
+<h1>Coverage Summary for Class: PreviewPrefsTab (net.sf.jabref.gui.preftabs)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PreviewPrefsTab</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 144)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">PreviewPrefsTab$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 13)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 21)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 157)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.preftabs;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.BorderLayout;
+<i>4</i>&nbsp;import java.awt.Dimension;
+<i>5</i>&nbsp;import java.util.ArrayList;
+<i>6</i>&nbsp;import java.util.Enumeration;
+<i>7</i>&nbsp;import java.util.List;
+<i>8</i>&nbsp;import java.util.concurrent.ExecutionException;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;import javax.swing.BoxLayout;
+<i>11</i>&nbsp;import javax.swing.DefaultListModel;
+<i>12</i>&nbsp;import javax.swing.JButton;
+<i>13</i>&nbsp;import javax.swing.JList;
+<i>14</i>&nbsp;import javax.swing.JOptionPane;
+<i>15</i>&nbsp;import javax.swing.JPanel;
+<i>16</i>&nbsp;import javax.swing.JScrollPane;
+<i>17</i>&nbsp;import javax.swing.JTextArea;
+<i>18</i>&nbsp;import javax.swing.ListSelectionModel;
+<i>19</i>&nbsp;import javax.swing.SwingWorker;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;import net.sf.jabref.Globals;
+<i>22</i>&nbsp;import net.sf.jabref.JabRefGUI;
+<i>23</i>&nbsp;import net.sf.jabref.gui.BasePanel;
+<i>24</i>&nbsp;import net.sf.jabref.gui.PreviewPanel;
+<i>25</i>&nbsp;import net.sf.jabref.logic.citationstyle.CitationStyle;
+<i>26</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>27</i>&nbsp;import net.sf.jabref.logic.util.TestEntry;
+<i>28</i>&nbsp;import net.sf.jabref.preferences.PreviewPreferences;
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;import com.jgoodies.forms.builder.FormBuilder;
+<i>31</i>&nbsp;import com.jgoodies.forms.factories.Paddings;
+<i>32</i>&nbsp;import org.apache.commons.lang3.ArrayUtils;
+<i>33</i>&nbsp;import org.apache.commons.logging.Log;
+<i>34</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;public class PreviewPrefsTab extends JPanel implements PrefsTab {
+<i>38</i>&nbsp;
+<b class="nc"><i>39</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(PreviewPrefsTab.class);</b>
+<i>40</i>&nbsp;
+<i>41</i>&nbsp;    private SwingWorker&lt;List&lt;CitationStyle&gt;, Void&gt; discoverCitationStyleWorker;
+<i>42</i>&nbsp;
+<b class="nc"><i>43</i>&nbsp;    private final DefaultListModel&lt;Object&gt; availableModel = new DefaultListModel&lt;&gt;();</b>
+<b class="nc"><i>44</i>&nbsp;    private final DefaultListModel&lt;Object&gt; chosenModel = new DefaultListModel&lt;&gt;();</b>
+<i>45</i>&nbsp;
+<b class="nc"><i>46</i>&nbsp;    private final JList&lt;Object&gt; available = new JList&lt;&gt;(availableModel);</b>
+<b class="nc"><i>47</i>&nbsp;    private final JList&lt;Object&gt; chosen = new JList&lt;&gt;(chosenModel);</b>
+<i>48</i>&nbsp;
+<b class="nc"><i>49</i>&nbsp;    private final JButton btnRight = new JButton(&quot;»&quot;);</b>
+<b class="nc"><i>50</i>&nbsp;    private final JButton btnLeft = new JButton(&quot;«&quot;);</b>
+<b class="nc"><i>51</i>&nbsp;    private final JButton btnUp = new JButton(Localization.lang(&quot;Up&quot;));</b>
+<b class="nc"><i>52</i>&nbsp;    private final JButton btnDown = new JButton(Localization.lang(&quot;Down&quot;));</b>
+<i>53</i>&nbsp;
+<i>54</i>&nbsp;
+<b class="nc"><i>55</i>&nbsp;    private final JTextArea layout = new JTextArea(&quot;&quot;, 1, 1);</b>
+<b class="nc"><i>56</i>&nbsp;    private final JButton btnTest = new JButton(Localization.lang(&quot;Test&quot;));</b>
+<b class="nc"><i>57</i>&nbsp;    private final JButton btnDefault = new JButton(Localization.lang(&quot;Default&quot;));</b>
+<b class="nc"><i>58</i>&nbsp;    private final JScrollPane scrollPane = new JScrollPane(layout);</b>
+<i>59</i>&nbsp;
+<i>60</i>&nbsp;
+<b class="nc"><i>61</i>&nbsp;    public PreviewPrefsTab() {</b>
+<b class="nc"><i>62</i>&nbsp;        setupLogic();</b>
+<b class="nc"><i>63</i>&nbsp;        setupGui();</b>
+<b class="nc"><i>64</i>&nbsp;    }</b>
+<i>65</i>&nbsp;
+<i>66</i>&nbsp;    private void setupLogic(){
+<b class="nc"><i>67</i>&nbsp;        chosen.getSelectionModel().addListSelectionListener(event -&gt; {</b>
+<b class="nc"><i>68</i>&nbsp;            boolean selectionEmpty = ((ListSelectionModel) event.getSource()).isSelectionEmpty();</b>
+<b class="nc"><i>69</i>&nbsp;            btnLeft.setEnabled(!selectionEmpty);</b>
+<b class="nc"><i>70</i>&nbsp;            btnDown.setEnabled(!selectionEmpty);</b>
+<b class="nc"><i>71</i>&nbsp;            btnUp.setEnabled(!selectionEmpty);</b>
+<b class="nc"><i>72</i>&nbsp;        });</b>
+<i>73</i>&nbsp;
+<b class="nc"><i>74</i>&nbsp;        available.getSelectionModel()</b>
+<b class="nc"><i>75</i>&nbsp;                .addListSelectionListener(e -&gt; btnRight.setEnabled(!((ListSelectionModel) e.getSource()).isSelectionEmpty()));</b>
+<i>76</i>&nbsp;
+<b class="nc"><i>77</i>&nbsp;        btnRight.addActionListener(event -&gt; {</b>
+<b class="nc"><i>78</i>&nbsp;            for (Object object : available.getSelectedValuesList()) {</b>
+<b class="nc"><i>79</i>&nbsp;                availableModel.removeElement(object);</b>
+<b class="nc"><i>80</i>&nbsp;                chosenModel.addElement(object);</b>
+<b class="nc"><i>81</i>&nbsp;            }</b>
+<b class="nc"><i>82</i>&nbsp;        });</b>
+<i>83</i>&nbsp;
+<b class="nc"><i>84</i>&nbsp;        btnLeft.addActionListener(event -&gt; {</b>
+<b class="nc"><i>85</i>&nbsp;            for (Object object : chosen.getSelectedValuesList()) {</b>
+<b class="nc"><i>86</i>&nbsp;                availableModel.addElement(object);</b>
+<b class="nc"><i>87</i>&nbsp;                chosenModel.removeElement(object);</b>
+<b class="nc"><i>88</i>&nbsp;            }</b>
+<b class="nc"><i>89</i>&nbsp;        });</b>
+<i>90</i>&nbsp;
+<b class="nc"><i>91</i>&nbsp;        btnUp.addActionListener(event -&gt; {</b>
+<b class="nc"><i>92</i>&nbsp;            List&lt;Integer&gt; newSelectedIndices = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>93</i>&nbsp;            for (int oldIndex : chosen.getSelectedIndices()) {</b>
+<b class="nc"><i>94</i>&nbsp;                boolean alreadyTaken = newSelectedIndices.contains(oldIndex - 1);</b>
+<b class="nc"><i>95</i>&nbsp;                int newIndex = (oldIndex &gt; 0 &amp;&amp; !alreadyTaken) ? oldIndex - 1 : oldIndex;</b>
+<b class="nc"><i>96</i>&nbsp;                chosenModel.add(newIndex, chosenModel.remove(oldIndex));</b>
+<b class="nc"><i>97</i>&nbsp;                newSelectedIndices.add(newIndex);</b>
+<i>98</i>&nbsp;            }
+<b class="nc"><i>99</i>&nbsp;            chosen.setSelectedIndices(ArrayUtils.toPrimitive(newSelectedIndices.toArray(new Integer[newSelectedIndices.size()])));</b>
+<b class="nc"><i>100</i>&nbsp;        });</b>
+<i>101</i>&nbsp;
+<b class="nc"><i>102</i>&nbsp;        btnDown.addActionListener(event -&gt; {</b>
+<b class="nc"><i>103</i>&nbsp;            List&lt;Integer&gt; newSelectedIndices = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>104</i>&nbsp;            int[] selectedIndices = chosen.getSelectedIndices();</b>
+<b class="nc"><i>105</i>&nbsp;            for (int i = selectedIndices.length - 1; i &gt;= 0; i--) {</b>
+<b class="nc"><i>106</i>&nbsp;                int oldIndex = selectedIndices[i];</b>
+<b class="nc"><i>107</i>&nbsp;                boolean alreadyTaken = newSelectedIndices.contains(oldIndex + 1);</b>
+<b class="nc"><i>108</i>&nbsp;                int newIndex = (oldIndex &lt; chosenModel.getSize() - 1 &amp;&amp; !alreadyTaken) ? oldIndex + 1 : oldIndex;</b>
+<b class="nc"><i>109</i>&nbsp;                chosenModel.add(newIndex, chosenModel.remove(oldIndex));</b>
+<b class="nc"><i>110</i>&nbsp;                newSelectedIndices.add(newIndex);</b>
+<i>111</i>&nbsp;            }
+<b class="nc"><i>112</i>&nbsp;            chosen.setSelectedIndices(ArrayUtils.toPrimitive(newSelectedIndices.toArray(new Integer[newSelectedIndices.size()])));</b>
+<b class="nc"><i>113</i>&nbsp;        });</b>
+<i>114</i>&nbsp;
+<i>115</i>&nbsp;
+<b class="nc"><i>116</i>&nbsp;        btnDefault.addActionListener(event -&gt; layout.setText(Globals.prefs.getPreviewPreferences()</b>
+<b class="nc"><i>117</i>&nbsp;                .getPreviewStyleDefault().replace(&quot;__NEWLINE__&quot;, &quot;\n&quot;)));</b>
+<i>118</i>&nbsp;
+<b class="nc"><i>119</i>&nbsp;        btnTest.addActionListener(event -&gt; {</b>
+<i>120</i>&nbsp;            try {
+<b class="nc"><i>121</i>&nbsp;                PreviewPanel testPane = new PreviewPanel(null, TestEntry.getTestEntry(), null)</b>
+<b class="nc"><i>122</i>&nbsp;                        .setFixedLayout(layout.getText());</b>
+<b class="nc"><i>123</i>&nbsp;                testPane.setPreferredSize(new Dimension(800, 350));</b>
+<b class="nc"><i>124</i>&nbsp;                JOptionPane.showMessageDialog(PreviewPrefsTab.this, new JScrollPane(testPane), Localization.lang(&quot;Preview&quot;), JOptionPane.PLAIN_MESSAGE);</b>
+<b class="nc"><i>125</i>&nbsp;            } catch (StringIndexOutOfBoundsException exception) {</b>
+<b class="nc"><i>126</i>&nbsp;                LOGGER.warn(&quot;Parsing error.&quot;, exception);</b>
+<b class="nc"><i>127</i>&nbsp;                JOptionPane.showMessageDialog(null,</b>
+<b class="nc"><i>128</i>&nbsp;                        Localization.lang(&quot;Parsing error&quot;) + &quot;: &quot; + Localization.lang(&quot;illegal backslash expression&quot;)</b>
+<b class="nc"><i>129</i>&nbsp;                                + &quot;.\n&quot; + exception.getMessage(),</b>
+<b class="nc"><i>130</i>&nbsp;                        Localization.lang(&quot;Parsing error&quot;), JOptionPane.ERROR_MESSAGE);</b>
+<b class="nc"><i>131</i>&nbsp;            }</b>
+<b class="nc"><i>132</i>&nbsp;        });</b>
+<b class="nc"><i>133</i>&nbsp;    }</b>
+<i>134</i>&nbsp;
+<i>135</i>&nbsp;    private void setupGui(){
+<b class="nc"><i>136</i>&nbsp;        JPanel chooseStyle = FormBuilder.create()</b>
+<b class="nc"><i>137</i>&nbsp;                .columns(&quot;0:grow, $lcgap, pref, $lcgap, 0:grow&quot;)</b>
+<b class="nc"><i>138</i>&nbsp;                .rows(&quot;pref, $lg, fill:pref:grow, $lg, pref:grow, $lg, pref:grow, $lg, pref:grow&quot;)</b>
+<b class="nc"><i>139</i>&nbsp;                .padding(Paddings.DIALOG)</b>
+<i>140</i>&nbsp;
+<b class="nc"><i>141</i>&nbsp;                .addSeparator(Localization.lang(&quot;Current Preview&quot;)).xyw(1, 1, 5)</b>
+<b class="nc"><i>142</i>&nbsp;                .add(available).xywh(1, 3, 1, 7)</b>
+<b class="nc"><i>143</i>&nbsp;                .add(chosen).xywh(5, 3, 1, 7)</b>
+<i>144</i>&nbsp;
+<b class="nc"><i>145</i>&nbsp;                .add(btnRight).xy(3, 3, &quot;fill, bottom&quot;)</b>
+<b class="nc"><i>146</i>&nbsp;                .add(btnLeft).xy(3, 5, &quot;fill, top&quot;)</b>
+<b class="nc"><i>147</i>&nbsp;                .add(btnUp).xy(3, 7, &quot;fill, bottom&quot;)</b>
+<b class="nc"><i>148</i>&nbsp;                .add(btnDown).xy(3, 9, &quot;fill, top&quot;)</b>
+<b class="nc"><i>149</i>&nbsp;                .build();</b>
+<i>150</i>&nbsp;
+<b class="nc"><i>151</i>&nbsp;        JPanel preview = FormBuilder.create()</b>
+<b class="nc"><i>152</i>&nbsp;                .columns(&quot;pref:grow, $lcgap, pref, $lcgap, pref&quot;)</b>
+<b class="nc"><i>153</i>&nbsp;                .rows(&quot;pref, $lg, fill:pref:grow&quot;)</b>
+<b class="nc"><i>154</i>&nbsp;                .padding(Paddings.DIALOG)</b>
+<i>155</i>&nbsp;
+<b class="nc"><i>156</i>&nbsp;                .addSeparator(Localization.lang(&quot;Preview&quot;)).xy(1, 1)</b>
+<b class="nc"><i>157</i>&nbsp;                .add(btnTest).xy(3, 1)</b>
+<b class="nc"><i>158</i>&nbsp;                .add(btnDefault).xy(5, 1)</b>
+<b class="nc"><i>159</i>&nbsp;                .add(scrollPane).xyw(1, 3, 5)</b>
+<b class="nc"><i>160</i>&nbsp;                .build();</b>
+<i>161</i>&nbsp;
+<b class="nc"><i>162</i>&nbsp;        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));</b>
+<b class="nc"><i>163</i>&nbsp;        add(chooseStyle, BorderLayout.CENTER);</b>
+<b class="nc"><i>164</i>&nbsp;        add(preview, BorderLayout.PAGE_END);</b>
+<b class="nc"><i>165</i>&nbsp;    }</b>
+<i>166</i>&nbsp;
+<i>167</i>&nbsp;    @Override
+<i>168</i>&nbsp;    public void setValues() {
+<b class="nc"><i>169</i>&nbsp;        PreviewPreferences previewPreferences = Globals.prefs.getPreviewPreferences();</b>
+<i>170</i>&nbsp;
+<b class="nc"><i>171</i>&nbsp;        chosenModel.clear();</b>
+<b class="nc"><i>172</i>&nbsp;        boolean isPreviewChosen = false;</b>
+<b class="nc"><i>173</i>&nbsp;        for (String style : previewPreferences.getPreviewCycle()) {</b>
+<b class="nc"><i>174</i>&nbsp;            if (CitationStyle.isCitationStyleFile(style)) {</b>
+<b class="nc"><i>175</i>&nbsp;                chosenModel.addElement(CitationStyle.createCitationStyleFromFile(style));</b>
+<i>176</i>&nbsp;            } else {
+<b class="nc"><i>177</i>&nbsp;                if (isPreviewChosen) {</b>
+<b class="nc"><i>178</i>&nbsp;                    LOGGER.error(&quot;Preview is already in the list, something went wrong&quot;);</b>
+<b class="nc"><i>179</i>&nbsp;                    continue;</b>
+<i>180</i>&nbsp;                }
+<b class="nc"><i>181</i>&nbsp;                isPreviewChosen = true;</b>
+<b class="nc"><i>182</i>&nbsp;                chosenModel.addElement(Localization.lang(&quot;Preview&quot;));</b>
+<i>183</i>&nbsp;            }
+<b class="nc"><i>184</i>&nbsp;        }</b>
+<i>185</i>&nbsp;
+<b class="nc"><i>186</i>&nbsp;        availableModel.clear();</b>
+<b class="nc"><i>187</i>&nbsp;        if (!isPreviewChosen){</b>
+<b class="nc"><i>188</i>&nbsp;            availableModel.addElement(Localization.lang(&quot;Preview&quot;));</b>
+<i>189</i>&nbsp;        }
+<i>190</i>&nbsp;
+<b class="nc"><i>191</i>&nbsp;        btnLeft.setEnabled(!chosen.isSelectionEmpty());</b>
+<b class="nc"><i>192</i>&nbsp;        btnRight.setEnabled(!available.isSelectionEmpty());</b>
+<b class="nc"><i>193</i>&nbsp;        btnUp.setEnabled(!chosen.isSelectionEmpty());</b>
+<b class="nc"><i>194</i>&nbsp;        btnDown.setEnabled(!chosen.isSelectionEmpty());</b>
+<i>195</i>&nbsp;
+<b class="nc"><i>196</i>&nbsp;        if (discoverCitationStyleWorker != null){</b>
+<b class="nc"><i>197</i>&nbsp;            discoverCitationStyleWorker.cancel(true);</b>
+<i>198</i>&nbsp;        }
+<i>199</i>&nbsp;
+<b class="nc"><i>200</i>&nbsp;        discoverCitationStyleWorker = new SwingWorker&lt;List&lt;CitationStyle&gt;, Void&gt;() {</b>
+<i>201</i>&nbsp;            @Override
+<i>202</i>&nbsp;            protected List&lt;CitationStyle&gt; doInBackground() throws Exception {
+<b class="nc"><i>203</i>&nbsp;                return CitationStyle.discoverCitationStyles();</b>
+<i>204</i>&nbsp;            }
+<i>205</i>&nbsp;
+<i>206</i>&nbsp;            @Override
+<i>207</i>&nbsp;            public void done(){
+<b class="nc"><i>208</i>&nbsp;                if (this.isCancelled()) {</b>
+<b class="nc"><i>209</i>&nbsp;                    return;</b>
+<i>210</i>&nbsp;                }
+<i>211</i>&nbsp;                try {
+<b class="nc"><i>212</i>&nbsp;                    get().stream()</b>
+<b class="nc"><i>213</i>&nbsp;                            .filter(style -&gt; !previewPreferences.getPreviewCycle().contains(style.getFilepath()))</b>
+<b class="nc"><i>214</i>&nbsp;                            .sorted((style0, style1) -&gt; style0.getTitle().compareTo(style1.getTitle()))</b>
+<b class="nc"><i>215</i>&nbsp;                            .forEach(availableModel::addElement);</b>
+<i>216</i>&nbsp;
+<b class="nc"><i>217</i>&nbsp;                    btnRight.setEnabled(!availableModel.isEmpty());</b>
+<b class="nc"><i>218</i>&nbsp;                } catch (InterruptedException | ExecutionException e) {</b>
+<b class="nc"><i>219</i>&nbsp;                    LOGGER.error(&quot;something went wrong while adding the discovered CitationStyles to the list &quot;);</b>
+<b class="nc"><i>220</i>&nbsp;                }</b>
+<b class="nc"><i>221</i>&nbsp;            }</b>
+<i>222</i>&nbsp;        };
+<b class="nc"><i>223</i>&nbsp;        discoverCitationStyleWorker.execute();</b>
+<i>224</i>&nbsp;
+<b class="nc"><i>225</i>&nbsp;        layout.setText(Globals.prefs.getPreviewPreferences().getPreviewStyle().replace(&quot;__NEWLINE__&quot;, &quot;\n&quot;));</b>
+<b class="nc"><i>226</i>&nbsp;    }</b>
+<i>227</i>&nbsp;
+<i>228</i>&nbsp;    @Override
+<i>229</i>&nbsp;    public void storeSettings() {
+<b class="nc"><i>230</i>&nbsp;        List&lt;String&gt; styles = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>231</i>&nbsp;        Enumeration&lt;Object&gt; elements = chosenModel.elements();</b>
+<b class="nc"><i>232</i>&nbsp;        while (elements.hasMoreElements()) {</b>
+<b class="nc"><i>233</i>&nbsp;            Object obj = elements.nextElement();</b>
+<b class="nc"><i>234</i>&nbsp;            if (obj instanceof CitationStyle) {</b>
+<b class="nc"><i>235</i>&nbsp;                styles.add(((CitationStyle) obj).getFilepath());</b>
+<b class="nc"><i>236</i>&nbsp;            } else if (obj instanceof String) {</b>
+<b class="nc"><i>237</i>&nbsp;                styles.add(&quot;Preview&quot;);</b>
+<i>238</i>&nbsp;            }
+<b class="nc"><i>239</i>&nbsp;        }</b>
+<b class="nc"><i>240</i>&nbsp;        PreviewPreferences previewPreferences = Globals.prefs.getPreviewPreferences()</b>
+<b class="nc"><i>241</i>&nbsp;                .getBuilder()</b>
+<b class="nc"><i>242</i>&nbsp;                .withPreviewCycle(styles)</b>
+<b class="nc"><i>243</i>&nbsp;                .withPreviewStyle(layout.getText().replace(&quot;\n&quot;, &quot;__NEWLINE__&quot;))</b>
+<b class="nc"><i>244</i>&nbsp;                .build();</b>
+<b class="nc"><i>245</i>&nbsp;        Globals.prefs.storePreviewPreferences(previewPreferences);</b>
+<i>246</i>&nbsp;
+<i>247</i>&nbsp;        // update preview
+<b class="nc"><i>248</i>&nbsp;        for (BasePanel basePanel : JabRefGUI.getMainFrame().getBasePanelList()) {</b>
+<b class="nc"><i>249</i>&nbsp;            basePanel.getPreviewPanel().updateLayout();</b>
+<b class="nc"><i>250</i>&nbsp;        }</b>
+<b class="nc"><i>251</i>&nbsp;    }</b>
+<i>252</i>&nbsp;
+<i>253</i>&nbsp;    @Override
+<i>254</i>&nbsp;    public boolean validateSettings() {
+<b class="nc"><i>255</i>&nbsp;        return !chosenModel.isEmpty();</b>
+<i>256</i>&nbsp;    }
+<i>257</i>&nbsp;
+<i>258</i>&nbsp;    @Override
+<i>259</i>&nbsp;    public String getTabName() {
+<b class="nc"><i>260</i>&nbsp;        return Localization.lang(&quot;Entry preview&quot;);</b>
+<i>261</i>&nbsp;    }
+<i>262</i>&nbsp;
+<i>263</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

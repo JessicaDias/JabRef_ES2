@@ -1,0 +1,161 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Globals</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Globals (net.sf.jabref)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Globals</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    14.3%
+  </span>
+  <span class="absValue">
+    (1/ 7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    20%
+  </span>
+  <span class="absValue">
+    (3/ 15)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import net.sf.jabref.collab.FileUpdateMonitor;
+<i>4</i>&nbsp;import net.sf.jabref.gui.GlobalFocusListener;
+<i>5</i>&nbsp;import net.sf.jabref.gui.keyboard.KeyBindingPreferences;
+<i>6</i>&nbsp;import net.sf.jabref.logic.error.StreamEavesdropper;
+<i>7</i>&nbsp;import net.sf.jabref.logic.importer.ImportFormatReader;
+<i>8</i>&nbsp;import net.sf.jabref.logic.journals.JournalAbbreviationLoader;
+<i>9</i>&nbsp;import net.sf.jabref.logic.protectedterms.ProtectedTermsLoader;
+<i>10</i>&nbsp;import net.sf.jabref.logic.remote.server.RemoteListenerServerLifecycle;
+<i>11</i>&nbsp;import net.sf.jabref.logic.util.BuildInfo;
+<i>12</i>&nbsp;import net.sf.jabref.preferences.JabRefPreferences;
+<i>13</i>&nbsp;
+<b class="nc"><i>14</i>&nbsp;public class Globals {</b>
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;    // JabRef version info
+<b class="fc"><i>17</i>&nbsp;    public static final BuildInfo BUILD_INFO = new BuildInfo();</b>
+<i>18</i>&nbsp;    // Remote listener
+<b class="fc"><i>19</i>&nbsp;    public static final RemoteListenerServerLifecycle REMOTE_LISTENER = new RemoteListenerServerLifecycle();</b>
+<i>20</i>&nbsp;
+<b class="fc"><i>21</i>&nbsp;    public static final ImportFormatReader IMPORT_FORMAT_READER = new ImportFormatReader();</b>
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;    // In the main program, this field is initialized in JabRef.java
+<i>25</i>&nbsp;    // Each test case initializes this field if required
+<i>26</i>&nbsp;    public static JabRefPreferences prefs;
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;    /**
+<i>29</i>&nbsp;     * This field is initialized upon startup.
+<i>30</i>&nbsp;     * Only GUI code is allowed to access it, logic code should use dependency injection.
+<i>31</i>&nbsp;     */
+<i>32</i>&nbsp;    public static JournalAbbreviationLoader journalAbbreviationLoader;
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;    /**
+<i>35</i>&nbsp;     * This field is initialized upon startup.
+<i>36</i>&nbsp;     * Only GUI code is allowed to access it, logic code should use dependency injection.
+<i>37</i>&nbsp;     */
+<i>38</i>&nbsp;    public static ProtectedTermsLoader protectedTermsLoader;
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;    // Key binding preferences
+<i>41</i>&nbsp;    private static KeyBindingPreferences keyPrefs;
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;    // Background tasks
+<i>44</i>&nbsp;    private static GlobalFocusListener focusListener;
+<i>45</i>&nbsp;    private static FileUpdateMonitor fileUpdateMonitor;
+<i>46</i>&nbsp;    private static StreamEavesdropper streamEavesdropper;
+<i>47</i>&nbsp;
+<i>48</i>&nbsp;    // Key binding preferences
+<i>49</i>&nbsp;    public static KeyBindingPreferences getKeyPrefs() {
+<b class="nc"><i>50</i>&nbsp;        if (keyPrefs == null) {</b>
+<b class="nc"><i>51</i>&nbsp;            keyPrefs = new KeyBindingPreferences(prefs);</b>
+<i>52</i>&nbsp;        }
+<b class="nc"><i>53</i>&nbsp;        return keyPrefs;</b>
+<i>54</i>&nbsp;    }
+<i>55</i>&nbsp;
+<i>56</i>&nbsp;
+<i>57</i>&nbsp;    // Background tasks
+<i>58</i>&nbsp;    public static void startBackgroundTasks() {
+<b class="nc"><i>59</i>&nbsp;        Globals.focusListener = new GlobalFocusListener();</b>
+<i>60</i>&nbsp;
+<b class="nc"><i>61</i>&nbsp;        Globals.streamEavesdropper = StreamEavesdropper.eavesdropOnSystem();</b>
+<i>62</i>&nbsp;
+<b class="nc"><i>63</i>&nbsp;        Globals.fileUpdateMonitor = new FileUpdateMonitor();</b>
+<b class="nc"><i>64</i>&nbsp;        JabRefExecutorService.INSTANCE.executeInterruptableTask(Globals.fileUpdateMonitor, &quot;FileUpdateMonitor&quot;);</b>
+<b class="nc"><i>65</i>&nbsp;    }</b>
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;    public static GlobalFocusListener getFocusListener() {
+<b class="nc"><i>68</i>&nbsp;        return focusListener;</b>
+<i>69</i>&nbsp;    }
+<i>70</i>&nbsp;
+<i>71</i>&nbsp;    public static FileUpdateMonitor getFileUpdateMonitor() {
+<b class="nc"><i>72</i>&nbsp;        return fileUpdateMonitor;</b>
+<i>73</i>&nbsp;    }
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;    public static StreamEavesdropper getStreamEavesdropper() {
+<b class="nc"><i>76</i>&nbsp;        return streamEavesdropper;</b>
+<i>77</i>&nbsp;    }
+<i>78</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

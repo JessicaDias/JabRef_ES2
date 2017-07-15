@@ -1,0 +1,653 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: DroppedFileHandler</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.externalfiles</a> ]
+</div>
+
+<h1>Coverage Summary for Class: DroppedFileHandler (net.sf.jabref.gui.externalfiles)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DroppedFileHandler</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 265)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.externalfiles;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.BorderLayout;
+<i>4</i>&nbsp;import java.io.File;
+<i>5</i>&nbsp;import java.io.IOException;
+<i>6</i>&nbsp;import java.nio.file.Files;
+<i>7</i>&nbsp;import java.nio.file.Path;
+<i>8</i>&nbsp;import java.nio.file.Paths;
+<i>9</i>&nbsp;import java.util.List;
+<i>10</i>&nbsp;import java.util.Optional;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;import javax.swing.BoxLayout;
+<i>13</i>&nbsp;import javax.swing.ButtonGroup;
+<i>14</i>&nbsp;import javax.swing.JCheckBox;
+<i>15</i>&nbsp;import javax.swing.JLabel;
+<i>16</i>&nbsp;import javax.swing.JOptionPane;
+<i>17</i>&nbsp;import javax.swing.JPanel;
+<i>18</i>&nbsp;import javax.swing.JRadioButton;
+<i>19</i>&nbsp;import javax.swing.JTextArea;
+<i>20</i>&nbsp;import javax.swing.JTextField;
+<i>21</i>&nbsp;import javax.swing.event.ChangeEvent;
+<i>22</i>&nbsp;import javax.swing.event.ChangeListener;
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;import net.sf.jabref.Globals;
+<i>25</i>&nbsp;import net.sf.jabref.gui.BasePanel;
+<i>26</i>&nbsp;import net.sf.jabref.gui.JabRefFrame;
+<i>27</i>&nbsp;import net.sf.jabref.gui.externalfiletype.ExternalFileType;
+<i>28</i>&nbsp;import net.sf.jabref.gui.externalfiletype.ExternalFileTypes;
+<i>29</i>&nbsp;import net.sf.jabref.gui.filelist.FileListEntry;
+<i>30</i>&nbsp;import net.sf.jabref.gui.filelist.FileListTableModel;
+<i>31</i>&nbsp;import net.sf.jabref.gui.maintable.MainTable;
+<i>32</i>&nbsp;import net.sf.jabref.gui.undo.NamedCompound;
+<i>33</i>&nbsp;import net.sf.jabref.gui.undo.UndoableFieldChange;
+<i>34</i>&nbsp;import net.sf.jabref.gui.undo.UndoableInsertEntry;
+<i>35</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>36</i>&nbsp;import net.sf.jabref.logic.layout.LayoutFormatterPreferences;
+<i>37</i>&nbsp;import net.sf.jabref.logic.util.io.FileUtil;
+<i>38</i>&nbsp;import net.sf.jabref.logic.xmp.XMPUtil;
+<i>39</i>&nbsp;import net.sf.jabref.model.database.BibDatabase;
+<i>40</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>41</i>&nbsp;import net.sf.jabref.model.entry.FieldName;
+<i>42</i>&nbsp;import net.sf.jabref.model.entry.IdGenerator;
+<i>43</i>&nbsp;import net.sf.jabref.preferences.JabRefPreferences;
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;import com.jgoodies.forms.builder.FormBuilder;
+<i>46</i>&nbsp;import com.jgoodies.forms.layout.FormLayout;
+<i>47</i>&nbsp;import org.apache.commons.logging.Log;
+<i>48</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>49</i>&nbsp;
+<i>50</i>&nbsp;/**
+<i>51</i>&nbsp; * This class holds the functionality of autolinking to a file that&#39;s dropped
+<i>52</i>&nbsp; * onto an entry.
+<i>53</i>&nbsp; * &lt;p&gt;
+<i>54</i>&nbsp; * Options for handling the files are:
+<i>55</i>&nbsp; * &lt;p&gt;
+<i>56</i>&nbsp; * 1) Link to the file in its current position (disabled if the file is remote)
+<i>57</i>&nbsp; * &lt;p&gt;
+<i>58</i>&nbsp; * 2) Copy the file to ??? directory, rename after bibtex key, and extension
+<i>59</i>&nbsp; * &lt;p&gt;
+<i>60</i>&nbsp; * 3) Move the file to ??? directory, rename after bibtex key, and extension
+<i>61</i>&nbsp; */
+<i>62</i>&nbsp;public class DroppedFileHandler {
+<i>63</i>&nbsp;
+<b class="nc"><i>64</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(DroppedFileHandler.class);</b>
+<i>65</i>&nbsp;
+<i>66</i>&nbsp;    private final JabRefFrame frame;
+<i>67</i>&nbsp;
+<i>68</i>&nbsp;    private final BasePanel panel;
+<i>69</i>&nbsp;
+<b class="nc"><i>70</i>&nbsp;    private final JRadioButton linkInPlace = new JRadioButton();</b>
+<b class="nc"><i>71</i>&nbsp;    private final JRadioButton copyRadioButton = new JRadioButton();</b>
+<b class="nc"><i>72</i>&nbsp;    private final JRadioButton moveRadioButton = new JRadioButton();</b>
+<i>73</i>&nbsp;
+<b class="nc"><i>74</i>&nbsp;    private final JLabel destDirLabel = new JLabel();</b>
+<i>75</i>&nbsp;
+<b class="nc"><i>76</i>&nbsp;    private final JCheckBox renameCheckBox = new JCheckBox();</b>
+<i>77</i>&nbsp;
+<b class="nc"><i>78</i>&nbsp;    private final JTextField renameToTextBox = new JTextField(50);</b>
+<i>79</i>&nbsp;
+<b class="nc"><i>80</i>&nbsp;    private final JPanel optionsPanel = new JPanel();</b>
+<i>81</i>&nbsp;
+<b class="nc"><i>82</i>&nbsp;    public DroppedFileHandler(JabRefFrame frame, BasePanel panel) {</b>
+<i>83</i>&nbsp;
+<b class="nc"><i>84</i>&nbsp;        this.frame = frame;</b>
+<b class="nc"><i>85</i>&nbsp;        this.panel = panel;</b>
+<i>86</i>&nbsp;
+<b class="nc"><i>87</i>&nbsp;        ButtonGroup grp = new ButtonGroup();</b>
+<b class="nc"><i>88</i>&nbsp;        grp.add(linkInPlace);</b>
+<b class="nc"><i>89</i>&nbsp;        grp.add(copyRadioButton);</b>
+<b class="nc"><i>90</i>&nbsp;        grp.add(moveRadioButton);</b>
+<i>91</i>&nbsp;
+<b class="nc"><i>92</i>&nbsp;        FormLayout layout = new FormLayout(&quot;left:15dlu,pref,pref,pref&quot;, &quot;bottom:14pt,pref,pref,pref,pref&quot;);</b>
+<b class="nc"><i>93</i>&nbsp;        layout.setRowGroups(new int[][] {{1, 2, 3, 4, 5}});</b>
+<b class="nc"><i>94</i>&nbsp;        FormBuilder builder = FormBuilder.create().layout(layout);</b>
+<i>95</i>&nbsp;
+<b class="nc"><i>96</i>&nbsp;        builder.add(linkInPlace).xyw(1, 1, 4);</b>
+<b class="nc"><i>97</i>&nbsp;        builder.add(destDirLabel).xyw(1, 2, 4);</b>
+<b class="nc"><i>98</i>&nbsp;        builder.add(copyRadioButton).xyw(2, 3, 3);</b>
+<b class="nc"><i>99</i>&nbsp;        builder.add(moveRadioButton).xyw(2, 4, 3);</b>
+<b class="nc"><i>100</i>&nbsp;        builder.add(renameCheckBox).xyw(2, 5, 1);</b>
+<b class="nc"><i>101</i>&nbsp;        builder.add(renameToTextBox).xyw(4, 5, 1);</b>
+<b class="nc"><i>102</i>&nbsp;        optionsPanel.add(builder.getPanel());</b>
+<b class="nc"><i>103</i>&nbsp;    }</b>
+<i>104</i>&nbsp;
+<i>105</i>&nbsp;    /**
+<i>106</i>&nbsp;     * Offer copy/move/linking options for a dragged external file. Perform the
+<i>107</i>&nbsp;     * chosen operation, if any.
+<i>108</i>&nbsp;     *
+<i>109</i>&nbsp;     * @param fileName  The name of the dragged file.
+<i>110</i>&nbsp;     * @param fileType  The FileType associated with the file.
+<i>111</i>&nbsp;     * @param mainTable The MainTable the file was dragged to.
+<i>112</i>&nbsp;     * @param dropRow   The row where the file was dropped.
+<i>113</i>&nbsp;     */
+<i>114</i>&nbsp;    public void handleDroppedfile(String fileName, ExternalFileType fileType, MainTable mainTable, int dropRow) {
+<i>115</i>&nbsp;
+<b class="nc"><i>116</i>&nbsp;        BibEntry entry = mainTable.getEntryAt(dropRow);</b>
+<b class="nc"><i>117</i>&nbsp;        handleDroppedfile(fileName, fileType, entry);</b>
+<b class="nc"><i>118</i>&nbsp;    }</b>
+<i>119</i>&nbsp;
+<i>120</i>&nbsp;    /**
+<i>121</i>&nbsp;     * @param fileName  The name of the dragged file.
+<i>122</i>&nbsp;     * @param fileType  The FileType associated with the file.
+<i>123</i>&nbsp;     * @param entry     The target entry for the drop.
+<i>124</i>&nbsp;     */
+<i>125</i>&nbsp;    public void handleDroppedfile(String fileName, ExternalFileType fileType, BibEntry entry) {
+<b class="nc"><i>126</i>&nbsp;        NamedCompound edits = new NamedCompound(Localization.lang(&quot;Drop %0&quot;, fileType.getExtension()));</b>
+<i>127</i>&nbsp;
+<b class="nc"><i>128</i>&nbsp;        if (tryXmpImport(fileName, fileType, edits)) {</b>
+<b class="nc"><i>129</i>&nbsp;            edits.end();</b>
+<b class="nc"><i>130</i>&nbsp;            panel.getUndoManager().addEdit(edits);</b>
+<b class="nc"><i>131</i>&nbsp;            return;</b>
+<i>132</i>&nbsp;        }
+<i>133</i>&nbsp;
+<i>134</i>&nbsp;        // Show dialog
+<b class="nc"><i>135</i>&nbsp;        if (!showLinkMoveCopyRenameDialog(fileName, fileType, entry, panel.getDatabase())) {</b>
+<b class="nc"><i>136</i>&nbsp;            return;</b>
+<i>137</i>&nbsp;        }
+<i>138</i>&nbsp;
+<i>139</i>&nbsp;        /*
+<i>140</i>&nbsp;         * Ok, we&#39;re ready to go. See first if we need to do a file copy before
+<i>141</i>&nbsp;         * linking:
+<i>142</i>&nbsp;         */
+<i>143</i>&nbsp;
+<b class="nc"><i>144</i>&nbsp;        boolean success = true;</b>
+<i>145</i>&nbsp;        String destFilename;
+<i>146</i>&nbsp;
+<b class="nc"><i>147</i>&nbsp;        if (linkInPlace.isSelected()) {</b>
+<b class="nc"><i>148</i>&nbsp;            destFilename = FileUtil.shortenFileName(new File(fileName),</b>
+<b class="nc"><i>149</i>&nbsp;                    panel.getBibDatabaseContext().getFileDirectories(Globals.prefs.getFileDirectoryPreferences()))</b>
+<b class="nc"><i>150</i>&nbsp;                    .toString();</b>
+<i>151</i>&nbsp;        } else {
+<b class="nc"><i>152</i>&nbsp;            destFilename = renameCheckBox.isSelected() ? renameToTextBox.getText() : Paths.get(fileName).toString();</b>
+<b class="nc"><i>153</i>&nbsp;            if (copyRadioButton.isSelected()) {</b>
+<b class="nc"><i>154</i>&nbsp;                success = doCopy(fileName, destFilename, edits);</b>
+<b class="nc"><i>155</i>&nbsp;            } else if (moveRadioButton.isSelected()) {</b>
+<b class="nc"><i>156</i>&nbsp;                success = doMove(fileName, destFilename, edits);</b>
+<i>157</i>&nbsp;            }
+<i>158</i>&nbsp;        }
+<i>159</i>&nbsp;
+<b class="nc"><i>160</i>&nbsp;        if (success) {</b>
+<b class="nc"><i>161</i>&nbsp;            doLink(entry, fileType, destFilename, false, edits);</b>
+<b class="nc"><i>162</i>&nbsp;            panel.markBaseChanged();</b>
+<b class="nc"><i>163</i>&nbsp;            panel.updateEntryEditorIfShowing();</b>
+<i>164</i>&nbsp;        }
+<b class="nc"><i>165</i>&nbsp;        edits.end();</b>
+<b class="nc"><i>166</i>&nbsp;        panel.getUndoManager().addEdit(edits);</b>
+<i>167</i>&nbsp;
+<b class="nc"><i>168</i>&nbsp;    }</b>
+<i>169</i>&nbsp;
+<i>170</i>&nbsp;    // Done by MrDlib
+<i>171</i>&nbsp;    public void linkPdfToEntry(String fileName, MainTable entryTable, int dropRow) {
+<b class="nc"><i>172</i>&nbsp;        BibEntry entry = entryTable.getEntryAt(dropRow);</b>
+<b class="nc"><i>173</i>&nbsp;        linkPdfToEntry(fileName, entry);</b>
+<b class="nc"><i>174</i>&nbsp;    }</b>
+<i>175</i>&nbsp;
+<i>176</i>&nbsp;    public void linkPdfToEntry(String fileName, BibEntry entry) {
+<b class="nc"><i>177</i>&nbsp;        Optional&lt;ExternalFileType&gt; optFileType = ExternalFileTypes.getInstance().getExternalFileTypeByExt(&quot;pdf&quot;);</b>
+<i>178</i>&nbsp;
+<b class="nc"><i>179</i>&nbsp;        if (!optFileType.isPresent()) {</b>
+<b class="nc"><i>180</i>&nbsp;            LOGGER.warn(&quot;No file type with extension &#39;pdf&#39; registered.&quot;);</b>
+<b class="nc"><i>181</i>&nbsp;            return;</b>
+<i>182</i>&nbsp;        }
+<i>183</i>&nbsp;
+<b class="nc"><i>184</i>&nbsp;        ExternalFileType fileType = optFileType.get();</b>
+<i>185</i>&nbsp;        // Show dialog
+<b class="nc"><i>186</i>&nbsp;        if (!showLinkMoveCopyRenameDialog(fileName, fileType, entry, panel.getDatabase())) {</b>
+<b class="nc"><i>187</i>&nbsp;            return;</b>
+<i>188</i>&nbsp;        }
+<i>189</i>&nbsp;
+<i>190</i>&nbsp;        /*
+<i>191</i>&nbsp;         * Ok, we&#39;re ready to go. See first if we need to do a file copy before
+<i>192</i>&nbsp;         * linking:
+<i>193</i>&nbsp;         */
+<i>194</i>&nbsp;
+<b class="nc"><i>195</i>&nbsp;        boolean success = true;</b>
+<i>196</i>&nbsp;        String destFilename;
+<b class="nc"><i>197</i>&nbsp;        NamedCompound edits = new NamedCompound(Localization.lang(&quot;Drop %0&quot;, fileType.getExtension()));</b>
+<i>198</i>&nbsp;
+<b class="nc"><i>199</i>&nbsp;        if (linkInPlace.isSelected()) {</b>
+<b class="nc"><i>200</i>&nbsp;            destFilename = FileUtil.shortenFileName(new File(fileName),</b>
+<b class="nc"><i>201</i>&nbsp;                    panel.getBibDatabaseContext().getFileDirectories(Globals.prefs.getFileDirectoryPreferences()))</b>
+<b class="nc"><i>202</i>&nbsp;                    .toString();</b>
+<i>203</i>&nbsp;        } else {
+<b class="nc"><i>204</i>&nbsp;            destFilename = renameCheckBox.isSelected() ? renameToTextBox.getText() : new File(fileName).getName();</b>
+<b class="nc"><i>205</i>&nbsp;            if (copyRadioButton.isSelected()) {</b>
+<b class="nc"><i>206</i>&nbsp;                success = doCopy(fileName, destFilename, edits);</b>
+<b class="nc"><i>207</i>&nbsp;            } else if (moveRadioButton.isSelected()) {</b>
+<b class="nc"><i>208</i>&nbsp;                success = doMove(fileName, destFilename, edits);</b>
+<i>209</i>&nbsp;            }
+<i>210</i>&nbsp;        }
+<i>211</i>&nbsp;
+<b class="nc"><i>212</i>&nbsp;        if (success) {</b>
+<b class="nc"><i>213</i>&nbsp;            doLink(entry, fileType, destFilename, false, edits);</b>
+<b class="nc"><i>214</i>&nbsp;            panel.markBaseChanged();</b>
+<i>215</i>&nbsp;        }
+<b class="nc"><i>216</i>&nbsp;        edits.end();</b>
+<b class="nc"><i>217</i>&nbsp;        panel.getUndoManager().addEdit(edits);</b>
+<b class="nc"><i>218</i>&nbsp;    }</b>
+<i>219</i>&nbsp;
+<i>220</i>&nbsp;    // Done by MrDlib
+<i>221</i>&nbsp;
+<i>222</i>&nbsp;    private boolean tryXmpImport(String fileName, ExternalFileType fileType, NamedCompound edits) {
+<i>223</i>&nbsp;
+<b class="nc"><i>224</i>&nbsp;        if (!&quot;pdf&quot;.equals(fileType.getExtension())) {</b>
+<b class="nc"><i>225</i>&nbsp;            return false;</b>
+<i>226</i>&nbsp;        }
+<i>227</i>&nbsp;
+<i>228</i>&nbsp;        List&lt;BibEntry&gt; xmpEntriesInFile;
+<i>229</i>&nbsp;        try {
+<b class="nc"><i>230</i>&nbsp;            xmpEntriesInFile = XMPUtil.readXMP(fileName, Globals.prefs.getXMPPreferences());</b>
+<b class="nc"><i>231</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i>232</i>&nbsp;            LOGGER.warn(&quot;Problem reading XMP&quot;, e);</b>
+<b class="nc"><i>233</i>&nbsp;            return false;</b>
+<b class="nc"><i>234</i>&nbsp;        }</b>
+<i>235</i>&nbsp;
+<b class="nc"><i>236</i>&nbsp;        if ((xmpEntriesInFile == null) || xmpEntriesInFile.isEmpty()) {</b>
+<b class="nc"><i>237</i>&nbsp;            return false;</b>
+<i>238</i>&nbsp;        }
+<i>239</i>&nbsp;
+<b class="nc"><i>240</i>&nbsp;        JLabel confirmationMessage = new JLabel(Localization.lang(&quot;The PDF contains one or several BibTeX-records.&quot;)</b>
+<b class="nc"><i>241</i>&nbsp;                + &quot;\n&quot; + Localization.lang(&quot;Do you want to import these as new entries into the current database?&quot;));</b>
+<b class="nc"><i>242</i>&nbsp;        JPanel entriesPanel = new JPanel();</b>
+<b class="nc"><i>243</i>&nbsp;        entriesPanel.setLayout(new BoxLayout(entriesPanel, BoxLayout.Y_AXIS));</b>
+<b class="nc"><i>244</i>&nbsp;        xmpEntriesInFile.forEach(entry -&gt; {</b>
+<b class="nc"><i>245</i>&nbsp;            JTextArea entryArea = new JTextArea(entry.toString());</b>
+<b class="nc"><i>246</i>&nbsp;            entryArea.setEditable(false);</b>
+<b class="nc"><i>247</i>&nbsp;            entriesPanel.add(entryArea);</b>
+<b class="nc"><i>248</i>&nbsp;        });</b>
+<i>249</i>&nbsp;
+<b class="nc"><i>250</i>&nbsp;        JPanel contentPanel = new JPanel(new BorderLayout());</b>
+<b class="nc"><i>251</i>&nbsp;        contentPanel.add(confirmationMessage, BorderLayout.NORTH);</b>
+<b class="nc"><i>252</i>&nbsp;        contentPanel.add(entriesPanel, BorderLayout.CENTER);</b>
+<i>253</i>&nbsp;
+<b class="nc"><i>254</i>&nbsp;        int reply = JOptionPane.showConfirmDialog(frame, contentPanel,</b>
+<b class="nc"><i>255</i>&nbsp;                Localization.lang(&quot;XMP-metadata found in PDF: %0&quot;, fileName), JOptionPane.YES_NO_CANCEL_OPTION,</b>
+<i>256</i>&nbsp;                JOptionPane.QUESTION_MESSAGE);
+<i>257</i>&nbsp;
+<b class="nc"><i>258</i>&nbsp;        if (reply == JOptionPane.CANCEL_OPTION) {</b>
+<b class="nc"><i>259</i>&nbsp;            return true; // The user canceled thus that we are done.</b>
+<i>260</i>&nbsp;        }
+<b class="nc"><i>261</i>&nbsp;        if (reply == JOptionPane.NO_OPTION) {</b>
+<b class="nc"><i>262</i>&nbsp;            return false;</b>
+<i>263</i>&nbsp;        }
+<i>264</i>&nbsp;
+<i>265</i>&nbsp;        // reply == JOptionPane.YES_OPTION)
+<i>266</i>&nbsp;
+<i>267</i>&nbsp;        /*
+<i>268</i>&nbsp;         * TODO Extract Import functionality from ImportMenuItem then we could
+<i>269</i>&nbsp;         * do:
+<i>270</i>&nbsp;         *
+<i>271</i>&nbsp;         * ImportMenuItem csv_importer = new ImportMenuItem(frame, (mainTable ==
+<i>272</i>&nbsp;         * null), new PdfXmpImporter());
+<i>273</i>&nbsp;         *
+<i>274</i>&nbsp;         * csv_importer.automatedImport(new String[] { fileName });
+<i>275</i>&nbsp;         */
+<i>276</i>&nbsp;
+<b class="nc"><i>277</i>&nbsp;        boolean isSingle = xmpEntriesInFile.size() == 1;</b>
+<b class="nc"><i>278</i>&nbsp;        BibEntry single = isSingle ? xmpEntriesInFile.get(0) : null;</b>
+<i>279</i>&nbsp;
+<b class="nc"><i>280</i>&nbsp;        boolean success = true;</b>
+<i>281</i>&nbsp;
+<i>282</i>&nbsp;        String destFilename;
+<i>283</i>&nbsp;
+<b class="nc"><i>284</i>&nbsp;        if (linkInPlace.isSelected()) {</b>
+<b class="nc"><i>285</i>&nbsp;            destFilename = FileUtil.shortenFileName(new File(fileName),</b>
+<b class="nc"><i>286</i>&nbsp;                    panel.getBibDatabaseContext().getFileDirectories(Globals.prefs.getFileDirectoryPreferences()))</b>
+<b class="nc"><i>287</i>&nbsp;                    .toString();</b>
+<i>288</i>&nbsp;        } else {
+<b class="nc"><i>289</i>&nbsp;            if (renameCheckBox.isSelected() || (single == null)) {</b>
+<b class="nc"><i>290</i>&nbsp;                destFilename = fileName;</b>
+<i>291</i>&nbsp;            } else {
+<b class="nc"><i>292</i>&nbsp;                destFilename = single.getCiteKey() + &quot;.&quot; + fileType.getExtension();</b>
+<i>293</i>&nbsp;            }
+<i>294</i>&nbsp;
+<b class="nc"><i>295</i>&nbsp;            if (copyRadioButton.isSelected()) {</b>
+<b class="nc"><i>296</i>&nbsp;                success = doCopy(fileName, destFilename, edits);</b>
+<b class="nc"><i>297</i>&nbsp;            } else if (moveRadioButton.isSelected()) {</b>
+<b class="nc"><i>298</i>&nbsp;                success = doMove(fileName, destFilename, edits);</b>
+<i>299</i>&nbsp;            }
+<i>300</i>&nbsp;        }
+<b class="nc"><i>301</i>&nbsp;        if (success) {</b>
+<i>302</i>&nbsp;
+<b class="nc"><i>303</i>&nbsp;            for (BibEntry aXmpEntriesInFile : xmpEntriesInFile) {</b>
+<i>304</i>&nbsp;
+<b class="nc"><i>305</i>&nbsp;                aXmpEntriesInFile.setId(IdGenerator.next());</b>
+<b class="nc"><i>306</i>&nbsp;                edits.addEdit(new UndoableInsertEntry(panel.getDatabase(), aXmpEntriesInFile, panel));</b>
+<b class="nc"><i>307</i>&nbsp;                panel.getDatabase().insertEntry(aXmpEntriesInFile);</b>
+<b class="nc"><i>308</i>&nbsp;                doLink(aXmpEntriesInFile, fileType, destFilename, true, edits);</b>
+<i>309</i>&nbsp;
+<b class="nc"><i>310</i>&nbsp;            }</b>
+<b class="nc"><i>311</i>&nbsp;            panel.markBaseChanged();</b>
+<b class="nc"><i>312</i>&nbsp;            panel.updateEntryEditorIfShowing();</b>
+<i>313</i>&nbsp;        }
+<b class="nc"><i>314</i>&nbsp;        return true;</b>
+<i>315</i>&nbsp;    }
+<i>316</i>&nbsp;
+<i>317</i>&nbsp;    //
+<i>318</i>&nbsp;    // @return true if user pushed &quot;OK&quot;, false otherwise
+<i>319</i>&nbsp;    //
+<i>320</i>&nbsp;    private boolean showLinkMoveCopyRenameDialog(String linkFileName, ExternalFileType fileType, BibEntry entry,
+<i>321</i>&nbsp;            BibDatabase database) {
+<i>322</i>&nbsp;
+<b class="nc"><i>323</i>&nbsp;        String dialogTitle = Localization.lang(&quot;Link to file %0&quot;, linkFileName);</b>
+<i>324</i>&nbsp;
+<b class="nc"><i>325</i>&nbsp;        Optional&lt;Path&gt; dir = panel.getBibDatabaseContext()</b>
+<b class="nc"><i>326</i>&nbsp;                .getFirstExistingFileDir(Globals.prefs.getFileDirectoryPreferences());</b>
+<i>327</i>&nbsp;
+<b class="nc"><i>328</i>&nbsp;        if (!dir.isPresent()) {</b>
+<b class="nc"><i>329</i>&nbsp;            destDirLabel.setText(Localization.lang(&quot;File directory is not set or does not exist!&quot;));</b>
+<b class="nc"><i>330</i>&nbsp;            copyRadioButton.setEnabled(false);</b>
+<b class="nc"><i>331</i>&nbsp;            moveRadioButton.setEnabled(false);</b>
+<b class="nc"><i>332</i>&nbsp;            renameToTextBox.setEnabled(false);</b>
+<b class="nc"><i>333</i>&nbsp;            renameCheckBox.setEnabled(false);</b>
+<b class="nc"><i>334</i>&nbsp;            linkInPlace.setSelected(true);</b>
+<i>335</i>&nbsp;        } else {
+<b class="nc"><i>336</i>&nbsp;            destDirLabel.setText(Localization.lang(&quot;File directory is &#39;%0&#39;:&quot;, dir.get().toString()));</b>
+<b class="nc"><i>337</i>&nbsp;            copyRadioButton.setEnabled(true);</b>
+<b class="nc"><i>338</i>&nbsp;            moveRadioButton.setEnabled(true);</b>
+<b class="nc"><i>339</i>&nbsp;            renameToTextBox.setEnabled(true);</b>
+<b class="nc"><i>340</i>&nbsp;            renameCheckBox.setEnabled(true);</b>
+<i>341</i>&nbsp;        }
+<i>342</i>&nbsp;
+<b class="nc"><i>343</i>&nbsp;        ChangeListener cl = arg0 -&gt; {</b>
+<b class="nc"><i>344</i>&nbsp;            renameCheckBox.setEnabled(!linkInPlace.isSelected());</b>
+<b class="nc"><i>345</i>&nbsp;            renameToTextBox.setEnabled(!linkInPlace.isSelected());</b>
+<b class="nc"><i>346</i>&nbsp;        };</b>
+<i>347</i>&nbsp;
+<b class="nc"><i>348</i>&nbsp;        linkInPlace.setText(Localization.lang(&quot;Leave file in its current directory&quot;));</b>
+<b class="nc"><i>349</i>&nbsp;        copyRadioButton.setText(Localization.lang(&quot;Copy file to file directory&quot;));</b>
+<b class="nc"><i>350</i>&nbsp;        moveRadioButton.setText(Localization.lang(&quot;Move file to file directory&quot;));</b>
+<b class="nc"><i>351</i>&nbsp;        renameCheckBox.setText(Localization.lang(&quot;Rename file to&quot;).concat(&quot;: &quot;));</b>
+<i>352</i>&nbsp;
+<b class="nc"><i>353</i>&nbsp;        LayoutFormatterPreferences layoutPrefs = Globals.prefs</b>
+<b class="nc"><i>354</i>&nbsp;                .getLayoutFormatterPreferences(Globals.journalAbbreviationLoader);</b>
+<i>355</i>&nbsp;
+<i>356</i>&nbsp;        // Determine which name to suggest:
+<b class="nc"><i>357</i>&nbsp;        String targetName = FileUtil.createFileNameFromPattern(database, entry,</b>
+<b class="nc"><i>358</i>&nbsp;                Globals.prefs.get(JabRefPreferences.IMPORT_FILENAMEPATTERN), layoutPrefs);</b>
+<i>359</i>&nbsp;
+<b class="nc"><i>360</i>&nbsp;        String fileDirPattern = Globals.prefs.get(JabRefPreferences.IMPORT_FILEDIRPATTERN);</b>
+<i>361</i>&nbsp;
+<b class="nc"><i>362</i>&nbsp;        String targetDirName = &quot;&quot;;</b>
+<b class="nc"><i>363</i>&nbsp;        if (!fileDirPattern.isEmpty()) {</b>
+<b class="nc"><i>364</i>&nbsp;            targetDirName = FileUtil.createFileNameFromPattern(database, entry, fileDirPattern, layoutPrefs);</b>
+<i>365</i>&nbsp;        }
+<i>366</i>&nbsp;
+<b class="nc"><i>367</i>&nbsp;        if (targetDirName.isEmpty()) {</b>
+<b class="nc"><i>368</i>&nbsp;            renameToTextBox.setText(targetName.concat(&quot;.&quot;).concat(fileType.getExtension()));</b>
+<i>369</i>&nbsp;        } else {
+<b class="nc"><i>370</i>&nbsp;            renameToTextBox</b>
+<b class="nc"><i>371</i>&nbsp;                    .setText(targetDirName.concat(&quot;/&quot;).concat(targetName.concat(&quot;.&quot;).concat(fileType.getExtension())));</b>
+<i>372</i>&nbsp;        }
+<b class="nc"><i>373</i>&nbsp;        linkInPlace.setSelected(frame.prefs().getBoolean(JabRefPreferences.DROPPEDFILEHANDLER_LEAVE));</b>
+<b class="nc"><i>374</i>&nbsp;        copyRadioButton.setSelected(frame.prefs().getBoolean(JabRefPreferences.DROPPEDFILEHANDLER_COPY));</b>
+<b class="nc"><i>375</i>&nbsp;        moveRadioButton.setSelected(frame.prefs().getBoolean(JabRefPreferences.DROPPEDFILEHANDLER_MOVE));</b>
+<b class="nc"><i>376</i>&nbsp;        renameCheckBox.setSelected(frame.prefs().getBoolean(JabRefPreferences.DROPPEDFILEHANDLER_RENAME));</b>
+<i>377</i>&nbsp;
+<b class="nc"><i>378</i>&nbsp;        linkInPlace.addChangeListener(cl);</b>
+<b class="nc"><i>379</i>&nbsp;        cl.stateChanged(new ChangeEvent(linkInPlace));</b>
+<i>380</i>&nbsp;
+<i>381</i>&nbsp;        try {
+<b class="nc"><i>382</i>&nbsp;            Object[] messages = {Localization.lang(&quot;How would you like to link to &#39;%0&#39;?&quot;, linkFileName), optionsPanel};</b>
+<b class="nc"><i>383</i>&nbsp;            int reply = JOptionPane.showConfirmDialog(frame, messages, dialogTitle, JOptionPane.OK_CANCEL_OPTION,</b>
+<i>384</i>&nbsp;                    JOptionPane.QUESTION_MESSAGE);
+<b class="nc"><i>385</i>&nbsp;            if (reply == JOptionPane.OK_OPTION) {</b>
+<i>386</i>&nbsp;                // store user&#39;s choice
+<b class="nc"><i>387</i>&nbsp;                frame.prefs().putBoolean(JabRefPreferences.DROPPEDFILEHANDLER_LEAVE, linkInPlace.isSelected());</b>
+<b class="nc"><i>388</i>&nbsp;                frame.prefs().putBoolean(JabRefPreferences.DROPPEDFILEHANDLER_COPY, copyRadioButton.isSelected());</b>
+<b class="nc"><i>389</i>&nbsp;                frame.prefs().putBoolean(JabRefPreferences.DROPPEDFILEHANDLER_MOVE, moveRadioButton.isSelected());</b>
+<b class="nc"><i>390</i>&nbsp;                frame.prefs().putBoolean(JabRefPreferences.DROPPEDFILEHANDLER_RENAME, renameCheckBox.isSelected());</b>
+<b class="nc"><i>391</i>&nbsp;                return true;</b>
+<i>392</i>&nbsp;            } else {
+<b class="nc"><i>393</i>&nbsp;                return false;</b>
+<i>394</i>&nbsp;            }
+<i>395</i>&nbsp;        } finally {
+<b class="nc"><i>396</i>&nbsp;            linkInPlace.removeChangeListener(cl);</b>
+<i>397</i>&nbsp;        }
+<i>398</i>&nbsp;    }
+<i>399</i>&nbsp;
+<i>400</i>&nbsp;    /**
+<i>401</i>&nbsp;     * Make a extension to the file.
+<i>402</i>&nbsp;     *
+<i>403</i>&nbsp;     * @param entry    The entry to extension from.
+<i>404</i>&nbsp;     * @param fileType The FileType associated with the file.
+<i>405</i>&nbsp;     * @param filename The path to the file.
+<i>406</i>&nbsp;     * @param edits    An NamedCompound action this action is to be added to. If none
+<i>407</i>&nbsp;     *                 is given, the edit is added to the panel&#39;s undoManager.
+<i>408</i>&nbsp;     */
+<i>409</i>&nbsp;    private void doLink(BibEntry entry, ExternalFileType fileType, String filename, boolean avoidDuplicate,
+<i>410</i>&nbsp;            NamedCompound edits) {
+<i>411</i>&nbsp;
+<b class="nc"><i>412</i>&nbsp;        Optional&lt;String&gt; oldValue = entry.getField(FieldName.FILE);</b>
+<b class="nc"><i>413</i>&nbsp;        FileListTableModel tm = new FileListTableModel();</b>
+<b class="nc"><i>414</i>&nbsp;        oldValue.ifPresent(tm::setContent);</b>
+<i>415</i>&nbsp;
+<i>416</i>&nbsp;        // If avoidDuplicate==true, we should check if this file is already linked:
+<b class="nc"><i>417</i>&nbsp;        if (avoidDuplicate) {</b>
+<i>418</i>&nbsp;            // For comparison, find the absolute filename:
+<b class="nc"><i>419</i>&nbsp;            List&lt;String&gt; dirs = panel.getBibDatabaseContext()</b>
+<b class="nc"><i>420</i>&nbsp;                    .getFileDirectories(Globals.prefs.getFileDirectoryPreferences());</b>
+<i>421</i>&nbsp;            String absFilename;
+<b class="nc"><i>422</i>&nbsp;            if (new File(filename).isAbsolute() || dirs.isEmpty()) {</b>
+<b class="nc"><i>423</i>&nbsp;                absFilename = filename;</b>
+<i>424</i>&nbsp;            } else {
+<b class="nc"><i>425</i>&nbsp;                Optional&lt;File&gt; file = FileUtil.expandFilename(filename, dirs);</b>
+<b class="nc"><i>426</i>&nbsp;                if (file.isPresent()) {</b>
+<b class="nc"><i>427</i>&nbsp;                    absFilename = file.get().getAbsolutePath();</b>
+<i>428</i>&nbsp;                } else {
+<b class="nc"><i>429</i>&nbsp;                    absFilename = &quot;&quot;; // This shouldn&#39;t happen based on the old code, so maybe one should set it something else?</b>
+<i>430</i>&nbsp;                }
+<i>431</i>&nbsp;            }
+<i>432</i>&nbsp;
+<b class="nc"><i>433</i>&nbsp;            LOGGER.debug(&quot;absFilename: &quot; + absFilename);</b>
+<i>434</i>&nbsp;
+<b class="nc"><i>435</i>&nbsp;            for (int i = 0; i &lt; tm.getRowCount(); i++) {</b>
+<b class="nc"><i>436</i>&nbsp;                FileListEntry flEntry = tm.getEntry(i);</b>
+<i>437</i>&nbsp;                // Find the absolute filename for this existing link:
+<i>438</i>&nbsp;                String absName;
+<b class="nc"><i>439</i>&nbsp;                if (new File(flEntry.link).isAbsolute() || dirs.isEmpty()) {</b>
+<b class="nc"><i>440</i>&nbsp;                    absName = flEntry.link;</b>
+<i>441</i>&nbsp;                } else {
+<b class="nc"><i>442</i>&nbsp;                    Optional&lt;File&gt; file = FileUtil.expandFilename(flEntry.link, dirs);</b>
+<b class="nc"><i>443</i>&nbsp;                    if (file.isPresent()) {</b>
+<b class="nc"><i>444</i>&nbsp;                        absName = file.get().getAbsolutePath();</b>
+<i>445</i>&nbsp;                    } else {
+<b class="nc"><i>446</i>&nbsp;                        absName = null;</b>
+<i>447</i>&nbsp;                    }
+<i>448</i>&nbsp;                }
+<b class="nc"><i>449</i>&nbsp;                LOGGER.debug(&quot;absName: &quot; + absName);</b>
+<i>450</i>&nbsp;                // If the filenames are equal, we don&#39;t need to link, so we simply return:
+<b class="nc"><i>451</i>&nbsp;                if (absFilename.equals(absName)) {</b>
+<b class="nc"><i>452</i>&nbsp;                    return;</b>
+<i>453</i>&nbsp;                }
+<i>454</i>&nbsp;            }
+<i>455</i>&nbsp;        }
+<i>456</i>&nbsp;
+<b class="nc"><i>457</i>&nbsp;        tm.addEntry(tm.getRowCount(), new FileListEntry(&quot;&quot;, filename, fileType));</b>
+<b class="nc"><i>458</i>&nbsp;        String newValue = tm.getStringRepresentation();</b>
+<b class="nc"><i>459</i>&nbsp;        UndoableFieldChange edit = new UndoableFieldChange(entry, FieldName.FILE, oldValue.orElse(null), newValue);</b>
+<b class="nc"><i>460</i>&nbsp;        entry.setField(FieldName.FILE, newValue);</b>
+<i>461</i>&nbsp;
+<b class="nc"><i>462</i>&nbsp;        if (edits == null) {</b>
+<b class="nc"><i>463</i>&nbsp;            panel.getUndoManager().addEdit(edit);</b>
+<i>464</i>&nbsp;        } else {
+<b class="nc"><i>465</i>&nbsp;            edits.addEdit(edit);</b>
+<i>466</i>&nbsp;        }
+<b class="nc"><i>467</i>&nbsp;    }</b>
+<i>468</i>&nbsp;
+<i>469</i>&nbsp;    /**
+<i>470</i>&nbsp;     * Move the given file to the base directory for its file type, and rename
+<i>471</i>&nbsp;     * it to the given filename.
+<i>472</i>&nbsp;     *
+<i>473</i>&nbsp;     * @param fileName     The name of the source file.
+<i>474</i>&nbsp;     * @param destFilename The destination filename.
+<i>475</i>&nbsp;     * @param edits        TODO we should be able to undo this action
+<i>476</i>&nbsp;     * @return true if the operation succeeded.
+<i>477</i>&nbsp;     */
+<i>478</i>&nbsp;    private boolean doMove(String fileName, String destFilename, NamedCompound edits) {
+<b class="nc"><i>479</i>&nbsp;        Optional&lt;Path&gt; dir = panel.getBibDatabaseContext()</b>
+<b class="nc"><i>480</i>&nbsp;                .getFirstExistingFileDir(Globals.prefs.getFileDirectoryPreferences());</b>
+<i>481</i>&nbsp;
+<b class="nc"><i>482</i>&nbsp;        if (dir.isPresent()) {</b>
+<b class="nc"><i>483</i>&nbsp;            Path destFile = dir.get().resolve(destFilename);</b>
+<i>484</i>&nbsp;
+<b class="nc"><i>485</i>&nbsp;            if (Files.exists(destFile)) {</b>
+<b class="nc"><i>486</i>&nbsp;                int answer = JOptionPane.showConfirmDialog(frame,</b>
+<b class="nc"><i>487</i>&nbsp;                        Localization.lang(&quot;&#39;%0&#39; exists. Overwrite file?&quot;, destFile.toString()),</b>
+<b class="nc"><i>488</i>&nbsp;                        Localization.lang(&quot;Overwrite file?&quot;), JOptionPane.YES_NO_OPTION);</b>
+<b class="nc"><i>489</i>&nbsp;                if (answer == JOptionPane.NO_OPTION) {</b>
+<b class="nc"><i>490</i>&nbsp;                    return false;</b>
+<i>491</i>&nbsp;                }
+<i>492</i>&nbsp;            }
+<i>493</i>&nbsp;
+<b class="nc"><i>494</i>&nbsp;            Path fromFile = Paths.get(fileName);</b>
+<i>495</i>&nbsp;            try {
+<b class="nc"><i>496</i>&nbsp;                if (!Files.exists(destFile)) {</b>
+<b class="nc"><i>497</i>&nbsp;                    Files.createDirectories(destFile);</b>
+<i>498</i>&nbsp;                }
+<b class="nc"><i>499</i>&nbsp;            } catch (IOException e) {</b>
+<b class="nc"><i>500</i>&nbsp;                LOGGER.error(&quot;Problem creating target directories&quot;, e);</b>
+<b class="nc"><i>501</i>&nbsp;            }</b>
+<b class="nc"><i>502</i>&nbsp;            if (FileUtil.renameFile(fromFile, destFile, true)) {</b>
+<b class="nc"><i>503</i>&nbsp;                return true;</b>
+<i>504</i>&nbsp;            } else {
+<b class="nc"><i>505</i>&nbsp;                JOptionPane.showMessageDialog(frame,</b>
+<b class="nc"><i>506</i>&nbsp;                        Localization.lang(&quot;Could not move file &#39;%0&#39;.&quot;, destFile.toString())</b>
+<b class="nc"><i>507</i>&nbsp;                                + Localization.lang(&quot;Please move the file manually and link in place.&quot;),</b>
+<b class="nc"><i>508</i>&nbsp;                        Localization.lang(&quot;Move file failed&quot;), JOptionPane.ERROR_MESSAGE);</b>
+<b class="nc"><i>509</i>&nbsp;                return false;</b>
+<i>510</i>&nbsp;            }
+<i>511</i>&nbsp;        }
+<b class="nc"><i>512</i>&nbsp;        return false;</b>
+<i>513</i>&nbsp;    }
+<i>514</i>&nbsp;
+<i>515</i>&nbsp;    /**
+<i>516</i>&nbsp;     * Copy the given file to the base directory for its file type, and give it
+<i>517</i>&nbsp;     * the given name.
+<i>518</i>&nbsp;     *
+<i>519</i>&nbsp;     * @param fileName The name of the source file.
+<i>520</i>&nbsp;     * @param toFile   The destination filename. An existing path-component will be removed.
+<i>521</i>&nbsp;     * @param edits    TODO we should be able to undo this!
+<i>522</i>&nbsp;     * @return true if the operation succeeded.
+<i>523</i>&nbsp;     */
+<i>524</i>&nbsp;    private boolean doCopy(String fileName, String toFile, NamedCompound edits) {
+<i>525</i>&nbsp;
+<b class="nc"><i>526</i>&nbsp;        List&lt;String&gt; dirs = panel.getBibDatabaseContext()</b>
+<b class="nc"><i>527</i>&nbsp;                .getFileDirectories(Globals.prefs.getFileDirectoryPreferences());</b>
+<b class="nc"><i>528</i>&nbsp;        int found = -1;</b>
+<b class="nc"><i>529</i>&nbsp;        for (int i = 0; i &lt; dirs.size(); i++) {</b>
+<b class="nc"><i>530</i>&nbsp;            if (new File(dirs.get(i)).exists()) {</b>
+<b class="nc"><i>531</i>&nbsp;                found = i;</b>
+<b class="nc"><i>532</i>&nbsp;                break;</b>
+<i>533</i>&nbsp;            }
+<i>534</i>&nbsp;        }
+<b class="nc"><i>535</i>&nbsp;        if (found &lt; 0) {</b>
+<i>536</i>&nbsp;            // OOps, we don&#39;t know which directory to put it in, or the given
+<i>537</i>&nbsp;            // dir doesn&#39;t exist....
+<i>538</i>&nbsp;            // This should not happen!!
+<b class="nc"><i>539</i>&nbsp;            LOGGER.warn(&quot;Cannot determine destination directory or destination directory does not exist&quot;);</b>
+<b class="nc"><i>540</i>&nbsp;            return false;</b>
+<i>541</i>&nbsp;        }
+<i>542</i>&nbsp;
+<b class="nc"><i>543</i>&nbsp;        Path destFile = Paths.get(dirs.get(found)).resolve(toFile);</b>
+<b class="nc"><i>544</i>&nbsp;        if (destFile.toString().equals(fileName)) {</b>
+<i>545</i>&nbsp;            // File is already in the correct position. Don&#39;t override!
+<b class="nc"><i>546</i>&nbsp;            return true;</b>
+<i>547</i>&nbsp;        }
+<i>548</i>&nbsp;
+<b class="nc"><i>549</i>&nbsp;        if (Files.exists(destFile)) {</b>
+<b class="nc"><i>550</i>&nbsp;            int answer = JOptionPane.showConfirmDialog(frame,</b>
+<b class="nc"><i>551</i>&nbsp;                    Localization.lang(&quot;&#39;%0&#39; exists. Overwrite file?&quot;, destFile.toString()),</b>
+<b class="nc"><i>552</i>&nbsp;                    Localization.lang(&quot;File exists&quot;), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);</b>
+<b class="nc"><i>553</i>&nbsp;            if (answer == JOptionPane.NO_OPTION) {</b>
+<b class="nc"><i>554</i>&nbsp;                return false;</b>
+<i>555</i>&nbsp;            }
+<i>556</i>&nbsp;        }
+<i>557</i>&nbsp;        try {
+<i>558</i>&nbsp;            //copy does not create directories, therefore we have to create them manually
+<b class="nc"><i>559</i>&nbsp;            if (!Files.exists(destFile)) {</b>
+<b class="nc"><i>560</i>&nbsp;                Files.createDirectories(destFile);</b>
+<i>561</i>&nbsp;            }
+<b class="nc"><i>562</i>&nbsp;            FileUtil.copyFile(Paths.get(fileName), destFile, true);</b>
+<b class="nc"><i>563</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i>564</i>&nbsp;            LOGGER.error(&quot;Problem copying file&quot;, e);</b>
+<b class="nc"><i>565</i>&nbsp;            return false;</b>
+<b class="nc"><i>566</i>&nbsp;        }</b>
+<b class="nc"><i>567</i>&nbsp;        return true;</b>
+<i>568</i>&nbsp;    }
+<i>569</i>&nbsp;
+<i>570</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

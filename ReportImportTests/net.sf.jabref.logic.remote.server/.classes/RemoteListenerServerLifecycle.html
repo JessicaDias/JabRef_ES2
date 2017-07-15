@@ -1,0 +1,161 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: RemoteListenerServerLifecycle</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.remote.server</a> ]
+</div>
+
+<h1>Coverage Summary for Class: RemoteListenerServerLifecycle (net.sf.jabref.logic.remote.server)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">RemoteListenerServerLifecycle</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    22.2%
+  </span>
+  <span class="absValue">
+    (2/ 9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    7.1%
+  </span>
+  <span class="absValue">
+    (2/ 28)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.remote.server;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.IOException;
+<i>4</i>&nbsp;import java.net.BindException;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import net.sf.jabref.JabRefExecutorService;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import org.apache.commons.logging.Log;
+<i>9</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;/**
+<i>12</i>&nbsp; * Manages the RemoteListenerServerThread through typical life cycle methods.
+<i>13</i>&nbsp; * &lt;p/&gt;
+<i>14</i>&nbsp; * open -&gt; start -&gt; stop
+<i>15</i>&nbsp; * openAndStart -&gt; stop
+<i>16</i>&nbsp; * &lt;p/&gt;
+<i>17</i>&nbsp; * Observer: isOpen, isNotStartedBefore
+<i>18</i>&nbsp; */
+<b class="fc"><i>19</i>&nbsp;public class RemoteListenerServerLifecycle implements AutoCloseable {</b>
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;    private RemoteListenerServerThread remoteListenerServerThread;
+<i>22</i>&nbsp;
+<b class="fc"><i>23</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(RemoteListenerServerLifecycle.class);</b>
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;    public void stop() {
+<b class="nc"><i>26</i>&nbsp;        if (isOpen()) {</b>
+<b class="nc"><i>27</i>&nbsp;            remoteListenerServerThread.interrupt();</b>
+<b class="nc"><i>28</i>&nbsp;            remoteListenerServerThread = null;</b>
+<b class="nc"><i>29</i>&nbsp;            JabRefExecutorService.INSTANCE.stopRemoteThread();</b>
+<i>30</i>&nbsp;        }
+<b class="nc"><i>31</i>&nbsp;    }</b>
+<i>32</i>&nbsp;
+<i>33</i>&nbsp;    /**
+<i>34</i>&nbsp;     * Acquire any resources needed for the server.
+<i>35</i>&nbsp;     */
+<i>36</i>&nbsp;    public void open(MessageHandler messageHandler, int port) {
+<b class="nc"><i>37</i>&nbsp;        if (isOpen()) {</b>
+<b class="nc"><i>38</i>&nbsp;            return;</b>
+<i>39</i>&nbsp;        }
+<i>40</i>&nbsp;
+<i>41</i>&nbsp;        RemoteListenerServerThread result;
+<i>42</i>&nbsp;        try {
+<b class="nc"><i>43</i>&nbsp;            result = new RemoteListenerServerThread(messageHandler, port);</b>
+<b class="nc"><i>44</i>&nbsp;        } catch (BindException e) {</b>
+<b class="nc"><i>45</i>&nbsp;            LOGGER.warn(&quot;Port is blocked&quot;, e);</b>
+<b class="nc"><i>46</i>&nbsp;            result = null;</b>
+<b class="nc"><i>47</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i>48</i>&nbsp;            result = null;</b>
+<b class="nc"><i>49</i>&nbsp;        }</b>
+<b class="nc"><i>50</i>&nbsp;        remoteListenerServerThread = result;</b>
+<b class="nc"><i>51</i>&nbsp;    }</b>
+<i>52</i>&nbsp;
+<i>53</i>&nbsp;    public boolean isOpen() {
+<b class="nc"><i>54</i>&nbsp;        return remoteListenerServerThread != null;</b>
+<i>55</i>&nbsp;    }
+<i>56</i>&nbsp;
+<i>57</i>&nbsp;    public void start() {
+<b class="nc"><i>58</i>&nbsp;        if (isOpen() &amp;&amp; isNotStartedBefore()) {</b>
+<i>59</i>&nbsp;            // threads can only be started when in state NEW
+<b class="nc"><i>60</i>&nbsp;            JabRefExecutorService.INSTANCE.manageRemoteThread(remoteListenerServerThread);</b>
+<i>61</i>&nbsp;        }
+<b class="nc"><i>62</i>&nbsp;    }</b>
+<i>63</i>&nbsp;
+<i>64</i>&nbsp;    public boolean isNotStartedBefore() {
+<i>65</i>&nbsp;        // threads can only be started when in state NEW
+<b class="nc"><i>66</i>&nbsp;        return (remoteListenerServerThread == null) || (remoteListenerServerThread.getState() == Thread.State.NEW);</b>
+<i>67</i>&nbsp;    }
+<i>68</i>&nbsp;
+<i>69</i>&nbsp;    public void openAndStart(MessageHandler messageHandler, int port) {
+<b class="nc"><i>70</i>&nbsp;        open(messageHandler, port);</b>
+<b class="nc"><i>71</i>&nbsp;        start();</b>
+<b class="nc"><i>72</i>&nbsp;    }</b>
+<i>73</i>&nbsp;
+<i>74</i>&nbsp;    @Override
+<i>75</i>&nbsp;    public void close() {
+<b class="nc"><i>76</i>&nbsp;        stop();</b>
+<b class="nc"><i>77</i>&nbsp;    }</b>
+<i>78</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

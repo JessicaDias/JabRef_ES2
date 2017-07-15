@@ -1,0 +1,1203 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: XMPUtil</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.xmp</a> ]
+</div>
+
+<h1>Coverage Summary for Class: XMPUtil (net.sf.jabref.logic.xmp)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">XMPUtil</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 24)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 333)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.xmp;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.ByteArrayInputStream;
+<i>4</i>&nbsp;import java.io.ByteArrayOutputStream;
+<i>5</i>&nbsp;import java.io.File;
+<i>6</i>&nbsp;import java.io.FileInputStream;
+<i>7</i>&nbsp;import java.io.IOException;
+<i>8</i>&nbsp;import java.io.InputStream;
+<i>9</i>&nbsp;import java.io.OutputStream;
+<i>10</i>&nbsp;import java.nio.file.Files;
+<i>11</i>&nbsp;import java.nio.file.Path;
+<i>12</i>&nbsp;import java.nio.file.StandardOpenOption;
+<i>13</i>&nbsp;import java.util.ArrayList;
+<i>14</i>&nbsp;import java.util.Calendar;
+<i>15</i>&nbsp;import java.util.Collection;
+<i>16</i>&nbsp;import java.util.Collections;
+<i>17</i>&nbsp;import java.util.LinkedList;
+<i>18</i>&nbsp;import java.util.List;
+<i>19</i>&nbsp;import java.util.Map;
+<i>20</i>&nbsp;import java.util.Map.Entry;
+<i>21</i>&nbsp;import java.util.Optional;
+<i>22</i>&nbsp;import java.util.Set;
+<i>23</i>&nbsp;import java.util.TreeSet;
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;import javax.xml.transform.TransformerException;
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;import net.sf.jabref.logic.TypedBibEntry;
+<i>28</i>&nbsp;import net.sf.jabref.model.database.BibDatabase;
+<i>29</i>&nbsp;import net.sf.jabref.model.database.BibDatabaseMode;
+<i>30</i>&nbsp;import net.sf.jabref.model.entry.Author;
+<i>31</i>&nbsp;import net.sf.jabref.model.entry.AuthorList;
+<i>32</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>33</i>&nbsp;import net.sf.jabref.model.entry.FieldName;
+<i>34</i>&nbsp;import net.sf.jabref.model.entry.MonthUtil;
+<i>35</i>&nbsp;import net.sf.jabref.model.strings.StringUtil;
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;import org.apache.commons.logging.Log;
+<i>38</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>39</i>&nbsp;import org.apache.jempbox.impl.DateConverter;
+<i>40</i>&nbsp;import org.apache.jempbox.impl.XMLUtil;
+<i>41</i>&nbsp;import org.apache.jempbox.xmp.XMPMetadata;
+<i>42</i>&nbsp;import org.apache.jempbox.xmp.XMPSchema;
+<i>43</i>&nbsp;import org.apache.jempbox.xmp.XMPSchemaDublinCore;
+<i>44</i>&nbsp;import org.apache.pdfbox.cos.COSBase;
+<i>45</i>&nbsp;import org.apache.pdfbox.cos.COSDictionary;
+<i>46</i>&nbsp;import org.apache.pdfbox.cos.COSName;
+<i>47</i>&nbsp;import org.apache.pdfbox.exceptions.COSVisitorException;
+<i>48</i>&nbsp;import org.apache.pdfbox.exceptions.CryptographyException;
+<i>49</i>&nbsp;import org.apache.pdfbox.pdmodel.PDDocument;
+<i>50</i>&nbsp;import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
+<i>51</i>&nbsp;import org.apache.pdfbox.pdmodel.PDDocumentInformation;
+<i>52</i>&nbsp;import org.apache.pdfbox.pdmodel.common.PDMetadata;
+<i>53</i>&nbsp;import org.apache.pdfbox.pdmodel.encryption.BadSecurityHandlerException;
+<i>54</i>&nbsp;import org.apache.pdfbox.pdmodel.encryption.StandardDecryptionMaterial;
+<i>55</i>&nbsp;import org.w3c.dom.Document;
+<i>56</i>&nbsp;
+<i>57</i>&nbsp;/**
+<i>58</i>&nbsp; * XMPUtils provide support for reading and writing BibTex data as XMP-Metadata
+<i>59</i>&nbsp; * in PDF-documents.
+<i>60</i>&nbsp; */
+<b class="nc"><i>61</i>&nbsp;public class XMPUtil {</b>
+<i>62</i>&nbsp;
+<b class="nc"><i>63</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(XMPUtil.class);</b>
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;
+<i>66</i>&nbsp;    /**
+<i>67</i>&nbsp;     * Convenience method for readXMP(File).
+<i>68</i>&nbsp;     *
+<i>69</i>&nbsp;     * @param filename
+<i>70</i>&nbsp;     *            The filename from which to open the file.
+<i>71</i>&nbsp;     * @return BibtexEntryies found in the PDF or an empty list
+<i>72</i>&nbsp;     * @throws IOException
+<i>73</i>&nbsp;     */
+<i>74</i>&nbsp;    public static List&lt;BibEntry&gt; readXMP(String filename, XMPPreferences xmpPreferences) throws IOException {
+<b class="nc"><i>75</i>&nbsp;        return XMPUtil.readXMP(new File(filename), xmpPreferences);</b>
+<i>76</i>&nbsp;    }
+<i>77</i>&nbsp;
+<i>78</i>&nbsp;    /**
+<i>79</i>&nbsp;     * Try to write the given BibTexEntry in the XMP-stream of the given
+<i>80</i>&nbsp;     * PDF-file.
+<i>81</i>&nbsp;     *
+<i>82</i>&nbsp;     * Throws an IOException if the file cannot be read or written, so the user
+<i>83</i>&nbsp;     * can remove a lock or cancel the operation.
+<i>84</i>&nbsp;     *
+<i>85</i>&nbsp;     * The method will overwrite existing BibTeX-XMP-data, but keep other
+<i>86</i>&nbsp;     * existing metadata.
+<i>87</i>&nbsp;     *
+<i>88</i>&nbsp;     * This is a convenience method for writeXMP(File, BibEntry).
+<i>89</i>&nbsp;     *
+<i>90</i>&nbsp;     * @param filename
+<i>91</i>&nbsp;     *            The filename from which to open the file.
+<i>92</i>&nbsp;     * @param entry
+<i>93</i>&nbsp;     *            The entry to write.
+<i>94</i>&nbsp;     * @param database
+<i>95</i>&nbsp;     *            maybenull An optional database which the given bibtex entries
+<i>96</i>&nbsp;     *            belong to, which will be used to resolve strings. If the
+<i>97</i>&nbsp;     *            database is null the strings will not be resolved.
+<i>98</i>&nbsp;     * @throws TransformerException
+<i>99</i>&nbsp;     *             If the entry was malformed or unsupported.
+<i>100</i>&nbsp;     * @throws IOException
+<i>101</i>&nbsp;     *             If the file could not be written to or could not be found.
+<i>102</i>&nbsp;     */
+<i>103</i>&nbsp;    public static void writeXMP(String filename, BibEntry entry,
+<i>104</i>&nbsp;            BibDatabase database, XMPPreferences xmpPreferences) throws IOException, TransformerException {
+<b class="nc"><i>105</i>&nbsp;        XMPUtil.writeXMP(new File(filename), entry, database, xmpPreferences);</b>
+<b class="nc"><i>106</i>&nbsp;    }</b>
+<i>107</i>&nbsp;
+<i>108</i>&nbsp;    /**
+<i>109</i>&nbsp;     * Try to read the BibTexEntries from the XMP-stream of the given PDF-file.
+<i>110</i>&nbsp;     *
+<i>111</i>&nbsp;     * @param file
+<i>112</i>&nbsp;     *            The file to read from.
+<i>113</i>&nbsp;     *
+<i>114</i>&nbsp;     * @throws IOException
+<i>115</i>&nbsp;     *             Throws an IOException if the file cannot be read, so the user
+<i>116</i>&nbsp;     *             than remove a lock or cancel the operation.
+<i>117</i>&nbsp;     */
+<i>118</i>&nbsp;    public static List&lt;BibEntry&gt; readXMP(File file, XMPPreferences xmpPreferences) throws IOException {
+<b class="nc"><i>119</i>&nbsp;        List&lt;BibEntry&gt; result = Collections.emptyList();</b>
+<b class="nc"><i>120</i>&nbsp;        try (FileInputStream inputStream = new FileInputStream(file)) {</b>
+<b class="nc"><i>121</i>&nbsp;            result = XMPUtil.readXMP(inputStream, xmpPreferences);</b>
+<b class="nc"><i>122</i>&nbsp;        }</b>
+<b class="nc"><i>123</i>&nbsp;        return result;</b>
+<i>124</i>&nbsp;    }
+<i>125</i>&nbsp;
+<i>126</i>&nbsp;    public static PDDocument loadWithAutomaticDecryption(InputStream inputStream) throws IOException {
+<b class="nc"><i>127</i>&nbsp;        PDDocument doc = PDDocument.load(inputStream);</b>
+<i>128</i>&nbsp;
+<b class="nc"><i>129</i>&nbsp;        if (doc.isEncrypted()) {</b>
+<i>130</i>&nbsp;            // try the empty string as user password
+<b class="nc"><i>131</i>&nbsp;            StandardDecryptionMaterial sdm = new StandardDecryptionMaterial(&quot;&quot;);</b>
+<i>132</i>&nbsp;            try {
+<b class="nc"><i>133</i>&nbsp;                doc.openProtection(sdm);</b>
+<b class="nc"><i>134</i>&nbsp;            } catch (BadSecurityHandlerException | CryptographyException e) {</b>
+<b class="nc"><i>135</i>&nbsp;                LOGGER.error(&quot;Cannot handle encrypted PDF: &quot; + e.getMessage());</b>
+<b class="nc"><i>136</i>&nbsp;                throw new EncryptedPdfsNotSupportedException();</b>
+<b class="nc"><i>137</i>&nbsp;            }</b>
+<i>138</i>&nbsp;        }
+<b class="nc"><i>139</i>&nbsp;        return doc;</b>
+<i>140</i>&nbsp;    }
+<i>141</i>&nbsp;
+<i>142</i>&nbsp;    /**
+<i>143</i>&nbsp;     * Try to read the given BibTexEntry from the XMP-stream of the given
+<i>144</i>&nbsp;     * inputstream containing a PDF-file.
+<i>145</i>&nbsp;     *
+<i>146</i>&nbsp;     * @param inputStream
+<i>147</i>&nbsp;     *            The inputstream to read from.
+<i>148</i>&nbsp;     *
+<i>149</i>&nbsp;     * @throws IOException
+<i>150</i>&nbsp;     *             Throws an IOException if the file cannot be read, so the user
+<i>151</i>&nbsp;     *             than remove a lock or cancel the operation.
+<i>152</i>&nbsp;     *
+<i>153</i>&nbsp;     * @return list of BibEntries retrieved from the stream. May be empty, but never null
+<i>154</i>&nbsp;     */
+<i>155</i>&nbsp;    public static List&lt;BibEntry&gt; readXMP(InputStream inputStream, XMPPreferences xmpPreferences)
+<i>156</i>&nbsp;            throws IOException {
+<i>157</i>&nbsp;
+<b class="nc"><i>158</i>&nbsp;        List&lt;BibEntry&gt; result = new LinkedList&lt;&gt;();</b>
+<i>159</i>&nbsp;
+<b class="nc"><i>160</i>&nbsp;        try (PDDocument document = loadWithAutomaticDecryption(inputStream)) {</b>
+<b class="nc"><i>161</i>&nbsp;            Optional&lt;XMPMetadata&gt; meta = XMPUtil.getXMPMetadata(document);</b>
+<i>162</i>&nbsp;
+<b class="nc"><i>163</i>&nbsp;            if (meta.isPresent()) {</b>
+<i>164</i>&nbsp;
+<b class="nc"><i>165</i>&nbsp;                List&lt;XMPSchema&gt; schemas = meta.get().getSchemasByNamespaceURI(XMPSchemaBibtex.NAMESPACE);</b>
+<i>166</i>&nbsp;
+<b class="nc"><i>167</i>&nbsp;                for (XMPSchema schema : schemas) {</b>
+<b class="nc"><i>168</i>&nbsp;                    XMPSchemaBibtex bib = (XMPSchemaBibtex) schema;</b>
+<i>169</i>&nbsp;
+<b class="nc"><i>170</i>&nbsp;                    BibEntry entry = bib.getBibtexEntry();</b>
+<b class="nc"><i>171</i>&nbsp;                    if (entry.getType() == null) {</b>
+<b class="nc"><i>172</i>&nbsp;                        entry.setType(BibEntry.DEFAULT_TYPE);</b>
+<i>173</i>&nbsp;                    }
+<b class="nc"><i>174</i>&nbsp;                    result.add(entry);</b>
+<b class="nc"><i>175</i>&nbsp;                }</b>
+<i>176</i>&nbsp;
+<i>177</i>&nbsp;                // If we did not find anything have a look if a Dublin Core exists
+<b class="nc"><i>178</i>&nbsp;                if (result.isEmpty()) {</b>
+<b class="nc"><i>179</i>&nbsp;                    schemas = meta.get().getSchemasByNamespaceURI(XMPSchemaDublinCore.NAMESPACE);</b>
+<b class="nc"><i>180</i>&nbsp;                    for (XMPSchema schema : schemas) {</b>
+<b class="nc"><i>181</i>&nbsp;                        XMPSchemaDublinCore dc = (XMPSchemaDublinCore) schema;</b>
+<i>182</i>&nbsp;
+<b class="nc"><i>183</i>&nbsp;                        Optional&lt;BibEntry&gt; entry = XMPUtil.getBibtexEntryFromDublinCore(dc,</b>
+<i>184</i>&nbsp;                                xmpPreferences);
+<i>185</i>&nbsp;
+<b class="nc"><i>186</i>&nbsp;                        if (entry.isPresent()) {</b>
+<b class="nc"><i>187</i>&nbsp;                            if (entry.get().getType() == null) {</b>
+<b class="nc"><i>188</i>&nbsp;                                entry.get().setType(BibEntry.DEFAULT_TYPE);</b>
+<i>189</i>&nbsp;                            }
+<b class="nc"><i>190</i>&nbsp;                            result.add(entry.get());</b>
+<i>191</i>&nbsp;                        }
+<b class="nc"><i>192</i>&nbsp;                    }</b>
+<i>193</i>&nbsp;                }
+<i>194</i>&nbsp;            }
+<b class="nc"><i>195</i>&nbsp;            if (result.isEmpty()) {</b>
+<i>196</i>&nbsp;                // If we did not find any XMP metadata, search for non XMP metadata
+<b class="nc"><i>197</i>&nbsp;                PDDocumentInformation documentInformation = document.getDocumentInformation();</b>
+<b class="nc"><i>198</i>&nbsp;                Optional&lt;BibEntry&gt; entry = XMPUtil.getBibtexEntryFromDocumentInformation(documentInformation);</b>
+<b class="nc"><i>199</i>&nbsp;                if (entry.isPresent()) {</b>
+<b class="nc"><i>200</i>&nbsp;                    result.add(entry.get());</b>
+<i>201</i>&nbsp;                }
+<i>202</i>&nbsp;            }
+<b class="nc"><i>203</i>&nbsp;        }</b>
+<i>204</i>&nbsp;
+<i>205</i>&nbsp;        // return empty list, if no metadata was found
+<b class="nc"><i>206</i>&nbsp;        if (result.isEmpty()) {</b>
+<b class="nc"><i>207</i>&nbsp;            return Collections.emptyList();</b>
+<i>208</i>&nbsp;        }
+<b class="nc"><i>209</i>&nbsp;        return result;</b>
+<i>210</i>&nbsp;    }
+<i>211</i>&nbsp;
+<i>212</i>&nbsp;    public static Collection&lt;BibEntry&gt; readXMP(Path filePath, XMPPreferences xmpPreferences) throws IOException {
+<b class="nc"><i>213</i>&nbsp;        return readXMP(filePath.toFile(), xmpPreferences);</b>
+<i>214</i>&nbsp;    }
+<i>215</i>&nbsp;
+<i>216</i>&nbsp;    /**
+<i>217</i>&nbsp;     * Helper function for retrieving a BibEntry from the
+<i>218</i>&nbsp;     * PDDocumentInformation in a PDF file.
+<i>219</i>&nbsp;     *
+<i>220</i>&nbsp;     * To understand how to get hold of a PDDocumentInformation have a look in
+<i>221</i>&nbsp;     * the test cases for XMPUtil.
+<i>222</i>&nbsp;     *
+<i>223</i>&nbsp;     * The BibEntry is build by mapping individual fields in the document
+<i>224</i>&nbsp;     * information (like author, title, keywords) to fields in a bibtex entry.
+<i>225</i>&nbsp;     *
+<i>226</i>&nbsp;     * @param di
+<i>227</i>&nbsp;     *            The document information from which to build a BibEntry.
+<i>228</i>&nbsp;     *
+<i>229</i>&nbsp;     * @return The bibtex entry found in the document information.
+<i>230</i>&nbsp;     */
+<i>231</i>&nbsp;    public static Optional&lt;BibEntry&gt; getBibtexEntryFromDocumentInformation(
+<i>232</i>&nbsp;            PDDocumentInformation di) {
+<i>233</i>&nbsp;
+<b class="nc"><i>234</i>&nbsp;        BibEntry entry = new BibEntry();</b>
+<b class="nc"><i>235</i>&nbsp;        entry.setType(BibEntry.DEFAULT_TYPE);</b>
+<i>236</i>&nbsp;
+<b class="nc"><i>237</i>&nbsp;        String s = di.getAuthor();</b>
+<b class="nc"><i>238</i>&nbsp;        if (s != null) {</b>
+<b class="nc"><i>239</i>&nbsp;            entry.setField(FieldName.AUTHOR, s);</b>
+<i>240</i>&nbsp;        }
+<i>241</i>&nbsp;
+<b class="nc"><i>242</i>&nbsp;        s = di.getTitle();</b>
+<b class="nc"><i>243</i>&nbsp;        if (s != null) {</b>
+<b class="nc"><i>244</i>&nbsp;            entry.setField(FieldName.TITLE, s);</b>
+<i>245</i>&nbsp;        }
+<i>246</i>&nbsp;
+<b class="nc"><i>247</i>&nbsp;        s = di.getKeywords();</b>
+<b class="nc"><i>248</i>&nbsp;        if (s != null) {</b>
+<b class="nc"><i>249</i>&nbsp;            entry.setField(FieldName.KEYWORDS, s);</b>
+<i>250</i>&nbsp;        }
+<i>251</i>&nbsp;
+<b class="nc"><i>252</i>&nbsp;        s = di.getSubject();</b>
+<b class="nc"><i>253</i>&nbsp;        if (s != null) {</b>
+<b class="nc"><i>254</i>&nbsp;            entry.setField(FieldName.ABSTRACT, s);</b>
+<i>255</i>&nbsp;        }
+<i>256</i>&nbsp;
+<b class="nc"><i>257</i>&nbsp;        COSDictionary dict = di.getDictionary();</b>
+<b class="nc"><i>258</i>&nbsp;        for (Map.Entry&lt;COSName, COSBase&gt; o : dict.entrySet()) {</b>
+<b class="nc"><i>259</i>&nbsp;            String key = o.getKey().getName();</b>
+<b class="nc"><i>260</i>&nbsp;            if (key.startsWith(&quot;bibtex/&quot;)) {</b>
+<b class="nc"><i>261</i>&nbsp;                String value = dict.getString(key);</b>
+<b class="nc"><i>262</i>&nbsp;                key = key.substring(&quot;bibtex/&quot;.length());</b>
+<b class="nc"><i>263</i>&nbsp;                if (BibEntry.TYPE_HEADER.equals(key)) {</b>
+<b class="nc"><i>264</i>&nbsp;                    entry.setType(value);</b>
+<i>265</i>&nbsp;                } else {
+<b class="nc"><i>266</i>&nbsp;                    entry.setField(key, value);</b>
+<i>267</i>&nbsp;                }
+<i>268</i>&nbsp;            }
+<b class="nc"><i>269</i>&nbsp;        }</b>
+<i>270</i>&nbsp;
+<i>271</i>&nbsp;        // Return empty Optional if no values were found
+<b class="nc"><i>272</i>&nbsp;        return entry.getFieldNames().isEmpty() ? Optional.empty() : Optional.of(entry);</b>
+<i>273</i>&nbsp;    }
+<i>274</i>&nbsp;
+<i>275</i>&nbsp;    /**
+<i>276</i>&nbsp;     * Helper function for retrieving a BibEntry from the DublinCore metadata
+<i>277</i>&nbsp;     * in a PDF file.
+<i>278</i>&nbsp;     *
+<i>279</i>&nbsp;     * To understand how to get hold of a XMPSchemaDublinCore have a look in the
+<i>280</i>&nbsp;     * test cases for XMPUtil.
+<i>281</i>&nbsp;     *
+<i>282</i>&nbsp;     * The BibEntry is build by mapping individual fields in the dublin core
+<i>283</i>&nbsp;     * (like creator, title, subject) to fields in a bibtex entry.
+<i>284</i>&nbsp;     *
+<i>285</i>&nbsp;     * @param dcSchema
+<i>286</i>&nbsp;     *            The document information from which to build a BibEntry.
+<i>287</i>&nbsp;     *
+<i>288</i>&nbsp;     * @return The bibtex entry found in the document information.
+<i>289</i>&nbsp;     */
+<i>290</i>&nbsp;    public static Optional&lt;BibEntry&gt; getBibtexEntryFromDublinCore(XMPSchemaDublinCore dcSchema,
+<i>291</i>&nbsp;            XMPPreferences xmpPreferences) {
+<i>292</i>&nbsp;
+<b class="nc"><i>293</i>&nbsp;        BibEntry entry = new BibEntry();</b>
+<i>294</i>&nbsp;
+<i>295</i>&nbsp;        /**
+<i>296</i>&nbsp;         * Contributor -&gt; Editor
+<i>297</i>&nbsp;         */
+<b class="nc"><i>298</i>&nbsp;        List&lt;String&gt; contributors = dcSchema.getContributors();</b>
+<b class="nc"><i>299</i>&nbsp;        if ((contributors != null) &amp;&amp; !contributors.isEmpty()) {</b>
+<b class="nc"><i>300</i>&nbsp;            entry.setField(FieldName.EDITOR, String.join(&quot; and &quot;, contributors));</b>
+<i>301</i>&nbsp;        }
+<i>302</i>&nbsp;
+<i>303</i>&nbsp;        /**
+<i>304</i>&nbsp;         * Author -&gt; Creator
+<i>305</i>&nbsp;         */
+<b class="nc"><i>306</i>&nbsp;        List&lt;String&gt; creators = dcSchema.getCreators();</b>
+<b class="nc"><i>307</i>&nbsp;        if ((creators != null) &amp;&amp; !creators.isEmpty()) {</b>
+<b class="nc"><i>308</i>&nbsp;            entry.setField(FieldName.AUTHOR, String.join(&quot; and &quot;, creators));</b>
+<i>309</i>&nbsp;        }
+<i>310</i>&nbsp;
+<i>311</i>&nbsp;        /**
+<i>312</i>&nbsp;         * Year + Month -&gt; Date
+<i>313</i>&nbsp;         */
+<b class="nc"><i>314</i>&nbsp;        List&lt;String&gt; dates = dcSchema.getSequenceList(&quot;dc:date&quot;);</b>
+<b class="nc"><i>315</i>&nbsp;        if ((dates != null) &amp;&amp; !dates.isEmpty()) {</b>
+<b class="nc"><i>316</i>&nbsp;            String date = dates.get(0).trim();</b>
+<b class="nc"><i>317</i>&nbsp;            Calendar c = null;</b>
+<i>318</i>&nbsp;            try {
+<b class="nc"><i>319</i>&nbsp;                c = DateConverter.toCalendar(date);</b>
+<b class="nc"><i>320</i>&nbsp;            } catch (IOException ignored) {</b>
+<i>321</i>&nbsp;                // Ignored
+<b class="nc"><i>322</i>&nbsp;            }</b>
+<b class="nc"><i>323</i>&nbsp;            if (c != null) {</b>
+<b class="nc"><i>324</i>&nbsp;                entry.setField(FieldName.YEAR, String.valueOf(c.get(Calendar.YEAR)));</b>
+<b class="nc"><i>325</i>&nbsp;                if (date.length() &gt; 4) {</b>
+<b class="nc"><i>326</i>&nbsp;                    entry.setField(FieldName.MONTH, MonthUtil.getMonthByIndex(c.get(Calendar.MONTH)).bibtexFormat);</b>
+<i>327</i>&nbsp;                }
+<i>328</i>&nbsp;            }
+<i>329</i>&nbsp;        }
+<i>330</i>&nbsp;
+<i>331</i>&nbsp;        /**
+<i>332</i>&nbsp;         * Abstract -&gt; Description
+<i>333</i>&nbsp;         */
+<b class="nc"><i>334</i>&nbsp;        String s = dcSchema.getDescription();</b>
+<b class="nc"><i>335</i>&nbsp;        if (s != null) {</b>
+<b class="nc"><i>336</i>&nbsp;            entry.setField(FieldName.ABSTRACT, s);</b>
+<i>337</i>&nbsp;        }
+<i>338</i>&nbsp;
+<i>339</i>&nbsp;        /**
+<i>340</i>&nbsp;         * Identifier -&gt; DOI
+<i>341</i>&nbsp;         */
+<b class="nc"><i>342</i>&nbsp;        s = dcSchema.getIdentifier();</b>
+<b class="nc"><i>343</i>&nbsp;        if (s != null) {</b>
+<b class="nc"><i>344</i>&nbsp;            entry.setField(FieldName.DOI, s);</b>
+<i>345</i>&nbsp;        }
+<i>346</i>&nbsp;
+<i>347</i>&nbsp;        /**
+<i>348</i>&nbsp;         * Publisher -&gt; Publisher
+<i>349</i>&nbsp;         */
+<b class="nc"><i>350</i>&nbsp;        List&lt;String&gt; publishers = dcSchema.getPublishers();</b>
+<b class="nc"><i>351</i>&nbsp;        if ((publishers != null) &amp;&amp; !publishers.isEmpty()) {</b>
+<b class="nc"><i>352</i>&nbsp;            entry.setField(FieldName.PUBLISHER, String.join(&quot; and &quot;, publishers));</b>
+<i>353</i>&nbsp;        }
+<i>354</i>&nbsp;
+<i>355</i>&nbsp;        /**
+<i>356</i>&nbsp;         * Relation -&gt; bibtexkey
+<i>357</i>&nbsp;         *
+<i>358</i>&nbsp;         * We abuse the relationship attribute to store all other values in the
+<i>359</i>&nbsp;         * bibtex document
+<i>360</i>&nbsp;         */
+<b class="nc"><i>361</i>&nbsp;        List&lt;String&gt; relationships = dcSchema.getRelationships();</b>
+<b class="nc"><i>362</i>&nbsp;        if (relationships != null) {</b>
+<b class="nc"><i>363</i>&nbsp;            for (String r : relationships) {</b>
+<b class="nc"><i>364</i>&nbsp;                if (r.startsWith(&quot;bibtex/&quot;)) {</b>
+<b class="nc"><i>365</i>&nbsp;                    r = r.substring(&quot;bibtex/&quot;.length());</b>
+<b class="nc"><i>366</i>&nbsp;                    int i = r.indexOf(&#39;/&#39;);</b>
+<b class="nc"><i>367</i>&nbsp;                    if (i != -1) {</b>
+<b class="nc"><i>368</i>&nbsp;                        entry.setField(r.substring(0, i), r.substring(i + 1));</b>
+<i>369</i>&nbsp;                    }
+<i>370</i>&nbsp;                }
+<b class="nc"><i>371</i>&nbsp;            }</b>
+<i>372</i>&nbsp;        }
+<i>373</i>&nbsp;
+<i>374</i>&nbsp;        /**
+<i>375</i>&nbsp;         * Rights -&gt; Rights
+<i>376</i>&nbsp;         */
+<b class="nc"><i>377</i>&nbsp;        s = dcSchema.getRights();</b>
+<b class="nc"><i>378</i>&nbsp;        if (s != null) {</b>
+<b class="nc"><i>379</i>&nbsp;            entry.setField(&quot;rights&quot;, s);</b>
+<i>380</i>&nbsp;        }
+<i>381</i>&nbsp;
+<i>382</i>&nbsp;        /**
+<i>383</i>&nbsp;         * Source -&gt; Source
+<i>384</i>&nbsp;         */
+<b class="nc"><i>385</i>&nbsp;        s = dcSchema.getSource();</b>
+<b class="nc"><i>386</i>&nbsp;        if (s != null) {</b>
+<b class="nc"><i>387</i>&nbsp;            entry.setField(&quot;source&quot;, s);</b>
+<i>388</i>&nbsp;        }
+<i>389</i>&nbsp;
+<i>390</i>&nbsp;        /**
+<i>391</i>&nbsp;         * Subject -&gt; Keywords
+<i>392</i>&nbsp;         */
+<b class="nc"><i>393</i>&nbsp;        List&lt;String&gt; subjects = dcSchema.getSubjects();</b>
+<b class="nc"><i>394</i>&nbsp;        if (subjects != null) {</b>
+<b class="nc"><i>395</i>&nbsp;            entry.addKeywords(subjects, xmpPreferences.getKeywordSeparator());</b>
+<i>396</i>&nbsp;        }
+<i>397</i>&nbsp;
+<i>398</i>&nbsp;        /**
+<i>399</i>&nbsp;         * Title -&gt; Title
+<i>400</i>&nbsp;         */
+<b class="nc"><i>401</i>&nbsp;        s = dcSchema.getTitle();</b>
+<b class="nc"><i>402</i>&nbsp;        if (s != null) {</b>
+<b class="nc"><i>403</i>&nbsp;            entry.setField(FieldName.TITLE, s);</b>
+<i>404</i>&nbsp;        }
+<i>405</i>&nbsp;
+<i>406</i>&nbsp;        /**
+<i>407</i>&nbsp;         * Type -&gt; Type
+<i>408</i>&nbsp;         */
+<b class="nc"><i>409</i>&nbsp;        List&lt;String&gt; l = dcSchema.getTypes();</b>
+<b class="nc"><i>410</i>&nbsp;        if ((l != null) &amp;&amp; !l.isEmpty()) {</b>
+<b class="nc"><i>411</i>&nbsp;            s = l.get(0);</b>
+<b class="nc"><i>412</i>&nbsp;            if (s != null) {</b>
+<b class="nc"><i>413</i>&nbsp;                entry.setType(s);</b>
+<i>414</i>&nbsp;            }
+<i>415</i>&nbsp;        }
+<i>416</i>&nbsp;
+<b class="nc"><i>417</i>&nbsp;        return entry.getFieldNames().isEmpty() ? Optional.empty() : Optional.of(entry);</b>
+<i>418</i>&nbsp;    }
+<i>419</i>&nbsp;
+<i>420</i>&nbsp;    /**
+<i>421</i>&nbsp;     * Try to write the given BibTexEntry in the XMP-stream of the given
+<i>422</i>&nbsp;     * PDF-file.
+<i>423</i>&nbsp;     *
+<i>424</i>&nbsp;     * Throws an IOException if the file cannot be read or written, so the user
+<i>425</i>&nbsp;     * can remove a lock or cancel the operation.
+<i>426</i>&nbsp;     *
+<i>427</i>&nbsp;     * The method will overwrite existing BibTeX-XMP-data, but keep other
+<i>428</i>&nbsp;     * existing metadata.
+<i>429</i>&nbsp;     *
+<i>430</i>&nbsp;     * This is a convenience method for writeXMP(File, Collection).
+<i>431</i>&nbsp;     *
+<i>432</i>&nbsp;     * @param file
+<i>433</i>&nbsp;     *            The file to write to.
+<i>434</i>&nbsp;     * @param entry
+<i>435</i>&nbsp;     *            The entry to write.
+<i>436</i>&nbsp;     * @param database
+<i>437</i>&nbsp;     *            maybenull An optional database which the given bibtex entries
+<i>438</i>&nbsp;     *            belong to, which will be used to resolve strings. If the
+<i>439</i>&nbsp;     *            database is null the strings will not be resolved.
+<i>440</i>&nbsp;     * @throws TransformerException
+<i>441</i>&nbsp;     *             If the entry was malformed or unsupported.
+<i>442</i>&nbsp;     * @throws IOException
+<i>443</i>&nbsp;     *             If the file could not be written to or could not be found.
+<i>444</i>&nbsp;     */
+<i>445</i>&nbsp;    public static void writeXMP(File file, BibEntry entry,
+<i>446</i>&nbsp;            BibDatabase database, XMPPreferences xmpPreferences) throws IOException, TransformerException {
+<b class="nc"><i>447</i>&nbsp;        List&lt;BibEntry&gt; l = new LinkedList&lt;&gt;();</b>
+<b class="nc"><i>448</i>&nbsp;        l.add(entry);</b>
+<b class="nc"><i>449</i>&nbsp;        XMPUtil.writeXMP(file, l, database, true, xmpPreferences);</b>
+<b class="nc"><i>450</i>&nbsp;    }</b>
+<i>451</i>&nbsp;
+<i>452</i>&nbsp;    /**
+<i>453</i>&nbsp;     * Write the given BibtexEntries as XMP-metadata text to the given stream.
+<i>454</i>&nbsp;     *
+<i>455</i>&nbsp;     * The text that is written to the stream contains a complete XMP-document.
+<i>456</i>&nbsp;     *
+<i>457</i>&nbsp;     * @param bibtexEntries
+<i>458</i>&nbsp;     *            The BibtexEntries to write XMP-metadata for.
+<i>459</i>&nbsp;     * @param database
+<i>460</i>&nbsp;     *            maybenull An optional database which the given bibtex entries
+<i>461</i>&nbsp;     *            belong to, which will be used to resolve strings. If the
+<i>462</i>&nbsp;     *            database is null the strings will not be resolved.
+<i>463</i>&nbsp;     * @throws TransformerException
+<i>464</i>&nbsp;     *             Thrown if the bibtexEntries could not transformed to XMP.
+<i>465</i>&nbsp;     * @throws IOException
+<i>466</i>&nbsp;     *             Thrown if an IOException occured while writing to the stream.
+<i>467</i>&nbsp;     *
+<i>468</i>&nbsp;     * @see #toXMP(java.util.Collection, BibDatabase) if you don&#39;t need strings to be
+<i>469</i>&nbsp;     *      resolved.
+<i>470</i>&nbsp;     */
+<i>471</i>&nbsp;    private static void toXMP(Collection&lt;BibEntry&gt; bibtexEntries,
+<i>472</i>&nbsp;            BibDatabase database, OutputStream outputStream, XMPPreferences xmpPreferences)
+<i>473</i>&nbsp;                    throws IOException, TransformerException {
+<i>474</i>&nbsp;
+<i>475</i>&nbsp;        Collection&lt;BibEntry&gt; resolvedEntries;
+<b class="nc"><i>476</i>&nbsp;        if (database == null) {</b>
+<b class="nc"><i>477</i>&nbsp;            resolvedEntries = bibtexEntries;</b>
+<i>478</i>&nbsp;        } else {
+<b class="nc"><i>479</i>&nbsp;            resolvedEntries = database.resolveForStrings(bibtexEntries, true);</b>
+<i>480</i>&nbsp;        }
+<i>481</i>&nbsp;
+<b class="nc"><i>482</i>&nbsp;        XMPMetadata x = new XMPMetadata();</b>
+<i>483</i>&nbsp;
+<b class="nc"><i>484</i>&nbsp;        for (BibEntry e : resolvedEntries) {</b>
+<b class="nc"><i>485</i>&nbsp;            XMPSchemaBibtex schema = new XMPSchemaBibtex(x);</b>
+<b class="nc"><i>486</i>&nbsp;            x.addSchema(schema);</b>
+<b class="nc"><i>487</i>&nbsp;            schema.setBibtexEntry(e, xmpPreferences);</b>
+<b class="nc"><i>488</i>&nbsp;        }</b>
+<i>489</i>&nbsp;
+<b class="nc"><i>490</i>&nbsp;        x.save(outputStream);</b>
+<b class="nc"><i>491</i>&nbsp;    }</b>
+<i>492</i>&nbsp;
+<i>493</i>&nbsp;    /**
+<i>494</i>&nbsp;     * Convenience method for toXMP(Collection&lt;BibEntry&gt;, BibDatabase,
+<i>495</i>&nbsp;     * OutputStream) returning a String containing the XMP-metadata of the given
+<i>496</i>&nbsp;     * collection of BibtexEntries.
+<i>497</i>&nbsp;     *
+<i>498</i>&nbsp;     * The resulting metadata string is wrapped as a complete XMP-document.
+<i>499</i>&nbsp;     *
+<i>500</i>&nbsp;     * @param bibtexEntries
+<i>501</i>&nbsp;     *            The BibtexEntries to return XMP-metadata for.
+<i>502</i>&nbsp;     * @param database
+<i>503</i>&nbsp;     *            maybenull An optional database which the given bibtex entries
+<i>504</i>&nbsp;     *            belong to, which will be used to resolve strings. If the
+<i>505</i>&nbsp;     *            database is null the strings will not be resolved.
+<i>506</i>&nbsp;     * @return The XMP representation of the given bibtexEntries.
+<i>507</i>&nbsp;     * @throws TransformerException
+<i>508</i>&nbsp;     *             Thrown if the bibtexEntries could not transformed to XMP.
+<i>509</i>&nbsp;     */
+<i>510</i>&nbsp;    public static String toXMP(Collection&lt;BibEntry&gt; bibtexEntries,
+<i>511</i>&nbsp;            BibDatabase database, XMPPreferences xmpPreferences) throws TransformerException {
+<i>512</i>&nbsp;        try {
+<b class="nc"><i>513</i>&nbsp;            ByteArrayOutputStream bs = new ByteArrayOutputStream();</b>
+<b class="nc"><i>514</i>&nbsp;            XMPUtil.toXMP(bibtexEntries, database, bs, xmpPreferences);</b>
+<b class="nc"><i>515</i>&nbsp;            return bs.toString();</b>
+<b class="nc"><i>516</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i>517</i>&nbsp;            throw new TransformerException(e);</b>
+<i>518</i>&nbsp;        }
+<i>519</i>&nbsp;    }
+<i>520</i>&nbsp;
+<i>521</i>&nbsp;    /**
+<i>522</i>&nbsp;     * Will read the XMPMetadata from the given pdf file, closing the file
+<i>523</i>&nbsp;     * afterwards.
+<i>524</i>&nbsp;     *
+<i>525</i>&nbsp;     * @param inputStream
+<i>526</i>&nbsp;     *            The inputStream representing a PDF-file to read the
+<i>527</i>&nbsp;     *            XMPMetadata from.
+<i>528</i>&nbsp;     * @return The XMPMetadata object found in the file
+<i>529</i>&nbsp;     */
+<i>530</i>&nbsp;    private static Optional&lt;XMPMetadata&gt; readRawXMP(InputStream inputStream) throws IOException {
+<b class="nc"><i>531</i>&nbsp;        try (PDDocument document = loadWithAutomaticDecryption(inputStream)) {</b>
+<b class="nc"><i>532</i>&nbsp;            return XMPUtil.getXMPMetadata(document);</b>
+<b class="nc"><i>533</i>&nbsp;        }</b>
+<i>534</i>&nbsp;    }
+<i>535</i>&nbsp;
+<i>536</i>&nbsp;    /**
+<i>537</i>&nbsp;     * @return empty Optional if no metadata has been found
+<i>538</i>&nbsp;     */
+<i>539</i>&nbsp;    private static Optional&lt;XMPMetadata&gt; getXMPMetadata(PDDocument document) throws IOException {
+<b class="nc"><i>540</i>&nbsp;        PDDocumentCatalog catalog = document.getDocumentCatalog();</b>
+<b class="nc"><i>541</i>&nbsp;        PDMetadata metaRaw = catalog.getMetadata();</b>
+<i>542</i>&nbsp;
+<b class="nc"><i>543</i>&nbsp;        if (metaRaw == null) {</b>
+<b class="nc"><i>544</i>&nbsp;            return Optional.empty();</b>
+<i>545</i>&nbsp;        }
+<i>546</i>&nbsp;
+<i>547</i>&nbsp;        Document parseResult;
+<b class="nc"><i>548</i>&nbsp;        try (InputStream is = metaRaw.createInputStream()) {</b>
+<b class="nc"><i>549</i>&nbsp;            parseResult = XMLUtil.parse(is);</b>
+<b class="nc"><i>550</i>&nbsp;        }</b>
+<b class="nc"><i>551</i>&nbsp;        XMPMetadata meta = new XMPMetadata(parseResult);</b>
+<b class="nc"><i>552</i>&nbsp;        meta.addXMLNSMapping(XMPSchemaBibtex.NAMESPACE, XMPSchemaBibtex.class);</b>
+<b class="nc"><i>553</i>&nbsp;        return Optional.of(meta);</b>
+<i>554</i>&nbsp;    }
+<i>555</i>&nbsp;
+<i>556</i>&nbsp;    /**
+<i>557</i>&nbsp;     * Will read the XMPMetadata from the given pdf file, closing the file
+<i>558</i>&nbsp;     * afterwards.
+<i>559</i>&nbsp;     *
+<i>560</i>&nbsp;     * @param file
+<i>561</i>&nbsp;     *            The file to read the XMPMetadata from.
+<i>562</i>&nbsp;     * @return The XMPMetadata object found in the file
+<i>563</i>&nbsp;     */
+<i>564</i>&nbsp;    public static Optional&lt;XMPMetadata&gt; readRawXMP(File file) throws IOException {
+<b class="nc"><i>565</i>&nbsp;        try (FileInputStream inputStream = new FileInputStream(file)) {</b>
+<b class="nc"><i>566</i>&nbsp;            return XMPUtil.readRawXMP(inputStream);</b>
+<b class="nc"><i>567</i>&nbsp;        }</b>
+<i>568</i>&nbsp;    }
+<i>569</i>&nbsp;
+<i>570</i>&nbsp;    private static void writeToDCSchema(XMPSchemaDublinCore dcSchema,
+<i>571</i>&nbsp;            BibEntry entry, BibDatabase database, XMPPreferences xmpPreferences) {
+<i>572</i>&nbsp;
+<i>573</i>&nbsp;        BibEntry resolvedEntry;
+<b class="nc"><i>574</i>&nbsp;        if (database == null) {</b>
+<b class="nc"><i>575</i>&nbsp;            resolvedEntry = entry;</b>
+<i>576</i>&nbsp;        } else {
+<b class="nc"><i>577</i>&nbsp;            resolvedEntry = database.resolveForStrings(entry, false);</b>
+<i>578</i>&nbsp;        }
+<i>579</i>&nbsp;
+<i>580</i>&nbsp;        // Query privacy filter settings
+<b class="nc"><i>581</i>&nbsp;        boolean useXmpPrivacyFilter = xmpPreferences.isUseXMPPrivacyFilter();</b>
+<i>582</i>&nbsp;        // Fields for which not to write XMP data later on:
+<b class="nc"><i>583</i>&nbsp;        Set&lt;String&gt; filters = new TreeSet&lt;&gt;(xmpPreferences.getXmpPrivacyFilter());</b>
+<i>584</i>&nbsp;
+<i>585</i>&nbsp;        // Set all the values including key and entryType
+<i>586</i>&nbsp;
+<b class="nc"><i>587</i>&nbsp;        for (Entry&lt;String, String&gt; field : resolvedEntry.getFieldMap().entrySet()) {</b>
+<i>588</i>&nbsp;
+<b class="nc"><i>589</i>&nbsp;            if (useXmpPrivacyFilter &amp;&amp; filters.contains(field.getKey())) {</b>
+<b class="nc"><i>590</i>&nbsp;                continue;</b>
+<i>591</i>&nbsp;            }
+<i>592</i>&nbsp;
+<b class="nc"><i>593</i>&nbsp;            if (FieldName.EDITOR.equals(field.getKey())) {</b>
+<b class="nc"><i>594</i>&nbsp;                String authors = field.getValue();</b>
+<i>595</i>&nbsp;
+<i>596</i>&nbsp;                /**
+<i>597</i>&nbsp;                 * Editor -&gt; Contributor
+<i>598</i>&nbsp;                 *
+<i>599</i>&nbsp;                 * Field: dc:contributor
+<i>600</i>&nbsp;                 *
+<i>601</i>&nbsp;                 * Type: bag ProperName
+<i>602</i>&nbsp;                 *
+<i>603</i>&nbsp;                 * Category: External
+<i>604</i>&nbsp;                 *
+<i>605</i>&nbsp;                 * Description: Contributors to the resource (other than the
+<i>606</i>&nbsp;                 * authors).
+<i>607</i>&nbsp;                 *
+<i>608</i>&nbsp;                 * Bibtex-Fields used: editor
+<i>609</i>&nbsp;                 */
+<i>610</i>&nbsp;
+<b class="nc"><i>611</i>&nbsp;                AuthorList list = AuthorList.parse(authors);</b>
+<i>612</i>&nbsp;
+<b class="nc"><i>613</i>&nbsp;                for (Author author : list.getAuthors()) {</b>
+<b class="nc"><i>614</i>&nbsp;                    dcSchema.addContributor(author.getFirstLast(false));</b>
+<b class="nc"><i>615</i>&nbsp;                }</b>
+<b class="nc"><i>616</i>&nbsp;                continue;</b>
+<i>617</i>&nbsp;            }
+<i>618</i>&nbsp;
+<i>619</i>&nbsp;            /**
+<i>620</i>&nbsp;             * ? -&gt; Coverage
+<i>621</i>&nbsp;             *
+<i>622</i>&nbsp;             * Unmapped
+<i>623</i>&nbsp;             *
+<i>624</i>&nbsp;             * dc:coverage Text External The extent or scope of the resource.
+<i>625</i>&nbsp;             */
+<i>626</i>&nbsp;
+<i>627</i>&nbsp;            /**
+<i>628</i>&nbsp;             * Author -&gt; Creator
+<i>629</i>&nbsp;             *
+<i>630</i>&nbsp;             * Field: dc:creator
+<i>631</i>&nbsp;             *
+<i>632</i>&nbsp;             * Type: seq ProperName
+<i>633</i>&nbsp;             *
+<i>634</i>&nbsp;             * Category: External
+<i>635</i>&nbsp;             *
+<i>636</i>&nbsp;             * Description: The authors of the resource (listed in order of
+<i>637</i>&nbsp;             * precedence, if significant).
+<i>638</i>&nbsp;             *
+<i>639</i>&nbsp;             * Bibtex-Fields used: author
+<i>640</i>&nbsp;             */
+<b class="nc"><i>641</i>&nbsp;            if (FieldName.AUTHOR.equals(field.getKey())) {</b>
+<b class="nc"><i>642</i>&nbsp;                String authors = field.getValue();</b>
+<b class="nc"><i>643</i>&nbsp;                AuthorList list = AuthorList.parse(authors);</b>
+<i>644</i>&nbsp;
+<b class="nc"><i>645</i>&nbsp;                for (Author author : list.getAuthors()) {</b>
+<b class="nc"><i>646</i>&nbsp;                    dcSchema.addCreator(author.getFirstLast(false));</b>
+<b class="nc"><i>647</i>&nbsp;                }</b>
+<b class="nc"><i>648</i>&nbsp;                continue;</b>
+<i>649</i>&nbsp;            }
+<i>650</i>&nbsp;
+<b class="nc"><i>651</i>&nbsp;            if (FieldName.MONTH.equals(field.getKey())) {</b>
+<i>652</i>&nbsp;                // Dealt with in year
+<b class="nc"><i>653</i>&nbsp;                continue;</b>
+<i>654</i>&nbsp;            }
+<i>655</i>&nbsp;
+<b class="nc"><i>656</i>&nbsp;            if (FieldName.YEAR.equals(field.getKey())) {</b>
+<i>657</i>&nbsp;
+<i>658</i>&nbsp;                /**
+<i>659</i>&nbsp;                 * Year + Month -&gt; Date
+<i>660</i>&nbsp;                 *
+<i>661</i>&nbsp;                 * Field: dc:date
+<i>662</i>&nbsp;                 *
+<i>663</i>&nbsp;                 * Type: seq Date
+<i>664</i>&nbsp;                 *
+<i>665</i>&nbsp;                 * Category: External
+<i>666</i>&nbsp;                 *
+<i>667</i>&nbsp;                 * Description: Date(s) that something interesting happened to
+<i>668</i>&nbsp;                 * the resource.
+<i>669</i>&nbsp;                 *
+<i>670</i>&nbsp;                 * Bibtex-Fields used: year, month
+<i>671</i>&nbsp;                 */
+<b class="nc"><i>672</i>&nbsp;                entry.getPublicationDate()</b>
+<b class="nc"><i>673</i>&nbsp;                        .ifPresent(publicationDate -&gt; dcSchema.addSequenceValue(&quot;dc:date&quot;, publicationDate));</b>
+<b class="nc"><i>674</i>&nbsp;                continue;</b>
+<i>675</i>&nbsp;            }
+<i>676</i>&nbsp;            /**
+<i>677</i>&nbsp;             * Abstract -&gt; Description
+<i>678</i>&nbsp;             *
+<i>679</i>&nbsp;             * Field: dc:description
+<i>680</i>&nbsp;             *
+<i>681</i>&nbsp;             * Type: Lang Alt
+<i>682</i>&nbsp;             *
+<i>683</i>&nbsp;             * Category: External
+<i>684</i>&nbsp;             *
+<i>685</i>&nbsp;             * Description: A textual description of the content of the
+<i>686</i>&nbsp;             * resource. Multiple values may be present for different languages.
+<i>687</i>&nbsp;             *
+<i>688</i>&nbsp;             * Bibtex-Fields used: abstract
+<i>689</i>&nbsp;             */
+<b class="nc"><i>690</i>&nbsp;            if (FieldName.ABSTRACT.equals(field.getKey())) {</b>
+<b class="nc"><i>691</i>&nbsp;                dcSchema.setDescription(field.getValue());</b>
+<b class="nc"><i>692</i>&nbsp;                continue;</b>
+<i>693</i>&nbsp;            }
+<i>694</i>&nbsp;
+<i>695</i>&nbsp;            /**
+<i>696</i>&nbsp;             * DOI -&gt; identifier
+<i>697</i>&nbsp;             *
+<i>698</i>&nbsp;             * Field: dc:identifier
+<i>699</i>&nbsp;             *
+<i>700</i>&nbsp;             * Type: Text
+<i>701</i>&nbsp;             *
+<i>702</i>&nbsp;             * Category: External
+<i>703</i>&nbsp;             *
+<i>704</i>&nbsp;             * Description: Unique identifier of the resource.
+<i>705</i>&nbsp;             *
+<i>706</i>&nbsp;             * Bibtex-Fields used: doi
+<i>707</i>&nbsp;             */
+<b class="nc"><i>708</i>&nbsp;            if (FieldName.DOI.equals(field.getKey())) {</b>
+<b class="nc"><i>709</i>&nbsp;                dcSchema.setIdentifier(field.getValue());</b>
+<b class="nc"><i>710</i>&nbsp;                continue;</b>
+<i>711</i>&nbsp;            }
+<i>712</i>&nbsp;
+<i>713</i>&nbsp;            /**
+<i>714</i>&nbsp;             * ? -&gt; Language
+<i>715</i>&nbsp;             *
+<i>716</i>&nbsp;             * Unmapped
+<i>717</i>&nbsp;             *
+<i>718</i>&nbsp;             * dc:language bag Locale Internal An unordered array specifying the
+<i>719</i>&nbsp;             * languages used in the resource.
+<i>720</i>&nbsp;             */
+<i>721</i>&nbsp;
+<i>722</i>&nbsp;            /**
+<i>723</i>&nbsp;             * Publisher -&gt; Publisher
+<i>724</i>&nbsp;             *
+<i>725</i>&nbsp;             * Field: dc:publisher
+<i>726</i>&nbsp;             *
+<i>727</i>&nbsp;             * Type: bag ProperName
+<i>728</i>&nbsp;             *
+<i>729</i>&nbsp;             * Category: External
+<i>730</i>&nbsp;             *
+<i>731</i>&nbsp;             * Description: Publishers.
+<i>732</i>&nbsp;             *
+<i>733</i>&nbsp;             * Bibtex-Fields used: doi
+<i>734</i>&nbsp;             */
+<b class="nc"><i>735</i>&nbsp;            if (FieldName.PUBLISHER.equals(field.getKey())) {</b>
+<b class="nc"><i>736</i>&nbsp;                dcSchema.addPublisher(field.getValue());</b>
+<b class="nc"><i>737</i>&nbsp;                continue;</b>
+<i>738</i>&nbsp;            }
+<i>739</i>&nbsp;
+<i>740</i>&nbsp;            /**
+<i>741</i>&nbsp;             * ? -&gt; Rights
+<i>742</i>&nbsp;             *
+<i>743</i>&nbsp;             * Unmapped
+<i>744</i>&nbsp;             *
+<i>745</i>&nbsp;             * dc:rights Lang Alt External Informal rights statement, selected
+<i>746</i>&nbsp;             * by language.
+<i>747</i>&nbsp;             */
+<i>748</i>&nbsp;
+<i>749</i>&nbsp;            /**
+<i>750</i>&nbsp;             * ? -&gt; Source
+<i>751</i>&nbsp;             *
+<i>752</i>&nbsp;             * Unmapped
+<i>753</i>&nbsp;             *
+<i>754</i>&nbsp;             * dc:source Text External Unique identifier of the work from which
+<i>755</i>&nbsp;             * this resource was derived.
+<i>756</i>&nbsp;             */
+<i>757</i>&nbsp;
+<i>758</i>&nbsp;            /**
+<i>759</i>&nbsp;             * Keywords -&gt; Subject
+<i>760</i>&nbsp;             *
+<i>761</i>&nbsp;             * Field: dc:subject
+<i>762</i>&nbsp;             *
+<i>763</i>&nbsp;             * Type: bag Text
+<i>764</i>&nbsp;             *
+<i>765</i>&nbsp;             * Category: External
+<i>766</i>&nbsp;             *
+<i>767</i>&nbsp;             * Description: An unordered array of descriptive phrases or
+<i>768</i>&nbsp;             * keywords that specify the topic of the content of the resource.
+<i>769</i>&nbsp;             *
+<i>770</i>&nbsp;             * Bibtex-Fields used: doi
+<i>771</i>&nbsp;             */
+<b class="nc"><i>772</i>&nbsp;            if (FieldName.KEYWORDS.equals(field.getKey())) {</b>
+<b class="nc"><i>773</i>&nbsp;                String o = field.getValue();</b>
+<b class="nc"><i>774</i>&nbsp;                String[] keywords = o.split(&quot;,&quot;);</b>
+<b class="nc"><i>775</i>&nbsp;                for (String keyword : keywords) {</b>
+<b class="nc"><i>776</i>&nbsp;                    dcSchema.addSubject(keyword.trim());</b>
+<i>777</i>&nbsp;                }
+<b class="nc"><i>778</i>&nbsp;                continue;</b>
+<i>779</i>&nbsp;            }
+<i>780</i>&nbsp;
+<i>781</i>&nbsp;            /**
+<i>782</i>&nbsp;             * Title -&gt; Title
+<i>783</i>&nbsp;             *
+<i>784</i>&nbsp;             * Field: dc:title
+<i>785</i>&nbsp;             *
+<i>786</i>&nbsp;             * Type: Lang Alt
+<i>787</i>&nbsp;             *
+<i>788</i>&nbsp;             * Category: External
+<i>789</i>&nbsp;             *
+<i>790</i>&nbsp;             * Description: The title of the document, or the name given to the
+<i>791</i>&nbsp;             * resource. Typically, it will be a name by which the resource is
+<i>792</i>&nbsp;             * formally known.
+<i>793</i>&nbsp;             *
+<i>794</i>&nbsp;             * Bibtex-Fields used: title
+<i>795</i>&nbsp;             */
+<b class="nc"><i>796</i>&nbsp;            if (FieldName.TITLE.equals(field.getKey())) {</b>
+<b class="nc"><i>797</i>&nbsp;                dcSchema.setTitle(field.getValue());</b>
+<b class="nc"><i>798</i>&nbsp;                continue;</b>
+<i>799</i>&nbsp;            }
+<i>800</i>&nbsp;
+<i>801</i>&nbsp;
+<i>802</i>&nbsp;            /**
+<i>803</i>&nbsp;             * All others (including the bibtex key) get packaged in the
+<i>804</i>&nbsp;             * relation attribute
+<i>805</i>&nbsp;             */
+<b class="nc"><i>806</i>&nbsp;            String o = field.getValue();</b>
+<b class="nc"><i>807</i>&nbsp;            dcSchema.addRelation(&quot;bibtex/&quot; + field.getKey() + &#39;/&#39; + o);</b>
+<b class="nc"><i>808</i>&nbsp;        }</b>
+<i>809</i>&nbsp;
+<i>810</i>&nbsp;        /**
+<i>811</i>&nbsp;         * ? -&gt; Format
+<i>812</i>&nbsp;         *
+<i>813</i>&nbsp;         * Unmapped
+<i>814</i>&nbsp;         *
+<i>815</i>&nbsp;         * dc:format MIMEType Internal The file format used when saving the
+<i>816</i>&nbsp;         * resource. Tools and applications should set this property to the save
+<i>817</i>&nbsp;         * format of the data. It may include appropriate qualifiers.
+<i>818</i>&nbsp;         */
+<b class="nc"><i>819</i>&nbsp;        dcSchema.setFormat(&quot;application/pdf&quot;);</b>
+<i>820</i>&nbsp;
+<i>821</i>&nbsp;        /**
+<i>822</i>&nbsp;         * entrytype -&gt; Type
+<i>823</i>&nbsp;         *
+<i>824</i>&nbsp;         * Field: dc:type
+<i>825</i>&nbsp;         *
+<i>826</i>&nbsp;         * Type: bag open Choice
+<i>827</i>&nbsp;         *
+<i>828</i>&nbsp;         * Category: External
+<i>829</i>&nbsp;         *
+<i>830</i>&nbsp;         * Description: A document type; for example, novel, poem, or working
+<i>831</i>&nbsp;         * paper.
+<i>832</i>&nbsp;         *
+<i>833</i>&nbsp;         * Bibtex-Fields used: entrytype
+<i>834</i>&nbsp;         */
+<b class="nc"><i>835</i>&nbsp;        TypedBibEntry typedEntry = new TypedBibEntry(entry, BibDatabaseMode.BIBTEX);</b>
+<b class="nc"><i>836</i>&nbsp;        String o = typedEntry.getTypeForDisplay();</b>
+<b class="nc"><i>837</i>&nbsp;        if (!o.isEmpty()) {</b>
+<b class="nc"><i>838</i>&nbsp;            dcSchema.addType(o);</b>
+<i>839</i>&nbsp;        }
+<b class="nc"><i>840</i>&nbsp;    }</b>
+<i>841</i>&nbsp;
+<i>842</i>&nbsp;    /**
+<i>843</i>&nbsp;     * Try to write the given BibTexEntry as a DublinCore XMP Schema
+<i>844</i>&nbsp;     *
+<i>845</i>&nbsp;     * Existing DublinCore schemas in the document are not modified.
+<i>846</i>&nbsp;     *
+<i>847</i>&nbsp;     * @param document
+<i>848</i>&nbsp;     *            The pdf document to write to.
+<i>849</i>&nbsp;     * @param entry
+<i>850</i>&nbsp;     *            The BibTeX entry that is written as a schema.
+<i>851</i>&nbsp;     * @param database
+<i>852</i>&nbsp;     *            maybenull An optional database which the given BibTeX entries
+<i>853</i>&nbsp;     *            belong to, which will be used to resolve strings. If the
+<i>854</i>&nbsp;     *            database is null the strings will not be resolved.
+<i>855</i>&nbsp;     * @throws IOException
+<i>856</i>&nbsp;     * @throws TransformerException
+<i>857</i>&nbsp;     */
+<i>858</i>&nbsp;    public static void writeDublinCore(PDDocument document, BibEntry entry,
+<i>859</i>&nbsp;            BibDatabase database, XMPPreferences xmpPreferences) throws IOException, TransformerException {
+<i>860</i>&nbsp;
+<b class="nc"><i>861</i>&nbsp;        List&lt;BibEntry&gt; entries = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>862</i>&nbsp;        entries.add(entry);</b>
+<i>863</i>&nbsp;
+<b class="nc"><i>864</i>&nbsp;        XMPUtil.writeDublinCore(document, entries, database, xmpPreferences);</b>
+<b class="nc"><i>865</i>&nbsp;    }</b>
+<i>866</i>&nbsp;
+<i>867</i>&nbsp;    /**
+<i>868</i>&nbsp;     * Try to write the given BibTexEntries as DublinCore XMP Schemas
+<i>869</i>&nbsp;     *
+<i>870</i>&nbsp;     * Existing DublinCore schemas in the document are removed
+<i>871</i>&nbsp;     *
+<i>872</i>&nbsp;     * @param document
+<i>873</i>&nbsp;     *            The pdf document to write to.
+<i>874</i>&nbsp;     * @param entries
+<i>875</i>&nbsp;     *            The BibTeX entries that are written as schemas
+<i>876</i>&nbsp;     * @param database
+<i>877</i>&nbsp;     *            maybenull An optional database which the given BibTeX entries
+<i>878</i>&nbsp;     *            belong to, which will be used to resolve strings. If the
+<i>879</i>&nbsp;     *            database is null the strings will not be resolved.
+<i>880</i>&nbsp;     * @throws IOException
+<i>881</i>&nbsp;     * @throws TransformerException
+<i>882</i>&nbsp;     */
+<i>883</i>&nbsp;    private static void writeDublinCore(PDDocument document,
+<i>884</i>&nbsp;            Collection&lt;BibEntry&gt; entries, BibDatabase database, XMPPreferences xmpPreferences)
+<i>885</i>&nbsp;                    throws IOException, TransformerException {
+<i>886</i>&nbsp;
+<i>887</i>&nbsp;        Collection&lt;BibEntry&gt; resolvedEntries;
+<b class="nc"><i>888</i>&nbsp;        if (database == null) {</b>
+<b class="nc"><i>889</i>&nbsp;            resolvedEntries = entries;</b>
+<i>890</i>&nbsp;        } else {
+<b class="nc"><i>891</i>&nbsp;            resolvedEntries = database.resolveForStrings(entries, false);</b>
+<i>892</i>&nbsp;        }
+<i>893</i>&nbsp;
+<b class="nc"><i>894</i>&nbsp;        PDDocumentCatalog catalog = document.getDocumentCatalog();</b>
+<b class="nc"><i>895</i>&nbsp;        PDMetadata metaRaw = catalog.getMetadata();</b>
+<i>896</i>&nbsp;
+<i>897</i>&nbsp;        XMPMetadata meta;
+<b class="nc"><i>898</i>&nbsp;        if (metaRaw == null) {</b>
+<b class="nc"><i>899</i>&nbsp;            meta = new XMPMetadata();</b>
+<i>900</i>&nbsp;        } else {
+<b class="nc"><i>901</i>&nbsp;            meta = new XMPMetadata(XMLUtil.parse(metaRaw.createInputStream()));</b>
+<i>902</i>&nbsp;        }
+<i>903</i>&nbsp;
+<i>904</i>&nbsp;        // Remove all current Dublin-Core schemas
+<b class="nc"><i>905</i>&nbsp;        List&lt;XMPSchema&gt; schemas = meta</b>
+<b class="nc"><i>906</i>&nbsp;                .getSchemasByNamespaceURI(XMPSchemaDublinCore.NAMESPACE);</b>
+<b class="nc"><i>907</i>&nbsp;        for (XMPSchema schema : schemas) {</b>
+<b class="nc"><i>908</i>&nbsp;            schema.getElement().getParentNode().removeChild(schema.getElement());</b>
+<b class="nc"><i>909</i>&nbsp;        }</b>
+<i>910</i>&nbsp;
+<b class="nc"><i>911</i>&nbsp;        for (BibEntry entry : resolvedEntries) {</b>
+<b class="nc"><i>912</i>&nbsp;            XMPSchemaDublinCore dcSchema = new XMPSchemaDublinCore(meta);</b>
+<b class="nc"><i>913</i>&nbsp;            XMPUtil.writeToDCSchema(dcSchema, entry, null, xmpPreferences);</b>
+<b class="nc"><i>914</i>&nbsp;            meta.addSchema(dcSchema);</b>
+<b class="nc"><i>915</i>&nbsp;        }</b>
+<i>916</i>&nbsp;
+<i>917</i>&nbsp;        // Save to stream and then input that stream to the PDF
+<b class="nc"><i>918</i>&nbsp;        ByteArrayOutputStream os = new ByteArrayOutputStream();</b>
+<b class="nc"><i>919</i>&nbsp;        meta.save(os);</b>
+<b class="nc"><i>920</i>&nbsp;        ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());</b>
+<b class="nc"><i>921</i>&nbsp;        PDMetadata metadataStream = new PDMetadata(document, is, false);</b>
+<b class="nc"><i>922</i>&nbsp;        catalog.setMetadata(metadataStream);</b>
+<b class="nc"><i>923</i>&nbsp;    }</b>
+<i>924</i>&nbsp;
+<i>925</i>&nbsp;    /**
+<i>926</i>&nbsp;     * Try to write the given BibTexEntry in the Document Information (the
+<i>927</i>&nbsp;     * properties of the pdf).
+<i>928</i>&nbsp;     *
+<i>929</i>&nbsp;     * Existing fields values are overriden if the bibtex entry has the
+<i>930</i>&nbsp;     * corresponding value set.
+<i>931</i>&nbsp;     *
+<i>932</i>&nbsp;     * @param document
+<i>933</i>&nbsp;     *            The pdf document to write to.
+<i>934</i>&nbsp;     * @param entry
+<i>935</i>&nbsp;     *            The Bibtex entry that is written into the PDF properties. *
+<i>936</i>&nbsp;     * @param database
+<i>937</i>&nbsp;     *            maybenull An optional database which the given bibtex entries
+<i>938</i>&nbsp;     *            belong to, which will be used to resolve strings. If the
+<i>939</i>&nbsp;     *            database is null the strings will not be resolved.
+<i>940</i>&nbsp;     */
+<i>941</i>&nbsp;    private static void writeDocumentInformation(PDDocument document,
+<i>942</i>&nbsp;            BibEntry entry, BibDatabase database, XMPPreferences xmpPreferences) {
+<i>943</i>&nbsp;
+<b class="nc"><i>944</i>&nbsp;        PDDocumentInformation di = document.getDocumentInformation();</b>
+<i>945</i>&nbsp;
+<i>946</i>&nbsp;        BibEntry resolvedEntry;
+<b class="nc"><i>947</i>&nbsp;        if (database == null) {</b>
+<b class="nc"><i>948</i>&nbsp;            resolvedEntry = entry;</b>
+<i>949</i>&nbsp;        } else {
+<b class="nc"><i>950</i>&nbsp;            resolvedEntry = database.resolveForStrings(entry, false);</b>
+<i>951</i>&nbsp;        }
+<i>952</i>&nbsp;
+<i>953</i>&nbsp;        // Query privacy filter settings
+<b class="nc"><i>954</i>&nbsp;        boolean useXmpPrivacyFilter = xmpPreferences.isUseXMPPrivacyFilter();</b>
+<i>955</i>&nbsp;        // Fields for which not to write XMP data later on:
+<b class="nc"><i>956</i>&nbsp;        Set&lt;String&gt; filters = new TreeSet&lt;&gt;(xmpPreferences.getXmpPrivacyFilter());</b>
+<i>957</i>&nbsp;
+<i>958</i>&nbsp;        // Set all the values including key and entryType
+<b class="nc"><i>959</i>&nbsp;        for (Entry&lt;String, String&gt; field : resolvedEntry.getFieldMap().entrySet()) {</b>
+<i>960</i>&nbsp;
+<b class="nc"><i>961</i>&nbsp;            String fieldName = field.getKey();</b>
+<b class="nc"><i>962</i>&nbsp;            String fieldContent = field.getValue();</b>
+<i>963</i>&nbsp;
+<b class="nc"><i>964</i>&nbsp;            if (useXmpPrivacyFilter &amp;&amp; filters.contains(fieldName)) {</b>
+<i>965</i>&nbsp;                // erase field instead of adding it
+<b class="nc"><i>966</i>&nbsp;                if (FieldName.AUTHOR.equals(fieldName)) {</b>
+<b class="nc"><i>967</i>&nbsp;                    di.setAuthor(null);</b>
+<b class="nc"><i>968</i>&nbsp;                } else if (FieldName.TITLE.equals(fieldName)) {</b>
+<b class="nc"><i>969</i>&nbsp;                    di.setTitle(null);</b>
+<b class="nc"><i>970</i>&nbsp;                } else if (FieldName.KEYWORDS.equals(fieldName)) {</b>
+<b class="nc"><i>971</i>&nbsp;                    di.setKeywords(null);</b>
+<b class="nc"><i>972</i>&nbsp;                } else if (FieldName.ABSTRACT.equals(fieldName)) {</b>
+<b class="nc"><i>973</i>&nbsp;                    di.setSubject(null);</b>
+<i>974</i>&nbsp;                } else {
+<b class="nc"><i>975</i>&nbsp;                    di.setCustomMetadataValue(&quot;bibtex/&quot; + fieldName, null);</b>
+<i>976</i>&nbsp;                }
+<b class="nc"><i>977</i>&nbsp;                continue;</b>
+<i>978</i>&nbsp;            }
+<i>979</i>&nbsp;
+<b class="nc"><i>980</i>&nbsp;            if (FieldName.AUTHOR.equals(fieldName)) {</b>
+<b class="nc"><i>981</i>&nbsp;                di.setAuthor(fieldContent);</b>
+<b class="nc"><i>982</i>&nbsp;            } else if (FieldName.TITLE.equals(fieldName)) {</b>
+<b class="nc"><i>983</i>&nbsp;                di.setTitle(fieldContent);</b>
+<b class="nc"><i>984</i>&nbsp;            } else if (FieldName.KEYWORDS.equals(fieldName)) {</b>
+<b class="nc"><i>985</i>&nbsp;                di.setKeywords(fieldContent);</b>
+<b class="nc"><i>986</i>&nbsp;            } else if (FieldName.ABSTRACT.equals(fieldName)) {</b>
+<b class="nc"><i>987</i>&nbsp;                di.setSubject(fieldContent);</b>
+<i>988</i>&nbsp;            } else {
+<b class="nc"><i>989</i>&nbsp;                di.setCustomMetadataValue(&quot;bibtex/&quot; + fieldName, fieldContent);</b>
+<i>990</i>&nbsp;            }
+<b class="nc"><i>991</i>&nbsp;        }</b>
+<b class="nc"><i>992</i>&nbsp;        di.setCustomMetadataValue(&quot;bibtex/entrytype&quot;, StringUtil.capitalizeFirst(resolvedEntry.getType()));</b>
+<b class="nc"><i>993</i>&nbsp;    }</b>
+<i>994</i>&nbsp;
+<i>995</i>&nbsp;    /**
+<i>996</i>&nbsp;     * Try to write the given BibTexEntry in the XMP-stream of the given
+<i>997</i>&nbsp;     * PDF-file.
+<i>998</i>&nbsp;     *
+<i>999</i>&nbsp;     * Throws an IOException if the file cannot be read or written, so the user
+<i>1000</i>&nbsp;     * can remove a lock or cancel the operation.
+<i>1001</i>&nbsp;     *
+<i>1002</i>&nbsp;     * The method will overwrite existing BibTeX-XMP-data, but keep other
+<i>1003</i>&nbsp;     * existing metadata.
+<i>1004</i>&nbsp;     *
+<i>1005</i>&nbsp;     * @param file
+<i>1006</i>&nbsp;     *            The file to write the entries to.
+<i>1007</i>&nbsp;     * @param bibtexEntries
+<i>1008</i>&nbsp;     *            The entries to write to the file. *
+<i>1009</i>&nbsp;     * @param database
+<i>1010</i>&nbsp;     *            maybenull An optional database which the given bibtex entries
+<i>1011</i>&nbsp;     *            belong to, which will be used to resolve strings. If the
+<i>1012</i>&nbsp;     *            database is null the strings will not be resolved.
+<i>1013</i>&nbsp;     * @param writePDFInfo
+<i>1014</i>&nbsp;     *            Write information also in PDF document properties
+<i>1015</i>&nbsp;     * @throws TransformerException
+<i>1016</i>&nbsp;     *             If the entry was malformed or unsupported.
+<i>1017</i>&nbsp;     * @throws IOException
+<i>1018</i>&nbsp;     *             If the file could not be written to or could not be found.
+<i>1019</i>&nbsp;     */
+<i>1020</i>&nbsp;    public static void writeXMP(File file,
+<i>1021</i>&nbsp;            Collection&lt;BibEntry&gt; bibtexEntries, BibDatabase database,
+<i>1022</i>&nbsp;            boolean writePDFInfo, XMPPreferences xmpPreferences) throws IOException, TransformerException {
+<i>1023</i>&nbsp;
+<i>1024</i>&nbsp;        Collection&lt;BibEntry&gt; resolvedEntries;
+<b class="nc"><i>1025</i>&nbsp;        if (database == null) {</b>
+<b class="nc"><i>1026</i>&nbsp;            resolvedEntries = bibtexEntries;</b>
+<i>1027</i>&nbsp;        } else {
+<b class="nc"><i>1028</i>&nbsp;            resolvedEntries = database.resolveForStrings(bibtexEntries, false);</b>
+<i>1029</i>&nbsp;        }
+<i>1030</i>&nbsp;
+<b class="nc"><i>1031</i>&nbsp;        try (PDDocument document = PDDocument.load(file.getAbsoluteFile())) {</b>
+<b class="nc"><i>1032</i>&nbsp;            if (document.isEncrypted()) {</b>
+<b class="nc"><i>1033</i>&nbsp;                throw new EncryptedPdfsNotSupportedException();</b>
+<i>1034</i>&nbsp;            }
+<i>1035</i>&nbsp;
+<b class="nc"><i>1036</i>&nbsp;            if (writePDFInfo &amp;&amp; (resolvedEntries.size() == 1)) {</b>
+<b class="nc"><i>1037</i>&nbsp;                XMPUtil.writeDocumentInformation(document, resolvedEntries</b>
+<b class="nc"><i>1038</i>&nbsp;                        .iterator().next(), null, xmpPreferences);</b>
+<b class="nc"><i>1039</i>&nbsp;                XMPUtil.writeDublinCore(document, resolvedEntries, null, xmpPreferences);</b>
+<i>1040</i>&nbsp;            }
+<i>1041</i>&nbsp;
+<b class="nc"><i>1042</i>&nbsp;            PDDocumentCatalog catalog = document.getDocumentCatalog();</b>
+<b class="nc"><i>1043</i>&nbsp;            PDMetadata metaRaw = catalog.getMetadata();</b>
+<i>1044</i>&nbsp;
+<i>1045</i>&nbsp;            XMPMetadata meta;
+<b class="nc"><i>1046</i>&nbsp;            if (metaRaw == null) {</b>
+<b class="nc"><i>1047</i>&nbsp;                meta = new XMPMetadata();</b>
+<i>1048</i>&nbsp;            } else {
+<b class="nc"><i>1049</i>&nbsp;                meta = new XMPMetadata(XMLUtil.parse(metaRaw.createInputStream()));</b>
+<i>1050</i>&nbsp;            }
+<b class="nc"><i>1051</i>&nbsp;            meta.addXMLNSMapping(XMPSchemaBibtex.NAMESPACE,</b>
+<i>1052</i>&nbsp;                    XMPSchemaBibtex.class);
+<i>1053</i>&nbsp;
+<i>1054</i>&nbsp;            // Remove all current Bibtex-schemas
+<b class="nc"><i>1055</i>&nbsp;            List&lt;XMPSchema&gt; schemas = meta</b>
+<b class="nc"><i>1056</i>&nbsp;                    .getSchemasByNamespaceURI(XMPSchemaBibtex.NAMESPACE);</b>
+<b class="nc"><i>1057</i>&nbsp;            for (XMPSchema schema : schemas) {</b>
+<b class="nc"><i>1058</i>&nbsp;                XMPSchemaBibtex bib = (XMPSchemaBibtex) schema;</b>
+<b class="nc"><i>1059</i>&nbsp;                bib.getElement().getParentNode().removeChild(bib.getElement());</b>
+<b class="nc"><i>1060</i>&nbsp;            }</b>
+<i>1061</i>&nbsp;
+<b class="nc"><i>1062</i>&nbsp;            for (BibEntry e : resolvedEntries) {</b>
+<b class="nc"><i>1063</i>&nbsp;                XMPSchemaBibtex bibtex = new XMPSchemaBibtex(meta);</b>
+<b class="nc"><i>1064</i>&nbsp;                meta.addSchema(bibtex);</b>
+<b class="nc"><i>1065</i>&nbsp;                bibtex.setBibtexEntry(e, xmpPreferences);</b>
+<b class="nc"><i>1066</i>&nbsp;            }</b>
+<i>1067</i>&nbsp;
+<i>1068</i>&nbsp;            // Save to stream and then input that stream to the PDF
+<b class="nc"><i>1069</i>&nbsp;            ByteArrayOutputStream os = new ByteArrayOutputStream();</b>
+<b class="nc"><i>1070</i>&nbsp;            meta.save(os);</b>
+<b class="nc"><i>1071</i>&nbsp;            ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());</b>
+<b class="nc"><i>1072</i>&nbsp;            PDMetadata metadataStream = new PDMetadata(document, is, false);</b>
+<b class="nc"><i>1073</i>&nbsp;            catalog.setMetadata(metadataStream);</b>
+<i>1074</i>&nbsp;
+<i>1075</i>&nbsp;            // Save
+<i>1076</i>&nbsp;            try {
+<b class="nc"><i>1077</i>&nbsp;                document.save(file.getAbsolutePath());</b>
+<b class="nc"><i>1078</i>&nbsp;            } catch (COSVisitorException e) {</b>
+<b class="nc"><i>1079</i>&nbsp;                LOGGER.debug(&quot;Could not write XMP metadata&quot;, e);</b>
+<b class="nc"><i>1080</i>&nbsp;                throw new TransformerException(&quot;Could not write XMP metadata: &quot; + e.getLocalizedMessage(), e);</b>
+<b class="nc"><i>1081</i>&nbsp;            }</b>
+<b class="nc"><i>1082</i>&nbsp;        }</b>
+<b class="nc"><i>1083</i>&nbsp;    }</b>
+<i>1084</i>&nbsp;
+<i>1085</i>&nbsp;    /**
+<i>1086</i>&nbsp;     * see XMPUtil.hasMetadata(InputStream)
+<i>1087</i>&nbsp;     */
+<i>1088</i>&nbsp;    public static boolean hasMetadata(Path path, XMPPreferences xmpPreferences) {
+<b class="nc"><i>1089</i>&nbsp;        try (InputStream inputStream = Files.newInputStream(path, StandardOpenOption.READ)) {</b>
+<b class="nc"><i>1090</i>&nbsp;            return hasMetadata(inputStream, xmpPreferences);</b>
+<b class="nc"><i>1091</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i>1092</i>&nbsp;            LOGGER.error(&quot;XMP reading failed&quot;, e);</b>
+<b class="nc"><i>1093</i>&nbsp;            return false;</b>
+<i>1094</i>&nbsp;        }
+<i>1095</i>&nbsp;    }
+<i>1096</i>&nbsp;
+<i>1097</i>&nbsp;    /**
+<i>1098</i>&nbsp;     * Will try to read XMP metadata from the given file, returning whether
+<i>1099</i>&nbsp;     * metadata was found.
+<i>1100</i>&nbsp;     *
+<i>1101</i>&nbsp;     * Caution: This method is as expensive as it is reading the actual metadata
+<i>1102</i>&nbsp;     * itself from the PDF.
+<i>1103</i>&nbsp;     *
+<i>1104</i>&nbsp;     * @param inputStream
+<i>1105</i>&nbsp;     *            The inputStream to read the PDF from.
+<i>1106</i>&nbsp;     * @return whether a BibEntry was found in the given PDF.
+<i>1107</i>&nbsp;     */
+<i>1108</i>&nbsp;    public static boolean hasMetadata(InputStream inputStream, XMPPreferences xmpPreferences) {
+<i>1109</i>&nbsp;        try {
+<b class="nc"><i>1110</i>&nbsp;            List&lt;BibEntry&gt; bibEntries = XMPUtil.readXMP(inputStream, xmpPreferences);</b>
+<b class="nc"><i>1111</i>&nbsp;            return !bibEntries.isEmpty();</b>
+<b class="nc"><i>1112</i>&nbsp;        } catch (EncryptedPdfsNotSupportedException ex) {</b>
+<b class="nc"><i>1113</i>&nbsp;            LOGGER.info(&quot;Encryption not supported by XMPUtil&quot;);</b>
+<b class="nc"><i>1114</i>&nbsp;            return false;</b>
+<b class="nc"><i>1115</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i>1116</i>&nbsp;            LOGGER.error(&quot;XMP reading failed&quot;, e);</b>
+<b class="nc"><i>1117</i>&nbsp;            return false;</b>
+<i>1118</i>&nbsp;        }
+<i>1119</i>&nbsp;    }
+<i>1120</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

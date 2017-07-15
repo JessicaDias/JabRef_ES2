@@ -1,0 +1,199 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: KeyBinding</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.keyboard</a> ]
+</div>
+
+<h1>Coverage Summary for Class: KeyBinding (net.sf.jabref.gui.keyboard)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">KeyBinding</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 95)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.keyboard;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>4</i>&nbsp;
+<b class="nc"><i>5</i>&nbsp;public enum KeyBinding {</b>
+<i>6</i>&nbsp;
+<b class="nc"><i>7</i>&nbsp;    ABBREVIATE(&quot;Abbreviate&quot;, Localization.lang(&quot;Abbreviate journal names&quot;), &quot;ctrl alt A&quot;),</b>
+<b class="nc"><i>8</i>&nbsp;    ACCEPT(&quot;Accept&quot;, Localization.lang(&quot;Accept&quot;), &quot;ctrl ENTER&quot;),</b>
+<b class="nc"><i>9</i>&nbsp;    AUTOGENERATE_BIBTEX_KEYS(&quot;Autogenerate BibTeX keys&quot;, Localization.lang(&quot;Autogenerate BibTeX keys&quot;), &quot;ctrl G&quot;),</b>
+<b class="nc"><i>10</i>&nbsp;    AUTOMATICALLY_LINK_FILES(&quot;Automatically link files&quot;, Localization.lang(&quot;Automatically set file links&quot;), &quot;F7&quot;),</b>
+<b class="nc"><i>11</i>&nbsp;    BACK(&quot;Back&quot;, Localization.lang(&quot;Back&quot;), &quot;alt LEFT&quot;),</b>
+<b class="nc"><i>12</i>&nbsp;    CHECK_INTEGRITY(&quot;Check integrity&quot;, Localization.menuTitle(&quot;Check integrity&quot;), &quot;ctrl F8&quot;),</b>
+<b class="nc"><i>13</i>&nbsp;    CLEANUP(&quot;Cleanup&quot;, Localization.lang(&quot;Cleanup entries&quot;), &quot;alt F8&quot;),</b>
+<b class="nc"><i>14</i>&nbsp;    CLEAR_SEARCH(&quot;Clear search&quot;, Localization.lang(&quot;Clear search&quot;), &quot;ESCAPE&quot;),</b>
+<b class="nc"><i>15</i>&nbsp;    CLOSE_DATABASE(&quot;Close database&quot;, Localization.lang(&quot;Close database&quot;), &quot;ctrl W&quot;),</b>
+<b class="nc"><i>16</i>&nbsp;    CLOSE_DIALOG(&quot;Close dialog&quot;, Localization.lang(&quot;Close dialog&quot;), &quot;ESCAPE&quot;),</b>
+<b class="nc"><i>17</i>&nbsp;    CLOSE_ENTRY_EDITOR(&quot;Close entry editor&quot;, Localization.lang(&quot;Close entry editor&quot;), &quot;ESCAPE&quot;),</b>
+<b class="nc"><i>18</i>&nbsp;    COPY(&quot;Copy&quot;, Localization.lang(&quot;Copy&quot;), &quot;ctrl C&quot;),</b>
+<b class="nc"><i>19</i>&nbsp;    COPY_CITE_BIBTEX_KEY(&quot;Copy \\cite{BibTeX key}&quot;, Localization.lang(&quot;Copy \\cite{BibTeX key}&quot;), &quot;ctrl K&quot;),</b>
+<b class="nc"><i>20</i>&nbsp;    COPY_BIBTEX_KEY(&quot;Copy BibTeX key&quot;, Localization.lang(&quot;Copy BibTeX key&quot;), &quot;ctrl shift K&quot;),</b>
+<b class="nc"><i>21</i>&nbsp;    COPY_BIBTEX_KEY_AND_TITLE(&quot;Copy BibTeX key and title&quot;, Localization.lang(&quot;Copy BibTeX key and title&quot;), &quot;ctrl shift alt K&quot;),</b>
+<b class="nc"><i>22</i>&nbsp;    COPY_BIBTEX_KEY_AND_LINK(&quot;Copy BibTeX key and link&quot;, Localization.lang(&quot;Copy BibTeX key and link&quot;), &quot;ctrl alt K&quot;),</b>
+<b class="nc"><i>23</i>&nbsp;    COPY_PREVIEW(&quot;Copy preview&quot;, Localization.lang(&quot;Copy preview&quot;), &quot;ctrl shift C&quot;),</b>
+<b class="nc"><i>24</i>&nbsp;    CUT(&quot;Cut&quot;, Localization.lang(&quot;Cut&quot;), &quot;ctrl X&quot;),</b>
+<b class="nc"><i>25</i>&nbsp;    DECREASE_TABLE_FONT_SIZE(&quot;Decrease table font size&quot;, Localization.lang(&quot;Decrease table font size&quot;), &quot;ctrl MINUS&quot;),</b>
+<b class="nc"><i>26</i>&nbsp;    DELETE_ENTRY(&quot;Delete entry&quot;, Localization.lang(&quot;Delete entry&quot;), &quot;DELETE&quot;),</b>
+<b class="nc"><i>27</i>&nbsp;    EDIT_ENTRY(&quot;Edit entry&quot;, Localization.lang(&quot;Edit entry&quot;), &quot;ctrl E&quot;),</b>
+<b class="nc"><i>28</i>&nbsp;    EDIT_STRINGS(&quot;Edit strings&quot;, Localization.lang(&quot;Edit strings&quot;), &quot;ctrl T&quot;),</b>
+<b class="nc"><i>29</i>&nbsp;    ENTRY_EDITOR_NEXT_ENTRY(&quot;Entry editor, next entry&quot;, Localization.lang(&quot;Entry editor, next entry&quot;), &quot;ctrl shift DOWN&quot;),</b>
+<b class="nc"><i>30</i>&nbsp;    ENTRY_EDITOR_NEXT_PANEL(&quot;Entry editor, next panel&quot;, Localization.lang(&quot;Entry editor, next panel&quot;), &quot;ctrl TAB&quot;),</b>
+<b class="nc"><i>31</i>&nbsp;    ENTRY_EDITOR_NEXT_PANEL_2(&quot;Entry editor, next panel 2&quot;, Localization.lang(&quot;Entry editor, next panel 2&quot;), &quot;ctrl PLUS&quot;),</b>
+<b class="nc"><i>32</i>&nbsp;    ENTRY_EDITOR_PREVIOUS_ENTRY(&quot;Entry editor, previous entry&quot;, Localization.lang(&quot;Entry editor, previous entry&quot;), &quot;ctrl shift UP&quot;),</b>
+<b class="nc"><i>33</i>&nbsp;    ENTRY_EDITOR_PREVIOUS_PANEL(&quot;Entry editor, previous panel&quot;, Localization.lang(&quot;Entry editor, previous panel&quot;), &quot;ctrl shift TAB&quot;),</b>
+<b class="nc"><i>34</i>&nbsp;    ENTRY_EDITOR_PREVIOUS_PANEL_2(&quot;Entry editor, previous panel 2&quot;, Localization.lang(&quot;Entry editor, previous panel 2&quot;), &quot;ctrl MINUS&quot;),</b>
+<b class="nc"><i>35</i>&nbsp;    ENTRY_EDITOR_STORE_FIELD(&quot;Entry editor, store field&quot;, Localization.lang(&quot;Entry editor, store field&quot;), &quot;alt S&quot;),</b>
+<b class="nc"><i>36</i>&nbsp;    FILE_LIST_EDITOR_MOVE_ENTRY_DOWN(&quot;File list editor, move entry down&quot;, Localization.lang(&quot;File list editor, move entry down&quot;), &quot;ctrl DOWN&quot;),</b>
+<b class="nc"><i>37</i>&nbsp;    FILE_LIST_EDITOR_MOVE_ENTRY_UP(&quot;File list editor, move entry up&quot;, Localization.lang(&quot;File list editor, move entry up&quot;), &quot;ctrl UP&quot;),</b>
+<b class="nc"><i>38</i>&nbsp;    FIND_UNLINKED_FILES(&quot;Find unlinked files&quot;, Localization.lang(&quot;Find unlinked files&quot;), &quot;shift F7&quot;),</b>
+<b class="nc"><i>39</i>&nbsp;    FOCUS_ENTRY_TABLE(&quot;Focus entry table&quot;, Localization.lang(&quot;Focus entry table&quot;), &quot;alt 1&quot;),</b>
+<b class="nc"><i>40</i>&nbsp;    FORWARD(&quot;Forward&quot;, Localization.lang(&quot;Forward&quot;), &quot;alt RIGHT&quot;),</b>
+<b class="nc"><i>41</i>&nbsp;    GLOBAL_SEARCH(&quot;Search globally&quot;, Localization.lang(&quot;Search globally&quot;), &quot;ctrl shift F&quot;),</b>
+<b class="nc"><i>42</i>&nbsp;    HELP(&quot;Help&quot;, Localization.lang(&quot;Help&quot;), &quot;F1&quot;),</b>
+<b class="nc"><i>43</i>&nbsp;    IMPORT_INTO_CURRENT_DATABASE(&quot;Import into current database&quot;, Localization.lang(&quot;Import into current database&quot;), &quot;ctrl I&quot;),</b>
+<b class="nc"><i>44</i>&nbsp;    IMPORT_INTO_NEW_DATABASE(&quot;Import into new database&quot;, Localization.lang(&quot;Import into new database&quot;), &quot;ctrl alt I&quot;),</b>
+<b class="nc"><i>45</i>&nbsp;    INCREASE_TABLE_FONT_SIZE(&quot;Increase table font size&quot;, Localization.lang(&quot;Increase table font size&quot;), &quot;ctrl PLUS&quot;),</b>
+<b class="nc"><i>46</i>&nbsp;    MARK_ENTRIES(&quot;Mark entries&quot;, Localization.lang(&quot;Mark entries&quot;), &quot;ctrl M&quot;),</b>
+<b class="nc"><i>47</i>&nbsp;    NEW_ARTICLE(&quot;New article&quot;, Localization.lang(&quot;New article&quot;), &quot;ctrl shift A&quot;),</b>
+<b class="nc"><i>48</i>&nbsp;    NEW_BOOK(&quot;New book&quot;, Localization.lang(&quot;New book&quot;), &quot;ctrl shift B&quot;),</b>
+<b class="nc"><i>49</i>&nbsp;    NEW_ENTRY(&quot;New entry&quot;, Localization.lang(&quot;New entry&quot;), &quot;ctrl N&quot;),</b>
+<b class="nc"><i>50</i>&nbsp;    NEW_FROM_PLAIN_TEXT(&quot;New from plain text&quot;, Localization.lang(&quot;New from plain text&quot;), &quot;ctrl shift N&quot;),</b>
+<b class="nc"><i>51</i>&nbsp;    NEW_INBOOK(&quot;New inbook&quot;, Localization.lang(&quot;New inbook&quot;), &quot;ctrl shift I&quot;),</b>
+<b class="nc"><i>52</i>&nbsp;    NEW_MASTERSTHESIS(&quot;New mastersthesis&quot;, Localization.lang(&quot;New mastersthesis&quot;), &quot;ctrl shift M&quot;),</b>
+<b class="nc"><i>53</i>&nbsp;    NEW_PHDTHESIS(&quot;New phdthesis&quot;, Localization.lang(&quot;New phdthesis&quot;), &quot;ctrl shift T&quot;),</b>
+<b class="nc"><i>54</i>&nbsp;    NEW_PROCEEDINGS(&quot;New proceedings&quot;, Localization.lang(&quot;New proceedings&quot;), &quot;ctrl shift P&quot;),</b>
+<b class="nc"><i>55</i>&nbsp;    NEW_UNPUBLISHED(&quot;New unpublished&quot;, Localization.lang(&quot;New unpublished&quot;), &quot;ctrl shift U&quot;),</b>
+<b class="nc"><i>56</i>&nbsp;    NEW_TECHREPORT(&quot;New technical report&quot;, Localization.lang(&quot;New technical report&quot;), &quot;ctrl shift R&quot;),</b>
+<b class="nc"><i>57</i>&nbsp;    NEXT_PREVIEW_LAYOUT(&quot;Next preview layout&quot;, Localization.lang(&quot;Next preview layout&quot;), &quot;F9&quot;),</b>
+<b class="nc"><i>58</i>&nbsp;    NEXT_TAB(&quot;Next tab&quot;, Localization.lang(&quot;Next tab&quot;), &quot;ctrl PAGE_DOWN&quot;),</b>
+<b class="nc"><i>59</i>&nbsp;    OPEN_CONSOLE(&quot;Open terminal here&quot;, Localization.lang(&quot;Open terminal here&quot;), &quot;ctrl shift L&quot;),</b>
+<b class="nc"><i>60</i>&nbsp;    OPEN_DATABASE(&quot;Open database&quot;, Localization.lang(&quot;Open database&quot;), &quot;ctrl O&quot;),</b>
+<b class="nc"><i>61</i>&nbsp;    OPEN_FILE(&quot;Open file&quot;, Localization.lang(&quot;Open file&quot;), &quot;F4&quot;),</b>
+<b class="nc"><i>62</i>&nbsp;    OPEN_FOLDER(&quot;Open folder&quot;, Localization.lang(&quot;Open folder&quot;), &quot;ctrl shift O&quot;),</b>
+<b class="nc"><i>63</i>&nbsp;    OPEN_OPEN_OFFICE_LIBRE_OFFICE_CONNECTION(&quot;Open OpenOffice/LibreOffice connection&quot;, Localization.lang(&quot;Open OpenOffice/LibreOffice connection&quot;), &quot;alt 0&quot;),</b>
+<b class="nc"><i>64</i>&nbsp;    OPEN_URL_OR_DOI(&quot;Open URL or DOI&quot;, Localization.lang(&quot;Open URL or DOI&quot;), &quot;F3&quot;),</b>
+<b class="nc"><i>65</i>&nbsp;    PASTE(&quot;Paste&quot;, Localization.lang(&quot;Paste&quot;), &quot;ctrl V&quot;),</b>
+<b class="nc"><i>66</i>&nbsp;    PULL_CHANGES_FROM_SHARED_DATABASE(&quot;Pull changes from shared database&quot;, Localization.lang(&quot;Pull changes from shared database&quot;), &quot;ctrl shift R&quot;),</b>
+<b class="nc"><i>67</i>&nbsp;    PREAMBLE_EDITOR_STORE_CHANGES(&quot;Preamble editor, store changes&quot;, Localization.lang(&quot;Preamble editor, store changes&quot;), &quot;alt S&quot;),</b>
+<b class="nc"><i>68</i>&nbsp;    PREVIOUS_PREVIEW_LAYOUT(&quot;Previous preview layout&quot;, Localization.lang(&quot;Previous preview layout&quot;), &quot;shift F9&quot;),</b>
+<b class="nc"><i>69</i>&nbsp;    PREVIOUS_TAB(&quot;Previous tab&quot;, Localization.lang(&quot;Previous tab&quot;), &quot;ctrl PAGE_UP&quot;),</b>
+<b class="nc"><i>70</i>&nbsp;    PUSH_TO_APPLICATION(&quot;Push to application&quot;, Localization.lang(&quot;Push to application&quot;), &quot;ctrl L&quot;),</b>
+<b class="nc"><i>71</i>&nbsp;    QUIT_JABREF(&quot;Quit JabRef&quot;, Localization.lang(&quot;Quit JabRef&quot;), &quot;ctrl Q&quot;),</b>
+<b class="nc"><i>72</i>&nbsp;    REDO(&quot;Redo&quot;, Localization.lang(&quot;Redo&quot;), &quot;ctrl Y&quot;),</b>
+<b class="nc"><i>73</i>&nbsp;    REFRESH_OO(&quot;Refresh OO&quot;, Localization.lang(&quot;Refresh OpenOffice/LibreOffice&quot;), &quot;ctrl alt O&quot;),</b>
+<b class="nc"><i>74</i>&nbsp;    REPLACE_STRING(&quot;Replace string&quot;, Localization.lang(&quot;Replace string&quot;), &quot;ctrl R&quot;),</b>
+<b class="nc"><i>75</i>&nbsp;    RESOLVE_DUPLICATE_BIBTEX_KEYS(&quot;Resolve duplicate BibTeX keys&quot;, Localization.lang(&quot;Resolve duplicate BibTeX keys&quot;), &quot;ctrl shift D&quot;),</b>
+<b class="nc"><i>76</i>&nbsp;    SAVE_ALL(&quot;Save all&quot;, Localization.lang(&quot;Save all&quot;), &quot;ctrl alt S&quot;),</b>
+<b class="nc"><i>77</i>&nbsp;    SAVE_DATABASE(&quot;Save database&quot;, Localization.lang(&quot;Save database&quot;), &quot;ctrl S&quot;),</b>
+<b class="nc"><i>78</i>&nbsp;    SAVE_DATABASE_AS(&quot;Save database as ...&quot;, Localization.lang(&quot;Save database as...&quot;), &quot;ctrl shift S&quot;),</b>
+<b class="nc"><i>79</i>&nbsp;    SEARCH(&quot;Search&quot;, Localization.lang(&quot;Search&quot;), &quot;ctrl F&quot;),</b>
+<b class="nc"><i>80</i>&nbsp;    SELECT_ALL(&quot;Select all&quot;, Localization.lang(&quot;Select all&quot;), &quot;ctrl A&quot;),</b>
+<b class="nc"><i>81</i>&nbsp;    SELECT_FIRST_ENTRY(&quot;Select first entry&quot;, Localization.lang(&quot;Select first entry&quot;), &quot;HOME&quot;),</b>
+<b class="nc"><i>82</i>&nbsp;    SELECT_LAST_ENTRY(&quot;Select last entry&quot;, Localization.lang(&quot;Select last entry&quot;), &quot;END&quot;),</b>
+<b class="nc"><i>83</i>&nbsp;    STRING_DIALOG_ADD_STRING(&quot;String dialog, add string&quot;, Localization.lang(&quot;String dialog, add string&quot;), &quot;ctrl N&quot;),</b>
+<b class="nc"><i>84</i>&nbsp;    STRING_DIALOG_REMOVE_STRING(&quot;String dialog, remove string&quot;, Localization.lang(&quot;String dialog, remove string&quot;), &quot;shift DELETE&quot;),</b>
+<b class="nc"><i>85</i>&nbsp;    SYNCHRONIZE_FILES(&quot;Synchronize files&quot;, Localization.lang(&quot;Synchronize files&quot;), &quot;ctrl shift F7&quot;),</b>
+<b class="nc"><i>86</i>&nbsp;    TOGGLE_ENTRY_PREVIEW(&quot;Toggle entry preview&quot;, Localization.lang(&quot;Toggle entry preview&quot;), &quot;alt 2&quot;),</b>
+<b class="nc"><i>87</i>&nbsp;    TOGGLE_GROUPS_INTERFACE(&quot;Toggle groups interface&quot;, Localization.lang(&quot;Toggle groups interface&quot;), &quot;alt 3&quot;),</b>
+<b class="nc"><i>88</i>&nbsp;    UNABBREVIATE(&quot;Unabbreviate&quot;, Localization.lang(&quot;Unabbreviate&quot;), &quot;ctrl alt shift A&quot;),</b>
+<b class="nc"><i>89</i>&nbsp;    UNDO(&quot;Undo&quot;, Localization.lang(&quot;Undo&quot;), &quot;ctrl Z&quot;),</b>
+<b class="nc"><i>90</i>&nbsp;    UNMARK_ENTRIES(&quot;Unmark entries&quot;, Localization.lang(&quot;Unmark entries&quot;), &quot;ctrl shift M&quot;),</b>
+<b class="nc"><i>91</i>&nbsp;    WEB_SEARCH(&quot;Web search&quot;, Localization.lang(&quot;Web search&quot;), &quot;alt 4&quot;),</b>
+<b class="nc"><i>92</i>&nbsp;    WRITE_XMP(&quot;Write XMP&quot;, Localization.lang(&quot;Write XMP&quot;), &quot;F6&quot;);</b>
+<i>93</i>&nbsp;
+<i>94</i>&nbsp;    private final String key;
+<i>95</i>&nbsp;    private final String localization;
+<i>96</i>&nbsp;    private final String defaultBinding;
+<i>97</i>&nbsp;
+<b class="nc"><i>98</i>&nbsp;    KeyBinding(String key, String localization, String defaultBinding) {</b>
+<b class="nc"><i>99</i>&nbsp;        this.key = key;</b>
+<b class="nc"><i>100</i>&nbsp;        this.localization = localization;</b>
+<b class="nc"><i>101</i>&nbsp;        this.defaultBinding = defaultBinding;</b>
+<b class="nc"><i>102</i>&nbsp;    }</b>
+<i>103</i>&nbsp;
+<i>104</i>&nbsp;    public String getKey() {
+<b class="nc"><i>105</i>&nbsp;        return key;</b>
+<i>106</i>&nbsp;    }
+<i>107</i>&nbsp;
+<i>108</i>&nbsp;    public String getLocalization() {
+<b class="nc"><i>109</i>&nbsp;        return localization;</b>
+<i>110</i>&nbsp;    }
+<i>111</i>&nbsp;
+<i>112</i>&nbsp;    public String getDefaultBinding() {
+<b class="nc"><i>113</i>&nbsp;        return defaultBinding;</b>
+<i>114</i>&nbsp;    }
+<i>115</i>&nbsp;
+<i>116</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,158 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: BibtexTextPrefix</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.bst</a> ]
+</div>
+
+<h1>Coverage Summary for Class: BibtexTextPrefix (net.sf.jabref.logic.bst)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">BibtexTextPrefix</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 33)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.bst;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;/**
+<i>4</i>&nbsp; * The |built_in| function {\.{text.prefix\$}} pops the top two literals (the
+<i>5</i>&nbsp; * integer literal |pop_lit1| and a string literal, in that order). It pushes
+<i>6</i>&nbsp; * the substring of the (at most) |pop_lit1| consecutive text characters
+<i>7</i>&nbsp; * starting from the beginning of the string. This function is similar to
+<i>8</i>&nbsp; * {\.{substring\$}}, but this one considers an accented character (or more
+<i>9</i>&nbsp; * precisely, a ``special character&#39;&#39;$\!$, even if it&#39;s missing its matching
+<i>10</i>&nbsp; * |right_brace|) to be a single text character (rather than however many
+<i>11</i>&nbsp; * |ASCII_code| characters it actually comprises), and this function doesn&#39;t
+<i>12</i>&nbsp; * consider braces to be text characters; furthermore, this function appends any
+<i>13</i>&nbsp; * needed matching |right_brace|s. If any of the types is incorrect, it
+<i>14</i>&nbsp; * complains and pushes the null string.
+<i>15</i>&nbsp; *
+<i>16</i>&nbsp; */
+<b class="nc"><i>17</i>&nbsp;public class BibtexTextPrefix {</b>
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;    /**
+<i>20</i>&nbsp;     *
+<i>21</i>&nbsp;     * @param numOfChars
+<i>22</i>&nbsp;     * @param toPrefix
+<i>23</i>&nbsp;     * @param warn may-be-null
+<i>24</i>&nbsp;     * @return
+<i>25</i>&nbsp;     */
+<i>26</i>&nbsp;    public static String textPrefix(int inNumOfChars, String toPrefix, Warn warn) {
+<i>27</i>&nbsp;
+<b class="nc"><i>28</i>&nbsp;        int numOfChars = inNumOfChars;</b>
+<b class="nc"><i>29</i>&nbsp;        StringBuilder sb = new StringBuilder();</b>
+<i>30</i>&nbsp;
+<b class="nc"><i>31</i>&nbsp;        char[] cs = toPrefix.toCharArray();</b>
+<b class="nc"><i>32</i>&nbsp;        int n = cs.length;</b>
+<b class="nc"><i>33</i>&nbsp;        int i = 0;</b>
+<i>34</i>&nbsp;
+<b class="nc"><i>35</i>&nbsp;        int braceLevel = 0;</b>
+<i>36</i>&nbsp;
+<b class="nc"><i>37</i>&nbsp;        while ((i &lt; n) &amp;&amp; (numOfChars &gt; 0)) {</b>
+<b class="nc"><i>38</i>&nbsp;            char c = cs[i];</b>
+<b class="nc"><i>39</i>&nbsp;            i++;</b>
+<b class="nc"><i>40</i>&nbsp;            if (c == &#39;{&#39;) {</b>
+<b class="nc"><i>41</i>&nbsp;                braceLevel++;</b>
+<b class="nc"><i>42</i>&nbsp;                if ((braceLevel == 1) &amp;&amp; (i &lt; n) &amp;&amp; (cs[i] == &#39;\\&#39;)) {</b>
+<b class="nc"><i>43</i>&nbsp;                    i++; // skip backslash</b>
+<b class="nc"><i>44</i>&nbsp;                    while ((i &lt; n) &amp;&amp; (braceLevel &gt; 0)) {</b>
+<b class="nc"><i>45</i>&nbsp;                        if (cs[i] == &#39;}&#39;) {</b>
+<b class="nc"><i>46</i>&nbsp;                            braceLevel--;</b>
+<b class="nc"><i>47</i>&nbsp;                        } else if (cs[i] == &#39;{&#39;) {</b>
+<b class="nc"><i>48</i>&nbsp;                            braceLevel++;</b>
+<i>49</i>&nbsp;                        }
+<b class="nc"><i>50</i>&nbsp;                        i++;</b>
+<i>51</i>&nbsp;                    }
+<b class="nc"><i>52</i>&nbsp;                    numOfChars--;</b>
+<i>53</i>&nbsp;                }
+<b class="nc"><i>54</i>&nbsp;            } else if (c == &#39;}&#39;) {</b>
+<b class="nc"><i>55</i>&nbsp;                if (braceLevel &gt; 0) {</b>
+<b class="nc"><i>56</i>&nbsp;                    braceLevel--;</b>
+<i>57</i>&nbsp;                } else {
+<b class="nc"><i>58</i>&nbsp;                    if (warn != null) {</b>
+<b class="nc"><i>59</i>&nbsp;                        warn.warn(&quot;Unbalanced brace in string for purify$: &quot; + toPrefix);</b>
+<i>60</i>&nbsp;                    }
+<i>61</i>&nbsp;                }
+<i>62</i>&nbsp;            } else {
+<b class="nc"><i>63</i>&nbsp;                numOfChars--;</b>
+<i>64</i>&nbsp;            }
+<i>65</i>&nbsp;
+<b class="nc"><i>66</i>&nbsp;        }</b>
+<b class="nc"><i>67</i>&nbsp;        sb.append(toPrefix.substring(0, i));</b>
+<b class="nc"><i>68</i>&nbsp;        while (braceLevel &gt; 0) {</b>
+<b class="nc"><i>69</i>&nbsp;            sb.append(&#39;}&#39;);</b>
+<b class="nc"><i>70</i>&nbsp;            braceLevel--;</b>
+<i>71</i>&nbsp;        }
+<i>72</i>&nbsp;
+<b class="nc"><i>73</i>&nbsp;        return sb.toString();</b>
+<i>74</i>&nbsp;    }
+<i>75</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

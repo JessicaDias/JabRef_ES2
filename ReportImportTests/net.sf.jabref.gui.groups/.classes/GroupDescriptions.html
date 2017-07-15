@@ -1,0 +1,229 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: GroupDescriptions</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.groups</a> ]
+</div>
+
+<h1>Coverage Summary for Class: GroupDescriptions (net.sf.jabref.gui.groups)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GroupDescriptions</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 58)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">GroupDescriptions$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 59)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.groups;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>4</i>&nbsp;import net.sf.jabref.model.groups.ExplicitGroup;
+<i>5</i>&nbsp;import net.sf.jabref.model.groups.KeywordGroup;
+<i>6</i>&nbsp;import net.sf.jabref.model.groups.SearchGroup;
+<i>7</i>&nbsp;import net.sf.jabref.model.strings.StringUtil;
+<i>8</i>&nbsp;
+<b class="nc"><i>9</i>&nbsp;public class GroupDescriptions {</b>
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;    public static String getDescriptionForPreview(String field, String expr, boolean caseSensitive, boolean regExp) {
+<b class="nc"><i>12</i>&nbsp;        String header = regExp ? Localization.lang(&quot;This group contains entries whose &lt;b&gt;%0&lt;/b&gt; field contains the regular expression &lt;b&gt;%1&lt;/b&gt;&quot;,</b>
+<b class="nc"><i>13</i>&nbsp;                field, StringUtil.quoteForHTML(expr))</b>
+<b class="nc"><i>14</i>&nbsp;                : Localization.lang(&quot;This group contains entries whose &lt;b&gt;%0&lt;/b&gt; field contains the keyword &lt;b&gt;%1&lt;/b&gt;&quot;,</b>
+<b class="nc"><i>15</i>&nbsp;                field, StringUtil.quoteForHTML(expr));</b>
+<b class="nc"><i>16</i>&nbsp;        String caseSensitiveText = caseSensitive ? Localization.lang(&quot;case sensitive&quot;) :</b>
+<b class="nc"><i>17</i>&nbsp;            Localization.lang(&quot;case insensitive&quot;);</b>
+<b class="nc"><i>18</i>&nbsp;        String footer = regExp ?</b>
+<b class="nc"><i>19</i>&nbsp;                Localization.lang(&quot;Entries cannot be manually assigned to or removed from this group.&quot;)</b>
+<b class="nc"><i>20</i>&nbsp;                : Localization.lang(</b>
+<i>21</i>&nbsp;                &quot;Additionally, entries whose &lt;b&gt;%0&lt;/b&gt; field does not contain &quot;
+<i>22</i>&nbsp;                        + &quot;&lt;b&gt;%1&lt;/b&gt; can be assigned manually to this group by selecting them &quot;
+<i>23</i>&nbsp;                        + &quot;then using either drag and drop or the context menu. &quot;
+<i>24</i>&nbsp;                        + &quot;This process adds the term &lt;b&gt;%1&lt;/b&gt; to &quot;
+<i>25</i>&nbsp;                        + &quot;each entry&#39;s &lt;b&gt;%0&lt;/b&gt; field. &quot;
+<i>26</i>&nbsp;                        + &quot;Entries can be removed manually from this group by selecting them &quot;
+<i>27</i>&nbsp;                        + &quot;then using the context menu. &quot;
+<i>28</i>&nbsp;                        + &quot;This process removes the term &lt;b&gt;%1&lt;/b&gt; from &quot;
+<i>29</i>&nbsp;                        + &quot;each entry&#39;s &lt;b&gt;%0&lt;/b&gt; field.&quot;,
+<b class="nc"><i>30</i>&nbsp;                field, StringUtil.quoteForHTML(expr));</b>
+<b class="nc"><i>31</i>&nbsp;        return String.format(&quot;%s (%s). %s&quot;, header, caseSensitiveText, footer);</b>
+<i>32</i>&nbsp;    }
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;    public static String getShortDescriptionKeywordGroup(KeywordGroup keywordGroup, boolean showDynamic) {
+<b class="nc"><i>35</i>&nbsp;        StringBuilder sb = new StringBuilder();</b>
+<b class="nc"><i>36</i>&nbsp;        sb.append(&quot;&lt;b&gt;&quot;);</b>
+<b class="nc"><i>37</i>&nbsp;        if (showDynamic) {</b>
+<b class="nc"><i>38</i>&nbsp;            sb.append(&quot;&lt;i&gt;&quot;).append(StringUtil.quoteForHTML(keywordGroup.getName())).append(&quot;&lt;/i&gt;&quot;);</b>
+<i>39</i>&nbsp;        } else {
+<b class="nc"><i>40</i>&nbsp;            sb.append(StringUtil.quoteForHTML(keywordGroup.getName()));</b>
+<i>41</i>&nbsp;        }
+<b class="nc"><i>42</i>&nbsp;        sb.append(&quot;&lt;/b&gt; - &quot;);</b>
+<b class="nc"><i>43</i>&nbsp;        sb.append(Localization.lang(&quot;dynamic group&quot;));</b>
+<b class="nc"><i>44</i>&nbsp;        sb.append(&quot; &lt;b&gt;&quot;);</b>
+<b class="nc"><i>45</i>&nbsp;        sb.append(keywordGroup.getSearchField());</b>
+<b class="nc"><i>46</i>&nbsp;        sb.append(&quot;&lt;/b&gt; &quot;);</b>
+<b class="nc"><i>47</i>&nbsp;        sb.append(Localization.lang(&quot;contains&quot;));</b>
+<b class="nc"><i>48</i>&nbsp;        sb.append(&quot; &lt;b&gt;&quot;);</b>
+<b class="nc"><i>49</i>&nbsp;        sb.append(StringUtil.quoteForHTML(keywordGroup.getSearchExpression()));</b>
+<b class="nc"><i>50</i>&nbsp;        sb.append(&quot;&lt;/b&gt;)&quot;);</b>
+<b class="nc"><i>51</i>&nbsp;        switch (keywordGroup.getHierarchicalContext()) {</b>
+<i>52</i>&nbsp;        case INCLUDING:
+<b class="nc"><i>53</i>&nbsp;            sb.append(&quot;, &quot;).append(Localization.lang(&quot;includes subgroups&quot;));</b>
+<b class="nc"><i>54</i>&nbsp;            break;</b>
+<i>55</i>&nbsp;        case REFINING:
+<b class="nc"><i>56</i>&nbsp;            sb.append(&quot;, &quot;).append(Localization.lang(&quot;refines supergroup&quot;));</b>
+<b class="nc"><i>57</i>&nbsp;            break;</b>
+<i>58</i>&nbsp;        default:
+<i>59</i>&nbsp;            break;
+<i>60</i>&nbsp;        }
+<b class="nc"><i>61</i>&nbsp;        return sb.toString();</b>
+<i>62</i>&nbsp;
+<i>63</i>&nbsp;    }
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;    public static String getDescriptionForPreview() {
+<b class="nc"><i>66</i>&nbsp;        return Localization.lang(&quot;This group contains entries based on manual assignment. &quot;</b>
+<i>67</i>&nbsp;                + &quot;Entries can be assigned to this group by selecting them &quot;
+<i>68</i>&nbsp;                + &quot;then using either drag and drop or the context menu. &quot;
+<i>69</i>&nbsp;                + &quot;Entries can be removed from this group by selecting them &quot;
+<i>70</i>&nbsp;                + &quot;then using the context menu.&quot;);
+<i>71</i>&nbsp;    }
+<i>72</i>&nbsp;
+<i>73</i>&nbsp;    public static String getShortDescriptionExplicitGroup(ExplicitGroup explicitGroup) {
+<b class="nc"><i>74</i>&nbsp;        StringBuilder sb = new StringBuilder();</b>
+<b class="nc"><i>75</i>&nbsp;        sb.append(&quot;&lt;b&gt;&quot;).append(explicitGroup.getName()).append(&quot;&lt;/b&gt; - &quot;).append(Localization.lang(&quot;static group&quot;));</b>
+<b class="nc"><i>76</i>&nbsp;        switch (explicitGroup.getHierarchicalContext()) {</b>
+<i>77</i>&nbsp;        case INCLUDING:
+<b class="nc"><i>78</i>&nbsp;            sb.append(&quot;, &quot;).append(Localization.lang(&quot;includes subgroups&quot;));</b>
+<b class="nc"><i>79</i>&nbsp;            break;</b>
+<i>80</i>&nbsp;        case REFINING:
+<b class="nc"><i>81</i>&nbsp;            sb.append(&quot;, &quot;).append(Localization.lang(&quot;refines supergroup&quot;));</b>
+<b class="nc"><i>82</i>&nbsp;            break;</b>
+<i>83</i>&nbsp;        default:
+<i>84</i>&nbsp;            break;
+<i>85</i>&nbsp;        }
+<b class="nc"><i>86</i>&nbsp;        return sb.toString();</b>
+<i>87</i>&nbsp;    }
+<i>88</i>&nbsp;
+<i>89</i>&nbsp;    public static String getShortDescriptionAllEntriesGroup() {
+<b class="nc"><i>90</i>&nbsp;        return Localization.lang(&quot;&lt;b&gt;All Entries&lt;/b&gt; (this group cannot be edited or removed)&quot;);</b>
+<i>91</i>&nbsp;    }
+<i>92</i>&nbsp;
+<i>93</i>&nbsp;    public static String getShortDescription(SearchGroup searchGroup, boolean showDynamic) {
+<i>94</i>&nbsp;
+<b class="nc"><i>95</i>&nbsp;        StringBuilder sb = new StringBuilder();</b>
+<b class="nc"><i>96</i>&nbsp;        sb.append(&quot;&lt;b&gt;&quot;);</b>
+<b class="nc"><i>97</i>&nbsp;        if (showDynamic) {</b>
+<b class="nc"><i>98</i>&nbsp;            sb.append(&quot;&lt;i&gt;&quot;).append(StringUtil.quoteForHTML(searchGroup.getName())).append(&quot;&lt;/i&gt;&quot;);</b>
+<i>99</i>&nbsp;        } else {
+<b class="nc"><i>100</i>&nbsp;            sb.append(StringUtil.quoteForHTML(searchGroup.getName()));</b>
+<i>101</i>&nbsp;        }
+<b class="nc"><i>102</i>&nbsp;        sb.append(&quot;&lt;/b&gt; - &quot;);</b>
+<b class="nc"><i>103</i>&nbsp;        sb.append(Localization.lang(&quot;dynamic group&quot;));</b>
+<b class="nc"><i>104</i>&nbsp;        sb.append(&quot; (&quot;);</b>
+<b class="nc"><i>105</i>&nbsp;        sb.append(Localization.lang(&quot;search expression&quot;));</b>
+<b class="nc"><i>106</i>&nbsp;        sb.append(&quot; &lt;b&gt;&quot;).append(StringUtil.quoteForHTML(searchGroup.getSearchExpression())).append(&quot;&lt;/b&gt;)&quot;);</b>
+<b class="nc"><i>107</i>&nbsp;        switch (searchGroup.getHierarchicalContext()) {</b>
+<i>108</i>&nbsp;        case INCLUDING:
+<b class="nc"><i>109</i>&nbsp;            sb.append(&quot;, &quot;).append(Localization.lang(&quot;includes subgroups&quot;));</b>
+<b class="nc"><i>110</i>&nbsp;            break;</b>
+<i>111</i>&nbsp;        case REFINING:
+<b class="nc"><i>112</i>&nbsp;            sb.append(&quot;, &quot;).append(Localization.lang(&quot;refines supergroup&quot;));</b>
+<b class="nc"><i>113</i>&nbsp;            break;</b>
+<i>114</i>&nbsp;        default:
+<i>115</i>&nbsp;            break;
+<i>116</i>&nbsp;        }
+<b class="nc"><i>117</i>&nbsp;        return sb.toString();</b>
+<i>118</i>&nbsp;    }
+<i>119</i>&nbsp;
+<i>120</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,681 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: PdfContentImporter</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.importer.fileformat</a> ]
+</div>
+
+<h1>Coverage Summary for Class: PdfContentImporter (net.sf.jabref.logic.importer.fileformat)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PdfContentImporter</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 270)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.importer.fileformat;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.BufferedReader;
+<i>4</i>&nbsp;import java.io.FileInputStream;
+<i>5</i>&nbsp;import java.io.IOException;
+<i>6</i>&nbsp;import java.io.StringWriter;
+<i>7</i>&nbsp;import java.nio.charset.Charset;
+<i>8</i>&nbsp;import java.nio.file.Path;
+<i>9</i>&nbsp;import java.util.ArrayList;
+<i>10</i>&nbsp;import java.util.Objects;
+<i>11</i>&nbsp;import java.util.Optional;
+<i>12</i>&nbsp;import java.util.regex.Matcher;
+<i>13</i>&nbsp;import java.util.regex.Pattern;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;import net.sf.jabref.logic.importer.FetcherException;
+<i>16</i>&nbsp;import net.sf.jabref.logic.importer.ImportFormatPreferences;
+<i>17</i>&nbsp;import net.sf.jabref.logic.importer.Importer;
+<i>18</i>&nbsp;import net.sf.jabref.logic.importer.ParserResult;
+<i>19</i>&nbsp;import net.sf.jabref.logic.importer.fetcher.DoiFetcher;
+<i>20</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>21</i>&nbsp;import net.sf.jabref.logic.util.DOI;
+<i>22</i>&nbsp;import net.sf.jabref.logic.util.FileExtensions;
+<i>23</i>&nbsp;import net.sf.jabref.logic.xmp.EncryptedPdfsNotSupportedException;
+<i>24</i>&nbsp;import net.sf.jabref.logic.xmp.XMPUtil;
+<i>25</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>26</i>&nbsp;import net.sf.jabref.model.entry.BibtexEntryTypes;
+<i>27</i>&nbsp;import net.sf.jabref.model.entry.EntryType;
+<i>28</i>&nbsp;import net.sf.jabref.model.entry.FieldName;
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;import com.google.common.base.Strings;
+<i>31</i>&nbsp;import org.apache.pdfbox.pdmodel.PDDocument;
+<i>32</i>&nbsp;import org.apache.pdfbox.util.PDFTextStripper;
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;/**
+<i>35</i>&nbsp; * PdfContentImporter parses data of the first page of the PDF and creates a BibTeX entry.
+<i>36</i>&nbsp; * &lt;p&gt;
+<i>37</i>&nbsp; * Currently, Springer and IEEE formats are supported.
+<i>38</i>&nbsp; * &lt;p&gt;
+<i>39</i>&nbsp; * Integrating XMP support is future work
+<i>40</i>&nbsp; */
+<i>41</i>&nbsp;public class PdfContentImporter extends Importer {
+<i>42</i>&nbsp;
+<b class="nc"><i>43</i>&nbsp;    private static final Pattern YEAR_EXTRACT_PATTERN = Pattern.compile(&quot;\\d{4}&quot;);</b>
+<i>44</i>&nbsp;    private final ImportFormatPreferences importFormatPreferences;
+<i>45</i>&nbsp;    // input lines into several lines
+<i>46</i>&nbsp;    private String[] lines;
+<i>47</i>&nbsp;    // current index in lines
+<i>48</i>&nbsp;    private int i;
+<i>49</i>&nbsp;    private String curString;
+<i>50</i>&nbsp;    private String year;
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;
+<b class="nc"><i>53</i>&nbsp;    public PdfContentImporter(ImportFormatPreferences importFormatPreferences) {</b>
+<b class="nc"><i>54</i>&nbsp;        this.importFormatPreferences = importFormatPreferences;</b>
+<b class="nc"><i>55</i>&nbsp;    }</b>
+<i>56</i>&nbsp;    /**
+<i>57</i>&nbsp;     * Removes all non-letter characters at the end
+<i>58</i>&nbsp;     * &lt;p&gt;
+<i>59</i>&nbsp;     * EXCEPTION: a closing bracket is NOT removed
+<i>60</i>&nbsp;     * &lt;/p&gt;
+<i>61</i>&nbsp;     * &lt;p&gt;
+<i>62</i>&nbsp;     * TODO: Additionally replace multiple subsequent spaces by one space, which will cause a rename of this method
+<i>63</i>&nbsp;     * &lt;/p&gt;
+<i>64</i>&nbsp;     */
+<i>65</i>&nbsp;    private static String removeNonLettersAtEnd(String input) {
+<b class="nc"><i>66</i>&nbsp;        String result = input.trim();</b>
+<b class="nc"><i>67</i>&nbsp;        if (result.isEmpty()) {</b>
+<b class="nc"><i>68</i>&nbsp;            return result;</b>
+<i>69</i>&nbsp;        }
+<b class="nc"><i>70</i>&nbsp;        char lastC = result.charAt(result.length() - 1);</b>
+<b class="nc"><i>71</i>&nbsp;        while (!Character.isLetter(lastC) &amp;&amp; (lastC != &#39;)&#39;)) {</b>
+<i>72</i>&nbsp;            // if there is an asterix, a dot or something else at the end: remove it
+<b class="nc"><i>73</i>&nbsp;            result = result.substring(0, result.length() - 1);</b>
+<b class="nc"><i>74</i>&nbsp;            if (result.isEmpty()) {</b>
+<b class="nc"><i>75</i>&nbsp;                break;</b>
+<i>76</i>&nbsp;            } else {
+<b class="nc"><i>77</i>&nbsp;                lastC = result.charAt(result.length() - 1);</b>
+<i>78</i>&nbsp;            }
+<i>79</i>&nbsp;        }
+<b class="nc"><i>80</i>&nbsp;        return result;</b>
+<i>81</i>&nbsp;    }
+<i>82</i>&nbsp;
+<i>83</i>&nbsp;    private static String streamlineNames(String names) {
+<i>84</i>&nbsp;        // TODO: replace with NormalizeNamesFormatter?!
+<i>85</i>&nbsp;        String res;
+<i>86</i>&nbsp;        // supported formats:
+<i>87</i>&nbsp;        //   Matthias Schrepfer1, Johannes Wolf1, Jan Mendling1, and Hajo A. Reijers2
+<b class="nc"><i>88</i>&nbsp;        if (names.contains(&quot;,&quot;)) {</b>
+<b class="nc"><i>89</i>&nbsp;            String[] splitNames = names.split(&quot;,&quot;);</b>
+<b class="nc"><i>90</i>&nbsp;            res = &quot;&quot;;</b>
+<b class="nc"><i>91</i>&nbsp;            boolean isFirst = true;</b>
+<b class="nc"><i>92</i>&nbsp;            for (String splitName : splitNames) {</b>
+<b class="nc"><i>93</i>&nbsp;                String curName = removeNonLettersAtEnd(splitName);</b>
+<b class="nc"><i>94</i>&nbsp;                if (curName.indexOf(&quot;and&quot;) == 0) {</b>
+<i>95</i>&nbsp;                    // skip possible ands between names
+<b class="nc"><i>96</i>&nbsp;                    curName = curName.substring(3).trim();</b>
+<i>97</i>&nbsp;                } else {
+<b class="nc"><i>98</i>&nbsp;                    int posAnd = curName.indexOf(&quot; and &quot;);</b>
+<b class="nc"><i>99</i>&nbsp;                    if (posAnd &gt;= 0) {</b>
+<b class="nc"><i>100</i>&nbsp;                        String nameBefore = curName.substring(0, posAnd);</b>
+<i>101</i>&nbsp;                        // cannot be first name as &quot;,&quot; is contained in the string
+<b class="nc"><i>102</i>&nbsp;                        res = res.concat(&quot; and &quot;).concat(removeNonLettersAtEnd(nameBefore));</b>
+<b class="nc"><i>103</i>&nbsp;                        curName = curName.substring(posAnd + 5);</b>
+<i>104</i>&nbsp;                    }
+<i>105</i>&nbsp;                }
+<i>106</i>&nbsp;
+<b class="nc"><i>107</i>&nbsp;                if (!&quot;&quot;.equals(curName)) {</b>
+<b class="nc"><i>108</i>&nbsp;                    if (&quot;et al.&quot;.equalsIgnoreCase(curName)) {</b>
+<b class="nc"><i>109</i>&nbsp;                        curName = &quot;others&quot;;</b>
+<i>110</i>&nbsp;                    }
+<b class="nc"><i>111</i>&nbsp;                    if (isFirst) {</b>
+<b class="nc"><i>112</i>&nbsp;                        isFirst = false;</b>
+<i>113</i>&nbsp;                    } else {
+<b class="nc"><i>114</i>&nbsp;                        res = res.concat(&quot; and &quot;);</b>
+<i>115</i>&nbsp;                    }
+<b class="nc"><i>116</i>&nbsp;                    res = res.concat(curName);</b>
+<i>117</i>&nbsp;                }
+<i>118</i>&nbsp;            }
+<b class="nc"><i>119</i>&nbsp;        } else {</b>
+<i>120</i>&nbsp;            // assumption: names separated by space
+<i>121</i>&nbsp;
+<b class="nc"><i>122</i>&nbsp;            String[] splitNames = names.split(&quot; &quot;);</b>
+<b class="nc"><i>123</i>&nbsp;            if (splitNames.length == 0) {</b>
+<i>124</i>&nbsp;                // empty names... something was really wrong...
+<b class="nc"><i>125</i>&nbsp;                return &quot;&quot;;</b>
+<i>126</i>&nbsp;            }
+<i>127</i>&nbsp;
+<b class="nc"><i>128</i>&nbsp;            boolean workedOnFirstOrMiddle = false;</b>
+<b class="nc"><i>129</i>&nbsp;            boolean isFirst = true;</b>
+<b class="nc"><i>130</i>&nbsp;            int i = 0;</b>
+<b class="nc"><i>131</i>&nbsp;            res = &quot;&quot;;</b>
+<i>132</i>&nbsp;            do {
+<b class="nc"><i>133</i>&nbsp;                if (workedOnFirstOrMiddle) {</b>
+<i>134</i>&nbsp;                    // last item was a first or a middle name
+<i>135</i>&nbsp;                    // we have to check whether we are on a middle name
+<i>136</i>&nbsp;                    // if not, just add the item as last name and add an &quot;and&quot;
+<b class="nc"><i>137</i>&nbsp;                    if (splitNames[i].contains(&quot;.&quot;)) {</b>
+<i>138</i>&nbsp;                        // we found a middle name
+<b class="nc"><i>139</i>&nbsp;                        res = res.concat(splitNames[i]).concat(&quot; &quot;);</b>
+<i>140</i>&nbsp;                    } else {
+<i>141</i>&nbsp;                        // last name found
+<b class="nc"><i>142</i>&nbsp;                        res = res.concat(removeNonLettersAtEnd(splitNames[i]));</b>
+<i>143</i>&nbsp;
+<b class="nc"><i>144</i>&nbsp;                        if (!splitNames[i].isEmpty() &amp;&amp; Character.isLowerCase(splitNames[i].charAt(0))) {</b>
+<i>145</i>&nbsp;                            // it is probably be &quot;van&quot;, &quot;vom&quot;, ...
+<i>146</i>&nbsp;                            // we just rely on the fact that these things are written in lower case letters
+<i>147</i>&nbsp;                            // do NOT finish name
+<b class="nc"><i>148</i>&nbsp;                            res = res.concat(&quot; &quot;);</b>
+<i>149</i>&nbsp;                        } else {
+<i>150</i>&nbsp;                            // finish this name
+<b class="nc"><i>151</i>&nbsp;                            workedOnFirstOrMiddle = false;</b>
+<i>152</i>&nbsp;                        }
+<i>153</i>&nbsp;                    }
+<i>154</i>&nbsp;                } else {
+<b class="nc"><i>155</i>&nbsp;                    if (&quot;and&quot;.equalsIgnoreCase(splitNames[i])) {</b>
+<i>156</i>&nbsp;                        // do nothing, just increment i at the end of this iteration
+<i>157</i>&nbsp;                    } else {
+<b class="nc"><i>158</i>&nbsp;                        if (isFirst) {</b>
+<b class="nc"><i>159</i>&nbsp;                            isFirst = false;</b>
+<i>160</i>&nbsp;                        } else {
+<b class="nc"><i>161</i>&nbsp;                            res = res.concat(&quot; and &quot;);</b>
+<i>162</i>&nbsp;                        }
+<b class="nc"><i>163</i>&nbsp;                        if (&quot;et&quot;.equalsIgnoreCase(splitNames[i]) &amp;&amp; (splitNames.length &gt; (i + 1))</b>
+<b class="nc"><i>164</i>&nbsp;                                &amp;&amp; &quot;al.&quot;.equalsIgnoreCase(splitNames[i + 1])) {</b>
+<b class="nc"><i>165</i>&nbsp;                            res = res.concat(&quot;others&quot;);</b>
+<b class="nc"><i>166</i>&nbsp;                            break;</b>
+<i>167</i>&nbsp;                        } else {
+<b class="nc"><i>168</i>&nbsp;                            res = res.concat(splitNames[i]).concat(&quot; &quot;);</b>
+<b class="nc"><i>169</i>&nbsp;                            workedOnFirstOrMiddle = true;</b>
+<i>170</i>&nbsp;                        }
+<i>171</i>&nbsp;                    }
+<i>172</i>&nbsp;                }
+<b class="nc"><i>173</i>&nbsp;                i++;</b>
+<b class="nc"><i>174</i>&nbsp;            } while (i &lt; splitNames.length);</b>
+<i>175</i>&nbsp;        }
+<b class="nc"><i>176</i>&nbsp;        return res;</b>
+<i>177</i>&nbsp;    }
+<i>178</i>&nbsp;
+<i>179</i>&nbsp;    private static String streamlineTitle(String title) {
+<b class="nc"><i>180</i>&nbsp;        return removeNonLettersAtEnd(title);</b>
+<i>181</i>&nbsp;    }
+<i>182</i>&nbsp;
+<i>183</i>&nbsp;    @Override
+<i>184</i>&nbsp;    public boolean isRecognizedFormat(BufferedReader reader) throws IOException {
+<b class="nc"><i>185</i>&nbsp;        Objects.requireNonNull(reader);</b>
+<b class="nc"><i>186</i>&nbsp;        return false;</b>
+<i>187</i>&nbsp;    }
+<i>188</i>&nbsp;
+<i>189</i>&nbsp;    @Override
+<i>190</i>&nbsp;    public ParserResult importDatabase(BufferedReader reader) throws IOException {
+<b class="nc"><i>191</i>&nbsp;        Objects.requireNonNull(reader);</b>
+<b class="nc"><i>192</i>&nbsp;        throw new UnsupportedOperationException(</b>
+<i>193</i>&nbsp;                &quot;PdfContentImporter does not support importDatabase(BufferedReader reader).&quot;
+<i>194</i>&nbsp;                        + &quot;Instead use importDatabase(Path filePath, Charset defaultEncoding).&quot;);
+<i>195</i>&nbsp;    }
+<i>196</i>&nbsp;
+<i>197</i>&nbsp;    @Override
+<i>198</i>&nbsp;    public ParserResult importDatabase(Path filePath, Charset defaultEncoding) {
+<b class="nc"><i>199</i>&nbsp;        final ArrayList&lt;BibEntry&gt; result = new ArrayList&lt;&gt;(1);</b>
+<b class="nc"><i>200</i>&nbsp;        try (FileInputStream fileStream = new FileInputStream(filePath.toFile());</b>
+<b class="nc"><i>201</i>&nbsp;                PDDocument document = XMPUtil.loadWithAutomaticDecryption(fileStream)) {</b>
+<b class="nc"><i>202</i>&nbsp;            String firstPageContents = getFirstPageContents(document);</b>
+<i>203</i>&nbsp;
+<b class="nc"><i>204</i>&nbsp;            Optional&lt;DOI&gt; doi = DOI.findInText(firstPageContents);</b>
+<b class="nc"><i>205</i>&nbsp;            if (doi.isPresent()) {</b>
+<b class="nc"><i>206</i>&nbsp;                ParserResult parserResult = new ParserResult(result);</b>
+<b class="nc"><i>207</i>&nbsp;                Optional&lt;BibEntry&gt; entry = new DoiFetcher(importFormatPreferences).performSearchById(doi.get().getDOI());</b>
+<b class="nc"><i>208</i>&nbsp;                entry.ifPresent(parserResult.getDatabase()::insertEntry);</b>
+<b class="nc"><i>209</i>&nbsp;                return parserResult;</b>
+<i>210</i>&nbsp;            }
+<i>211</i>&nbsp;
+<i>212</i>&nbsp;            // idea: split[] contains the different lines
+<i>213</i>&nbsp;            // blocks are separated by empty lines
+<i>214</i>&nbsp;            // treat each block
+<i>215</i>&nbsp;            //   or do special treatment at authors (which are not broken)
+<i>216</i>&nbsp;            //   therefore, we do a line-based and not a block-based splitting
+<i>217</i>&nbsp;            // i points to the current line
+<i>218</i>&nbsp;            // curString (mostly) contains the current block
+<i>219</i>&nbsp;            //   the different lines are joined into one and thereby separated by &quot; &quot;
+<b class="nc"><i>220</i>&nbsp;            lines = firstPageContents.split(System.lineSeparator());</b>
+<i>221</i>&nbsp;
+<b class="nc"><i>222</i>&nbsp;            proceedToNextNonEmptyLine();</b>
+<b class="nc"><i>223</i>&nbsp;            if (i &gt;= lines.length) {</b>
+<i>224</i>&nbsp;                // PDF could not be parsed or is empty
+<i>225</i>&nbsp;                // return empty list
+<b class="nc"><i>226</i>&nbsp;                return new ParserResult();</b>
+<i>227</i>&nbsp;            }
+<i>228</i>&nbsp;
+<i>229</i>&nbsp;            // we start at the current line
+<b class="nc"><i>230</i>&nbsp;            curString = lines[i];</b>
+<i>231</i>&nbsp;            // i might get incremented later and curString modified, too
+<b class="nc"><i>232</i>&nbsp;            i = i + 1;</b>
+<i>233</i>&nbsp;
+<i>234</i>&nbsp;            String author;
+<b class="nc"><i>235</i>&nbsp;            String editor = null;</b>
+<b class="nc"><i>236</i>&nbsp;            String abstractT = null;</b>
+<b class="nc"><i>237</i>&nbsp;            String keywords = null;</b>
+<i>238</i>&nbsp;            String title;
+<b class="nc"><i>239</i>&nbsp;            String conference = null;</b>
+<b class="nc"><i>240</i>&nbsp;            String DOI = null;</b>
+<b class="nc"><i>241</i>&nbsp;            String series = null;</b>
+<b class="nc"><i>242</i>&nbsp;            String volume = null;</b>
+<b class="nc"><i>243</i>&nbsp;            String number = null;</b>
+<b class="nc"><i>244</i>&nbsp;            String pages = null;</b>
+<i>245</i>&nbsp;            // year is a class variable as the method extractYear() uses it;
+<b class="nc"><i>246</i>&nbsp;            String publisher = null;</b>
+<i>247</i>&nbsp;
+<b class="nc"><i>248</i>&nbsp;            EntryType type = BibtexEntryTypes.INPROCEEDINGS;</b>
+<b class="nc"><i>249</i>&nbsp;            if (curString.length() &gt; 4) {</b>
+<i>250</i>&nbsp;                // special case: possibly conference as first line on the page
+<b class="nc"><i>251</i>&nbsp;                extractYear();</b>
+<b class="nc"><i>252</i>&nbsp;                if (curString.contains(&quot;Conference&quot;)) {</b>
+<b class="nc"><i>253</i>&nbsp;                    fillCurStringWithNonEmptyLines();</b>
+<b class="nc"><i>254</i>&nbsp;                    conference = curString;</b>
+<b class="nc"><i>255</i>&nbsp;                    curString = &quot;&quot;;</b>
+<i>256</i>&nbsp;                } else {
+<i>257</i>&nbsp;                    // e.g. Copyright (c) 1998 by the Genetics Society of America
+<i>258</i>&nbsp;                    // future work: get year using RegEx
+<b class="nc"><i>259</i>&nbsp;                    String lower = curString.toLowerCase();</b>
+<b class="nc"><i>260</i>&nbsp;                    if (lower.contains(&quot;copyright&quot;)) {</b>
+<b class="nc"><i>261</i>&nbsp;                        fillCurStringWithNonEmptyLines();</b>
+<b class="nc"><i>262</i>&nbsp;                        publisher = curString;</b>
+<b class="nc"><i>263</i>&nbsp;                        curString = &quot;&quot;;</b>
+<i>264</i>&nbsp;                    }
+<i>265</i>&nbsp;                }
+<i>266</i>&nbsp;            }
+<i>267</i>&nbsp;
+<i>268</i>&nbsp;            // start: title
+<b class="nc"><i>269</i>&nbsp;            fillCurStringWithNonEmptyLines();</b>
+<b class="nc"><i>270</i>&nbsp;            title = streamlineTitle(curString);</b>
+<b class="nc"><i>271</i>&nbsp;            curString = &quot;&quot;;</b>
+<i>272</i>&nbsp;            //i points to the next non-empty line
+<i>273</i>&nbsp;
+<i>274</i>&nbsp;            // after title: authors
+<b class="nc"><i>275</i>&nbsp;            author = null;</b>
+<b class="nc"><i>276</i>&nbsp;            while ((i &lt; lines.length) &amp;&amp; !&quot;&quot;.equals(lines[i])) {</b>
+<i>277</i>&nbsp;                // author names are unlikely to be lines among different lines
+<i>278</i>&nbsp;                // treat them line by line
+<b class="nc"><i>279</i>&nbsp;                curString = streamlineNames(lines[i]);</b>
+<b class="nc"><i>280</i>&nbsp;                if (author == null) {</b>
+<b class="nc"><i>281</i>&nbsp;                    author = curString;</b>
+<i>282</i>&nbsp;                } else {
+<b class="nc"><i>283</i>&nbsp;                    if (&quot;&quot;.equals(curString)) {</b>
+<i>284</i>&nbsp;                        // if lines[i] is &quot;and&quot; then &quot;&quot; is returned by streamlineNames -&gt; do nothing
+<i>285</i>&nbsp;                    } else {
+<b class="nc"><i>286</i>&nbsp;                        author = author.concat(&quot; and &quot;).concat(curString);</b>
+<i>287</i>&nbsp;                    }
+<i>288</i>&nbsp;                }
+<b class="nc"><i>289</i>&nbsp;                i++;</b>
+<i>290</i>&nbsp;            }
+<b class="nc"><i>291</i>&nbsp;            curString = &quot;&quot;;</b>
+<b class="nc"><i>292</i>&nbsp;            i++;</b>
+<i>293</i>&nbsp;
+<i>294</i>&nbsp;            // then, abstract and keywords follow
+<b class="nc"><i>295</i>&nbsp;            while (i &lt; lines.length) {</b>
+<b class="nc"><i>296</i>&nbsp;                curString = lines[i];</b>
+<b class="nc"><i>297</i>&nbsp;                if ((curString.length() &gt;= &quot;Abstract&quot;.length()) &amp;&amp; &quot;Abstract&quot;.equalsIgnoreCase(curString.substring(0, &quot;Abstract&quot;.length()))) {</b>
+<b class="nc"><i>298</i>&nbsp;                    if (curString.length() == &quot;Abstract&quot;.length()) {</b>
+<i>299</i>&nbsp;                        // only word &quot;abstract&quot; found -- skip line
+<b class="nc"><i>300</i>&nbsp;                        curString = &quot;&quot;;</b>
+<i>301</i>&nbsp;                    } else {
+<b class="nc"><i>302</i>&nbsp;                        curString = curString.substring(&quot;Abstract&quot;.length() + 1).trim().concat(System.lineSeparator());</b>
+<i>303</i>&nbsp;                    }
+<b class="nc"><i>304</i>&nbsp;                    i++;</b>
+<i>305</i>&nbsp;                    // fillCurStringWithNonEmptyLines() cannot be used as that uses &quot; &quot; as line separator
+<i>306</i>&nbsp;                    // whereas we need linebreak as separator
+<b class="nc"><i>307</i>&nbsp;                    while ((i &lt; lines.length) &amp;&amp; !&quot;&quot;.equals(lines[i])) {</b>
+<b class="nc"><i>308</i>&nbsp;                        curString = curString.concat(lines[i]).concat(System.lineSeparator());</b>
+<b class="nc"><i>309</i>&nbsp;                        i++;</b>
+<i>310</i>&nbsp;                    }
+<b class="nc"><i>311</i>&nbsp;                    abstractT = curString.trim();</b>
+<b class="nc"><i>312</i>&nbsp;                    i++;</b>
+<b class="nc"><i>313</i>&nbsp;                } else if ((curString.length() &gt;= &quot;Keywords&quot;.length()) &amp;&amp; &quot;Keywords&quot;.equalsIgnoreCase(curString.substring(0, &quot;Keywords&quot;.length()))) {</b>
+<b class="nc"><i>314</i>&nbsp;                    if (curString.length() == &quot;Keywords&quot;.length()) {</b>
+<i>315</i>&nbsp;                        // only word &quot;Keywords&quot; found -- skip line
+<b class="nc"><i>316</i>&nbsp;                        curString = &quot;&quot;;</b>
+<i>317</i>&nbsp;                    } else {
+<b class="nc"><i>318</i>&nbsp;                        curString = curString.substring(&quot;Keywords&quot;.length() + 1).trim();</b>
+<i>319</i>&nbsp;                    }
+<b class="nc"><i>320</i>&nbsp;                    i++;</b>
+<b class="nc"><i>321</i>&nbsp;                    fillCurStringWithNonEmptyLines();</b>
+<b class="nc"><i>322</i>&nbsp;                    keywords = removeNonLettersAtEnd(curString);</b>
+<i>323</i>&nbsp;                } else {
+<b class="nc"><i>324</i>&nbsp;                    String lower = curString.toLowerCase();</b>
+<i>325</i>&nbsp;
+<b class="nc"><i>326</i>&nbsp;                    int pos = lower.indexOf(&quot;technical&quot;);</b>
+<b class="nc"><i>327</i>&nbsp;                    if (pos &gt;= 0) {</b>
+<b class="nc"><i>328</i>&nbsp;                        type = BibtexEntryTypes.TECHREPORT;</b>
+<b class="nc"><i>329</i>&nbsp;                        pos = curString.trim().lastIndexOf(&#39; &#39;);</b>
+<b class="nc"><i>330</i>&nbsp;                        if (pos &gt;= 0) {</b>
+<i>331</i>&nbsp;                            // assumption: last character of curString is NOT &#39; &#39;
+<i>332</i>&nbsp;                            //   otherwise pos+1 leads to an out-of-bounds exception
+<b class="nc"><i>333</i>&nbsp;                            number = curString.substring(pos + 1);</b>
+<i>334</i>&nbsp;                        }
+<i>335</i>&nbsp;                    }
+<i>336</i>&nbsp;
+<b class="nc"><i>337</i>&nbsp;                    i++;</b>
+<b class="nc"><i>338</i>&nbsp;                    proceedToNextNonEmptyLine();</b>
+<b class="nc"><i>339</i>&nbsp;                }</b>
+<i>340</i>&nbsp;            }
+<i>341</i>&nbsp;
+<b class="nc"><i>342</i>&nbsp;            i = lines.length - 1;</b>
+<i>343</i>&nbsp;
+<i>344</i>&nbsp;            // last block: DOI, detailed information
+<i>345</i>&nbsp;            // sometimes, this information is in the third last block etc...
+<i>346</i>&nbsp;            // therefore, read until the beginning of the file
+<i>347</i>&nbsp;
+<b class="nc"><i>348</i>&nbsp;            while (i &gt;= 0) {</b>
+<b class="nc"><i>349</i>&nbsp;                readLastBlock();</b>
+<i>350</i>&nbsp;                // i now points to the block before or is -1
+<i>351</i>&nbsp;                // curString contains the last block, separated by &quot; &quot;
+<i>352</i>&nbsp;
+<b class="nc"><i>353</i>&nbsp;                extractYear();</b>
+<i>354</i>&nbsp;
+<b class="nc"><i>355</i>&nbsp;                int pos = curString.indexOf(&quot;(Eds.)&quot;);</b>
+<b class="nc"><i>356</i>&nbsp;                if ((pos &gt;= 0) &amp;&amp; (publisher == null)) {</b>
+<i>357</i>&nbsp;                    // looks like a Springer last line
+<i>358</i>&nbsp;                    // e.g: A. Persson and J. Stirna (Eds.): PoEM 2009, LNBIP 39, pp. 161-175, 2009.
+<b class="nc"><i>359</i>&nbsp;                    publisher = &quot;Springer&quot;;</b>
+<b class="nc"><i>360</i>&nbsp;                    editor = streamlineNames(curString.substring(0, pos - 1));</b>
+<b class="nc"><i>361</i>&nbsp;                    curString = curString.substring(pos + &quot;(Eds.)&quot;.length() + 2); //+2 because of &quot;:&quot; after (Eds.) and the subsequent space</b>
+<b class="nc"><i>362</i>&nbsp;                    String[] springerSplit = curString.split(&quot;, &quot;);</b>
+<b class="nc"><i>363</i>&nbsp;                    if (springerSplit.length &gt;= 4) {</b>
+<b class="nc"><i>364</i>&nbsp;                        conference = springerSplit[0];</b>
+<i>365</i>&nbsp;
+<b class="nc"><i>366</i>&nbsp;                        String seriesData = springerSplit[1];</b>
+<b class="nc"><i>367</i>&nbsp;                        int lastSpace = seriesData.lastIndexOf(&#39; &#39;);</b>
+<b class="nc"><i>368</i>&nbsp;                        series = seriesData.substring(0, lastSpace);</b>
+<b class="nc"><i>369</i>&nbsp;                        volume = seriesData.substring(lastSpace + 1);</b>
+<i>370</i>&nbsp;
+<b class="nc"><i>371</i>&nbsp;                        pages = springerSplit[2].substring(4);</b>
+<i>372</i>&nbsp;
+<b class="nc"><i>373</i>&nbsp;                        if (springerSplit[3].length() &gt;= 4) {</b>
+<b class="nc"><i>374</i>&nbsp;                            year = springerSplit[3].substring(0, 4);</b>
+<i>375</i>&nbsp;                        }
+<i>376</i>&nbsp;                    }
+<b class="nc"><i>377</i>&nbsp;                } else {</b>
+<b class="nc"><i>378</i>&nbsp;                    if (DOI == null) {</b>
+<b class="nc"><i>379</i>&nbsp;                        pos = curString.indexOf(&quot;DOI&quot;);</b>
+<b class="nc"><i>380</i>&nbsp;                        if (pos &lt; 0) {</b>
+<b class="nc"><i>381</i>&nbsp;                            pos = curString.indexOf(FieldName.DOI);</b>
+<i>382</i>&nbsp;                        }
+<b class="nc"><i>383</i>&nbsp;                        if (pos &gt;= 0) {</b>
+<b class="nc"><i>384</i>&nbsp;                            pos += 3;</b>
+<b class="nc"><i>385</i>&nbsp;                            char delimiter = curString.charAt(pos);</b>
+<b class="nc"><i>386</i>&nbsp;                            if ((delimiter == &#39;:&#39;) || (delimiter == &#39; &#39;)) {</b>
+<b class="nc"><i>387</i>&nbsp;                                pos++;</b>
+<i>388</i>&nbsp;                            }
+<b class="nc"><i>389</i>&nbsp;                            int nextSpace = curString.indexOf(&#39; &#39;, pos);</b>
+<b class="nc"><i>390</i>&nbsp;                            if (nextSpace &gt; 0) {</b>
+<b class="nc"><i>391</i>&nbsp;                                DOI = curString.substring(pos, nextSpace);</b>
+<i>392</i>&nbsp;                            } else {
+<b class="nc"><i>393</i>&nbsp;                                DOI = curString.substring(pos);</b>
+<i>394</i>&nbsp;                            }
+<i>395</i>&nbsp;                        }
+<i>396</i>&nbsp;                    }
+<i>397</i>&nbsp;
+<b class="nc"><i>398</i>&nbsp;                    if ((publisher == null) &amp;&amp; curString.contains(&quot;IEEE&quot;)) {</b>
+<i>399</i>&nbsp;                        // IEEE has the conference things at the end
+<b class="nc"><i>400</i>&nbsp;                        publisher = &quot;IEEE&quot;;</b>
+<i>401</i>&nbsp;
+<i>402</i>&nbsp;                        // year is extracted by extractYear
+<i>403</i>&nbsp;                        // otherwise, we could it determine as follows:
+<i>404</i>&nbsp;                        // String yearStr = curString.substring(curString.length()-4);
+<i>405</i>&nbsp;                        // if (isYear(yearStr)) {
+<i>406</i>&nbsp;                        //	year = yearStr;
+<i>407</i>&nbsp;                        // }
+<i>408</i>&nbsp;
+<b class="nc"><i>409</i>&nbsp;                        if (conference == null) {</b>
+<b class="nc"><i>410</i>&nbsp;                            pos = curString.indexOf(&#39;$&#39;);</b>
+<b class="nc"><i>411</i>&nbsp;                            if (pos &gt; 0) {</b>
+<i>412</i>&nbsp;                                // we found the price
+<i>413</i>&nbsp;                                // before the price, the ISSN is stated
+<i>414</i>&nbsp;                                // skip that
+<b class="nc"><i>415</i>&nbsp;                                pos -= 2;</b>
+<b class="nc"><i>416</i>&nbsp;                                while ((pos &gt;= 0) &amp;&amp; (curString.charAt(pos) != &#39; &#39;)) {</b>
+<b class="nc"><i>417</i>&nbsp;                                    pos--;</b>
+<i>418</i>&nbsp;                                }
+<b class="nc"><i>419</i>&nbsp;                                if (pos &gt; 0) {</b>
+<b class="nc"><i>420</i>&nbsp;                                    conference = curString.substring(0, pos);</b>
+<i>421</i>&nbsp;                                }
+<i>422</i>&nbsp;                            }
+<i>423</i>&nbsp;                        }
+<i>424</i>&nbsp;                    }
+<i>425</i>&nbsp;                }
+<b class="nc"><i>426</i>&nbsp;            }</b>
+<i>427</i>&nbsp;
+<b class="nc"><i>428</i>&nbsp;            BibEntry entry = new BibEntry();</b>
+<b class="nc"><i>429</i>&nbsp;            entry.setType(type);</b>
+<i>430</i>&nbsp;
+<i>431</i>&nbsp;            // TODO: institution parsing missing
+<i>432</i>&nbsp;
+<b class="nc"><i>433</i>&nbsp;            if (author != null) {</b>
+<b class="nc"><i>434</i>&nbsp;                entry.setField(FieldName.AUTHOR, author);</b>
+<i>435</i>&nbsp;            }
+<b class="nc"><i>436</i>&nbsp;            if (editor != null) {</b>
+<b class="nc"><i>437</i>&nbsp;                entry.setField(FieldName.EDITOR, editor);</b>
+<i>438</i>&nbsp;            }
+<b class="nc"><i>439</i>&nbsp;            if (abstractT != null) {</b>
+<b class="nc"><i>440</i>&nbsp;                entry.setField(FieldName.ABSTRACT, abstractT);</b>
+<i>441</i>&nbsp;            }
+<b class="nc"><i>442</i>&nbsp;            if (!Strings.isNullOrEmpty(keywords)) {</b>
+<b class="nc"><i>443</i>&nbsp;                entry.setField(FieldName.KEYWORDS, keywords);</b>
+<i>444</i>&nbsp;            }
+<b class="nc"><i>445</i>&nbsp;            if (title != null) {</b>
+<b class="nc"><i>446</i>&nbsp;                entry.setField(FieldName.TITLE, title);</b>
+<i>447</i>&nbsp;            }
+<b class="nc"><i>448</i>&nbsp;            if (conference != null) {</b>
+<b class="nc"><i>449</i>&nbsp;                entry.setField(FieldName.BOOKTITLE, conference);</b>
+<i>450</i>&nbsp;            }
+<b class="nc"><i>451</i>&nbsp;            if (DOI != null) {</b>
+<b class="nc"><i>452</i>&nbsp;                entry.setField(FieldName.DOI, DOI);</b>
+<i>453</i>&nbsp;            }
+<b class="nc"><i>454</i>&nbsp;            if (series != null) {</b>
+<b class="nc"><i>455</i>&nbsp;                entry.setField(FieldName.SERIES, series);</b>
+<i>456</i>&nbsp;            }
+<b class="nc"><i>457</i>&nbsp;            if (volume != null) {</b>
+<b class="nc"><i>458</i>&nbsp;                entry.setField(FieldName.VOLUME, volume);</b>
+<i>459</i>&nbsp;            }
+<b class="nc"><i>460</i>&nbsp;            if (number != null) {</b>
+<b class="nc"><i>461</i>&nbsp;                entry.setField(FieldName.NUMBER, number);</b>
+<i>462</i>&nbsp;            }
+<b class="nc"><i>463</i>&nbsp;            if (pages != null) {</b>
+<b class="nc"><i>464</i>&nbsp;                entry.setField(FieldName.PAGES, pages);</b>
+<i>465</i>&nbsp;            }
+<b class="nc"><i>466</i>&nbsp;            if (year != null) {</b>
+<b class="nc"><i>467</i>&nbsp;                entry.setField(FieldName.YEAR, year);</b>
+<i>468</i>&nbsp;            }
+<b class="nc"><i>469</i>&nbsp;            if (publisher != null) {</b>
+<b class="nc"><i>470</i>&nbsp;                entry.setField(FieldName.PUBLISHER, publisher);</b>
+<i>471</i>&nbsp;            }
+<i>472</i>&nbsp;
+<b class="nc"><i>473</i>&nbsp;            result.add(entry);</b>
+<b class="nc"><i>474</i>&nbsp;        } catch (EncryptedPdfsNotSupportedException e) {</b>
+<b class="nc"><i>475</i>&nbsp;            return ParserResult.fromErrorMessage(Localization.lang(&quot;Decryption not supported.&quot;));</b>
+<b class="nc"><i>476</i>&nbsp;        } catch(IOException exception) {</b>
+<b class="nc"><i>477</i>&nbsp;            return ParserResult.fromError(exception);</b>
+<b class="nc"><i>478</i>&nbsp;        } catch (FetcherException e) {</b>
+<b class="nc"><i>479</i>&nbsp;            return ParserResult.fromErrorMessage(e.getMessage());</b>
+<b class="nc"><i>480</i>&nbsp;        }</b>
+<i>481</i>&nbsp;
+<b class="nc"><i>482</i>&nbsp;        return new ParserResult(result);</b>
+<i>483</i>&nbsp;    }
+<i>484</i>&nbsp;
+<i>485</i>&nbsp;    private String getFirstPageContents(PDDocument document) throws IOException {
+<b class="nc"><i>486</i>&nbsp;        PDFTextStripper stripper = new PDFTextStripper();</b>
+<i>487</i>&nbsp;
+<b class="nc"><i>488</i>&nbsp;        stripper.setStartPage(1);</b>
+<b class="nc"><i>489</i>&nbsp;        stripper.setEndPage(1);</b>
+<b class="nc"><i>490</i>&nbsp;        stripper.setSortByPosition(true);</b>
+<b class="nc"><i>491</i>&nbsp;        stripper.setParagraphEnd(System.lineSeparator());</b>
+<b class="nc"><i>492</i>&nbsp;        StringWriter writer = new StringWriter();</b>
+<b class="nc"><i>493</i>&nbsp;        stripper.writeText(document, writer);</b>
+<i>494</i>&nbsp;
+<b class="nc"><i>495</i>&nbsp;        return writer.toString();</b>
+<i>496</i>&nbsp;    }
+<i>497</i>&nbsp;
+<i>498</i>&nbsp;    /**
+<i>499</i>&nbsp;     * Extract the year out of curString (if it is not yet defined)
+<i>500</i>&nbsp;     */
+<i>501</i>&nbsp;    private void extractYear() {
+<b class="nc"><i>502</i>&nbsp;        if (year != null) {</b>
+<b class="nc"><i>503</i>&nbsp;            return;</b>
+<i>504</i>&nbsp;        }
+<i>505</i>&nbsp;
+<b class="nc"><i>506</i>&nbsp;        Matcher m = YEAR_EXTRACT_PATTERN.matcher(curString);</b>
+<b class="nc"><i>507</i>&nbsp;        if (m.find()) {</b>
+<b class="nc"><i>508</i>&nbsp;            year = curString.substring(m.start(), m.end());</b>
+<i>509</i>&nbsp;        }
+<i>510</i>&nbsp;
+<b class="nc"><i>511</i>&nbsp;    }</b>
+<i>512</i>&nbsp;
+<i>513</i>&nbsp;    /**
+<i>514</i>&nbsp;     * PDFTextStripper normally does NOT produce multiple empty lines
+<i>515</i>&nbsp;     * (besides at strange PDFs). These strange PDFs are handled here:
+<i>516</i>&nbsp;     * proceed to next non-empty line
+<i>517</i>&nbsp;     */
+<i>518</i>&nbsp;    private void proceedToNextNonEmptyLine() {
+<b class="nc"><i>519</i>&nbsp;        while ((i &lt; lines.length) &amp;&amp; &quot;&quot;.equals(lines[i].trim())) {</b>
+<b class="nc"><i>520</i>&nbsp;            i++;</b>
+<i>521</i>&nbsp;        }
+<b class="nc"><i>522</i>&nbsp;    }</b>
+<i>523</i>&nbsp;
+<i>524</i>&nbsp;    /**
+<i>525</i>&nbsp;     * Fill curString with lines until &quot;&quot; is found
+<i>526</i>&nbsp;     * No trailing space is added
+<i>527</i>&nbsp;     * i is advanced to the next non-empty line (ignoring white space)
+<i>528</i>&nbsp;     * &lt;p&gt;
+<i>529</i>&nbsp;     * Lines containing only white spaces are ignored,
+<i>530</i>&nbsp;     * but NOT considered as &quot;&quot;
+<i>531</i>&nbsp;     * &lt;p&gt;
+<i>532</i>&nbsp;     * Uses GLOBAL variables lines, curLine, i
+<i>533</i>&nbsp;     */
+<i>534</i>&nbsp;    private void fillCurStringWithNonEmptyLines() {
+<i>535</i>&nbsp;        // ensure that curString does not end with &quot; &quot;
+<b class="nc"><i>536</i>&nbsp;        curString = curString.trim();</b>
+<b class="nc"><i>537</i>&nbsp;        while ((i &lt; lines.length) &amp;&amp; !&quot;&quot;.equals(lines[i])) {</b>
+<b class="nc"><i>538</i>&nbsp;            String curLine = lines[i].trim();</b>
+<b class="nc"><i>539</i>&nbsp;            if (!&quot;&quot;.equals(curLine)) {</b>
+<b class="nc"><i>540</i>&nbsp;                if (!curString.isEmpty()) {</b>
+<i>541</i>&nbsp;                    // insert separating space if necessary
+<b class="nc"><i>542</i>&nbsp;                    curString = curString.concat(&quot; &quot;);</b>
+<i>543</i>&nbsp;                }
+<b class="nc"><i>544</i>&nbsp;                curString = curString.concat(lines[i]);</b>
+<i>545</i>&nbsp;            }
+<b class="nc"><i>546</i>&nbsp;            i++;</b>
+<b class="nc"><i>547</i>&nbsp;        }</b>
+<i>548</i>&nbsp;
+<b class="nc"><i>549</i>&nbsp;        proceedToNextNonEmptyLine();</b>
+<b class="nc"><i>550</i>&nbsp;    }</b>
+<i>551</i>&nbsp;
+<i>552</i>&nbsp;    /**
+<i>553</i>&nbsp;     * resets curString
+<i>554</i>&nbsp;     * curString now contains the last block (until &quot;&quot; reached)
+<i>555</i>&nbsp;     * Trailing space is added
+<i>556</i>&nbsp;     * &lt;p&gt;
+<i>557</i>&nbsp;     * invariant before/after: i points to line before the last handled block
+<i>558</i>&nbsp;     */
+<i>559</i>&nbsp;    private void readLastBlock() {
+<b class="nc"><i>560</i>&nbsp;        while ((i &gt;= 0) &amp;&amp; &quot;&quot;.equals(lines[i].trim())) {</b>
+<b class="nc"><i>561</i>&nbsp;            i--;</b>
+<i>562</i>&nbsp;        }
+<i>563</i>&nbsp;        // i is now at the end of a block
+<i>564</i>&nbsp;
+<b class="nc"><i>565</i>&nbsp;        int end = i;</b>
+<i>566</i>&nbsp;
+<i>567</i>&nbsp;        // find beginning
+<b class="nc"><i>568</i>&nbsp;        while ((i &gt;= 0) &amp;&amp; !&quot;&quot;.equals(lines[i])) {</b>
+<b class="nc"><i>569</i>&nbsp;            i--;</b>
+<i>570</i>&nbsp;        }
+<i>571</i>&nbsp;        // i is now the line before the beginning of the block
+<i>572</i>&nbsp;        // this fulfills the invariant
+<i>573</i>&nbsp;
+<b class="nc"><i>574</i>&nbsp;        curString = &quot;&quot;;</b>
+<b class="nc"><i>575</i>&nbsp;        for (int j = i + 1; j &lt;= end; j++) {</b>
+<b class="nc"><i>576</i>&nbsp;            curString = curString.concat(lines[j].trim());</b>
+<b class="nc"><i>577</i>&nbsp;            if (j != end) {</b>
+<b class="nc"><i>578</i>&nbsp;                curString = curString.concat(&quot; &quot;);</b>
+<i>579</i>&nbsp;            }
+<i>580</i>&nbsp;        }
+<b class="nc"><i>581</i>&nbsp;    }</b>
+<i>582</i>&nbsp;
+<i>583</i>&nbsp;    @Override
+<i>584</i>&nbsp;    public String getName() {
+<b class="nc"><i>585</i>&nbsp;        return &quot;PDFcontent&quot;;</b>
+<i>586</i>&nbsp;    }
+<i>587</i>&nbsp;
+<i>588</i>&nbsp;    @Override
+<i>589</i>&nbsp;    public FileExtensions getExtensions() {
+<b class="nc"><i>590</i>&nbsp;        return FileExtensions.PDF_CONTENT;</b>
+<i>591</i>&nbsp;    }
+<i>592</i>&nbsp;
+<i>593</i>&nbsp;    @Override
+<i>594</i>&nbsp;    public String getDescription() {
+<b class="nc"><i>595</i>&nbsp;        return &quot;PdfContentImporter parses data of the first page of the PDF and creates a BibTeX entry. Currently, Springer and IEEE formats are supported.&quot;;</b>
+<i>596</i>&nbsp;    }
+<i>597</i>&nbsp;
+<i>598</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

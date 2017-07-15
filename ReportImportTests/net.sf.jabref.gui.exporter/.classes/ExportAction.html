@@ -1,0 +1,321 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ExportAction</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.exporter</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ExportAction (net.sf.jabref.gui.exporter)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ExportAction</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 22)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">ExportAction$1InternalExportAction</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 43)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">ExportAction$1InternalExportAction$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 19)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 84)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.exporter;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.event.ActionEvent;
+<i>4</i>&nbsp;import java.io.File;
+<i>5</i>&nbsp;import java.util.List;
+<i>6</i>&nbsp;import java.util.Map;
+<i>7</i>&nbsp;import java.util.Set;
+<i>8</i>&nbsp;import java.util.TreeSet;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;import javax.swing.AbstractAction;
+<i>11</i>&nbsp;import javax.swing.Action;
+<i>12</i>&nbsp;import javax.swing.JFileChooser;
+<i>13</i>&nbsp;import javax.swing.JOptionPane;
+<i>14</i>&nbsp;import javax.swing.filechooser.FileFilter;
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;import net.sf.jabref.Globals;
+<i>17</i>&nbsp;import net.sf.jabref.gui.JabRefFrame;
+<i>18</i>&nbsp;import net.sf.jabref.gui.actions.MnemonicAwareAction;
+<i>19</i>&nbsp;import net.sf.jabref.gui.worker.AbstractWorker;
+<i>20</i>&nbsp;import net.sf.jabref.logic.exporter.ExportFormat;
+<i>21</i>&nbsp;import net.sf.jabref.logic.exporter.ExportFormats;
+<i>22</i>&nbsp;import net.sf.jabref.logic.exporter.IExportFormat;
+<i>23</i>&nbsp;import net.sf.jabref.logic.exporter.SavePreferences;
+<i>24</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>25</i>&nbsp;import net.sf.jabref.logic.layout.LayoutFormatterPreferences;
+<i>26</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>27</i>&nbsp;import net.sf.jabref.preferences.JabRefPreferences;
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;import org.apache.commons.logging.Log;
+<i>30</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>31</i>&nbsp;
+<b class="nc"><i>32</i>&nbsp;public class ExportAction {</b>
+<i>33</i>&nbsp;
+<b class="nc"><i>34</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(ExportAction.class);</b>
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    /**
+<i>38</i>&nbsp;     * Create an AbstractAction for performing an export operation.
+<i>39</i>&nbsp;     *
+<i>40</i>&nbsp;     * @param frame
+<i>41</i>&nbsp;     *            The JabRefFrame of this JabRef instance.
+<i>42</i>&nbsp;     * @param selectedOnly
+<i>43</i>&nbsp;     *            true indicates that only selected entries should be exported,
+<i>44</i>&nbsp;     *            false indicates that all entries should be exported.
+<i>45</i>&nbsp;     * @return The action.
+<i>46</i>&nbsp;     */
+<i>47</i>&nbsp;    public static AbstractAction getExportAction(JabRefFrame frame, boolean selectedOnly) {
+<i>48</i>&nbsp;
+<i>49</i>&nbsp;        class InternalExportAction extends MnemonicAwareAction {
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;            private final JabRefFrame frame;
+<i>52</i>&nbsp;
+<i>53</i>&nbsp;            private final boolean selectedOnly;
+<i>54</i>&nbsp;
+<i>55</i>&nbsp;
+<b class="nc"><i>56</i>&nbsp;            public InternalExportAction(JabRefFrame frame, boolean selectedOnly) {</b>
+<b class="nc"><i>57</i>&nbsp;                this.frame = frame;</b>
+<b class="nc"><i>58</i>&nbsp;                this.selectedOnly = selectedOnly;</b>
+<b class="nc"><i>59</i>&nbsp;                putValue(Action.NAME, selectedOnly ? Localization.menuTitle(&quot;Export selected entries&quot;) : Localization</b>
+<b class="nc"><i>60</i>&nbsp;                        .menuTitle(&quot;Export&quot;));</b>
+<b class="nc"><i>61</i>&nbsp;            }</b>
+<i>62</i>&nbsp;
+<i>63</i>&nbsp;            @Override
+<i>64</i>&nbsp;            public void actionPerformed(ActionEvent e) {
+<b class="nc"><i>65</i>&nbsp;                Map&lt;String, ExportFormat&gt; customFormats = Globals.prefs.customExports.getCustomExportFormats(Globals.prefs,</b>
+<i>66</i>&nbsp;                        Globals.journalAbbreviationLoader);
+<b class="nc"><i>67</i>&nbsp;                LayoutFormatterPreferences layoutPreferences = Globals.prefs</b>
+<b class="nc"><i>68</i>&nbsp;                        .getLayoutFormatterPreferences(Globals.journalAbbreviationLoader);</b>
+<b class="nc"><i>69</i>&nbsp;                SavePreferences savePreferences = SavePreferences.loadForExportFromPreferences(Globals.prefs);</b>
+<b class="nc"><i>70</i>&nbsp;                ExportFormats.initAllExports(customFormats, layoutPreferences, savePreferences);</b>
+<b class="nc"><i>71</i>&nbsp;                JFileChooser fc = ExportAction</b>
+<b class="nc"><i>72</i>&nbsp;                        .createExportFileChooser(Globals.prefs.get(JabRefPreferences.EXPORT_WORKING_DIRECTORY));</b>
+<b class="nc"><i>73</i>&nbsp;                fc.showSaveDialog(frame);</b>
+<b class="nc"><i>74</i>&nbsp;                File file = fc.getSelectedFile();</b>
+<b class="nc"><i>75</i>&nbsp;                if (file == null) {</b>
+<b class="nc"><i>76</i>&nbsp;                    return;</b>
+<i>77</i>&nbsp;                }
+<b class="nc"><i>78</i>&nbsp;                FileFilter ff = fc.getFileFilter();</b>
+<b class="nc"><i>79</i>&nbsp;                if (ff instanceof ExportFileFilter) {</b>
+<i>80</i>&nbsp;
+<b class="nc"><i>81</i>&nbsp;                    ExportFileFilter eff = (ExportFileFilter) ff;</b>
+<b class="nc"><i>82</i>&nbsp;                    String path = file.getPath();</b>
+<b class="nc"><i>83</i>&nbsp;                    if (!path.endsWith(eff.getExtension())) {</b>
+<b class="nc"><i>84</i>&nbsp;                        path = path + eff.getExtension();</b>
+<i>85</i>&nbsp;                    }
+<b class="nc"><i>86</i>&nbsp;                    file = new File(path);</b>
+<b class="nc"><i>87</i>&nbsp;                    if (file.exists()) {</b>
+<i>88</i>&nbsp;                        // Warn that the file exists:
+<b class="nc"><i>89</i>&nbsp;                        if (JOptionPane.showConfirmDialog(frame,</b>
+<b class="nc"><i>90</i>&nbsp;                                Localization.lang(&quot;&#39;%0&#39; exists. Overwrite file?&quot;, file.getName()),</b>
+<b class="nc"><i>91</i>&nbsp;                                Localization.lang(&quot;Export&quot;), JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) {</b>
+<b class="nc"><i>92</i>&nbsp;                            return;</b>
+<i>93</i>&nbsp;                        }
+<i>94</i>&nbsp;                    }
+<b class="nc"><i>95</i>&nbsp;                    final IExportFormat format = eff.getExportFormat();</b>
+<i>96</i>&nbsp;                    List&lt;BibEntry&gt; entries;
+<b class="nc"><i>97</i>&nbsp;                    if (selectedOnly) {</b>
+<i>98</i>&nbsp;                        // Selected entries
+<b class="nc"><i>99</i>&nbsp;                        entries = frame.getCurrentBasePanel().getSelectedEntries();</b>
+<i>100</i>&nbsp;                    } else {
+<i>101</i>&nbsp;                        // All entries
+<b class="nc"><i>102</i>&nbsp;                        entries = frame.getCurrentBasePanel().getDatabase().getEntries();</b>
+<i>103</i>&nbsp;                    }
+<i>104</i>&nbsp;
+<i>105</i>&nbsp;                    // Set the global variable for this database&#39;s file directory before exporting,
+<i>106</i>&nbsp;                    // so formatters can resolve linked files correctly.
+<i>107</i>&nbsp;                    // (This is an ugly hack!)
+<b class="nc"><i>108</i>&nbsp;                    Globals.prefs.fileDirForDatabase = frame.getCurrentBasePanel().getBibDatabaseContext()</b>
+<b class="nc"><i>109</i>&nbsp;                            .getFileDirectories(Globals.prefs.getFileDirectoryPreferences());</b>
+<i>110</i>&nbsp;
+<i>111</i>&nbsp;                    // Make sure we remember which filter was used, to set
+<i>112</i>&nbsp;                    // the default for next time:
+<b class="nc"><i>113</i>&nbsp;                    Globals.prefs.put(JabRefPreferences.LAST_USED_EXPORT, format.getConsoleName());</b>
+<b class="nc"><i>114</i>&nbsp;                    Globals.prefs.put(JabRefPreferences.EXPORT_WORKING_DIRECTORY, file.getParent());</b>
+<i>115</i>&nbsp;
+<b class="nc"><i>116</i>&nbsp;                    final File finFile = file;</b>
+<b class="nc"><i>117</i>&nbsp;                    final List&lt;BibEntry&gt; finEntries = entries;</b>
+<b class="nc"><i>118</i>&nbsp;                    AbstractWorker exportWorker = new AbstractWorker() {</b>
+<i>119</i>&nbsp;
+<i>120</i>&nbsp;                        String errorMessage;
+<i>121</i>&nbsp;
+<i>122</i>&nbsp;
+<i>123</i>&nbsp;                        @Override
+<i>124</i>&nbsp;                        public void run() {
+<i>125</i>&nbsp;                            try {
+<b class="nc"><i>126</i>&nbsp;                                format.performExport(frame.getCurrentBasePanel().getBibDatabaseContext(),</b>
+<b class="nc"><i>127</i>&nbsp;                                        finFile.getPath(),</b>
+<b class="nc"><i>128</i>&nbsp;                                        frame.getCurrentBasePanel().getBibDatabaseContext().getMetaData().getEncoding()</b>
+<b class="nc"><i>129</i>&nbsp;                                                .orElse(Globals.prefs.getDefaultEncoding()),</b>
+<i>130</i>&nbsp;                                        finEntries);
+<b class="nc"><i>131</i>&nbsp;                            } catch (Exception ex) {</b>
+<b class="nc"><i>132</i>&nbsp;                                LOGGER.warn(&quot;Problem exporting&quot;, ex);</b>
+<b class="nc"><i>133</i>&nbsp;                                if (ex.getMessage() == null) {</b>
+<b class="nc"><i>134</i>&nbsp;                                    errorMessage = ex.toString();</b>
+<i>135</i>&nbsp;                                } else {
+<b class="nc"><i>136</i>&nbsp;                                    errorMessage = ex.getMessage();</b>
+<i>137</i>&nbsp;                                }
+<b class="nc"><i>138</i>&nbsp;                            }</b>
+<b class="nc"><i>139</i>&nbsp;                        }</b>
+<i>140</i>&nbsp;
+<i>141</i>&nbsp;                        @Override
+<i>142</i>&nbsp;                        public void update() {
+<i>143</i>&nbsp;                            // No error message. Report success:
+<b class="nc"><i>144</i>&nbsp;                            if (errorMessage == null) {</b>
+<b class="nc"><i>145</i>&nbsp;                                frame.output(Localization.lang(&quot;%0 export successful&quot;, format.getDisplayName()));</b>
+<i>146</i>&nbsp;                            }
+<i>147</i>&nbsp;                            // ... or show an error dialog:
+<i>148</i>&nbsp;                            else {
+<b class="nc"><i>149</i>&nbsp;                                frame.output(Localization.lang(&quot;Could not save file.&quot;) + &quot; - &quot; + errorMessage);</b>
+<i>150</i>&nbsp;                                // Need to warn the user that saving failed!
+<b class="nc"><i>151</i>&nbsp;                                JOptionPane.showMessageDialog(frame,</b>
+<b class="nc"><i>152</i>&nbsp;                                        Localization.lang(&quot;Could not save file.&quot;) + &quot;\n&quot; + errorMessage,</b>
+<b class="nc"><i>153</i>&nbsp;                                        Localization.lang(&quot;Save database&quot;), JOptionPane.ERROR_MESSAGE);</b>
+<i>154</i>&nbsp;                            }
+<b class="nc"><i>155</i>&nbsp;                        }</b>
+<i>156</i>&nbsp;                    };
+<i>157</i>&nbsp;
+<i>158</i>&nbsp;                    // Run the export action in a background thread:
+<b class="nc"><i>159</i>&nbsp;                    exportWorker.getWorker().run();</b>
+<i>160</i>&nbsp;                    // Run the update method:
+<b class="nc"><i>161</i>&nbsp;                    exportWorker.update();</b>
+<i>162</i>&nbsp;                }
+<b class="nc"><i>163</i>&nbsp;            }</b>
+<i>164</i>&nbsp;        }
+<i>165</i>&nbsp;
+<b class="nc"><i>166</i>&nbsp;        return new InternalExportAction(frame, selectedOnly);</b>
+<i>167</i>&nbsp;    }
+<i>168</i>&nbsp;
+<i>169</i>&nbsp;    private static JFileChooser createExportFileChooser(String currentDir) {
+<b class="nc"><i>170</i>&nbsp;        String lastUsedFormat = Globals.prefs.get(JabRefPreferences.LAST_USED_EXPORT);</b>
+<b class="nc"><i>171</i>&nbsp;        FileFilter defaultFilter = null;</b>
+<b class="nc"><i>172</i>&nbsp;        JFileChooser fc = new JFileChooser(currentDir);</b>
+<b class="nc"><i>173</i>&nbsp;        Set&lt;FileFilter&gt; filters = new TreeSet&lt;&gt;();</b>
+<b class="nc"><i>174</i>&nbsp;        for (Map.Entry&lt;String, IExportFormat&gt; e : ExportFormats.getExportFormats().entrySet()) {</b>
+<b class="nc"><i>175</i>&nbsp;            String formatName = e.getKey();</b>
+<b class="nc"><i>176</i>&nbsp;            IExportFormat format = e.getValue();</b>
+<b class="nc"><i>177</i>&nbsp;            ExportFileFilter exportFileFilter = new ExportFileFilter(format);</b>
+<b class="nc"><i>178</i>&nbsp;            filters.add(exportFileFilter);</b>
+<b class="nc"><i>179</i>&nbsp;            if (formatName.equals(lastUsedFormat)) {</b>
+<b class="nc"><i>180</i>&nbsp;                defaultFilter = exportFileFilter;</b>
+<i>181</i>&nbsp;            }
+<b class="nc"><i>182</i>&nbsp;        }</b>
+<b class="nc"><i>183</i>&nbsp;        for (FileFilter ff : filters) {</b>
+<b class="nc"><i>184</i>&nbsp;            fc.addChoosableFileFilter(ff);</b>
+<b class="nc"><i>185</i>&nbsp;        }</b>
+<b class="nc"><i>186</i>&nbsp;        fc.setAcceptAllFileFilterUsed(false);</b>
+<b class="nc"><i>187</i>&nbsp;        if (defaultFilter != null) {</b>
+<b class="nc"><i>188</i>&nbsp;            fc.setFileFilter(defaultFilter);</b>
+<i>189</i>&nbsp;        }
+<b class="nc"><i>190</i>&nbsp;        return fc;</b>
+<i>191</i>&nbsp;    }
+<i>192</i>&nbsp;
+<i>193</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

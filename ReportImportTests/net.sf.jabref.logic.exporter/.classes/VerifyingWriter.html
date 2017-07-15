@@ -1,0 +1,135 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: VerifyingWriter</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.exporter</a> ]
+</div>
+
+<h1>Coverage Summary for Class: VerifyingWriter (net.sf.jabref.logic.exporter)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">VerifyingWriter</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 18)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.exporter;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.IOException;
+<i>4</i>&nbsp;import java.io.OutputStream;
+<i>5</i>&nbsp;import java.io.OutputStreamWriter;
+<i>6</i>&nbsp;import java.nio.charset.Charset;
+<i>7</i>&nbsp;import java.nio.charset.CharsetEncoder;
+<i>8</i>&nbsp;import java.util.Set;
+<i>9</i>&nbsp;import java.util.TreeSet;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;/**
+<i>12</i>&nbsp; * Writer that extends OutputStreamWriter, but also checks if the chosen
+<i>13</i>&nbsp; * encoding supports all text that is written. Currently only a boolean value is
+<i>14</i>&nbsp; * stored to remember whether everything has gone well or not.
+<i>15</i>&nbsp; */
+<i>16</i>&nbsp;public class VerifyingWriter extends OutputStreamWriter {
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;    private final CharsetEncoder encoder;
+<b class="nc"><i>19</i>&nbsp;    private boolean couldEncodeAll = true;</b>
+<b class="nc"><i>20</i>&nbsp;    private final Set&lt;Character&gt; problemCharacters = new TreeSet&lt;&gt;();</b>
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;    public VerifyingWriter(OutputStream out, Charset encoding) {
+<b class="nc"><i>24</i>&nbsp;        super(out, encoding);</b>
+<b class="nc"><i>25</i>&nbsp;        encoder = encoding.newEncoder();</b>
+<b class="nc"><i>26</i>&nbsp;    }</b>
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;    @Override
+<i>29</i>&nbsp;    public void write(String str) throws IOException {
+<b class="nc"><i>30</i>&nbsp;        super.write(str);</b>
+<b class="nc"><i>31</i>&nbsp;        if (!encoder.canEncode(str)) {</b>
+<b class="nc"><i>32</i>&nbsp;            for (int i = 0; i &lt; str.length(); i++) {</b>
+<b class="nc"><i>33</i>&nbsp;                if (!encoder.canEncode(str.charAt(i))) {</b>
+<b class="nc"><i>34</i>&nbsp;                    problemCharacters.add(str.charAt(i));</b>
+<i>35</i>&nbsp;                }
+<i>36</i>&nbsp;            }
+<b class="nc"><i>37</i>&nbsp;            couldEncodeAll = false;</b>
+<i>38</i>&nbsp;        }
+<b class="nc"><i>39</i>&nbsp;    }</b>
+<i>40</i>&nbsp;
+<i>41</i>&nbsp;    public boolean couldEncodeAll() {
+<b class="nc"><i>42</i>&nbsp;        return couldEncodeAll;</b>
+<i>43</i>&nbsp;    }
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;    public String getProblemCharacters() {
+<b class="nc"><i>46</i>&nbsp;        StringBuilder chars = new StringBuilder();</b>
+<b class="nc"><i>47</i>&nbsp;        for (Character ch : problemCharacters) {</b>
+<b class="nc"><i>48</i>&nbsp;            chars.append(ch.charValue());</b>
+<b class="nc"><i>49</i>&nbsp;        }</b>
+<b class="nc"><i>50</i>&nbsp;        return chars.toString();</b>
+<i>51</i>&nbsp;    }
+<i>52</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

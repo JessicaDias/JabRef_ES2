@@ -1,0 +1,405 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ExternalFileTypes</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.externalfiletype</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ExternalFileTypes (net.sf.jabref.gui.externalfiletype)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ExternalFileTypes</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 159)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.externalfiletype;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.ArrayList;
+<i>4</i>&nbsp;import java.util.List;
+<i>5</i>&nbsp;import java.util.Optional;
+<i>6</i>&nbsp;import java.util.Set;
+<i>7</i>&nbsp;import java.util.TreeSet;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;import net.sf.jabref.Globals;
+<i>10</i>&nbsp;import net.sf.jabref.gui.IconTheme;
+<i>11</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>12</i>&nbsp;import net.sf.jabref.model.entry.FileField;
+<i>13</i>&nbsp;import net.sf.jabref.model.strings.StringUtil;
+<i>14</i>&nbsp;import net.sf.jabref.preferences.JabRefPreferences;
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;public final class ExternalFileTypes {
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;    // This String is used in the encoded list in prefs of external file type
+<i>19</i>&nbsp;    // modifications, in order to indicate a removed default file type:
+<i>20</i>&nbsp;    private static final String FILE_TYPE_REMOVED_FLAG = &quot;REMOVED&quot;;
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;    // Map containing all registered external file types:
+<b class="nc"><i>23</i>&nbsp;    private final Set&lt;ExternalFileType&gt; externalFileTypes = new TreeSet&lt;&gt;();</b>
+<i>24</i>&nbsp;
+<b class="nc"><i>25</i>&nbsp;    private final ExternalFileType HTML_FALLBACK_TYPE = new ExternalFileType(&quot;URL&quot;, &quot;html&quot;, &quot;text/html&quot;, &quot;&quot;, &quot;www&quot;,</b>
+<b class="nc"><i>26</i>&nbsp;            IconTheme.JabRefIcon.WWW.getSmallIcon());</b>
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;    // The only instance of this class:
+<i>29</i>&nbsp;    private static ExternalFileTypes singleton;
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;    public static ExternalFileTypes getInstance() {
+<b class="nc"><i>33</i>&nbsp;        if (ExternalFileTypes.singleton == null) {</b>
+<b class="nc"><i>34</i>&nbsp;            ExternalFileTypes.singleton = new ExternalFileTypes();</b>
+<i>35</i>&nbsp;        }
+<b class="nc"><i>36</i>&nbsp;        return ExternalFileTypes.singleton;</b>
+<i>37</i>&nbsp;    }
+<i>38</i>&nbsp;
+<b class="nc"><i>39</i>&nbsp;    private ExternalFileTypes() {</b>
+<b class="nc"><i>40</i>&nbsp;        updateExternalFileTypes();</b>
+<b class="nc"><i>41</i>&nbsp;    }</b>
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;    public static List&lt;ExternalFileType&gt; getDefaultExternalFileTypes() {
+<b class="nc"><i>44</i>&nbsp;        List&lt;ExternalFileType&gt; list = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>45</i>&nbsp;        list.add(new ExternalFileType(&quot;PDF&quot;, &quot;pdf&quot;, &quot;application/pdf&quot;, &quot;evince&quot;, &quot;pdfSmall&quot;,</b>
+<b class="nc"><i>46</i>&nbsp;                IconTheme.JabRefIcon.PDF_FILE.getSmallIcon()));</b>
+<b class="nc"><i>47</i>&nbsp;        list.add(new ExternalFileType(&quot;PostScript&quot;, &quot;ps&quot;, &quot;application/postscript&quot;, &quot;evince&quot;, &quot;psSmall&quot;,</b>
+<b class="nc"><i>48</i>&nbsp;                IconTheme.JabRefIcon.FILE.getSmallIcon()));</b>
+<b class="nc"><i>49</i>&nbsp;        list.add(new ExternalFileType(&quot;Word&quot;, &quot;doc&quot;, &quot;application/msword&quot;, &quot;oowriter&quot;, &quot;openoffice&quot;,</b>
+<b class="nc"><i>50</i>&nbsp;                IconTheme.JabRefIcon.FILE_WORD.getSmallIcon()));</b>
+<b class="nc"><i>51</i>&nbsp;        list.add(new ExternalFileType(&quot;Word 2007+&quot;, &quot;docx&quot;,</b>
+<i>52</i>&nbsp;                &quot;application/vnd.openxmlformats-officedocument.wordprocessingml.document&quot;, &quot;oowriter&quot;, &quot;openoffice&quot;,
+<b class="nc"><i>53</i>&nbsp;                IconTheme.JabRefIcon.FILE_WORD.getSmallIcon()));</b>
+<b class="nc"><i>54</i>&nbsp;        list.add(new ExternalFileType(Localization.lang(&quot;OpenDocument text&quot;), &quot;odt&quot;,</b>
+<b class="nc"><i>55</i>&nbsp;                &quot;application/vnd.oasis.opendocument.text&quot;, &quot;oowriter&quot;, &quot;openoffice&quot;, IconTheme.getImage(&quot;openoffice&quot;)));</b>
+<b class="nc"><i>56</i>&nbsp;        list.add(new ExternalFileType(&quot;Excel&quot;, &quot;xls&quot;, &quot;application/excel&quot;, &quot;oocalc&quot;, &quot;openoffice&quot;,</b>
+<b class="nc"><i>57</i>&nbsp;                IconTheme.JabRefIcon.FILE_EXCEL.getSmallIcon()));</b>
+<b class="nc"><i>58</i>&nbsp;        list.add(new ExternalFileType(&quot;Excel 2007+&quot;, &quot;xlsx&quot;,</b>
+<i>59</i>&nbsp;                &quot;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet&quot;, &quot;oocalc&quot;, &quot;openoffice&quot;,
+<b class="nc"><i>60</i>&nbsp;                IconTheme.JabRefIcon.FILE_EXCEL.getSmallIcon()));</b>
+<b class="nc"><i>61</i>&nbsp;        list.add(new ExternalFileType(Localization.lang(&quot;OpenDocument spreadsheet&quot;), &quot;ods&quot;,</b>
+<i>62</i>&nbsp;                &quot;application/vnd.oasis.opendocument.spreadsheet&quot;, &quot;oocalc&quot;, &quot;openoffice&quot;,
+<b class="nc"><i>63</i>&nbsp;                IconTheme.getImage(&quot;openoffice&quot;)));</b>
+<b class="nc"><i>64</i>&nbsp;        list.add(new ExternalFileType(&quot;PowerPoint&quot;, &quot;ppt&quot;, &quot;application/vnd.ms-powerpoint&quot;, &quot;ooimpress&quot;, &quot;openoffice&quot;,</b>
+<b class="nc"><i>65</i>&nbsp;                IconTheme.JabRefIcon.FILE_POWERPOINT.getSmallIcon()));</b>
+<b class="nc"><i>66</i>&nbsp;        list.add(new ExternalFileType(&quot;PowerPoint 2007+&quot;, &quot;pptx&quot;,</b>
+<i>67</i>&nbsp;                &quot;application/vnd.openxmlformats-officedocument.presentationml.presentation&quot;, &quot;ooimpress&quot;, &quot;openoffice&quot;,
+<b class="nc"><i>68</i>&nbsp;                IconTheme.JabRefIcon.FILE_POWERPOINT.getSmallIcon()));</b>
+<b class="nc"><i>69</i>&nbsp;        list.add(new ExternalFileType(Localization.lang(&quot;OpenDocument presentation&quot;), &quot;odp&quot;,</b>
+<i>70</i>&nbsp;                &quot;application/vnd.oasis.opendocument.presentation&quot;, &quot;ooimpress&quot;, &quot;openoffice&quot;,
+<b class="nc"><i>71</i>&nbsp;                IconTheme.getImage(&quot;openoffice&quot;)));</b>
+<b class="nc"><i>72</i>&nbsp;        list.add(new ExternalFileType(&quot;Rich Text Format&quot;, &quot;rtf&quot;, &quot;application/rtf&quot;, &quot;oowriter&quot;, &quot;openoffice&quot;,</b>
+<b class="nc"><i>73</i>&nbsp;                IconTheme.JabRefIcon.FILE_TEXT.getSmallIcon()));</b>
+<b class="nc"><i>74</i>&nbsp;        list.add(new ExternalFileType(Localization.lang(&quot;%0 image&quot;, &quot;PNG&quot;), &quot;png&quot;, &quot;image/png&quot;, &quot;gimp&quot;, &quot;picture&quot;,</b>
+<b class="nc"><i>75</i>&nbsp;                IconTheme.JabRefIcon.PICTURE.getSmallIcon()));</b>
+<b class="nc"><i>76</i>&nbsp;        list.add(new ExternalFileType(Localization.lang(&quot;%0 image&quot;, &quot;GIF&quot;), &quot;gif&quot;, &quot;image/gif&quot;, &quot;gimp&quot;, &quot;picture&quot;,</b>
+<b class="nc"><i>77</i>&nbsp;                IconTheme.JabRefIcon.PICTURE.getSmallIcon()));</b>
+<b class="nc"><i>78</i>&nbsp;        list.add(new ExternalFileType(Localization.lang(&quot;%0 image&quot;, &quot;JPG&quot;), &quot;jpg&quot;, &quot;image/jpeg&quot;, &quot;gimp&quot;, &quot;picture&quot;,</b>
+<b class="nc"><i>79</i>&nbsp;                IconTheme.JabRefIcon.PICTURE.getSmallIcon()));</b>
+<b class="nc"><i>80</i>&nbsp;        list.add(new ExternalFileType(&quot;Djvu&quot;, &quot;djvu&quot;, &quot;image/vnd.djvu&quot;, &quot;evince&quot;, &quot;psSmall&quot;,</b>
+<b class="nc"><i>81</i>&nbsp;                IconTheme.JabRefIcon.FILE.getSmallIcon()));</b>
+<b class="nc"><i>82</i>&nbsp;        list.add(new ExternalFileType(&quot;Text&quot;, &quot;txt&quot;, &quot;text/plain&quot;, &quot;emacs&quot;, &quot;emacs&quot;,</b>
+<b class="nc"><i>83</i>&nbsp;                IconTheme.JabRefIcon.FILE_TEXT.getSmallIcon()));</b>
+<b class="nc"><i>84</i>&nbsp;        list.add(new ExternalFileType(&quot;LaTeX&quot;, &quot;tex&quot;, &quot;application/x-latex&quot;, &quot;emacs&quot;, &quot;emacs&quot;,</b>
+<b class="nc"><i>85</i>&nbsp;                IconTheme.JabRefIcon.FILE_TEXT.getSmallIcon()));</b>
+<b class="nc"><i>86</i>&nbsp;        list.add(new ExternalFileType(&quot;CHM&quot;, &quot;chm&quot;, &quot;application/mshelp&quot;, &quot;gnochm&quot;, &quot;www&quot;,</b>
+<b class="nc"><i>87</i>&nbsp;                IconTheme.JabRefIcon.WWW.getSmallIcon()));</b>
+<b class="nc"><i>88</i>&nbsp;        list.add(new ExternalFileType(Localization.lang(&quot;%0 image&quot;, &quot;TIFF&quot;), &quot;tiff&quot;, &quot;image/tiff&quot;, &quot;gimp&quot;, &quot;picture&quot;,</b>
+<b class="nc"><i>89</i>&nbsp;                IconTheme.JabRefIcon.PICTURE.getSmallIcon()));</b>
+<b class="nc"><i>90</i>&nbsp;        list.add(new ExternalFileType(&quot;URL&quot;, &quot;html&quot;, &quot;text/html&quot;, &quot;firefox&quot;, &quot;www&quot;,</b>
+<b class="nc"><i>91</i>&nbsp;                IconTheme.JabRefIcon.WWW.getSmallIcon()));</b>
+<b class="nc"><i>92</i>&nbsp;        list.add(new ExternalFileType(&quot;MHT&quot;, &quot;mht&quot;, &quot;multipart/related&quot;, &quot;firefox&quot;, &quot;www&quot;,</b>
+<b class="nc"><i>93</i>&nbsp;                IconTheme.JabRefIcon.WWW.getSmallIcon()));</b>
+<b class="nc"><i>94</i>&nbsp;        list.add(new ExternalFileType(&quot;ePUB&quot;, &quot;epub&quot;, &quot;application/epub+zip&quot;, &quot;firefox&quot;, &quot;www&quot;,</b>
+<b class="nc"><i>95</i>&nbsp;                IconTheme.JabRefIcon.WWW.getSmallIcon()));</b>
+<i>96</i>&nbsp;
+<i>97</i>&nbsp;        // On all OSes there is a generic application available to handle file opening,
+<i>98</i>&nbsp;        // so we don&#39;t need the default application settings anymore:
+<b class="nc"><i>99</i>&nbsp;        for (ExternalFileType type : list) {</b>
+<b class="nc"><i>100</i>&nbsp;            type.setOpenWith(&quot;&quot;);</b>
+<b class="nc"><i>101</i>&nbsp;        }</b>
+<i>102</i>&nbsp;
+<b class="nc"><i>103</i>&nbsp;        return list;</b>
+<i>104</i>&nbsp;    }
+<i>105</i>&nbsp;
+<i>106</i>&nbsp;    public Set&lt;ExternalFileType&gt; getExternalFileTypeSelection() {
+<b class="nc"><i>107</i>&nbsp;        return externalFileTypes;</b>
+<i>108</i>&nbsp;    }
+<i>109</i>&nbsp;
+<i>110</i>&nbsp;    /**
+<i>111</i>&nbsp;     * Look up the external file type registered with this name, if any.
+<i>112</i>&nbsp;     *
+<i>113</i>&nbsp;     * @param name The file type name.
+<i>114</i>&nbsp;     * @return The ExternalFileType registered, or null if none.
+<i>115</i>&nbsp;     */
+<i>116</i>&nbsp;    public Optional&lt;ExternalFileType&gt; getExternalFileTypeByName(String name) {
+<b class="nc"><i>117</i>&nbsp;        for (ExternalFileType type : externalFileTypes) {</b>
+<b class="nc"><i>118</i>&nbsp;            if (type.getName().equals(name)) {</b>
+<b class="nc"><i>119</i>&nbsp;                return Optional.of(type);</b>
+<i>120</i>&nbsp;            }
+<b class="nc"><i>121</i>&nbsp;        }</b>
+<i>122</i>&nbsp;        // Return an instance that signifies an unknown file type:
+<b class="nc"><i>123</i>&nbsp;        return Optional.of(new UnknownExternalFileType(name));</b>
+<i>124</i>&nbsp;    }
+<i>125</i>&nbsp;
+<i>126</i>&nbsp;    /**
+<i>127</i>&nbsp;     * Look up the external file type registered for this extension, if any.
+<i>128</i>&nbsp;     *
+<i>129</i>&nbsp;     * @param extension The file extension.
+<i>130</i>&nbsp;     * @return The ExternalFileType registered, or null if none.
+<i>131</i>&nbsp;     */
+<i>132</i>&nbsp;    public Optional&lt;ExternalFileType&gt; getExternalFileTypeByExt(String extension) {
+<b class="nc"><i>133</i>&nbsp;        for (ExternalFileType type : externalFileTypes) {</b>
+<b class="nc"><i>134</i>&nbsp;            if (type.getExtension().equalsIgnoreCase(extension)) {</b>
+<b class="nc"><i>135</i>&nbsp;                return Optional.of(type);</b>
+<i>136</i>&nbsp;            }
+<b class="nc"><i>137</i>&nbsp;        }</b>
+<b class="nc"><i>138</i>&nbsp;        return Optional.empty();</b>
+<i>139</i>&nbsp;    }
+<i>140</i>&nbsp;
+<i>141</i>&nbsp;    /**
+<i>142</i>&nbsp;     * Returns true if there is an external file type registered for this extension.
+<i>143</i>&nbsp;     *
+<i>144</i>&nbsp;     * @param extension The file extension.
+<i>145</i>&nbsp;     * @return true if an ExternalFileType with the extension exists, false otherwise
+<i>146</i>&nbsp;     */
+<i>147</i>&nbsp;    public boolean isExternalFileTypeByExt(String extension) {
+<b class="nc"><i>148</i>&nbsp;        for (ExternalFileType type : externalFileTypes) {</b>
+<b class="nc"><i>149</i>&nbsp;            if (type.getExtension().equalsIgnoreCase(extension)) {</b>
+<b class="nc"><i>150</i>&nbsp;                return true;</b>
+<i>151</i>&nbsp;            }
+<b class="nc"><i>152</i>&nbsp;        }</b>
+<b class="nc"><i>153</i>&nbsp;        return false;</b>
+<i>154</i>&nbsp;    }
+<i>155</i>&nbsp;
+<i>156</i>&nbsp;    /**
+<i>157</i>&nbsp;     * Look up the external file type name registered for this extension, if any.
+<i>158</i>&nbsp;     *
+<i>159</i>&nbsp;     * @param extension The file extension.
+<i>160</i>&nbsp;     * @return The name of the ExternalFileType registered, or null if none.
+<i>161</i>&nbsp;     */
+<i>162</i>&nbsp;    public String getExternalFileTypeNameByExt(String extension) {
+<b class="nc"><i>163</i>&nbsp;        for (ExternalFileType type : externalFileTypes) {</b>
+<b class="nc"><i>164</i>&nbsp;            if (type.getExtension().equalsIgnoreCase(extension)) {</b>
+<b class="nc"><i>165</i>&nbsp;                return type.getName();</b>
+<i>166</i>&nbsp;            }
+<b class="nc"><i>167</i>&nbsp;        }</b>
+<b class="nc"><i>168</i>&nbsp;        return &quot;&quot;;</b>
+<i>169</i>&nbsp;    }
+<i>170</i>&nbsp;
+<i>171</i>&nbsp;    /**
+<i>172</i>&nbsp;     * Look up the external file type registered for this filename, if any.
+<i>173</i>&nbsp;     *
+<i>174</i>&nbsp;     * @param filename The name of the file whose type to look up.
+<i>175</i>&nbsp;     * @return The ExternalFileType registered, or null if none.
+<i>176</i>&nbsp;     */
+<i>177</i>&nbsp;    public Optional&lt;ExternalFileType&gt; getExternalFileTypeForName(String filename) {
+<b class="nc"><i>178</i>&nbsp;        int longestFound = -1;</b>
+<b class="nc"><i>179</i>&nbsp;        ExternalFileType foundType = null;</b>
+<b class="nc"><i>180</i>&nbsp;        for (ExternalFileType type : externalFileTypes) {</b>
+<b class="nc"><i>181</i>&nbsp;            if (!type.getExtension().isEmpty() &amp;&amp; filename.toLowerCase().endsWith(type.getExtension().toLowerCase())</b>
+<b class="nc"><i>182</i>&nbsp;                    &amp;&amp; (type.getExtension().length() &gt; longestFound)) {</b>
+<b class="nc"><i>183</i>&nbsp;                longestFound = type.getExtension().length();</b>
+<b class="nc"><i>184</i>&nbsp;                foundType = type;</b>
+<i>185</i>&nbsp;            }
+<b class="nc"><i>186</i>&nbsp;        }</b>
+<b class="nc"><i>187</i>&nbsp;        return Optional.ofNullable(foundType);</b>
+<i>188</i>&nbsp;    }
+<i>189</i>&nbsp;
+<i>190</i>&nbsp;    /**
+<i>191</i>&nbsp;     * Look up the external file type registered for this MIME type, if any.
+<i>192</i>&nbsp;     *
+<i>193</i>&nbsp;     * @param mimeType The MIME type.
+<i>194</i>&nbsp;     * @return The ExternalFileType registered, or null if none. For the mime type &quot;text/html&quot;, a valid file type is
+<i>195</i>&nbsp;     *         guaranteed to be returned.
+<i>196</i>&nbsp;     */
+<i>197</i>&nbsp;    public Optional&lt;ExternalFileType&gt; getExternalFileTypeByMimeType(String mimeType) {
+<b class="nc"><i>198</i>&nbsp;        for (ExternalFileType type : externalFileTypes) {</b>
+<b class="nc"><i>199</i>&nbsp;            if (type.getMimeType().equalsIgnoreCase(mimeType)) {</b>
+<b class="nc"><i>200</i>&nbsp;                return Optional.of(type);</b>
+<i>201</i>&nbsp;            }
+<b class="nc"><i>202</i>&nbsp;        }</b>
+<b class="nc"><i>203</i>&nbsp;        if (&quot;text/html&quot;.equalsIgnoreCase(mimeType)) {</b>
+<b class="nc"><i>204</i>&nbsp;            return Optional.of(HTML_FALLBACK_TYPE);</b>
+<i>205</i>&nbsp;        } else {
+<b class="nc"><i>206</i>&nbsp;            return Optional.empty();</b>
+<i>207</i>&nbsp;        }
+<i>208</i>&nbsp;    }
+<i>209</i>&nbsp;
+<i>210</i>&nbsp;    /**
+<i>211</i>&nbsp;     * Reset the List of external file types after user customization.
+<i>212</i>&nbsp;     *
+<i>213</i>&nbsp;     * @param types The new List of external file types. This is the complete list, not just new entries.
+<i>214</i>&nbsp;     */
+<i>215</i>&nbsp;    public void setExternalFileTypes(List&lt;ExternalFileType&gt; types) {
+<i>216</i>&nbsp;
+<i>217</i>&nbsp;        // First find a list of the default types:
+<b class="nc"><i>218</i>&nbsp;        List&lt;ExternalFileType&gt; defTypes = getDefaultExternalFileTypes();</b>
+<i>219</i>&nbsp;        // Make a list of types that are unchanged:
+<b class="nc"><i>220</i>&nbsp;        List&lt;ExternalFileType&gt; unchanged = new ArrayList&lt;&gt;();</b>
+<i>221</i>&nbsp;
+<b class="nc"><i>222</i>&nbsp;        externalFileTypes.clear();</b>
+<b class="nc"><i>223</i>&nbsp;        for (ExternalFileType type : types) {</b>
+<b class="nc"><i>224</i>&nbsp;            externalFileTypes.add(type);</b>
+<i>225</i>&nbsp;
+<i>226</i>&nbsp;            // See if we can find a type with matching name in the default type list:
+<b class="nc"><i>227</i>&nbsp;            ExternalFileType found = null;</b>
+<b class="nc"><i>228</i>&nbsp;            for (ExternalFileType defType : defTypes) {</b>
+<b class="nc"><i>229</i>&nbsp;                if (defType.getName().equals(type.getName())) {</b>
+<b class="nc"><i>230</i>&nbsp;                    found = defType;</b>
+<b class="nc"><i>231</i>&nbsp;                    break;</b>
+<i>232</i>&nbsp;                }
+<b class="nc"><i>233</i>&nbsp;            }</b>
+<b class="nc"><i>234</i>&nbsp;            if (found != null) {</b>
+<i>235</i>&nbsp;                // Found it! Check if it is an exact match, or if it has been customized:
+<b class="nc"><i>236</i>&nbsp;                if (found.equals(type)) {</b>
+<b class="nc"><i>237</i>&nbsp;                    unchanged.add(type);</b>
+<i>238</i>&nbsp;                } else {
+<i>239</i>&nbsp;                    // It was modified. Remove its entry from the defaults list, since
+<i>240</i>&nbsp;                    // the type hasn&#39;t been removed:
+<b class="nc"><i>241</i>&nbsp;                    defTypes.remove(found);</b>
+<i>242</i>&nbsp;                }
+<i>243</i>&nbsp;            }
+<b class="nc"><i>244</i>&nbsp;        }</b>
+<i>245</i>&nbsp;
+<i>246</i>&nbsp;        // Go through unchanged types. Remove them from the ones that should be stored,
+<i>247</i>&nbsp;        // and from the list of defaults, since we don&#39;t need to mention these in prefs:
+<b class="nc"><i>248</i>&nbsp;        for (ExternalFileType type : unchanged) {</b>
+<b class="nc"><i>249</i>&nbsp;            defTypes.remove(type);</b>
+<b class="nc"><i>250</i>&nbsp;            types.remove(type);</b>
+<b class="nc"><i>251</i>&nbsp;        }</b>
+<i>252</i>&nbsp;
+<i>253</i>&nbsp;        // Now set up the array to write to prefs, containing all new types, all modified
+<i>254</i>&nbsp;        // types, and a flag denoting each default type that has been removed:
+<b class="nc"><i>255</i>&nbsp;        String[][] array = new String[types.size() + defTypes.size()][];</b>
+<b class="nc"><i>256</i>&nbsp;        int i = 0;</b>
+<b class="nc"><i>257</i>&nbsp;        for (ExternalFileType type : types) {</b>
+<b class="nc"><i>258</i>&nbsp;            array[i] = type.getStringArrayRepresentation();</b>
+<b class="nc"><i>259</i>&nbsp;            i++;</b>
+<b class="nc"><i>260</i>&nbsp;        }</b>
+<b class="nc"><i>261</i>&nbsp;        for (ExternalFileType type : defTypes) {</b>
+<b class="nc"><i>262</i>&nbsp;            array[i] = new String[] {type.getName(), FILE_TYPE_REMOVED_FLAG};</b>
+<b class="nc"><i>263</i>&nbsp;            i++;</b>
+<b class="nc"><i>264</i>&nbsp;        }</b>
+<b class="nc"><i>265</i>&nbsp;        Globals.prefs.put(JabRefPreferences.EXTERNAL_FILE_TYPES, FileField.encodeStringArray(array));</b>
+<b class="nc"><i>266</i>&nbsp;    }</b>
+<i>267</i>&nbsp;
+<i>268</i>&nbsp;    /**
+<i>269</i>&nbsp;     * Set up the list of external file types, either from default values, or from values recorded in Preferences.
+<i>270</i>&nbsp;     */
+<i>271</i>&nbsp;    private void updateExternalFileTypes() {
+<i>272</i>&nbsp;        // First get a list of the default file types as a starting point:
+<b class="nc"><i>273</i>&nbsp;        List&lt;ExternalFileType&gt; types = getDefaultExternalFileTypes();</b>
+<i>274</i>&nbsp;        // If no changes have been stored, simply use the defaults:
+<b class="nc"><i>275</i>&nbsp;        if (Globals.prefs.get(JabRefPreferences.EXTERNAL_FILE_TYPES, null) == null) {</b>
+<b class="nc"><i>276</i>&nbsp;            externalFileTypes.clear();</b>
+<b class="nc"><i>277</i>&nbsp;            externalFileTypes.addAll(types);</b>
+<b class="nc"><i>278</i>&nbsp;            return;</b>
+<i>279</i>&nbsp;        }
+<i>280</i>&nbsp;        // Read the prefs information for file types:
+<b class="nc"><i>281</i>&nbsp;        String[][] vals = StringUtil</b>
+<b class="nc"><i>282</i>&nbsp;                .decodeStringDoubleArray(Globals.prefs.get(JabRefPreferences.EXTERNAL_FILE_TYPES, &quot;&quot;));</b>
+<b class="nc"><i>283</i>&nbsp;        for (String[] val : vals) {</b>
+<b class="nc"><i>284</i>&nbsp;            if ((val.length == 2) &amp;&amp; val[1].equals(FILE_TYPE_REMOVED_FLAG)) {</b>
+<i>285</i>&nbsp;                // This entry indicates that a default entry type should be removed:
+<b class="nc"><i>286</i>&nbsp;                ExternalFileType toRemove = null;</b>
+<b class="nc"><i>287</i>&nbsp;                for (ExternalFileType type : types) {</b>
+<b class="nc"><i>288</i>&nbsp;                    if (type.getName().equals(val[0])) {</b>
+<b class="nc"><i>289</i>&nbsp;                        toRemove = type;</b>
+<b class="nc"><i>290</i>&nbsp;                        break;</b>
+<i>291</i>&nbsp;                    }
+<b class="nc"><i>292</i>&nbsp;                }</b>
+<i>293</i>&nbsp;                // If we found it, remove it from the type list:
+<b class="nc"><i>294</i>&nbsp;                if (toRemove != null) {</b>
+<b class="nc"><i>295</i>&nbsp;                    types.remove(toRemove);</b>
+<i>296</i>&nbsp;                }
+<b class="nc"><i>297</i>&nbsp;            } else {</b>
+<i>298</i>&nbsp;                // A new or modified entry type. Construct it from the string array:
+<b class="nc"><i>299</i>&nbsp;                ExternalFileType type = ExternalFileType.buildFromArgs(val);</b>
+<i>300</i>&nbsp;                // Check if there is a default type with the same name. If so, this is a
+<i>301</i>&nbsp;                // modification of that type, so remove the default one:
+<b class="nc"><i>302</i>&nbsp;                ExternalFileType toRemove = null;</b>
+<b class="nc"><i>303</i>&nbsp;                for (ExternalFileType defType : types) {</b>
+<b class="nc"><i>304</i>&nbsp;                    if (type.getName().equals(defType.getName())) {</b>
+<b class="nc"><i>305</i>&nbsp;                        toRemove = defType;</b>
+<b class="nc"><i>306</i>&nbsp;                        break;</b>
+<i>307</i>&nbsp;                    }
+<b class="nc"><i>308</i>&nbsp;                }</b>
+<i>309</i>&nbsp;                // If we found it, remove it from the type list:
+<b class="nc"><i>310</i>&nbsp;                if (toRemove != null) {</b>
+<b class="nc"><i>311</i>&nbsp;                    types.remove(toRemove);</b>
+<i>312</i>&nbsp;                }
+<i>313</i>&nbsp;
+<i>314</i>&nbsp;                // Then add the new one:
+<b class="nc"><i>315</i>&nbsp;                types.add(type);</b>
+<i>316</i>&nbsp;            }
+<i>317</i>&nbsp;        }
+<i>318</i>&nbsp;
+<i>319</i>&nbsp;        // Finally, build the list of types based on the modified defaults list:
+<b class="nc"><i>320</i>&nbsp;        externalFileTypes.addAll(types);</b>
+<b class="nc"><i>321</i>&nbsp;    }</b>
+<i>322</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

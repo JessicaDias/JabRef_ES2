@@ -1,0 +1,842 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ManageJournalsPanel</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.journals</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ManageJournalsPanel (net.sf.jabref.gui.journals)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ManageJournalsPanel</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 219)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">ManageJournalsPanel$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">ManageJournalsPanel$AbbreviationsTableModel</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 37)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">ManageJournalsPanel$AbbreviationsTableModel$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 12)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">ManageJournalsPanel$DownloadAction</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 20)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">ManageJournalsPanel$ExternalFileEntry</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 45)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">ManageJournalsPanel$JournalEntry</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 17)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 50)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 353)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.journals;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.BorderLayout;
+<i>4</i>&nbsp;import java.awt.Dimension;
+<i>5</i>&nbsp;import java.awt.event.ActionEvent;
+<i>6</i>&nbsp;import java.awt.event.ActionListener;
+<i>7</i>&nbsp;import java.awt.event.MouseAdapter;
+<i>8</i>&nbsp;import java.awt.event.MouseEvent;
+<i>9</i>&nbsp;import java.awt.event.MouseListener;
+<i>10</i>&nbsp;import java.io.File;
+<i>11</i>&nbsp;import java.io.FileNotFoundException;
+<i>12</i>&nbsp;import java.io.IOException;
+<i>13</i>&nbsp;import java.io.OutputStream;
+<i>14</i>&nbsp;import java.io.OutputStreamWriter;
+<i>15</i>&nbsp;import java.net.URL;
+<i>16</i>&nbsp;import java.nio.file.Files;
+<i>17</i>&nbsp;import java.nio.file.Path;
+<i>18</i>&nbsp;import java.nio.file.Paths;
+<i>19</i>&nbsp;import java.nio.file.StandardOpenOption;
+<i>20</i>&nbsp;import java.util.ArrayList;
+<i>21</i>&nbsp;import java.util.Collections;
+<i>22</i>&nbsp;import java.util.List;
+<i>23</i>&nbsp;import java.util.Optional;
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;import javax.swing.AbstractAction;
+<i>26</i>&nbsp;import javax.swing.Action;
+<i>27</i>&nbsp;import javax.swing.ActionMap;
+<i>28</i>&nbsp;import javax.swing.BorderFactory;
+<i>29</i>&nbsp;import javax.swing.Box;
+<i>30</i>&nbsp;import javax.swing.ButtonGroup;
+<i>31</i>&nbsp;import javax.swing.InputMap;
+<i>32</i>&nbsp;import javax.swing.JButton;
+<i>33</i>&nbsp;import javax.swing.JComponent;
+<i>34</i>&nbsp;import javax.swing.JDialog;
+<i>35</i>&nbsp;import javax.swing.JLabel;
+<i>36</i>&nbsp;import javax.swing.JOptionPane;
+<i>37</i>&nbsp;import javax.swing.JPanel;
+<i>38</i>&nbsp;import javax.swing.JRadioButton;
+<i>39</i>&nbsp;import javax.swing.JScrollPane;
+<i>40</i>&nbsp;import javax.swing.JTable;
+<i>41</i>&nbsp;import javax.swing.JTextField;
+<i>42</i>&nbsp;import javax.swing.table.AbstractTableModel;
+<i>43</i>&nbsp;
+<i>44</i>&nbsp;import net.sf.jabref.Globals;
+<i>45</i>&nbsp;import net.sf.jabref.gui.FileDialog;
+<i>46</i>&nbsp;import net.sf.jabref.gui.IconTheme;
+<i>47</i>&nbsp;import net.sf.jabref.gui.JabRefFrame;
+<i>48</i>&nbsp;import net.sf.jabref.gui.help.HelpAction;
+<i>49</i>&nbsp;import net.sf.jabref.gui.keyboard.KeyBinding;
+<i>50</i>&nbsp;import net.sf.jabref.gui.net.MonitoredURLDownload;
+<i>51</i>&nbsp;import net.sf.jabref.logic.help.HelpFile;
+<i>52</i>&nbsp;import net.sf.jabref.logic.journals.Abbreviation;
+<i>53</i>&nbsp;import net.sf.jabref.logic.journals.JournalAbbreviationLoader;
+<i>54</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>55</i>&nbsp;import net.sf.jabref.logic.util.OS;
+<i>56</i>&nbsp;import net.sf.jabref.preferences.JabRefPreferences;
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;import com.jgoodies.forms.builder.ButtonBarBuilder;
+<i>59</i>&nbsp;import com.jgoodies.forms.builder.ButtonStackBuilder;
+<i>60</i>&nbsp;import com.jgoodies.forms.builder.FormBuilder;
+<i>61</i>&nbsp;import com.jgoodies.forms.layout.FormLayout;
+<i>62</i>&nbsp;import org.apache.commons.logging.Log;
+<i>63</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;class ManageJournalsPanel extends JPanel {
+<i>66</i>&nbsp;
+<b class="nc"><i>67</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(ManageJournalsPanel.class);</b>
+<i>68</i>&nbsp;
+<i>69</i>&nbsp;    private final JabRefFrame frame;
+<b class="nc"><i>70</i>&nbsp;    private final JTextField personalFile = new JTextField();</b>
+<b class="nc"><i>71</i>&nbsp;    private final AbbreviationsTableModel tableModel = new AbbreviationsTableModel();</b>
+<i>72</i>&nbsp;    private JTable userTable; // builtInTable
+<b class="nc"><i>73</i>&nbsp;    private final JPanel userPanel = new JPanel();</b>
+<i>74</i>&nbsp;    private final JPanel journalEditPanel;
+<b class="nc"><i>75</i>&nbsp;    private final JPanel externalFilesPanel = new JPanel();</b>
+<b class="nc"><i>76</i>&nbsp;    private final JPanel addExtPan = new JPanel();</b>
+<b class="nc"><i>77</i>&nbsp;    private final JTextField nameTf = new JTextField();</b>
+<b class="nc"><i>78</i>&nbsp;    private final JTextField newNameTf = new JTextField();</b>
+<b class="nc"><i>79</i>&nbsp;    private final JTextField abbrTf = new JTextField();</b>
+<b class="nc"><i>80</i>&nbsp;    private final List&lt;ExternalFileEntry&gt; externals = new ArrayList&lt;&gt;(); // To hold references to external journal lists.</b>
+<i>81</i>&nbsp;    private final JDialog dialog;
+<b class="nc"><i>82</i>&nbsp;    private final JRadioButton newFile = new JRadioButton(Localization.lang(&quot;New file&quot;));</b>
+<b class="nc"><i>83</i>&nbsp;    private final JRadioButton oldFile = new JRadioButton(Localization.lang(&quot;Existing file&quot;));</b>
+<i>84</i>&nbsp;
+<b class="nc"><i>85</i>&nbsp;    private final JButton add = new JButton(IconTheme.JabRefIcon.ADD_NOBOX.getIcon());</b>
+<b class="nc"><i>86</i>&nbsp;    private final JButton remove = new JButton(IconTheme.JabRefIcon.REMOVE_NOBOX.getIcon());</b>
+<i>87</i>&nbsp;
+<i>88</i>&nbsp;
+<b class="nc"><i>89</i>&nbsp;    public ManageJournalsPanel(final JabRefFrame frame) {</b>
+<b class="nc"><i>90</i>&nbsp;        this.frame = frame;</b>
+<i>91</i>&nbsp;
+<b class="nc"><i>92</i>&nbsp;        personalFile.setEditable(false);</b>
+<i>93</i>&nbsp;
+<b class="nc"><i>94</i>&nbsp;        ButtonGroup group = new ButtonGroup();</b>
+<b class="nc"><i>95</i>&nbsp;        group.add(newFile);</b>
+<b class="nc"><i>96</i>&nbsp;        group.add(oldFile);</b>
+<b class="nc"><i>97</i>&nbsp;        addExtPan.setLayout(new BorderLayout());</b>
+<b class="nc"><i>98</i>&nbsp;        JButton addExt = new JButton(IconTheme.JabRefIcon.ADD.getIcon());</b>
+<b class="nc"><i>99</i>&nbsp;        addExtPan.add(addExt, BorderLayout.EAST);</b>
+<b class="nc"><i>100</i>&nbsp;        addExtPan.setToolTipText(Localization.lang(&quot;Add&quot;));</b>
+<b class="nc"><i>101</i>&nbsp;        FormLayout layout = new FormLayout(&quot;1dlu, 8dlu, left:pref, 4dlu, fill:200dlu:grow, 4dlu, fill:pref&quot;,</b>
+<i>102</i>&nbsp;                &quot;pref, pref, pref, 20dlu, 20dlu, fill:200dlu, 4dlu, pref&quot;);
+<b class="nc"><i>103</i>&nbsp;        FormBuilder builder = FormBuilder.create().layout(layout);</b>
+<i>104</i>&nbsp;
+<b class="nc"><i>105</i>&nbsp;        builder.addSeparator(Localization.lang(&quot;Built-in journal list&quot;)).xyw(2, 1, 6);</b>
+<b class="nc"><i>106</i>&nbsp;        JLabel description = new JLabel(</b>
+<b class="nc"><i>107</i>&nbsp;                &quot;&lt;HTML&gt;&quot; + Localization.lang(&quot;JabRef includes a built-in list of journal abbreviations.&quot;) + &quot;&lt;br&gt;&quot;</b>
+<i>108</i>&nbsp;                        + Localization
+<b class="nc"><i>109</i>&nbsp;                                .lang(&quot;You can add additional journal names by setting up a personal journal list,&lt;br&gt;as &quot;</b>
+<i>110</i>&nbsp;                                        + &quot;well as linking to external journal lists.&quot;)
+<i>111</i>&nbsp;                        + &quot;&lt;/HTML&gt;&quot;);
+<b class="nc"><i>112</i>&nbsp;        description.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));</b>
+<b class="nc"><i>113</i>&nbsp;        builder.add(description).xyw(2, 2, 6);</b>
+<b class="nc"><i>114</i>&nbsp;        JButton viewBuiltin = new JButton(Localization.lang(&quot;View&quot;));</b>
+<b class="nc"><i>115</i>&nbsp;        builder.add(viewBuiltin).xy(7, 2);</b>
+<b class="nc"><i>116</i>&nbsp;        builder.addSeparator(Localization.lang(&quot;Personal journal list&quot;)).xyw(2, 3, 6);</b>
+<i>117</i>&nbsp;
+<b class="nc"><i>118</i>&nbsp;        builder.add(newFile).xy(3, 4);</b>
+<b class="nc"><i>119</i>&nbsp;        builder.add(newNameTf).xy(5, 4);</b>
+<b class="nc"><i>120</i>&nbsp;        JButton browseNew = new JButton(Localization.lang(&quot;Browse&quot;));</b>
+<b class="nc"><i>121</i>&nbsp;        builder.add(browseNew).xy(7, 4);</b>
+<b class="nc"><i>122</i>&nbsp;        builder.add(oldFile).xy(3, 5);</b>
+<b class="nc"><i>123</i>&nbsp;        builder.add(personalFile).xy(5, 5);</b>
+<b class="nc"><i>124</i>&nbsp;        JButton browseOld = new JButton(Localization.lang(&quot;Browse&quot;));</b>
+<b class="nc"><i>125</i>&nbsp;        builder.add(browseOld).xy(7, 5);</b>
+<i>126</i>&nbsp;
+<b class="nc"><i>127</i>&nbsp;        userPanel.setLayout(new BorderLayout());</b>
+<b class="nc"><i>128</i>&nbsp;        builder.add(userPanel).xyw(2, 6, 4);</b>
+<b class="nc"><i>129</i>&nbsp;        ButtonStackBuilder butBul = new ButtonStackBuilder();</b>
+<b class="nc"><i>130</i>&nbsp;        butBul.addButton(add);</b>
+<b class="nc"><i>131</i>&nbsp;        butBul.addButton(remove);</b>
+<i>132</i>&nbsp;
+<b class="nc"><i>133</i>&nbsp;        butBul.addGlue();</b>
+<b class="nc"><i>134</i>&nbsp;        builder.add(butBul.getPanel()).xy(7, 6);</b>
+<i>135</i>&nbsp;
+<b class="nc"><i>136</i>&nbsp;        builder.addSeparator(Localization.lang(&quot;External files&quot;)).xyw(2, 8, 6);</b>
+<b class="nc"><i>137</i>&nbsp;        externalFilesPanel.setLayout(new BorderLayout());</b>
+<i>138</i>&nbsp;
+<b class="nc"><i>139</i>&nbsp;        setLayout(new BorderLayout());</b>
+<b class="nc"><i>140</i>&nbsp;        builder.getPanel().setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));</b>
+<b class="nc"><i>141</i>&nbsp;        add(builder.getPanel(), BorderLayout.NORTH);</b>
+<b class="nc"><i>142</i>&nbsp;        add(externalFilesPanel, BorderLayout.CENTER);</b>
+<b class="nc"><i>143</i>&nbsp;        ButtonBarBuilder bb = new ButtonBarBuilder();</b>
+<b class="nc"><i>144</i>&nbsp;        bb.addGlue();</b>
+<b class="nc"><i>145</i>&nbsp;        JButton ok = new JButton(Localization.lang(&quot;OK&quot;));</b>
+<b class="nc"><i>146</i>&nbsp;        bb.addButton(ok);</b>
+<b class="nc"><i>147</i>&nbsp;        JButton cancel = new JButton(Localization.lang(&quot;Cancel&quot;));</b>
+<b class="nc"><i>148</i>&nbsp;        bb.addButton(cancel);</b>
+<b class="nc"><i>149</i>&nbsp;        bb.addUnrelatedGap();</b>
+<i>150</i>&nbsp;
+<b class="nc"><i>151</i>&nbsp;        JButton help = new HelpAction(HelpFile.JOURNAL_ABBREV).getHelpButton();</b>
+<b class="nc"><i>152</i>&nbsp;        bb.addButton(help);</b>
+<b class="nc"><i>153</i>&nbsp;        bb.addGlue();</b>
+<b class="nc"><i>154</i>&nbsp;        bb.getPanel().setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));</b>
+<b class="nc"><i>155</i>&nbsp;        dialog = new JDialog(frame, Localization.lang(&quot;Journal abbreviations&quot;), false);</b>
+<b class="nc"><i>156</i>&nbsp;        dialog.getContentPane().add(this, BorderLayout.CENTER);</b>
+<b class="nc"><i>157</i>&nbsp;        dialog.getContentPane().add(bb.getPanel(), BorderLayout.SOUTH);</b>
+<i>158</i>&nbsp;
+<i>159</i>&nbsp;        // Set up panel for editing a single journal, to be used in a dialog box:
+<b class="nc"><i>160</i>&nbsp;        FormLayout layout2 = new FormLayout(&quot;right:pref, 4dlu, fill:180dlu&quot;, &quot;p, 2dlu, p&quot;);</b>
+<b class="nc"><i>161</i>&nbsp;        FormBuilder builder2 = FormBuilder.create().layout(layout2);</b>
+<b class="nc"><i>162</i>&nbsp;        builder2.add(Localization.lang(&quot;Journal name&quot;)).xy(1, 1);</b>
+<b class="nc"><i>163</i>&nbsp;        builder2.add(nameTf).xy(3, 1);</b>
+<b class="nc"><i>164</i>&nbsp;        builder2.add(Localization.lang(&quot;ISO abbreviation&quot;)).xy(1, 3);</b>
+<b class="nc"><i>165</i>&nbsp;        builder2.add(abbrTf).xy(3, 3);</b>
+<b class="nc"><i>166</i>&nbsp;        journalEditPanel = builder2.getPanel();</b>
+<i>167</i>&nbsp;
+<b class="nc"><i>168</i>&nbsp;        viewBuiltin.addActionListener(e -&gt; {</b>
+<b class="nc"><i>169</i>&nbsp;            JTable table = new JTable(JournalAbbreviationsUtil.getTableModel(Globals.journalAbbreviationLoader</b>
+<b class="nc"><i>170</i>&nbsp;                    .getRepository(Globals.prefs.getJournalAbbreviationPreferences()).getAbbreviations()));</b>
+<i>171</i>&nbsp;
+<b class="nc"><i>172</i>&nbsp;            JScrollPane pane = new JScrollPane(table);</b>
+<b class="nc"><i>173</i>&nbsp;            JOptionPane.showMessageDialog(null, pane, Localization.lang(&quot;Journal list preview&quot;),</b>
+<i>174</i>&nbsp;                    JOptionPane.INFORMATION_MESSAGE);
+<b class="nc"><i>175</i>&nbsp;        });</b>
+<i>176</i>&nbsp;
+<b class="nc"><i>177</i>&nbsp;        browseNew.addActionListener(e -&gt; {</b>
+<b class="nc"><i>178</i>&nbsp;            Optional&lt;Path&gt; path = new FileDialog(frame, newNameTf.getText()).saveNewFile();</b>
+<b class="nc"><i>179</i>&nbsp;            path.ifPresent(fileName -&gt; {</b>
+<b class="nc"><i>180</i>&nbsp;                newNameTf.setText(fileName.toString());</b>
+<b class="nc"><i>181</i>&nbsp;                newFile.setSelected(true);</b>
+<b class="nc"><i>182</i>&nbsp;            });</b>
+<i>183</i>&nbsp;
+<b class="nc"><i>184</i>&nbsp;        });</b>
+<i>185</i>&nbsp;
+<b class="nc"><i>186</i>&nbsp;        browseOld.addActionListener(e -&gt; {</b>
+<b class="nc"><i>187</i>&nbsp;            Optional&lt;Path&gt; path = new FileDialog(frame, personalFile.getText()).showDialogAndGetSelectedFile();</b>
+<i>188</i>&nbsp;
+<b class="nc"><i>189</i>&nbsp;            path.ifPresent(fileName -&gt; {</b>
+<b class="nc"><i>190</i>&nbsp;                personalFile.setText(fileName.toString());</b>
+<b class="nc"><i>191</i>&nbsp;                oldFile.setSelected(true);</b>
+<b class="nc"><i>192</i>&nbsp;                oldFile.setEnabled(true);</b>
+<b class="nc"><i>193</i>&nbsp;                setupUserTable();</b>
+<b class="nc"><i>194</i>&nbsp;            });</b>
+<b class="nc"><i>195</i>&nbsp;        });</b>
+<i>196</i>&nbsp;
+<b class="nc"><i>197</i>&nbsp;        ok.addActionListener(e -&gt; {</b>
+<b class="nc"><i>198</i>&nbsp;            if (readyToClose()) {</b>
+<b class="nc"><i>199</i>&nbsp;                storeSettings();</b>
+<b class="nc"><i>200</i>&nbsp;                dialog.dispose();</b>
+<i>201</i>&nbsp;            }
+<b class="nc"><i>202</i>&nbsp;        });</b>
+<i>203</i>&nbsp;
+<b class="nc"><i>204</i>&nbsp;        Action cancelAction = new AbstractAction() {</b>
+<i>205</i>&nbsp;
+<i>206</i>&nbsp;            @Override
+<i>207</i>&nbsp;            public void actionPerformed(ActionEvent e) {
+<b class="nc"><i>208</i>&nbsp;                dialog.dispose();</b>
+<b class="nc"><i>209</i>&nbsp;            }</b>
+<i>210</i>&nbsp;        };
+<b class="nc"><i>211</i>&nbsp;        cancel.addActionListener(cancelAction);</b>
+<i>212</i>&nbsp;
+<b class="nc"><i>213</i>&nbsp;        add.addActionListener(tableModel);</b>
+<b class="nc"><i>214</i>&nbsp;        remove.addActionListener(tableModel);</b>
+<b class="nc"><i>215</i>&nbsp;        addExt.addActionListener(e -&gt; {</b>
+<b class="nc"><i>216</i>&nbsp;            externals.add(new ExternalFileEntry());</b>
+<b class="nc"><i>217</i>&nbsp;            buildExternalsPanel();</b>
+<b class="nc"><i>218</i>&nbsp;        });</b>
+<i>219</i>&nbsp;
+<i>220</i>&nbsp;        // Key bindings:
+<b class="nc"><i>221</i>&nbsp;        ActionMap am = getActionMap();</b>
+<b class="nc"><i>222</i>&nbsp;        InputMap im = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);</b>
+<b class="nc"><i>223</i>&nbsp;        im.put(Globals.getKeyPrefs().getKey(KeyBinding.CLOSE_DIALOG), &quot;close&quot;);</b>
+<b class="nc"><i>224</i>&nbsp;        am.put(&quot;close&quot;, cancelAction);</b>
+<i>225</i>&nbsp;
+<b class="nc"><i>226</i>&nbsp;        int xSize = getPreferredSize().width;</b>
+<b class="nc"><i>227</i>&nbsp;        dialog.setSize(xSize + 10, 700);</b>
+<b class="nc"><i>228</i>&nbsp;    }</b>
+<i>229</i>&nbsp;
+<i>230</i>&nbsp;    public JDialog getDialog() {
+<b class="nc"><i>231</i>&nbsp;        return dialog;</b>
+<i>232</i>&nbsp;    }
+<i>233</i>&nbsp;
+<i>234</i>&nbsp;    public void setValues() {
+<b class="nc"><i>235</i>&nbsp;        personalFile.setText(Globals.prefs.get(JabRefPreferences.PERSONAL_JOURNAL_LIST));</b>
+<b class="nc"><i>236</i>&nbsp;        if (personalFile.getText().isEmpty()) {</b>
+<b class="nc"><i>237</i>&nbsp;            newFile.setSelected(true);</b>
+<b class="nc"><i>238</i>&nbsp;            newFile.setEnabled(true);</b>
+<b class="nc"><i>239</i>&nbsp;            oldFile.setSelected(false);</b>
+<b class="nc"><i>240</i>&nbsp;            oldFile.setEnabled(false);</b>
+<i>241</i>&nbsp;        } else {
+<b class="nc"><i>242</i>&nbsp;            newFile.setSelected(false);</b>
+<b class="nc"><i>243</i>&nbsp;            newFile.setEnabled(false);</b>
+<b class="nc"><i>244</i>&nbsp;            oldFile.setSelected(true);</b>
+<b class="nc"><i>245</i>&nbsp;            oldFile.setEnabled(true);</b>
+<i>246</i>&nbsp;        }
+<b class="nc"><i>247</i>&nbsp;        setupUserTable();</b>
+<b class="nc"><i>248</i>&nbsp;        setupExternals();</b>
+<b class="nc"><i>249</i>&nbsp;        buildExternalsPanel();</b>
+<i>250</i>&nbsp;
+<b class="nc"><i>251</i>&nbsp;    }</b>
+<i>252</i>&nbsp;
+<i>253</i>&nbsp;    private void buildExternalsPanel() {
+<i>254</i>&nbsp;
+<b class="nc"><i>255</i>&nbsp;        FormBuilder builder = FormBuilder.create().layout(new FormLayout(&quot;fill:pref:grow&quot;, &quot;p&quot;));</b>
+<b class="nc"><i>256</i>&nbsp;        int row = 1;</b>
+<b class="nc"><i>257</i>&nbsp;        for (ExternalFileEntry efe : externals) {</b>
+<b class="nc"><i>258</i>&nbsp;            builder.add(efe.getPanel()).xy(1, row);</b>
+<b class="nc"><i>259</i>&nbsp;            builder.appendRows(&quot;2dlu, p&quot;);</b>
+<b class="nc"><i>260</i>&nbsp;            row += 2;</b>
+<b class="nc"><i>261</i>&nbsp;        }</b>
+<b class="nc"><i>262</i>&nbsp;        builder.add(Box.createVerticalGlue()).xy(1, row);</b>
+<b class="nc"><i>263</i>&nbsp;        builder.appendRows(&quot;2dlu, p, 2dlu, p&quot;);</b>
+<b class="nc"><i>264</i>&nbsp;        builder.add(addExtPan).xy(1, row + 2);</b>
+<b class="nc"><i>265</i>&nbsp;        builder.add(Box.createVerticalGlue()).xy(1, row + 2);</b>
+<i>266</i>&nbsp;
+<b class="nc"><i>267</i>&nbsp;        JScrollPane pane = new JScrollPane(builder.getPanel());</b>
+<b class="nc"><i>268</i>&nbsp;        pane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));</b>
+<b class="nc"><i>269</i>&nbsp;        externalFilesPanel.setMinimumSize(new Dimension(400, 400));</b>
+<b class="nc"><i>270</i>&nbsp;        externalFilesPanel.setPreferredSize(new Dimension(400, 400));</b>
+<b class="nc"><i>271</i>&nbsp;        externalFilesPanel.removeAll();</b>
+<b class="nc"><i>272</i>&nbsp;        externalFilesPanel.add(pane, BorderLayout.CENTER);</b>
+<b class="nc"><i>273</i>&nbsp;        externalFilesPanel.revalidate();</b>
+<b class="nc"><i>274</i>&nbsp;        externalFilesPanel.repaint();</b>
+<i>275</i>&nbsp;
+<b class="nc"><i>276</i>&nbsp;    }</b>
+<i>277</i>&nbsp;
+<i>278</i>&nbsp;    private void setupExternals() {
+<b class="nc"><i>279</i>&nbsp;        List&lt;String&gt; externalFiles = Globals.prefs.getStringList(JabRefPreferences.EXTERNAL_JOURNAL_LISTS);</b>
+<b class="nc"><i>280</i>&nbsp;        if (externalFiles.isEmpty()) {</b>
+<b class="nc"><i>281</i>&nbsp;            ExternalFileEntry efe = new ExternalFileEntry();</b>
+<b class="nc"><i>282</i>&nbsp;            externals.add(efe);</b>
+<b class="nc"><i>283</i>&nbsp;        } else {</b>
+<b class="nc"><i>284</i>&nbsp;            for (String externalFile : externalFiles) {</b>
+<b class="nc"><i>285</i>&nbsp;                ExternalFileEntry efe = new ExternalFileEntry(externalFile);</b>
+<b class="nc"><i>286</i>&nbsp;                externals.add(efe);</b>
+<b class="nc"><i>287</i>&nbsp;            }</b>
+<i>288</i>&nbsp;        }
+<b class="nc"><i>289</i>&nbsp;    }</b>
+<i>290</i>&nbsp;
+<i>291</i>&nbsp;    private void setupUserTable() {
+<b class="nc"><i>292</i>&nbsp;        List&lt;Abbreviation&gt; userAbbreviations = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>293</i>&nbsp;        String filename = personalFile.getText();</b>
+<b class="nc"><i>294</i>&nbsp;        if (!filename.isEmpty() &amp;&amp; Files.exists(Paths.get(filename))) {</b>
+<i>295</i>&nbsp;            try {
+<b class="nc"><i>296</i>&nbsp;                userAbbreviations = JournalAbbreviationLoader.readJournalListFromFile(new File(filename),</b>
+<b class="nc"><i>297</i>&nbsp;                        Globals.prefs.getDefaultEncoding());</b>
+<b class="nc"><i>298</i>&nbsp;            } catch (FileNotFoundException e) {</b>
+<b class="nc"><i>299</i>&nbsp;                LOGGER.warn(&quot;Problem reading abbreviation file&quot;, e);</b>
+<b class="nc"><i>300</i>&nbsp;            }</b>
+<i>301</i>&nbsp;        }
+<i>302</i>&nbsp;
+<b class="nc"><i>303</i>&nbsp;        tableModel.setJournals(userAbbreviations);</b>
+<b class="nc"><i>304</i>&nbsp;        userTable = new JTable(tableModel);</b>
+<i>305</i>&nbsp;
+<b class="nc"><i>306</i>&nbsp;        userTable.addMouseListener(tableModel.getMouseListener());</b>
+<b class="nc"><i>307</i>&nbsp;        userPanel.add(new JScrollPane(userTable), BorderLayout.CENTER);</b>
+<b class="nc"><i>308</i>&nbsp;    }</b>
+<i>309</i>&nbsp;
+<i>310</i>&nbsp;    private boolean readyToClose() {
+<i>311</i>&nbsp;        Path filePath;
+<b class="nc"><i>312</i>&nbsp;        if (newFile.isSelected()) {</b>
+<b class="nc"><i>313</i>&nbsp;            if (newNameTf.getText().isEmpty()) {</b>
+<b class="nc"><i>314</i>&nbsp;                if (tableModel.getRowCount() &gt; 0) {</b>
+<b class="nc"><i>315</i>&nbsp;                    JOptionPane.showMessageDialog(this,</b>
+<b class="nc"><i>316</i>&nbsp;                            Localization.lang(&quot;You must choose a filename to store journal abbreviations&quot;),</b>
+<b class="nc"><i>317</i>&nbsp;                            Localization.lang(&quot;Store journal abbreviations&quot;), JOptionPane.ERROR_MESSAGE);</b>
+<b class="nc"><i>318</i>&nbsp;                    return false;</b>
+<i>319</i>&nbsp;                } else {
+<b class="nc"><i>320</i>&nbsp;                    return true;</b>
+<i>321</i>&nbsp;                }
+<i>322</i>&nbsp;            } else {
+<b class="nc"><i>323</i>&nbsp;                filePath = Paths.get(newNameTf.getText());</b>
+<b class="nc"><i>324</i>&nbsp;                return !Files.exists(filePath) || (JOptionPane.showConfirmDialog(this,</b>
+<b class="nc"><i>325</i>&nbsp;                        Localization.lang(&quot;&#39;%0&#39; exists. Overwrite file?&quot;, filePath.getFileName().toString()),</b>
+<b class="nc"><i>326</i>&nbsp;                        Localization.lang(&quot;Store journal abbreviations&quot;),</b>
+<i>327</i>&nbsp;                        JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION);
+<i>328</i>&nbsp;            }
+<i>329</i>&nbsp;        }
+<b class="nc"><i>330</i>&nbsp;        return true;</b>
+<i>331</i>&nbsp;    }
+<i>332</i>&nbsp;
+<i>333</i>&nbsp;    private void storeSettings() {
+<b class="nc"><i>334</i>&nbsp;        Path filePath = null;</b>
+<b class="nc"><i>335</i>&nbsp;        if (newFile.isSelected()) {</b>
+<b class="nc"><i>336</i>&nbsp;            if (!newNameTf.getText().isEmpty()) {</b>
+<b class="nc"><i>337</i>&nbsp;                filePath = Paths.get(newNameTf.getText());</b>
+<i>338</i>&nbsp;            }
+<i>339</i>&nbsp;        } else {
+<b class="nc"><i>340</i>&nbsp;            filePath = Paths.get(personalFile.getText());</b>
+<i>341</i>&nbsp;        }
+<i>342</i>&nbsp;
+<b class="nc"><i>343</i>&nbsp;        if (filePath != null) {</b>
+<b class="nc"><i>344</i>&nbsp;            try (OutputStream stream = Files.newOutputStream(filePath, StandardOpenOption.CREATE);</b>
+<b class="nc"><i>345</i>&nbsp;                    OutputStreamWriter writer = new OutputStreamWriter(stream, Globals.prefs.getDefaultEncoding())) {</b>
+<b class="nc"><i>346</i>&nbsp;                for (JournalEntry entry : tableModel.getJournals()) {</b>
+<b class="nc"><i>347</i>&nbsp;                    writer.write(entry.getName());</b>
+<b class="nc"><i>348</i>&nbsp;                    writer.write(&quot; = &quot;);</b>
+<b class="nc"><i>349</i>&nbsp;                    writer.write(entry.getAbbreviation());</b>
+<b class="nc"><i>350</i>&nbsp;                    writer.write(OS.NEWLINE);</b>
+<b class="nc"><i>351</i>&nbsp;                }</b>
+<b class="nc"><i>352</i>&nbsp;            } catch (IOException e) {</b>
+<b class="nc"><i>353</i>&nbsp;                LOGGER.warn(&quot;Problem writing abbreviation file&quot;, e);</b>
+<b class="nc"><i>354</i>&nbsp;            }</b>
+<b class="nc"><i>355</i>&nbsp;            String filename = filePath.toString();</b>
+<b class="nc"><i>356</i>&nbsp;            if (&quot;&quot;.equals(filename)) {</b>
+<b class="nc"><i>357</i>&nbsp;                filename = null;</b>
+<i>358</i>&nbsp;            }
+<b class="nc"><i>359</i>&nbsp;            Globals.prefs.put(JabRefPreferences.PERSONAL_JOURNAL_LIST, filename);</b>
+<i>360</i>&nbsp;        }
+<i>361</i>&nbsp;
+<i>362</i>&nbsp;        // Store the list of external files set up:
+<b class="nc"><i>363</i>&nbsp;        List&lt;String&gt; extFiles = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>364</i>&nbsp;        for (ExternalFileEntry efe : externals) {</b>
+<b class="nc"><i>365</i>&nbsp;            if (!&quot;&quot;.equals(efe.getValue())) {</b>
+<b class="nc"><i>366</i>&nbsp;                extFiles.add(efe.getValue());</b>
+<i>367</i>&nbsp;            }
+<b class="nc"><i>368</i>&nbsp;        }</b>
+<b class="nc"><i>369</i>&nbsp;        Globals.prefs.putStringList(JabRefPreferences.EXTERNAL_JOURNAL_LISTS, extFiles);</b>
+<i>370</i>&nbsp;
+<i>371</i>&nbsp;        // Update journal abbreviation loader
+<b class="nc"><i>372</i>&nbsp;        Globals.journalAbbreviationLoader.update(Globals.prefs.getJournalAbbreviationPreferences());</b>
+<b class="nc"><i>373</i>&nbsp;    }</b>
+<i>374</i>&nbsp;
+<i>375</i>&nbsp;
+<i>376</i>&nbsp;    class DownloadAction extends AbstractAction {
+<i>377</i>&nbsp;
+<i>378</i>&nbsp;        private final JTextField comp;
+<i>379</i>&nbsp;
+<i>380</i>&nbsp;
+<b class="nc"><i>381</i>&nbsp;        public DownloadAction(JTextField tc) {</b>
+<b class="nc"><i>382</i>&nbsp;            super(Localization.lang(&quot;Download&quot;));</b>
+<b class="nc"><i>383</i>&nbsp;            comp = tc;</b>
+<b class="nc"><i>384</i>&nbsp;        }</b>
+<i>385</i>&nbsp;
+<i>386</i>&nbsp;        @Override
+<i>387</i>&nbsp;        public void actionPerformed(ActionEvent e) {
+<i>388</i>&nbsp;            String chosen;
+<b class="nc"><i>389</i>&nbsp;            chosen = JOptionPane.showInputDialog(Localization.lang(&quot;Choose the URL to download.&quot;), &quot;&quot;);</b>
+<b class="nc"><i>390</i>&nbsp;            if ((chosen == null) || comp.getText().isEmpty()) {</b>
+<b class="nc"><i>391</i>&nbsp;                return;</b>
+<i>392</i>&nbsp;            }
+<i>393</i>&nbsp;            File toFile;
+<i>394</i>&nbsp;            try {
+<i>395</i>&nbsp;
+<b class="nc"><i>396</i>&nbsp;                Optional&lt;Path&gt; path = new FileDialog(frame, System.getProperty(&quot;user.home&quot;)).saveNewFile();</b>
+<b class="nc"><i>397</i>&nbsp;                if (path.isPresent()) {</b>
+<b class="nc"><i>398</i>&nbsp;                    toFile = new File(path.get().toString());</b>
+<i>399</i>&nbsp;                } else {
+<b class="nc"><i>400</i>&nbsp;                    return;</b>
+<i>401</i>&nbsp;                }
+<i>402</i>&nbsp;
+<b class="nc"><i>403</i>&nbsp;                URL url = new URL(chosen);</b>
+<b class="nc"><i>404</i>&nbsp;                MonitoredURLDownload.buildMonitoredDownload(comp, url).downloadToFile(toFile);</b>
+<b class="nc"><i>405</i>&nbsp;                comp.setText(toFile.getPath());</b>
+<b class="nc"><i>406</i>&nbsp;            } catch (IOException ex) {</b>
+<b class="nc"><i>407</i>&nbsp;                JOptionPane.showMessageDialog(null, Localization.lang(&quot;Error downloading file &#39;%0&#39;&quot;, chosen),</b>
+<b class="nc"><i>408</i>&nbsp;                        Localization.lang(&quot;Download failed&quot;), JOptionPane.ERROR_MESSAGE);</b>
+<b class="nc"><i>409</i>&nbsp;                LOGGER.debug(&quot;Error downloading file&quot;, ex);</b>
+<b class="nc"><i>410</i>&nbsp;            }</b>
+<b class="nc"><i>411</i>&nbsp;        }</b>
+<i>412</i>&nbsp;    }
+<i>413</i>&nbsp;
+<b class="nc"><i>414</i>&nbsp;    class AbbreviationsTableModel extends AbstractTableModel implements ActionListener {</b>
+<i>415</i>&nbsp;
+<b class="nc"><i>416</i>&nbsp;        private final String[] names = new String[] {Localization.lang(&quot;Journal name&quot;),</b>
+<b class="nc"><i>417</i>&nbsp;                Localization.lang(&quot;Abbreviation&quot;)};</b>
+<i>418</i>&nbsp;        private List&lt;JournalEntry&gt; journals;
+<i>419</i>&nbsp;
+<i>420</i>&nbsp;
+<i>421</i>&nbsp;        public void setJournals(List&lt;Abbreviation&gt; abbreviations) {
+<b class="nc"><i>422</i>&nbsp;            this.journals = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>423</i>&nbsp;            for (Abbreviation abbreviation : abbreviations) {</b>
+<b class="nc"><i>424</i>&nbsp;                this.journals.add(new JournalEntry(abbreviation.getName(), abbreviation.getIsoAbbreviation()));</b>
+<b class="nc"><i>425</i>&nbsp;            }</b>
+<b class="nc"><i>426</i>&nbsp;            fireTableDataChanged();</b>
+<b class="nc"><i>427</i>&nbsp;        }</b>
+<i>428</i>&nbsp;
+<i>429</i>&nbsp;        public List&lt;JournalEntry&gt; getJournals() {
+<b class="nc"><i>430</i>&nbsp;            return journals;</b>
+<i>431</i>&nbsp;        }
+<i>432</i>&nbsp;
+<i>433</i>&nbsp;        @Override
+<i>434</i>&nbsp;        public int getColumnCount() {
+<b class="nc"><i>435</i>&nbsp;            return 2;</b>
+<i>436</i>&nbsp;        }
+<i>437</i>&nbsp;
+<i>438</i>&nbsp;        @Override
+<i>439</i>&nbsp;        public int getRowCount() {
+<b class="nc"><i>440</i>&nbsp;            return journals.size();</b>
+<i>441</i>&nbsp;        }
+<i>442</i>&nbsp;
+<i>443</i>&nbsp;        @Override
+<i>444</i>&nbsp;        public Object getValueAt(int row, int col) {
+<b class="nc"><i>445</i>&nbsp;            if (col == 0) {</b>
+<b class="nc"><i>446</i>&nbsp;                return journals.get(row).getName();</b>
+<i>447</i>&nbsp;            } else {
+<b class="nc"><i>448</i>&nbsp;                return journals.get(row).getAbbreviation();</b>
+<i>449</i>&nbsp;            }
+<i>450</i>&nbsp;        }
+<i>451</i>&nbsp;
+<i>452</i>&nbsp;        @Override
+<i>453</i>&nbsp;        public void setValueAt(Object object, int row, int col) {
+<b class="nc"><i>454</i>&nbsp;            JournalEntry entry = journals.get(row);</b>
+<b class="nc"><i>455</i>&nbsp;            if (col == 0) {</b>
+<b class="nc"><i>456</i>&nbsp;                entry.setName((String) object);</b>
+<i>457</i>&nbsp;            } else {
+<b class="nc"><i>458</i>&nbsp;                entry.setAbbreviation((String) object);</b>
+<i>459</i>&nbsp;            }
+<i>460</i>&nbsp;
+<b class="nc"><i>461</i>&nbsp;        }</b>
+<i>462</i>&nbsp;
+<i>463</i>&nbsp;        @Override
+<i>464</i>&nbsp;        public String getColumnName(int i) {
+<b class="nc"><i>465</i>&nbsp;            return names[i];</b>
+<i>466</i>&nbsp;        }
+<i>467</i>&nbsp;
+<i>468</i>&nbsp;        @Override
+<i>469</i>&nbsp;        public boolean isCellEditable(int i, int i1) {
+<b class="nc"><i>470</i>&nbsp;            return false;</b>
+<i>471</i>&nbsp;        }
+<i>472</i>&nbsp;
+<i>473</i>&nbsp;        public MouseListener getMouseListener() {
+<b class="nc"><i>474</i>&nbsp;            return new MouseAdapter() {</b>
+<i>475</i>&nbsp;
+<i>476</i>&nbsp;                @Override
+<i>477</i>&nbsp;                public void mouseClicked(MouseEvent e) {
+<b class="nc"><i>478</i>&nbsp;                    if (e.getClickCount() == 2) {</b>
+<b class="nc"><i>479</i>&nbsp;                        JTable table = (JTable) e.getSource();</b>
+<b class="nc"><i>480</i>&nbsp;                        int row = table.rowAtPoint(e.getPoint());</b>
+<b class="nc"><i>481</i>&nbsp;                        nameTf.setText((String) getValueAt(row, 0));</b>
+<b class="nc"><i>482</i>&nbsp;                        abbrTf.setText((String) getValueAt(row, 1));</b>
+<b class="nc"><i>483</i>&nbsp;                        if (JOptionPane.showConfirmDialog(dialog, journalEditPanel, Localization.lang(&quot;Edit journal&quot;),</b>
+<i>484</i>&nbsp;                                JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+<b class="nc"><i>485</i>&nbsp;                            setValueAt(nameTf.getText(), row, 0);</b>
+<b class="nc"><i>486</i>&nbsp;                            setValueAt(abbrTf.getText(), row, 1);</b>
+<b class="nc"><i>487</i>&nbsp;                            Collections.sort(journals);</b>
+<b class="nc"><i>488</i>&nbsp;                            fireTableDataChanged();</b>
+<i>489</i>&nbsp;                        }
+<i>490</i>&nbsp;
+<i>491</i>&nbsp;                    }
+<b class="nc"><i>492</i>&nbsp;                }</b>
+<i>493</i>&nbsp;            };
+<i>494</i>&nbsp;        }
+<i>495</i>&nbsp;
+<i>496</i>&nbsp;        @Override
+<i>497</i>&nbsp;        public void actionPerformed(ActionEvent e) {
+<b class="nc"><i>498</i>&nbsp;            if (e.getSource() == add) {</b>
+<b class="nc"><i>499</i>&nbsp;                nameTf.setText(&quot;&quot;);</b>
+<b class="nc"><i>500</i>&nbsp;                abbrTf.setText(&quot;&quot;);</b>
+<b class="nc"><i>501</i>&nbsp;                if (JOptionPane.showConfirmDialog(dialog, journalEditPanel, Localization.lang(&quot;Edit journal&quot;),</b>
+<i>502</i>&nbsp;                        JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+<b class="nc"><i>503</i>&nbsp;                    journals.add(new JournalEntry(nameTf.getText(), abbrTf.getText()));</b>
+<b class="nc"><i>504</i>&nbsp;                    Collections.sort(journals);</b>
+<b class="nc"><i>505</i>&nbsp;                    fireTableDataChanged();</b>
+<i>506</i>&nbsp;                }
+<b class="nc"><i>507</i>&nbsp;            } else if (e.getSource() == remove) {</b>
+<b class="nc"><i>508</i>&nbsp;                int[] rows = userTable.getSelectedRows();</b>
+<b class="nc"><i>509</i>&nbsp;                if (rows.length &gt; 0) {</b>
+<b class="nc"><i>510</i>&nbsp;                    for (int i = rows.length - 1; i &gt;= 0; i--) {</b>
+<b class="nc"><i>511</i>&nbsp;                        journals.remove(rows[i]);</b>
+<i>512</i>&nbsp;                    }
+<b class="nc"><i>513</i>&nbsp;                    fireTableDataChanged();</b>
+<i>514</i>&nbsp;                }
+<i>515</i>&nbsp;            }
+<b class="nc"><i>516</i>&nbsp;        }</b>
+<i>517</i>&nbsp;    }
+<i>518</i>&nbsp;
+<i>519</i>&nbsp;    private class ExternalFileEntry {
+<i>520</i>&nbsp;
+<i>521</i>&nbsp;        private JPanel pan;
+<i>522</i>&nbsp;        private final JTextField tf;
+<b class="nc"><i>523</i>&nbsp;        private final JButton browse = new JButton(Localization.lang(&quot;Browse&quot;));</b>
+<b class="nc"><i>524</i>&nbsp;        private final JButton view = new JButton(Localization.lang(&quot;Preview&quot;));</b>
+<b class="nc"><i>525</i>&nbsp;        private final JButton clear = new JButton(IconTheme.JabRefIcon.DELETE_ENTRY.getIcon());</b>
+<b class="nc"><i>526</i>&nbsp;        private final JButton download = new JButton(Localization.lang(&quot;Download&quot;));</b>
+<i>527</i>&nbsp;
+<i>528</i>&nbsp;
+<b class="nc"><i>529</i>&nbsp;        public ExternalFileEntry() {</b>
+<b class="nc"><i>530</i>&nbsp;            tf = new JTextField();</b>
+<b class="nc"><i>531</i>&nbsp;            setupPanel();</b>
+<b class="nc"><i>532</i>&nbsp;        }</b>
+<i>533</i>&nbsp;
+<b class="nc"><i>534</i>&nbsp;        public ExternalFileEntry(String filename) {</b>
+<b class="nc"><i>535</i>&nbsp;            tf = new JTextField(filename);</b>
+<b class="nc"><i>536</i>&nbsp;            setupPanel();</b>
+<b class="nc"><i>537</i>&nbsp;        }</b>
+<i>538</i>&nbsp;
+<i>539</i>&nbsp;        private void setupPanel() {
+<b class="nc"><i>540</i>&nbsp;            tf.setEditable(false);</b>
+<b class="nc"><i>541</i>&nbsp;            browse.addActionListener(e -&gt;</b>
+<b class="nc"><i>542</i>&nbsp;                    new FileDialog(frame).showDialogAndGetSelectedFile()</b>
+<b class="nc"><i>543</i>&nbsp;                            .ifPresent(f -&gt; tf.setText(f.toAbsolutePath().toString()))</b>
+<i>544</i>&nbsp;            );
+<b class="nc"><i>545</i>&nbsp;            DownloadAction da = new DownloadAction(tf);</b>
+<b class="nc"><i>546</i>&nbsp;            download.addActionListener(da);</b>
+<b class="nc"><i>547</i>&nbsp;            FormBuilder builder = FormBuilder.create().layout(new FormLayout(</b>
+<i>548</i>&nbsp;                    &quot;fill:pref:grow, 4dlu, fill:pref, 4dlu, fill:pref, 4dlu, fill:pref, 4dlu, fill:pref&quot;, &quot;p&quot;));
+<b class="nc"><i>549</i>&nbsp;            builder.add(tf).xy(1, 1);</b>
+<b class="nc"><i>550</i>&nbsp;            builder.add(browse).xy(3, 1);</b>
+<b class="nc"><i>551</i>&nbsp;            builder.add(download).xy(5, 1);</b>
+<b class="nc"><i>552</i>&nbsp;            builder.add(view).xy(7, 1);</b>
+<b class="nc"><i>553</i>&nbsp;            builder.add(clear).xy(9, 1);</b>
+<i>554</i>&nbsp;
+<b class="nc"><i>555</i>&nbsp;            pan = builder.getPanel();</b>
+<i>556</i>&nbsp;
+<b class="nc"><i>557</i>&nbsp;            view.addActionListener(e -&gt; {</b>
+<i>558</i>&nbsp;                try {
+<b class="nc"><i>559</i>&nbsp;                    List&lt;Abbreviation&gt; abbreviations = JournalAbbreviationLoader</b>
+<b class="nc"><i>560</i>&nbsp;                            .readJournalListFromFile(new File(tf.getText()));</b>
+<i>561</i>&nbsp;
+<b class="nc"><i>562</i>&nbsp;                    JTable table = new JTable(JournalAbbreviationsUtil.getTableModel(abbreviations));</b>
+<i>563</i>&nbsp;
+<b class="nc"><i>564</i>&nbsp;                    JScrollPane pane = new JScrollPane(table);</b>
+<b class="nc"><i>565</i>&nbsp;                    JOptionPane.showMessageDialog(null, pane, Localization.lang(&quot;Journal list preview&quot;),</b>
+<i>566</i>&nbsp;                            JOptionPane.INFORMATION_MESSAGE);
+<b class="nc"><i>567</i>&nbsp;                } catch (FileNotFoundException ex) {</b>
+<b class="nc"><i>568</i>&nbsp;                    LOGGER.debug(&quot;File not found&quot;, ex);</b>
+<i>569</i>&nbsp;
+<b class="nc"><i>570</i>&nbsp;                    JOptionPane.showMessageDialog(null, Localization.lang(&quot;File &#39;%0&#39; not found&quot;, tf.getText()),</b>
+<b class="nc"><i>571</i>&nbsp;                            Localization.lang(&quot;Error&quot;), JOptionPane.ERROR_MESSAGE);</b>
+<b class="nc"><i>572</i>&nbsp;                }</b>
+<b class="nc"><i>573</i>&nbsp;            });</b>
+<b class="nc"><i>574</i>&nbsp;            clear.addActionListener(e -&gt; {</b>
+<b class="nc"><i>575</i>&nbsp;                externals.remove(ExternalFileEntry.this);</b>
+<b class="nc"><i>576</i>&nbsp;                buildExternalsPanel();</b>
+<b class="nc"><i>577</i>&nbsp;            });</b>
+<b class="nc"><i>578</i>&nbsp;            clear.setToolTipText(Localization.lang(&quot;Remove&quot;));</b>
+<b class="nc"><i>579</i>&nbsp;        }</b>
+<i>580</i>&nbsp;
+<i>581</i>&nbsp;        public JPanel getPanel() {
+<b class="nc"><i>582</i>&nbsp;            return pan;</b>
+<i>583</i>&nbsp;        }
+<i>584</i>&nbsp;
+<i>585</i>&nbsp;        public String getValue() {
+<b class="nc"><i>586</i>&nbsp;            return tf.getText();</b>
+<i>587</i>&nbsp;        }
+<i>588</i>&nbsp;    }
+<i>589</i>&nbsp;
+<i>590</i>&nbsp;    static class JournalEntry implements Comparable&lt;JournalEntry&gt; {
+<i>591</i>&nbsp;
+<i>592</i>&nbsp;        private String name;
+<i>593</i>&nbsp;        private String abbreviation;
+<i>594</i>&nbsp;
+<i>595</i>&nbsp;
+<b class="nc"><i>596</i>&nbsp;        public JournalEntry(String name, String abbreviation) {</b>
+<b class="nc"><i>597</i>&nbsp;            this.name = name;</b>
+<b class="nc"><i>598</i>&nbsp;            this.abbreviation = abbreviation;</b>
+<b class="nc"><i>599</i>&nbsp;        }</b>
+<i>600</i>&nbsp;
+<i>601</i>&nbsp;        @Override
+<i>602</i>&nbsp;        public int compareTo(JournalEntry other) {
+<b class="nc"><i>603</i>&nbsp;            return this.name.compareTo(other.name);</b>
+<i>604</i>&nbsp;        }
+<i>605</i>&nbsp;
+<i>606</i>&nbsp;        @Override
+<i>607</i>&nbsp;        public boolean equals(Object o) {
+<b class="nc"><i>608</i>&nbsp;            if (this == o) {</b>
+<b class="nc"><i>609</i>&nbsp;                return true;</b>
+<i>610</i>&nbsp;            }
+<b class="nc"><i>611</i>&nbsp;            if (o instanceof JournalEntry) {</b>
+<b class="nc"><i>612</i>&nbsp;                return this.name.equals(((JournalEntry) o).name);</b>
+<i>613</i>&nbsp;            }
+<b class="nc"><i>614</i>&nbsp;            return false;</b>
+<i>615</i>&nbsp;        }
+<i>616</i>&nbsp;
+<i>617</i>&nbsp;        @Override
+<i>618</i>&nbsp;        public int hashCode() {
+<b class="nc"><i>619</i>&nbsp;            return this.name.hashCode();</b>
+<i>620</i>&nbsp;        }
+<i>621</i>&nbsp;
+<i>622</i>&nbsp;        public String getName() {
+<b class="nc"><i>623</i>&nbsp;            return name;</b>
+<i>624</i>&nbsp;        }
+<i>625</i>&nbsp;
+<i>626</i>&nbsp;        public void setName(String name) {
+<b class="nc"><i>627</i>&nbsp;            this.name = name;</b>
+<b class="nc"><i>628</i>&nbsp;        }</b>
+<i>629</i>&nbsp;
+<i>630</i>&nbsp;        public String getAbbreviation() {
+<b class="nc"><i>631</i>&nbsp;            return abbreviation;</b>
+<i>632</i>&nbsp;        }
+<i>633</i>&nbsp;
+<i>634</i>&nbsp;        public void setAbbreviation(String abbreviation) {
+<b class="nc"><i>635</i>&nbsp;            this.abbreviation = abbreviation;</b>
+<b class="nc"><i>636</i>&nbsp;        }</b>
+<i>637</i>&nbsp;    }
+<i>638</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

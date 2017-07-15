@@ -1,0 +1,526 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ModsExportFormat</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.exporter</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ModsExportFormat (net.sf.jabref.logic.exporter)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ModsExportFormat</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 22)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 255)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.exporter;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.File;
+<i>4</i>&nbsp;import java.io.IOException;
+<i>5</i>&nbsp;import java.math.BigInteger;
+<i>6</i>&nbsp;import java.nio.charset.Charset;
+<i>7</i>&nbsp;import java.util.List;
+<i>8</i>&nbsp;import java.util.Map;
+<i>9</i>&nbsp;import java.util.Objects;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;import javax.xml.bind.JAXBContext;
+<i>12</i>&nbsp;import javax.xml.bind.JAXBElement;
+<i>13</i>&nbsp;import javax.xml.bind.JAXBException;
+<i>14</i>&nbsp;import javax.xml.bind.Marshaller;
+<i>15</i>&nbsp;import javax.xml.namespace.QName;
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.mods.AbstractDefinition;
+<i>18</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.mods.CodeOrText;
+<i>19</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.mods.DateDefinition;
+<i>20</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.mods.DetailDefinition;
+<i>21</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.mods.ExtentDefinition;
+<i>22</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.mods.GenreDefinition;
+<i>23</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.mods.IdentifierDefinition;
+<i>24</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.mods.IssuanceDefinition;
+<i>25</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.mods.LanguageDefinition;
+<i>26</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.mods.LanguageTermDefinition;
+<i>27</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.mods.LocationDefinition;
+<i>28</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.mods.ModsCollectionDefinition;
+<i>29</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.mods.ModsDefinition;
+<i>30</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.mods.NameDefinition;
+<i>31</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.mods.NamePartDefinition;
+<i>32</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.mods.NoteDefinition;
+<i>33</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.mods.OriginInfoDefinition;
+<i>34</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.mods.PartDefinition;
+<i>35</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.mods.PhysicalLocationDefinition;
+<i>36</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.mods.PlaceDefinition;
+<i>37</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.mods.PlaceTermDefinition;
+<i>38</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.mods.RelatedItemDefinition;
+<i>39</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.mods.StringPlusLanguage;
+<i>40</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.mods.StringPlusLanguagePlusAuthority;
+<i>41</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.mods.StringPlusLanguagePlusSupplied;
+<i>42</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.mods.SubjectDefinition;
+<i>43</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.mods.TitleInfoDefinition;
+<i>44</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.mods.TypeOfResourceDefinition;
+<i>45</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.mods.UrlDefinition;
+<i>46</i>&nbsp;import net.sf.jabref.model.database.BibDatabaseContext;
+<i>47</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>48</i>&nbsp;import net.sf.jabref.model.entry.FieldName;
+<i>49</i>&nbsp;
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;/**
+<i>52</i>&nbsp; * ExportFormat for exporting in MODS XML format.
+<i>53</i>&nbsp; */
+<i>54</i>&nbsp;class ModsExportFormat extends ExportFormat {
+<i>55</i>&nbsp;
+<i>56</i>&nbsp;    private static final String MINUS = &quot;-&quot;;
+<i>57</i>&nbsp;    private static final String DOUBLE_MINUS = &quot;--&quot;;
+<i>58</i>&nbsp;    private static final String MODS_SCHEMA_LOCATION = &quot;http://www.loc.gov/standards/mods/v3/mods-3-6.xsd&quot;;
+<i>59</i>&nbsp;    protected static final String MODS_NAMESPACE_URI = &quot;http://www.loc.gov/mods/v3&quot;;
+<i>60</i>&nbsp;    private JAXBContext context;
+<i>61</i>&nbsp;
+<i>62</i>&nbsp;
+<i>63</i>&nbsp;    public ModsExportFormat() {
+<b class="nc"><i>64</i>&nbsp;        super(&quot;MODS&quot;, &quot;mods&quot;, null, null, &quot;.xml&quot;);</b>
+<b class="nc"><i>65</i>&nbsp;    }</b>
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;    @Override
+<i>68</i>&nbsp;    public void performExport(final BibDatabaseContext databaseContext, final String file, final Charset encoding,
+<i>69</i>&nbsp;            List&lt;BibEntry&gt; entries) throws SaveException, IOException {
+<b class="nc"><i>70</i>&nbsp;        Objects.requireNonNull(databaseContext);</b>
+<b class="nc"><i>71</i>&nbsp;        Objects.requireNonNull(entries);</b>
+<b class="nc"><i>72</i>&nbsp;        if (entries.isEmpty()) { // Only export if entries exist</b>
+<b class="nc"><i>73</i>&nbsp;            return;</b>
+<i>74</i>&nbsp;        }
+<i>75</i>&nbsp;
+<i>76</i>&nbsp;        try {
+<b class="nc"><i>77</i>&nbsp;            ModsCollectionDefinition modsCollection = new ModsCollectionDefinition();</b>
+<b class="nc"><i>78</i>&nbsp;            for (BibEntry bibEntry : entries) {</b>
+<b class="nc"><i>79</i>&nbsp;                ModsDefinition mods = new ModsDefinition();</b>
+<b class="nc"><i>80</i>&nbsp;                bibEntry.getCiteKeyOptional().ifPresent(citeKey -&gt; addIdentifier(&quot;citekey&quot;, citeKey, mods));</b>
+<i>81</i>&nbsp;
+<b class="nc"><i>82</i>&nbsp;                Map&lt;String, String&gt; fieldMap = bibEntry.getFieldMap();</b>
+<b class="nc"><i>83</i>&nbsp;                addGenre(bibEntry, mods);</b>
+<i>84</i>&nbsp;
+<b class="nc"><i>85</i>&nbsp;                OriginInfoDefinition originInfo = new OriginInfoDefinition();</b>
+<b class="nc"><i>86</i>&nbsp;                PartDefinition partDefinition = new PartDefinition();</b>
+<b class="nc"><i>87</i>&nbsp;                RelatedItemDefinition relatedItem = new RelatedItemDefinition();</b>
+<i>88</i>&nbsp;
+<b class="nc"><i>89</i>&nbsp;                for (Map.Entry&lt;String, String&gt; entry : fieldMap.entrySet()) {</b>
+<b class="nc"><i>90</i>&nbsp;                    String key = entry.getKey();</b>
+<b class="nc"><i>91</i>&nbsp;                    String value = entry.getValue();</b>
+<i>92</i>&nbsp;
+<b class="nc"><i>93</i>&nbsp;                    switch (key) {</b>
+<i>94</i>&nbsp;
+<i>95</i>&nbsp;                        case FieldName.AUTHOR:
+<b class="nc"><i>96</i>&nbsp;                            handleAuthors(mods, value);</b>
+<b class="nc"><i>97</i>&nbsp;                            break;</b>
+<i>98</i>&nbsp;                        case &quot;affiliation&quot;:
+<b class="nc"><i>99</i>&nbsp;                            addAffiliation(mods, value);</b>
+<b class="nc"><i>100</i>&nbsp;                            break;</b>
+<i>101</i>&nbsp;                        case FieldName.ABSTRACT:
+<b class="nc"><i>102</i>&nbsp;                            addAbstract(mods, value);</b>
+<b class="nc"><i>103</i>&nbsp;                            break;</b>
+<i>104</i>&nbsp;                        case FieldName.TITLE:
+<b class="nc"><i>105</i>&nbsp;                            addTitle(mods, value);</b>
+<b class="nc"><i>106</i>&nbsp;                            break;</b>
+<i>107</i>&nbsp;                        case FieldName.LANGUAGE:
+<b class="nc"><i>108</i>&nbsp;                            addLanguage(mods, value);</b>
+<b class="nc"><i>109</i>&nbsp;                            break;</b>
+<i>110</i>&nbsp;                        case FieldName.LOCATION:
+<b class="nc"><i>111</i>&nbsp;                            addLocation(mods, value);</b>
+<b class="nc"><i>112</i>&nbsp;                            break;</b>
+<i>113</i>&nbsp;                        case FieldName.URL:
+<b class="nc"><i>114</i>&nbsp;                            addUrl(mods, value);</b>
+<b class="nc"><i>115</i>&nbsp;                            break;</b>
+<i>116</i>&nbsp;                        case FieldName.NOTE:
+<b class="nc"><i>117</i>&nbsp;                            addNote(mods, value);</b>
+<b class="nc"><i>118</i>&nbsp;                            break;</b>
+<i>119</i>&nbsp;                        case FieldName.KEYWORDS:
+<b class="nc"><i>120</i>&nbsp;                            addKeyWords(mods, value);</b>
+<b class="nc"><i>121</i>&nbsp;                            break;</b>
+<i>122</i>&nbsp;                        case FieldName.VOLUME:
+<b class="nc"><i>123</i>&nbsp;                            addDetail(FieldName.VOLUME, value, partDefinition);</b>
+<b class="nc"><i>124</i>&nbsp;                            break;</b>
+<i>125</i>&nbsp;                        case FieldName.ISSUE:
+<b class="nc"><i>126</i>&nbsp;                            addDetail(FieldName.ISSUE, value, partDefinition);</b>
+<b class="nc"><i>127</i>&nbsp;                            break;</b>
+<i>128</i>&nbsp;                        case FieldName.PAGES:
+<b class="nc"><i>129</i>&nbsp;                            addPages(partDefinition, value);</b>
+<b class="nc"><i>130</i>&nbsp;                            break;</b>
+<i>131</i>&nbsp;                        case FieldName.URI:
+<b class="nc"><i>132</i>&nbsp;                            addIdentifier(FieldName.URI, value, mods);</b>
+<b class="nc"><i>133</i>&nbsp;                            break;</b>
+<i>134</i>&nbsp;                        case FieldName.ISBN:
+<b class="nc"><i>135</i>&nbsp;                            addIdentifier(FieldName.ISBN, value, mods);</b>
+<b class="nc"><i>136</i>&nbsp;                            break;</b>
+<i>137</i>&nbsp;                        case FieldName.ISSN:
+<b class="nc"><i>138</i>&nbsp;                            addIdentifier(FieldName.ISSN, value, mods);</b>
+<b class="nc"><i>139</i>&nbsp;                            break;</b>
+<i>140</i>&nbsp;                        case FieldName.DOI:
+<b class="nc"><i>141</i>&nbsp;                            addIdentifier(FieldName.DOI, value, mods);</b>
+<b class="nc"><i>142</i>&nbsp;                            break;</b>
+<i>143</i>&nbsp;                        case FieldName.PMID:
+<b class="nc"><i>144</i>&nbsp;                            addIdentifier(FieldName.PMID, value, mods);</b>
+<b class="nc"><i>145</i>&nbsp;                            break;</b>
+<i>146</i>&nbsp;                        case FieldName.JOURNAL:
+<b class="nc"><i>147</i>&nbsp;                            addJournal(value, relatedItem);</b>
+<b class="nc"><i>148</i>&nbsp;                            break;</b>
+<i>149</i>&nbsp;                        default:
+<i>150</i>&nbsp;                            break;
+<i>151</i>&nbsp;                    }
+<i>152</i>&nbsp;
+<b class="nc"><i>153</i>&nbsp;                    addOriginInformation(key, value, originInfo);</b>
+<b class="nc"><i>154</i>&nbsp;                }</b>
+<b class="nc"><i>155</i>&nbsp;                mods.getModsGroup().add(originInfo);</b>
+<i>156</i>&nbsp;
+<b class="nc"><i>157</i>&nbsp;                addRelatedAndOriginInfoToModsGroup(relatedItem, partDefinition, mods);</b>
+<b class="nc"><i>158</i>&nbsp;                modsCollection.getMods().add(mods);</b>
+<b class="nc"><i>159</i>&nbsp;            }</b>
+<i>160</i>&nbsp;
+<b class="nc"><i>161</i>&nbsp;            JAXBElement&lt;ModsCollectionDefinition&gt; jaxbElement = new JAXBElement&lt;&gt;(</b>
+<i>162</i>&nbsp;                    new QName(MODS_NAMESPACE_URI, &quot;modsCollection&quot;), ModsCollectionDefinition.class, modsCollection);
+<i>163</i>&nbsp;
+<b class="nc"><i>164</i>&nbsp;            createMarshallerAndWriteToFile(file, jaxbElement);</b>
+<b class="nc"><i>165</i>&nbsp;        } catch (JAXBException ex) {</b>
+<b class="nc"><i>166</i>&nbsp;            throw new SaveException(ex);</b>
+<b class="nc"><i>167</i>&nbsp;        }</b>
+<b class="nc"><i>168</i>&nbsp;    }</b>
+<i>169</i>&nbsp;
+<i>170</i>&nbsp;    private void createMarshallerAndWriteToFile(String file, JAXBElement&lt;ModsCollectionDefinition&gt; jaxbElement)
+<i>171</i>&nbsp;            throws JAXBException {
+<i>172</i>&nbsp;
+<b class="nc"><i>173</i>&nbsp;        if (context == null) {</b>
+<b class="nc"><i>174</i>&nbsp;            context = JAXBContext.newInstance(ModsCollectionDefinition.class);</b>
+<i>175</i>&nbsp;        }
+<b class="nc"><i>176</i>&nbsp;        Marshaller marshaller = context.createMarshaller();</b>
+<i>177</i>&nbsp;        //format the output
+<b class="nc"><i>178</i>&nbsp;        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);</b>
+<b class="nc"><i>179</i>&nbsp;        marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, MODS_SCHEMA_LOCATION);</b>
+<i>180</i>&nbsp;
+<i>181</i>&nbsp;        // Write to File
+<b class="nc"><i>182</i>&nbsp;        marshaller.marshal(jaxbElement, new File(file));</b>
+<b class="nc"><i>183</i>&nbsp;    }</b>
+<i>184</i>&nbsp;
+<i>185</i>&nbsp;
+<i>186</i>&nbsp;    private void addRelatedAndOriginInfoToModsGroup(RelatedItemDefinition relatedItem, PartDefinition partDefinition,
+<i>187</i>&nbsp;            ModsDefinition mods) {
+<i>188</i>&nbsp;
+<b class="nc"><i>189</i>&nbsp;        relatedItem.getModsGroup().add(partDefinition);</b>
+<b class="nc"><i>190</i>&nbsp;        relatedItem.setAtType(&quot;host&quot;);</b>
+<b class="nc"><i>191</i>&nbsp;        mods.getModsGroup().add(relatedItem);</b>
+<b class="nc"><i>192</i>&nbsp;        TypeOfResourceDefinition typeOfResource = new TypeOfResourceDefinition();</b>
+<b class="nc"><i>193</i>&nbsp;        typeOfResource.setValue(&quot;text&quot;);</b>
+<b class="nc"><i>194</i>&nbsp;        mods.getModsGroup().add(typeOfResource);</b>
+<b class="nc"><i>195</i>&nbsp;    }</b>
+<i>196</i>&nbsp;
+<i>197</i>&nbsp;    private void addGenre(BibEntry bibEntry, ModsDefinition mods) {
+<b class="nc"><i>198</i>&nbsp;        GenreDefinition genre = new GenreDefinition();</b>
+<b class="nc"><i>199</i>&nbsp;        genre.setValue(bibEntry.getType());</b>
+<b class="nc"><i>200</i>&nbsp;        mods.getModsGroup().add(genre);</b>
+<b class="nc"><i>201</i>&nbsp;    }</b>
+<i>202</i>&nbsp;
+<i>203</i>&nbsp;    private void addAbstract(ModsDefinition mods, String value) {
+<b class="nc"><i>204</i>&nbsp;        AbstractDefinition abstractDefinition = new AbstractDefinition();</b>
+<b class="nc"><i>205</i>&nbsp;        abstractDefinition.setValue(value);</b>
+<b class="nc"><i>206</i>&nbsp;        mods.getModsGroup().add(abstractDefinition);</b>
+<b class="nc"><i>207</i>&nbsp;    }</b>
+<i>208</i>&nbsp;
+<i>209</i>&nbsp;    private void addTitle(ModsDefinition mods, String value) {
+<b class="nc"><i>210</i>&nbsp;        TitleInfoDefinition titleInfo = new TitleInfoDefinition();</b>
+<b class="nc"><i>211</i>&nbsp;        StringPlusLanguage title = new StringPlusLanguage();</b>
+<b class="nc"><i>212</i>&nbsp;        title.setValue(value);</b>
+<b class="nc"><i>213</i>&nbsp;        JAXBElement&lt;StringPlusLanguage&gt; element = new JAXBElement&lt;&gt;(new QName(MODS_NAMESPACE_URI, &quot;title&quot;),</b>
+<i>214</i>&nbsp;                StringPlusLanguage.class, title);
+<b class="nc"><i>215</i>&nbsp;        titleInfo.getTitleOrSubTitleOrPartNumber().add(element);</b>
+<b class="nc"><i>216</i>&nbsp;        mods.getModsGroup().add(titleInfo);</b>
+<b class="nc"><i>217</i>&nbsp;    }</b>
+<i>218</i>&nbsp;
+<i>219</i>&nbsp;    private void addAffiliation(ModsDefinition mods, String value) {
+<b class="nc"><i>220</i>&nbsp;        NameDefinition nameDefinition = new NameDefinition();</b>
+<b class="nc"><i>221</i>&nbsp;        StringPlusLanguage affiliation = new StringPlusLanguage();</b>
+<b class="nc"><i>222</i>&nbsp;        affiliation.setValue(value);</b>
+<b class="nc"><i>223</i>&nbsp;        JAXBElement&lt;StringPlusLanguage&gt; element = new JAXBElement&lt;&gt;(new QName(MODS_NAMESPACE_URI, &quot;affiliation&quot;),</b>
+<i>224</i>&nbsp;                StringPlusLanguage.class, affiliation);
+<b class="nc"><i>225</i>&nbsp;        nameDefinition.getAffiliationOrRoleOrDescription().add(element);</b>
+<b class="nc"><i>226</i>&nbsp;        mods.getModsGroup().add(nameDefinition);</b>
+<b class="nc"><i>227</i>&nbsp;    }</b>
+<i>228</i>&nbsp;
+<i>229</i>&nbsp;    private void addLocation(ModsDefinition mods, String value) {
+<b class="nc"><i>230</i>&nbsp;        LocationDefinition locationDefinition = new LocationDefinition();</b>
+<i>231</i>&nbsp;        //There can be more than one location
+<b class="nc"><i>232</i>&nbsp;        String[] locations = value.split(&quot;, &quot;);</b>
+<b class="nc"><i>233</i>&nbsp;        for (String location : locations) {</b>
+<b class="nc"><i>234</i>&nbsp;            PhysicalLocationDefinition physicalLocation = new PhysicalLocationDefinition();</b>
+<b class="nc"><i>235</i>&nbsp;            physicalLocation.setValue(location);</b>
+<b class="nc"><i>236</i>&nbsp;            locationDefinition.getPhysicalLocation().add(physicalLocation);</b>
+<i>237</i>&nbsp;        }
+<b class="nc"><i>238</i>&nbsp;        mods.getModsGroup().add(locationDefinition);</b>
+<b class="nc"><i>239</i>&nbsp;    }</b>
+<i>240</i>&nbsp;
+<i>241</i>&nbsp;    private void addNote(ModsDefinition mods, String value) {
+<b class="nc"><i>242</i>&nbsp;        String[] notes = value.split(&quot;, &quot;);</b>
+<b class="nc"><i>243</i>&nbsp;        for (String note : notes) {</b>
+<b class="nc"><i>244</i>&nbsp;            NoteDefinition noteDefinition = new NoteDefinition();</b>
+<b class="nc"><i>245</i>&nbsp;            noteDefinition.setValue(note);</b>
+<b class="nc"><i>246</i>&nbsp;            mods.getModsGroup().add(noteDefinition);</b>
+<i>247</i>&nbsp;        }
+<b class="nc"><i>248</i>&nbsp;    }</b>
+<i>249</i>&nbsp;
+<i>250</i>&nbsp;    private void addUrl(ModsDefinition mods, String value) {
+<b class="nc"><i>251</i>&nbsp;        String[] urls = value.split(&quot;, &quot;);</b>
+<b class="nc"><i>252</i>&nbsp;        LocationDefinition location = new LocationDefinition();</b>
+<b class="nc"><i>253</i>&nbsp;        for (String url : urls) {</b>
+<b class="nc"><i>254</i>&nbsp;            UrlDefinition urlDefinition = new UrlDefinition();</b>
+<b class="nc"><i>255</i>&nbsp;            urlDefinition.setValue(url);</b>
+<b class="nc"><i>256</i>&nbsp;            location.getUrl().add(urlDefinition);</b>
+<b class="nc"><i>257</i>&nbsp;            mods.getModsGroup().add(location);</b>
+<i>258</i>&nbsp;        }
+<b class="nc"><i>259</i>&nbsp;    }</b>
+<i>260</i>&nbsp;
+<i>261</i>&nbsp;    private void addJournal(String value, RelatedItemDefinition relatedItem) {
+<b class="nc"><i>262</i>&nbsp;        TitleInfoDefinition titleInfo = new TitleInfoDefinition();</b>
+<b class="nc"><i>263</i>&nbsp;        StringPlusLanguage title = new StringPlusLanguage();</b>
+<b class="nc"><i>264</i>&nbsp;        title.setValue(value);</b>
+<b class="nc"><i>265</i>&nbsp;        JAXBElement&lt;StringPlusLanguage&gt; element = new JAXBElement&lt;&gt;(new QName(MODS_NAMESPACE_URI, &quot;title&quot;),</b>
+<i>266</i>&nbsp;                StringPlusLanguage.class, title);
+<b class="nc"><i>267</i>&nbsp;        titleInfo.getTitleOrSubTitleOrPartNumber().add(element);</b>
+<b class="nc"><i>268</i>&nbsp;        relatedItem.getModsGroup().add(titleInfo);</b>
+<b class="nc"><i>269</i>&nbsp;    }</b>
+<i>270</i>&nbsp;
+<i>271</i>&nbsp;    private void addLanguage(ModsDefinition mods, String value) {
+<b class="nc"><i>272</i>&nbsp;        LanguageDefinition language = new LanguageDefinition();</b>
+<b class="nc"><i>273</i>&nbsp;        LanguageTermDefinition languageTerm = new LanguageTermDefinition();</b>
+<b class="nc"><i>274</i>&nbsp;        languageTerm.setValue(value);</b>
+<b class="nc"><i>275</i>&nbsp;        language.getLanguageTerm().add(languageTerm);</b>
+<b class="nc"><i>276</i>&nbsp;        mods.getModsGroup().add(language);</b>
+<b class="nc"><i>277</i>&nbsp;    }</b>
+<i>278</i>&nbsp;
+<i>279</i>&nbsp;    private void addPages(PartDefinition partDefinition, String value) {
+<b class="nc"><i>280</i>&nbsp;        if (value.contains(DOUBLE_MINUS)) {</b>
+<b class="nc"><i>281</i>&nbsp;            addStartAndEndPage(value, partDefinition, DOUBLE_MINUS);</b>
+<b class="nc"><i>282</i>&nbsp;        } else if (value.contains(MINUS)) {</b>
+<b class="nc"><i>283</i>&nbsp;            addStartAndEndPage(value, partDefinition, MINUS);</b>
+<i>284</i>&nbsp;        } else {
+<b class="nc"><i>285</i>&nbsp;            BigInteger total = new BigInteger(value);</b>
+<b class="nc"><i>286</i>&nbsp;            ExtentDefinition extent = new ExtentDefinition();</b>
+<b class="nc"><i>287</i>&nbsp;            extent.setTotal(total);</b>
+<b class="nc"><i>288</i>&nbsp;            partDefinition.getDetailOrExtentOrDate().add(extent);</b>
+<i>289</i>&nbsp;        }
+<b class="nc"><i>290</i>&nbsp;    }</b>
+<i>291</i>&nbsp;
+<i>292</i>&nbsp;    private void addKeyWords(ModsDefinition mods, String value) {
+<b class="nc"><i>293</i>&nbsp;        String[] keywords = value.split(&quot;, &quot;);</b>
+<i>294</i>&nbsp;
+<b class="nc"><i>295</i>&nbsp;        for (String keyword : keywords) {</b>
+<b class="nc"><i>296</i>&nbsp;            SubjectDefinition subject = new SubjectDefinition();</b>
+<b class="nc"><i>297</i>&nbsp;            StringPlusLanguagePlusAuthority topic = new StringPlusLanguagePlusAuthority();</b>
+<b class="nc"><i>298</i>&nbsp;            topic.setValue(keyword);</b>
+<b class="nc"><i>299</i>&nbsp;            JAXBElement&lt;?&gt; element = new JAXBElement&lt;&gt;(new QName(MODS_NAMESPACE_URI, &quot;topic&quot;),</b>
+<i>300</i>&nbsp;                    StringPlusLanguagePlusAuthority.class, topic);
+<b class="nc"><i>301</i>&nbsp;            subject.getTopicOrGeographicOrTemporal().add(element);</b>
+<b class="nc"><i>302</i>&nbsp;            mods.getModsGroup().add(subject);</b>
+<i>303</i>&nbsp;        }
+<b class="nc"><i>304</i>&nbsp;    }</b>
+<i>305</i>&nbsp;
+<i>306</i>&nbsp;    private void handleAuthors(ModsDefinition mods, String value) {
+<b class="nc"><i>307</i>&nbsp;        String[] authors = value.split(&quot;and&quot;);</b>
+<b class="nc"><i>308</i>&nbsp;        for (String author : authors) {</b>
+<b class="nc"><i>309</i>&nbsp;            NameDefinition name = new NameDefinition();</b>
+<b class="nc"><i>310</i>&nbsp;            name.setAtType(&quot;personal&quot;);</b>
+<b class="nc"><i>311</i>&nbsp;            NamePartDefinition namePart = new NamePartDefinition();</b>
+<b class="nc"><i>312</i>&nbsp;            if (author.contains(&quot;,&quot;)) {</b>
+<i>313</i>&nbsp;                //if author contains &quot;,&quot;  then this indicates that the author has a forename and family name
+<b class="nc"><i>314</i>&nbsp;                int commaIndex = author.indexOf(&#39;,&#39;);</b>
+<b class="nc"><i>315</i>&nbsp;                String familyName = author.substring(0, commaIndex);</b>
+<b class="nc"><i>316</i>&nbsp;                namePart.setAtType(&quot;family&quot;);</b>
+<b class="nc"><i>317</i>&nbsp;                namePart.setValue(familyName);</b>
+<i>318</i>&nbsp;
+<b class="nc"><i>319</i>&nbsp;                JAXBElement&lt;NamePartDefinition&gt; element = new JAXBElement&lt;&gt;(new QName(MODS_NAMESPACE_URI, &quot;namePart&quot;),</b>
+<i>320</i>&nbsp;                        NamePartDefinition.class, namePart);
+<b class="nc"><i>321</i>&nbsp;                name.getNamePartOrDisplayFormOrAffiliation().add(element);</b>
+<i>322</i>&nbsp;
+<i>323</i>&nbsp;                //now take care of the forenames
+<b class="nc"><i>324</i>&nbsp;                String forename = author.substring(commaIndex + 1, author.length());</b>
+<b class="nc"><i>325</i>&nbsp;                String[] forenames = forename.split(&quot; &quot;);</b>
+<b class="nc"><i>326</i>&nbsp;                for (String given : forenames) {</b>
+<b class="nc"><i>327</i>&nbsp;                    if (!given.isEmpty()) {</b>
+<b class="nc"><i>328</i>&nbsp;                        NamePartDefinition namePartDefinition = new NamePartDefinition();</b>
+<b class="nc"><i>329</i>&nbsp;                        namePartDefinition.setAtType(&quot;given&quot;);</b>
+<b class="nc"><i>330</i>&nbsp;                        namePartDefinition.setValue(given);</b>
+<b class="nc"><i>331</i>&nbsp;                        element = new JAXBElement&lt;&gt;(new QName(MODS_NAMESPACE_URI, &quot;namePart&quot;), NamePartDefinition.class,</b>
+<i>332</i>&nbsp;                                namePartDefinition);
+<b class="nc"><i>333</i>&nbsp;                        name.getNamePartOrDisplayFormOrAffiliation().add(element);</b>
+<i>334</i>&nbsp;                    }
+<i>335</i>&nbsp;                }
+<b class="nc"><i>336</i>&nbsp;                mods.getModsGroup().add(name);</b>
+<b class="nc"><i>337</i>&nbsp;            } else {</b>
+<i>338</i>&nbsp;                //no &quot;,&quot; indicates that there should only be a family name
+<b class="nc"><i>339</i>&nbsp;                namePart.setAtType(&quot;family&quot;);</b>
+<b class="nc"><i>340</i>&nbsp;                namePart.setValue(author);</b>
+<b class="nc"><i>341</i>&nbsp;                JAXBElement&lt;NamePartDefinition&gt; element = new JAXBElement&lt;&gt;(new QName(MODS_NAMESPACE_URI, &quot;namePart&quot;),</b>
+<i>342</i>&nbsp;                        NamePartDefinition.class, namePart);
+<b class="nc"><i>343</i>&nbsp;                name.getNamePartOrDisplayFormOrAffiliation().add(element);</b>
+<b class="nc"><i>344</i>&nbsp;                mods.getModsGroup().add(name);</b>
+<i>345</i>&nbsp;            }
+<i>346</i>&nbsp;        }
+<b class="nc"><i>347</i>&nbsp;    }</b>
+<i>348</i>&nbsp;
+<i>349</i>&nbsp;    private void addIdentifier(String key, String value, ModsDefinition mods) {
+<b class="nc"><i>350</i>&nbsp;        if (&quot;citekey&quot;.equals(key)) {</b>
+<b class="nc"><i>351</i>&nbsp;            mods.setID(value);</b>
+<i>352</i>&nbsp;        }
+<b class="nc"><i>353</i>&nbsp;        IdentifierDefinition identifier = new IdentifierDefinition();</b>
+<b class="nc"><i>354</i>&nbsp;        identifier.setType(key);</b>
+<b class="nc"><i>355</i>&nbsp;        identifier.setValue(value);</b>
+<b class="nc"><i>356</i>&nbsp;        mods.getModsGroup().add(identifier);</b>
+<b class="nc"><i>357</i>&nbsp;    }</b>
+<i>358</i>&nbsp;
+<i>359</i>&nbsp;    private void addStartAndEndPage(String value, PartDefinition partDefinition, String minus) {
+<b class="nc"><i>360</i>&nbsp;        int minusIndex = value.indexOf(minus);</b>
+<b class="nc"><i>361</i>&nbsp;        String startPage = value.substring(0, minusIndex);</b>
+<b class="nc"><i>362</i>&nbsp;        String endPage = &quot;&quot;;</b>
+<b class="nc"><i>363</i>&nbsp;        if (MINUS.equals(minus)) {</b>
+<b class="nc"><i>364</i>&nbsp;            endPage = value.substring(minusIndex + 1);</b>
+<b class="nc"><i>365</i>&nbsp;        } else if (DOUBLE_MINUS.equals(minus)) {</b>
+<b class="nc"><i>366</i>&nbsp;            endPage = value.substring(minusIndex + 2);</b>
+<i>367</i>&nbsp;        }
+<i>368</i>&nbsp;
+<b class="nc"><i>369</i>&nbsp;        StringPlusLanguage start = new StringPlusLanguage();</b>
+<b class="nc"><i>370</i>&nbsp;        start.setValue(startPage);</b>
+<b class="nc"><i>371</i>&nbsp;        StringPlusLanguage end = new StringPlusLanguage();</b>
+<b class="nc"><i>372</i>&nbsp;        end.setValue(endPage);</b>
+<b class="nc"><i>373</i>&nbsp;        ExtentDefinition extent = new ExtentDefinition();</b>
+<b class="nc"><i>374</i>&nbsp;        extent.setStart(start);</b>
+<b class="nc"><i>375</i>&nbsp;        extent.setEnd(end);</b>
+<i>376</i>&nbsp;
+<b class="nc"><i>377</i>&nbsp;        partDefinition.getDetailOrExtentOrDate().add(extent);</b>
+<b class="nc"><i>378</i>&nbsp;    }</b>
+<i>379</i>&nbsp;
+<i>380</i>&nbsp;    private void addDetail(String detailName, String value, PartDefinition partDefinition) {
+<b class="nc"><i>381</i>&nbsp;        DetailDefinition detail = new DetailDefinition();</b>
+<b class="nc"><i>382</i>&nbsp;        StringPlusLanguage detailType = new StringPlusLanguage();</b>
+<b class="nc"><i>383</i>&nbsp;        detailType.setValue(value);</b>
+<b class="nc"><i>384</i>&nbsp;        detail.setType(detailName);</b>
+<b class="nc"><i>385</i>&nbsp;        JAXBElement&lt;StringPlusLanguage&gt; element = new JAXBElement&lt;&gt;(new QName(MODS_NAMESPACE_URI, &quot;number&quot;),</b>
+<i>386</i>&nbsp;                StringPlusLanguage.class, detailType);
+<b class="nc"><i>387</i>&nbsp;        detail.getNumberOrCaptionOrTitle().add(element);</b>
+<b class="nc"><i>388</i>&nbsp;        partDefinition.getDetailOrExtentOrDate().add(detail);</b>
+<b class="nc"><i>389</i>&nbsp;    }</b>
+<i>390</i>&nbsp;
+<i>391</i>&nbsp;    private void addOriginInformation(String key, String value, OriginInfoDefinition originInfo) {
+<b class="nc"><i>392</i>&nbsp;        if (FieldName.YEAR.equals(key)) {</b>
+<b class="nc"><i>393</i>&nbsp;            addDate(&quot;dateIssued&quot;, value, originInfo);</b>
+<b class="nc"><i>394</i>&nbsp;        } else if (&quot;created&quot;.equals(key)) {</b>
+<b class="nc"><i>395</i>&nbsp;            addDate(&quot;dateCreated&quot;, value, originInfo);</b>
+<b class="nc"><i>396</i>&nbsp;        } else if (&quot;modified&quot;.equals(key)) {</b>
+<b class="nc"><i>397</i>&nbsp;            addDate(&quot;dateModified&quot;, value, originInfo);</b>
+<b class="nc"><i>398</i>&nbsp;        } else if (&quot;captured&quot;.equals(key)) {</b>
+<b class="nc"><i>399</i>&nbsp;            addDate(&quot;dateCaptured&quot;, value, originInfo);</b>
+<b class="nc"><i>400</i>&nbsp;        } else if (FieldName.PUBLISHER.equals(key)) {</b>
+<b class="nc"><i>401</i>&nbsp;            StringPlusLanguagePlusSupplied publisher = new StringPlusLanguagePlusSupplied();</b>
+<b class="nc"><i>402</i>&nbsp;            publisher.setValue(value);</b>
+<b class="nc"><i>403</i>&nbsp;            JAXBElement&lt;StringPlusLanguagePlusSupplied&gt; element = new JAXBElement&lt;&gt;(</b>
+<i>404</i>&nbsp;                    new QName(MODS_NAMESPACE_URI, &quot;publisher&quot;), StringPlusLanguagePlusSupplied.class, publisher);
+<b class="nc"><i>405</i>&nbsp;            originInfo.getPlaceOrPublisherOrDateIssued().add(element);</b>
+<b class="nc"><i>406</i>&nbsp;        } else if (&quot;issuance&quot;.equals(key)) {</b>
+<b class="nc"><i>407</i>&nbsp;            IssuanceDefinition issuance = IssuanceDefinition.fromValue(value);</b>
+<b class="nc"><i>408</i>&nbsp;            JAXBElement&lt;IssuanceDefinition&gt; element = new JAXBElement&lt;&gt;(new QName(MODS_NAMESPACE_URI, &quot;issuance&quot;),</b>
+<i>409</i>&nbsp;                    IssuanceDefinition.class, issuance);
+<b class="nc"><i>410</i>&nbsp;            originInfo.getPlaceOrPublisherOrDateIssued().add(element);</b>
+<b class="nc"><i>411</i>&nbsp;        } else if (&quot;address&quot;.equals(key)) {</b>
+<b class="nc"><i>412</i>&nbsp;            PlaceDefinition placeDefinition = new PlaceDefinition();</b>
+<i>413</i>&nbsp;            //There can be more than one place, so we split to get all places and add them
+<b class="nc"><i>414</i>&nbsp;            String[] places = value.split(&quot;, &quot;);</b>
+<b class="nc"><i>415</i>&nbsp;            for (String place : places) {</b>
+<b class="nc"><i>416</i>&nbsp;                PlaceTermDefinition placeTerm = new PlaceTermDefinition();</b>
+<i>417</i>&nbsp;                //There&#39;s no possibility to see from a bib entry whether it is code or text, but since it is in the bib entry
+<i>418</i>&nbsp;                //we assume that it is text
+<b class="nc"><i>419</i>&nbsp;                placeTerm.setType(CodeOrText.TEXT);</b>
+<b class="nc"><i>420</i>&nbsp;                placeTerm.setValue(place);</b>
+<b class="nc"><i>421</i>&nbsp;                placeDefinition.getPlaceTerm().add(placeTerm);</b>
+<i>422</i>&nbsp;            }
+<b class="nc"><i>423</i>&nbsp;            JAXBElement&lt;PlaceDefinition&gt; element = new JAXBElement&lt;&gt;(new QName(MODS_NAMESPACE_URI, &quot;place&quot;),</b>
+<i>424</i>&nbsp;                    PlaceDefinition.class, placeDefinition);
+<b class="nc"><i>425</i>&nbsp;            originInfo.getPlaceOrPublisherOrDateIssued().add(element);</b>
+<b class="nc"><i>426</i>&nbsp;        } else if (&quot;edition&quot;.equals(key)) {</b>
+<b class="nc"><i>427</i>&nbsp;            StringPlusLanguagePlusSupplied edition = new StringPlusLanguagePlusSupplied();</b>
+<b class="nc"><i>428</i>&nbsp;            edition.setValue(value);</b>
+<b class="nc"><i>429</i>&nbsp;            JAXBElement&lt;StringPlusLanguagePlusSupplied&gt; element = new JAXBElement&lt;&gt;(</b>
+<i>430</i>&nbsp;                    new QName(MODS_NAMESPACE_URI, &quot;edition&quot;), StringPlusLanguagePlusSupplied.class, edition);
+<b class="nc"><i>431</i>&nbsp;            originInfo.getPlaceOrPublisherOrDateIssued().add(element);</b>
+<i>432</i>&nbsp;        }
+<b class="nc"><i>433</i>&nbsp;    }</b>
+<i>434</i>&nbsp;
+<i>435</i>&nbsp;    private void addDate(String dateName, String value, OriginInfoDefinition originInfo) {
+<b class="nc"><i>436</i>&nbsp;        DateDefinition dateIssued = new DateDefinition();</b>
+<b class="nc"><i>437</i>&nbsp;        dateIssued.setKeyDate(&quot;yes&quot;);</b>
+<b class="nc"><i>438</i>&nbsp;        dateIssued.setValue(value);</b>
+<b class="nc"><i>439</i>&nbsp;        JAXBElement&lt;DateDefinition&gt; element = new JAXBElement&lt;&gt;(new QName(MODS_NAMESPACE_URI, dateName),</b>
+<i>440</i>&nbsp;                DateDefinition.class, dateIssued);
+<b class="nc"><i>441</i>&nbsp;        originInfo.getPlaceOrPublisherOrDateIssued().add(element);</b>
+<b class="nc"><i>442</i>&nbsp;    }</b>
+<i>443</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

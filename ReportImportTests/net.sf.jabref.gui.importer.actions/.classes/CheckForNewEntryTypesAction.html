@@ -1,0 +1,219 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: CheckForNewEntryTypesAction</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.importer.actions</a> ]
+</div>
+
+<h1>Coverage Summary for Class: CheckForNewEntryTypesAction (net.sf.jabref.gui.importer.actions)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CheckForNewEntryTypesAction</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    12.5%
+  </span>
+  <span class="absValue">
+    (1/ 8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    1.8%
+  </span>
+  <span class="absValue">
+    (1/ 57)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.importer.actions;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.Font;
+<i>4</i>&nbsp;import java.util.ArrayList;
+<i>5</i>&nbsp;import java.util.Collections;
+<i>6</i>&nbsp;import java.util.HashMap;
+<i>7</i>&nbsp;import java.util.List;
+<i>8</i>&nbsp;import java.util.Map;
+<i>9</i>&nbsp;import java.util.stream.Collectors;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;import javax.swing.BoxLayout;
+<i>12</i>&nbsp;import javax.swing.JCheckBox;
+<i>13</i>&nbsp;import javax.swing.JLabel;
+<i>14</i>&nbsp;import javax.swing.JOptionPane;
+<i>15</i>&nbsp;import javax.swing.JPanel;
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;import net.sf.jabref.Globals;
+<i>18</i>&nbsp;import net.sf.jabref.gui.BasePanel;
+<i>19</i>&nbsp;import net.sf.jabref.gui.customentrytypes.CustomEntryTypesManager;
+<i>20</i>&nbsp;import net.sf.jabref.logic.importer.ParserResult;
+<i>21</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>22</i>&nbsp;import net.sf.jabref.model.EntryTypes;
+<i>23</i>&nbsp;import net.sf.jabref.model.database.BibDatabaseMode;
+<i>24</i>&nbsp;import net.sf.jabref.model.entry.CustomEntryType;
+<i>25</i>&nbsp;import net.sf.jabref.model.entry.EntryType;
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;/**
+<i>28</i>&nbsp; * This action checks whether any new custom entry types were loaded from this
+<i>29</i>&nbsp; * BIB file. If so, an offer to remember these entry types is given.
+<i>30</i>&nbsp; */
+<b class="fc"><i>31</i>&nbsp;public class CheckForNewEntryTypesAction implements PostOpenAction {</b>
+<i>32</i>&nbsp;
+<i>33</i>&nbsp;    @Override
+<i>34</i>&nbsp;    public boolean isActionNecessary(ParserResult parserResult) {
+<b class="nc"><i>35</i>&nbsp;        return !getListOfUnknownAndUnequalCustomizations(parserResult).isEmpty();</b>
+<i>36</i>&nbsp;    }
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;    @Override
+<i>39</i>&nbsp;    public void performAction(BasePanel panel, ParserResult parserResult) {
+<i>40</i>&nbsp;
+<b class="nc"><i>41</i>&nbsp;        BibDatabaseMode mode = getBibDatabaseModeFromParserResult(parserResult);</b>
+<i>42</i>&nbsp;
+<b class="nc"><i>43</i>&nbsp;        List&lt;EntryType&gt; typesToStore = determineEntryTypesToSave(panel, getListOfUnknownAndUnequalCustomizations(parserResult), mode);</b>
+<i>44</i>&nbsp;
+<b class="nc"><i>45</i>&nbsp;        if (!typesToStore.isEmpty()) {</b>
+<b class="nc"><i>46</i>&nbsp;            typesToStore.forEach(type -&gt; EntryTypes.addOrModifyCustomEntryType((CustomEntryType) type, mode));</b>
+<b class="nc"><i>47</i>&nbsp;            CustomEntryTypesManager.saveCustomEntryTypes(Globals.prefs);</b>
+<i>48</i>&nbsp;        }
+<b class="nc"><i>49</i>&nbsp;    }</b>
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;    private List&lt;EntryType&gt; getListOfUnknownAndUnequalCustomizations(ParserResult parserResult) {
+<b class="nc"><i>52</i>&nbsp;        BibDatabaseMode mode = getBibDatabaseModeFromParserResult(parserResult);</b>
+<i>53</i>&nbsp;
+<b class="nc"><i>54</i>&nbsp;        return parserResult.getEntryTypes().values().stream()</b>
+<b class="nc"><i>55</i>&nbsp;                .filter(type -&gt;</b>
+<b class="nc"><i>56</i>&nbsp;                    (!EntryTypes.getType(type.getName(), mode).isPresent())</b>
+<b class="nc"><i>57</i>&nbsp;                        || !EntryTypes.isEqualNameAndFieldBased(type, EntryTypes.getType(type.getName(), mode).get()))</b>
+<b class="nc"><i>58</i>&nbsp;                .collect(Collectors.toList());</b>
+<i>59</i>&nbsp;    }
+<i>60</i>&nbsp;
+<i>61</i>&nbsp;    private List&lt;EntryType&gt; determineEntryTypesToSave(BasePanel panel, List&lt;EntryType&gt; allCustomizedEntryTypes, BibDatabaseMode databaseMode) {
+<b class="nc"><i>62</i>&nbsp;        List&lt;EntryType&gt; newTypes = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>63</i>&nbsp;        List&lt;EntryType&gt; differentCustomizations = new ArrayList&lt;&gt;();</b>
+<i>64</i>&nbsp;
+<b class="nc"><i>65</i>&nbsp;        for (EntryType customType : allCustomizedEntryTypes) {</b>
+<b class="nc"><i>66</i>&nbsp;            if (!EntryTypes.getType(customType.getName(), databaseMode).isPresent()) {</b>
+<b class="nc"><i>67</i>&nbsp;                newTypes.add(customType);</b>
+<i>68</i>&nbsp;            } else {
+<b class="nc"><i>69</i>&nbsp;                EntryType currentlyStoredType = EntryTypes.getType(customType.getName(), databaseMode).get();</b>
+<b class="nc"><i>70</i>&nbsp;                if (!EntryTypes.isEqualNameAndFieldBased(customType, currentlyStoredType)) {</b>
+<b class="nc"><i>71</i>&nbsp;                    differentCustomizations.add(customType);</b>
+<i>72</i>&nbsp;                }
+<i>73</i>&nbsp;            }
+<b class="nc"><i>74</i>&nbsp;        }</b>
+<i>75</i>&nbsp;
+<b class="nc"><i>76</i>&nbsp;        Map&lt;EntryType, JCheckBox&gt; typeCheckBoxMap = new HashMap&lt;&gt;();</b>
+<i>77</i>&nbsp;
+<b class="nc"><i>78</i>&nbsp;        JPanel checkboxPanel = createCheckBoxPanel(newTypes, differentCustomizations, typeCheckBoxMap);</b>
+<i>79</i>&nbsp;
+<b class="nc"><i>80</i>&nbsp;        int answer = JOptionPane.showConfirmDialog(panel.frame(),</b>
+<i>81</i>&nbsp;                checkboxPanel,
+<b class="nc"><i>82</i>&nbsp;                Localization.lang(&quot;Custom entry types&quot;),</b>
+<i>83</i>&nbsp;                JOptionPane.OK_CANCEL_OPTION,
+<i>84</i>&nbsp;                JOptionPane.QUESTION_MESSAGE);
+<i>85</i>&nbsp;
+<b class="nc"><i>86</i>&nbsp;        if (answer == JOptionPane.YES_OPTION) {</b>
+<b class="nc"><i>87</i>&nbsp;            return typeCheckBoxMap.entrySet().stream().filter(entry -&gt; entry.getValue().isSelected())</b>
+<b class="nc"><i>88</i>&nbsp;                    .map(Map.Entry::getKey).collect(Collectors.toList());</b>
+<i>89</i>&nbsp;        } else {
+<b class="nc"><i>90</i>&nbsp;            return Collections.emptyList();</b>
+<i>91</i>&nbsp;        }
+<i>92</i>&nbsp;
+<i>93</i>&nbsp;    }
+<i>94</i>&nbsp;
+<i>95</i>&nbsp;    private JPanel createCheckBoxPanel(List&lt;EntryType&gt; newTypes, List&lt;EntryType&gt; differentCustomizations,
+<i>96</i>&nbsp;            Map&lt;EntryType, JCheckBox&gt; typeCheckBoxMap) {
+<b class="nc"><i>97</i>&nbsp;        JPanel checkboxPanel = new JPanel();</b>
+<b class="nc"><i>98</i>&nbsp;        checkboxPanel.setLayout(new BoxLayout(checkboxPanel, BoxLayout.PAGE_AXIS));</b>
+<i>99</i>&nbsp;
+<b class="nc"><i>100</i>&nbsp;        JLabel customFoundLabel = new JLabel(Localization.lang(&quot;Custom entry types found in file&quot;)+&quot;.&quot;);</b>
+<b class="nc"><i>101</i>&nbsp;        Font boldStandardFont = new Font(customFoundLabel.getFont().getFontName(), Font.BOLD, customFoundLabel.getFont().getSize());</b>
+<b class="nc"><i>102</i>&nbsp;        customFoundLabel.setFont(boldStandardFont);</b>
+<b class="nc"><i>103</i>&nbsp;        checkboxPanel.add(customFoundLabel);</b>
+<i>104</i>&nbsp;
+<b class="nc"><i>105</i>&nbsp;        JLabel selectLabel = new JLabel(Localization.lang(&quot;Select all customized types to be stored in local preferences&quot;)+&quot;:&quot;);</b>
+<b class="nc"><i>106</i>&nbsp;        selectLabel.setFont(boldStandardFont);</b>
+<b class="nc"><i>107</i>&nbsp;        checkboxPanel.add(selectLabel);</b>
+<i>108</i>&nbsp;
+<b class="nc"><i>109</i>&nbsp;        checkboxPanel.add(new JLabel(&quot; &quot;));</b>
+<i>110</i>&nbsp;
+<i>111</i>&nbsp;        // add all unknown types:
+<b class="nc"><i>112</i>&nbsp;        if (!newTypes.isEmpty()) {</b>
+<b class="nc"><i>113</i>&nbsp;            checkboxPanel.add(new JLabel(Localization.lang(&quot;Currently unknown&quot;) + &quot;:&quot;));</b>
+<b class="nc"><i>114</i>&nbsp;            for (EntryType type : newTypes) {</b>
+<b class="nc"><i>115</i>&nbsp;                JCheckBox box = new JCheckBox(type.getName(), true);</b>
+<b class="nc"><i>116</i>&nbsp;                checkboxPanel.add(box);</b>
+<b class="nc"><i>117</i>&nbsp;                typeCheckBoxMap.put(type, box);</b>
+<b class="nc"><i>118</i>&nbsp;            }</b>
+<i>119</i>&nbsp;        }
+<i>120</i>&nbsp;
+<i>121</i>&nbsp;        // add all different customizations
+<b class="nc"><i>122</i>&nbsp;        if (!differentCustomizations.isEmpty()) {</b>
+<b class="nc"><i>123</i>&nbsp;            checkboxPanel.add(new JLabel(Localization.lang(&quot;Different customization, current settings will be overwritten&quot;) + &quot;:&quot;));</b>
+<b class="nc"><i>124</i>&nbsp;            for (EntryType type : differentCustomizations) {</b>
+<b class="nc"><i>125</i>&nbsp;                JCheckBox box = new JCheckBox(type.getName(), true);</b>
+<b class="nc"><i>126</i>&nbsp;                checkboxPanel.add(box);</b>
+<b class="nc"><i>127</i>&nbsp;                typeCheckBoxMap.put(type, box);</b>
+<b class="nc"><i>128</i>&nbsp;            }</b>
+<i>129</i>&nbsp;        }
+<b class="nc"><i>130</i>&nbsp;        return checkboxPanel;</b>
+<i>131</i>&nbsp;    }
+<i>132</i>&nbsp;
+<i>133</i>&nbsp;    private BibDatabaseMode getBibDatabaseModeFromParserResult(ParserResult parserResult) {
+<b class="nc"><i>134</i>&nbsp;        return parserResult.getMetaData().getMode().orElse(Globals.prefs.getDefaultBibDatabaseMode());</b>
+<i>135</i>&nbsp;    }
+<i>136</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,345 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: RisImporter</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.importer.fileformat</a> ]
+</div>
+
+<h1>Coverage Summary for Class: RisImporter (net.sf.jabref.logic.importer.fileformat)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">RisImporter</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 156)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.importer.fileformat;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.BufferedReader;
+<i>4</i>&nbsp;import java.io.IOException;
+<i>5</i>&nbsp;import java.util.ArrayList;
+<i>6</i>&nbsp;import java.util.HashMap;
+<i>7</i>&nbsp;import java.util.List;
+<i>8</i>&nbsp;import java.util.Locale;
+<i>9</i>&nbsp;import java.util.Map;
+<i>10</i>&nbsp;import java.util.Optional;
+<i>11</i>&nbsp;import java.util.regex.Pattern;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;import net.sf.jabref.logic.importer.Importer;
+<i>14</i>&nbsp;import net.sf.jabref.logic.importer.ParserResult;
+<i>15</i>&nbsp;import net.sf.jabref.logic.util.FileExtensions;
+<i>16</i>&nbsp;import net.sf.jabref.logic.util.OS;
+<i>17</i>&nbsp;import net.sf.jabref.model.entry.AuthorList;
+<i>18</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>19</i>&nbsp;import net.sf.jabref.model.entry.FieldName;
+<i>20</i>&nbsp;import net.sf.jabref.model.entry.MonthUtil;
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;/**
+<i>23</i>&nbsp; * Imports a Biblioscape Tag File. The format is described on
+<i>24</i>&nbsp; * http://www.biblioscape.com/manual_bsp/Biblioscape_Tag_File.htm
+<i>25</i>&nbsp; * Several Biblioscape field types are ignored. Others are only included in the BibTeX
+<i>26</i>&nbsp; * field &quot;comment&quot;.
+<i>27</i>&nbsp; */
+<b class="nc"><i>28</i>&nbsp;public class RisImporter extends Importer {</b>
+<i>29</i>&nbsp;
+<b class="nc"><i>30</i>&nbsp;    private static final Pattern RECOGNIZED_FORMAT_PATTERN = Pattern.compile(&quot;TY  - .*&quot;);</b>
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;
+<i>33</i>&nbsp;    @Override
+<i>34</i>&nbsp;    public String getName() {
+<b class="nc"><i>35</i>&nbsp;        return &quot;RIS&quot;;</b>
+<i>36</i>&nbsp;    }
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;    @Override
+<i>39</i>&nbsp;    public FileExtensions getExtensions() {
+<b class="nc"><i>40</i>&nbsp;        return FileExtensions.RIS;</b>
+<i>41</i>&nbsp;    }
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;    @Override
+<i>44</i>&nbsp;    public String getDescription() {
+<b class="nc"><i>45</i>&nbsp;        return &quot;Imports a Biblioscape Tag File.&quot;;</b>
+<i>46</i>&nbsp;    }
+<i>47</i>&nbsp;
+<i>48</i>&nbsp;    @Override
+<i>49</i>&nbsp;    public boolean isRecognizedFormat(BufferedReader reader) throws IOException {
+<i>50</i>&nbsp;        // Our strategy is to look for the &quot;TY  - *&quot; line.
+<b class="nc"><i>51</i>&nbsp;        return reader.lines().anyMatch(line -&gt; RECOGNIZED_FORMAT_PATTERN.matcher(line).find());</b>
+<i>52</i>&nbsp;    }
+<i>53</i>&nbsp;
+<i>54</i>&nbsp;    @Override
+<i>55</i>&nbsp;    public ParserResult importDatabase(BufferedReader reader) throws IOException {
+<b class="nc"><i>56</i>&nbsp;        List&lt;BibEntry&gt; bibitems = new ArrayList&lt;&gt;();</b>
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;        //use optional here, so that no exception will be thrown if the file is empty
+<b class="nc"><i>59</i>&nbsp;        Optional&lt;String&gt; OptionalLines = reader.lines().reduce((line, nextline) -&gt; line + &quot;\n&quot; + nextline);</b>
+<b class="nc"><i>60</i>&nbsp;        String linesAsString = OptionalLines.isPresent() ? OptionalLines.get() : &quot;&quot;;</b>
+<i>61</i>&nbsp;
+<b class="nc"><i>62</i>&nbsp;        String[] entries = linesAsString.replace(&quot;\u2013&quot;, &quot;-&quot;).replace(&quot;\u2014&quot;, &quot;--&quot;).replace(&quot;\u2015&quot;, &quot;--&quot;)</b>
+<b class="nc"><i>63</i>&nbsp;                .split(&quot;ER  -.*\\n&quot;);</b>
+<i>64</i>&nbsp;
+<b class="nc"><i>65</i>&nbsp;        for (String entry1 : entries) {</b>
+<i>66</i>&nbsp;
+<b class="nc"><i>67</i>&nbsp;            String type = &quot;&quot;;</b>
+<b class="nc"><i>68</i>&nbsp;            String author = &quot;&quot;;</b>
+<b class="nc"><i>69</i>&nbsp;            String editor = &quot;&quot;;</b>
+<b class="nc"><i>70</i>&nbsp;            String startPage = &quot;&quot;;</b>
+<b class="nc"><i>71</i>&nbsp;            String endPage = &quot;&quot;;</b>
+<b class="nc"><i>72</i>&nbsp;            String comment = &quot;&quot;;</b>
+<b class="nc"><i>73</i>&nbsp;            Map&lt;String, String&gt; fields = new HashMap&lt;&gt;();</b>
+<i>74</i>&nbsp;
+<b class="nc"><i>75</i>&nbsp;            String[] lines = entry1.split(&quot;\n&quot;);</b>
+<i>76</i>&nbsp;
+<b class="nc"><i>77</i>&nbsp;            for (int j = 0; j &lt; lines.length; j++) {</b>
+<b class="nc"><i>78</i>&nbsp;                StringBuilder current = new StringBuilder(lines[j]);</b>
+<b class="nc"><i>79</i>&nbsp;                boolean done = false;</b>
+<b class="nc"><i>80</i>&nbsp;                while (!done &amp;&amp; (j &lt; (lines.length - 1))) {</b>
+<b class="nc"><i>81</i>&nbsp;                    if ((lines[j + 1].length() &gt;= 6) &amp;&amp; !&quot;  - &quot;.equals(lines[j + 1].substring(2, 6))) {</b>
+<b class="nc"><i>82</i>&nbsp;                        if ((current.length() &gt; 0) &amp;&amp; !Character.isWhitespace(current.charAt(current.length() - 1))</b>
+<b class="nc"><i>83</i>&nbsp;                                &amp;&amp; !Character.isWhitespace(lines[j + 1].charAt(0))) {</b>
+<b class="nc"><i>84</i>&nbsp;                            current.append(&#39; &#39;);</b>
+<i>85</i>&nbsp;                        }
+<b class="nc"><i>86</i>&nbsp;                        current.append(lines[j + 1]);</b>
+<b class="nc"><i>87</i>&nbsp;                        j++;</b>
+<i>88</i>&nbsp;                    } else {
+<b class="nc"><i>89</i>&nbsp;                        done = true;</b>
+<i>90</i>&nbsp;                    }
+<i>91</i>&nbsp;                }
+<b class="nc"><i>92</i>&nbsp;                String entry = current.toString();</b>
+<b class="nc"><i>93</i>&nbsp;                if (entry.length() &lt; 6) {</b>
+<b class="nc"><i>94</i>&nbsp;                    continue;</b>
+<i>95</i>&nbsp;                } else {
+<b class="nc"><i>96</i>&nbsp;                    String tag = entry.substring(0, 2);</b>
+<b class="nc"><i>97</i>&nbsp;                    String value = entry.substring(6).trim();</b>
+<b class="nc"><i>98</i>&nbsp;                    if (&quot;TY&quot;.equals(tag)) {</b>
+<b class="nc"><i>99</i>&nbsp;                        if (&quot;BOOK&quot;.equals(value)) {</b>
+<b class="nc"><i>100</i>&nbsp;                            type = &quot;book&quot;;</b>
+<b class="nc"><i>101</i>&nbsp;                        } else if (&quot;JOUR&quot;.equals(value) || &quot;MGZN&quot;.equals(value)) {</b>
+<b class="nc"><i>102</i>&nbsp;                            type = &quot;article&quot;;</b>
+<b class="nc"><i>103</i>&nbsp;                        } else if (&quot;THES&quot;.equals(value)) {</b>
+<b class="nc"><i>104</i>&nbsp;                            type = &quot;phdthesis&quot;;</b>
+<b class="nc"><i>105</i>&nbsp;                        } else if (&quot;UNPB&quot;.equals(value)) {</b>
+<b class="nc"><i>106</i>&nbsp;                            type = &quot;unpublished&quot;;</b>
+<b class="nc"><i>107</i>&nbsp;                        } else if (&quot;RPRT&quot;.equals(value)) {</b>
+<b class="nc"><i>108</i>&nbsp;                            type = &quot;techreport&quot;;</b>
+<b class="nc"><i>109</i>&nbsp;                        } else if (&quot;CONF&quot;.equals(value)) {</b>
+<b class="nc"><i>110</i>&nbsp;                            type = &quot;inproceedings&quot;;</b>
+<b class="nc"><i>111</i>&nbsp;                        } else if (&quot;CHAP&quot;.equals(value)) {</b>
+<b class="nc"><i>112</i>&nbsp;                            type = &quot;incollection&quot;;//&quot;inbook&quot;;</b>
+<b class="nc"><i>113</i>&nbsp;                        } else if (&quot;PAT&quot;.equals(value)) {</b>
+<b class="nc"><i>114</i>&nbsp;                            type = &quot;patent&quot;;</b>
+<i>115</i>&nbsp;                        } else {
+<b class="nc"><i>116</i>&nbsp;                            type = &quot;other&quot;;</b>
+<i>117</i>&nbsp;                        }
+<b class="nc"><i>118</i>&nbsp;                    } else if (&quot;T1&quot;.equals(tag) || &quot;TI&quot;.equals(tag)) {</b>
+<b class="nc"><i>119</i>&nbsp;                        String oldVal = fields.get(FieldName.TITLE);</b>
+<b class="nc"><i>120</i>&nbsp;                        if (oldVal == null) {</b>
+<b class="nc"><i>121</i>&nbsp;                            fields.put(FieldName.TITLE, value);</b>
+<i>122</i>&nbsp;                        } else {
+<b class="nc"><i>123</i>&nbsp;                            if (oldVal.endsWith(&quot;:&quot;) || oldVal.endsWith(&quot;.&quot;) || oldVal.endsWith(&quot;?&quot;)) {</b>
+<b class="nc"><i>124</i>&nbsp;                                fields.put(FieldName.TITLE, oldVal + &quot; &quot; + value);</b>
+<i>125</i>&nbsp;                            } else {
+<b class="nc"><i>126</i>&nbsp;                                fields.put(FieldName.TITLE, oldVal + &quot;: &quot; + value);</b>
+<i>127</i>&nbsp;                            }
+<i>128</i>&nbsp;                        }
+<b class="nc"><i>129</i>&nbsp;                        fields.put(FieldName.TITLE, fields.get(FieldName.TITLE).replaceAll(&quot;\\s+&quot;, &quot; &quot;)); // Normalize whitespaces</b>
+<b class="nc"><i>130</i>&nbsp;                    } else if (&quot;BT&quot;.equals(tag)) {</b>
+<b class="nc"><i>131</i>&nbsp;                        fields.put(FieldName.BOOKTITLE, value);</b>
+<b class="nc"><i>132</i>&nbsp;                    } else if (&quot;T2&quot;.equals(tag) || &quot;JO&quot;.equals(tag)) {</b>
+<b class="nc"><i>133</i>&nbsp;                        fields.put(FieldName.JOURNAL, value);</b>
+<b class="nc"><i>134</i>&nbsp;                    } else if (&quot;T3&quot;.equals(tag)) {</b>
+<b class="nc"><i>135</i>&nbsp;                        fields.put(FieldName.SERIES, value);</b>
+<b class="nc"><i>136</i>&nbsp;                    } else if (&quot;AU&quot;.equals(tag) || &quot;A1&quot;.equals(tag)) {</b>
+<b class="nc"><i>137</i>&nbsp;                        if (&quot;&quot;.equals(author)) {</b>
+<b class="nc"><i>138</i>&nbsp;                            author = value;</b>
+<i>139</i>&nbsp;                        } else {
+<b class="nc"><i>140</i>&nbsp;                            author += &quot; and &quot; + value;</b>
+<i>141</i>&nbsp;                        }
+<b class="nc"><i>142</i>&nbsp;                    } else if (&quot;A2&quot;.equals(tag) || &quot;A3&quot;.equals(tag) || &quot;A4&quot;.equals(tag)) {</b>
+<b class="nc"><i>143</i>&nbsp;                        if (editor.isEmpty()) {</b>
+<b class="nc"><i>144</i>&nbsp;                            editor = value;</b>
+<i>145</i>&nbsp;                        } else {
+<b class="nc"><i>146</i>&nbsp;                            editor += &quot; and &quot; + value;</b>
+<i>147</i>&nbsp;                        }
+<b class="nc"><i>148</i>&nbsp;                    } else if (&quot;JA&quot;.equals(tag) || &quot;JF&quot;.equals(tag)) {</b>
+<b class="nc"><i>149</i>&nbsp;                        if (&quot;inproceedings&quot;.equals(type)) {</b>
+<b class="nc"><i>150</i>&nbsp;                            fields.put(FieldName.BOOKTITLE, value);</b>
+<i>151</i>&nbsp;                        } else {
+<b class="nc"><i>152</i>&nbsp;                            fields.put(FieldName.JOURNAL, value);</b>
+<i>153</i>&nbsp;                        }
+<b class="nc"><i>154</i>&nbsp;                    } else if (&quot;LA&quot;.equals(tag)) {</b>
+<b class="nc"><i>155</i>&nbsp;                        fields.put(FieldName.LANGUAGE, value);</b>
+<b class="nc"><i>156</i>&nbsp;                    } else if (&quot;CA&quot;.equals(tag)) {</b>
+<b class="nc"><i>157</i>&nbsp;                        fields.put(&quot;caption&quot;, value);</b>
+<b class="nc"><i>158</i>&nbsp;                    } else if (&quot;DB&quot;.equals(tag)) {</b>
+<b class="nc"><i>159</i>&nbsp;                        fields.put(&quot;database&quot;, value);</b>
+<b class="nc"><i>160</i>&nbsp;                    } else if (&quot;IS&quot;.equals(tag)) {</b>
+<b class="nc"><i>161</i>&nbsp;                        fields.put(FieldName.NUMBER, value);</b>
+<b class="nc"><i>162</i>&nbsp;                    } else if (&quot;SP&quot;.equals(tag)) {</b>
+<b class="nc"><i>163</i>&nbsp;                        startPage = value;</b>
+<b class="nc"><i>164</i>&nbsp;                    } else if (&quot;PB&quot;.equals(tag)) {</b>
+<b class="nc"><i>165</i>&nbsp;                        if (&quot;phdthesis&quot;.equals(type)) {</b>
+<b class="nc"><i>166</i>&nbsp;                            fields.put(FieldName.SCHOOL, value);</b>
+<i>167</i>&nbsp;                        } else {
+<b class="nc"><i>168</i>&nbsp;                            fields.put(FieldName.PUBLISHER, value);</b>
+<i>169</i>&nbsp;                        }
+<b class="nc"><i>170</i>&nbsp;                    } else if (&quot;AD&quot;.equals(tag) || &quot;CY&quot;.equals(tag)) {</b>
+<b class="nc"><i>171</i>&nbsp;                        fields.put(FieldName.ADDRESS, value);</b>
+<b class="nc"><i>172</i>&nbsp;                    } else if (&quot;EP&quot;.equals(tag)) {</b>
+<b class="nc"><i>173</i>&nbsp;                        endPage = value;</b>
+<b class="nc"><i>174</i>&nbsp;                        if (!endPage.isEmpty()) {</b>
+<b class="nc"><i>175</i>&nbsp;                            endPage = &quot;--&quot; + endPage;</b>
+<i>176</i>&nbsp;                        }
+<b class="nc"><i>177</i>&nbsp;                    } else if (&quot;ET&quot;.equals(tag)) {</b>
+<b class="nc"><i>178</i>&nbsp;                        fields.put(FieldName.EDITION, value);</b>
+<b class="nc"><i>179</i>&nbsp;                    } else if (&quot;SN&quot;.equals(tag)) {</b>
+<b class="nc"><i>180</i>&nbsp;                        fields.put(FieldName.ISSN, value);</b>
+<b class="nc"><i>181</i>&nbsp;                    } else if (&quot;VL&quot;.equals(tag)) {</b>
+<b class="nc"><i>182</i>&nbsp;                        fields.put(FieldName.VOLUME, value);</b>
+<b class="nc"><i>183</i>&nbsp;                    } else if (&quot;N2&quot;.equals(tag) || &quot;AB&quot;.equals(tag)) {</b>
+<b class="nc"><i>184</i>&nbsp;                        String oldAb = fields.get(FieldName.ABSTRACT);</b>
+<b class="nc"><i>185</i>&nbsp;                        if (oldAb == null) {</b>
+<b class="nc"><i>186</i>&nbsp;                            fields.put(FieldName.ABSTRACT, value);</b>
+<i>187</i>&nbsp;                        } else {
+<b class="nc"><i>188</i>&nbsp;                            fields.put(FieldName.ABSTRACT, oldAb + OS.NEWLINE + value);</b>
+<i>189</i>&nbsp;                        }
+<b class="nc"><i>190</i>&nbsp;                    } else if (&quot;UR&quot;.equals(tag)) {</b>
+<b class="nc"><i>191</i>&nbsp;                        fields.put(FieldName.URL, value);</b>
+<b class="nc"><i>192</i>&nbsp;                    } else if ((&quot;Y1&quot;.equals(tag) || &quot;PY&quot;.equals(tag) || &quot;DA&quot;.equals(tag)) &amp;&amp; (value.length() &gt;= 4)) {</b>
+<b class="nc"><i>193</i>&nbsp;                        fields.put(FieldName.YEAR, value.substring(0, 4));</b>
+<b class="nc"><i>194</i>&nbsp;                        String[] parts = value.split(&quot;/&quot;);</b>
+<b class="nc"><i>195</i>&nbsp;                        if ((parts.length &gt; 1) &amp;&amp; !parts[1].isEmpty()) {</b>
+<i>196</i>&nbsp;                            try {
+<b class="nc"><i>197</i>&nbsp;                                int monthNumber = Integer.parseInt(parts[1]);</b>
+<b class="nc"><i>198</i>&nbsp;                                MonthUtil.Month month = MonthUtil.getMonthByNumber(monthNumber);</b>
+<b class="nc"><i>199</i>&nbsp;                                if (month.isValid()) {</b>
+<b class="nc"><i>200</i>&nbsp;                                    fields.put(FieldName.MONTH, month.bibtexFormat);</b>
+<i>201</i>&nbsp;                                }
+<b class="nc"><i>202</i>&nbsp;                            } catch (NumberFormatException ex) {</b>
+<i>203</i>&nbsp;                                // The month part is unparseable, so we ignore it.
+<b class="nc"><i>204</i>&nbsp;                            }</b>
+<i>205</i>&nbsp;                        }
+<b class="nc"><i>206</i>&nbsp;                    } else if (&quot;KW&quot;.equals(tag)) {</b>
+<b class="nc"><i>207</i>&nbsp;                        if (fields.containsKey(FieldName.KEYWORDS)) {</b>
+<b class="nc"><i>208</i>&nbsp;                            String kw = fields.get(FieldName.KEYWORDS);</b>
+<b class="nc"><i>209</i>&nbsp;                            fields.put(FieldName.KEYWORDS, kw + &quot;, &quot; + value);</b>
+<b class="nc"><i>210</i>&nbsp;                        } else {</b>
+<b class="nc"><i>211</i>&nbsp;                            fields.put(FieldName.KEYWORDS, value);</b>
+<i>212</i>&nbsp;                        }
+<b class="nc"><i>213</i>&nbsp;                    } else if (&quot;U1&quot;.equals(tag) || &quot;U2&quot;.equals(tag) || &quot;N1&quot;.equals(tag)) {</b>
+<b class="nc"><i>214</i>&nbsp;                        if (!comment.isEmpty()) {</b>
+<b class="nc"><i>215</i>&nbsp;                            comment = comment + &quot; &quot;;</b>
+<i>216</i>&nbsp;                        }
+<b class="nc"><i>217</i>&nbsp;                        comment = comment + value;</b>
+<i>218</i>&nbsp;                    }
+<i>219</i>&nbsp;                    // Added ID import 2005.12.01, Morten Alver:
+<b class="nc"><i>220</i>&nbsp;                    else if (&quot;ID&quot;.equals(tag)) {</b>
+<b class="nc"><i>221</i>&nbsp;                        fields.put(&quot;refid&quot;, value);</b>
+<b class="nc"><i>222</i>&nbsp;                    } else if (&quot;M3&quot;.equals(tag) || &quot;DO&quot;.equals(tag)) {</b>
+<b class="nc"><i>223</i>&nbsp;                        addDoi(fields, value);</b>
+<i>224</i>&nbsp;                    }
+<i>225</i>&nbsp;                }
+<i>226</i>&nbsp;                // fix authors
+<b class="nc"><i>227</i>&nbsp;                if (!author.isEmpty()) {</b>
+<b class="nc"><i>228</i>&nbsp;                    author = AuthorList.fixAuthorLastNameFirst(author);</b>
+<b class="nc"><i>229</i>&nbsp;                    fields.put(FieldName.AUTHOR, author);</b>
+<i>230</i>&nbsp;                }
+<b class="nc"><i>231</i>&nbsp;                if (!editor.isEmpty()) {</b>
+<b class="nc"><i>232</i>&nbsp;                    editor = AuthorList.fixAuthorLastNameFirst(editor);</b>
+<b class="nc"><i>233</i>&nbsp;                    fields.put(FieldName.EDITOR, editor);</b>
+<i>234</i>&nbsp;                }
+<b class="nc"><i>235</i>&nbsp;                if (!comment.isEmpty()) {</b>
+<b class="nc"><i>236</i>&nbsp;                    fields.put(FieldName.COMMENT, comment);</b>
+<i>237</i>&nbsp;                }
+<i>238</i>&nbsp;
+<b class="nc"><i>239</i>&nbsp;                fields.put(FieldName.PAGES, startPage + endPage);</b>
+<i>240</i>&nbsp;            }
+<b class="nc"><i>241</i>&nbsp;            BibEntry b = new BibEntry(type);</b>
+<i>242</i>&nbsp;
+<i>243</i>&nbsp;            // Remove empty fields:
+<b class="nc"><i>244</i>&nbsp;            fields.entrySet().removeIf(key -&gt; (key.getValue() == null) || key.getValue().trim().isEmpty());</b>
+<i>245</i>&nbsp;
+<i>246</i>&nbsp;            // create one here
+<b class="nc"><i>247</i>&nbsp;            b.setField(fields);</b>
+<b class="nc"><i>248</i>&nbsp;            bibitems.add(b);</b>
+<i>249</i>&nbsp;
+<i>250</i>&nbsp;        }
+<b class="nc"><i>251</i>&nbsp;        return new ParserResult(bibitems);</b>
+<i>252</i>&nbsp;
+<i>253</i>&nbsp;    }
+<i>254</i>&nbsp;
+<i>255</i>&nbsp;    private void addDoi(Map&lt;String, String&gt; hm, String val) {
+<b class="nc"><i>256</i>&nbsp;        String doi = val.toLowerCase(Locale.ENGLISH);</b>
+<b class="nc"><i>257</i>&nbsp;        if (doi.startsWith(&quot;doi:&quot;)) {</b>
+<b class="nc"><i>258</i>&nbsp;            doi = doi.replaceAll(&quot;(?i)doi:&quot;, &quot;&quot;).trim();</b>
+<b class="nc"><i>259</i>&nbsp;            hm.put(FieldName.DOI, doi);</b>
+<i>260</i>&nbsp;        }
+<b class="nc"><i>261</i>&nbsp;    }</b>
+<i>262</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,642 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: GroupDialog</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.groups</a> ]
+</div>
+
+<h1>Coverage Summary for Class: GroupDialog (net.sf.jabref.gui.groups)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GroupDialog</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 288)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">GroupDialog$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">GroupDialog$2</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">GroupDialog$3</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 22)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 297)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.groups;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.BorderLayout;
+<i>4</i>&nbsp;import java.awt.CardLayout;
+<i>5</i>&nbsp;import java.awt.Container;
+<i>6</i>&nbsp;import java.awt.Dimension;
+<i>7</i>&nbsp;import java.awt.Font;
+<i>8</i>&nbsp;import java.awt.event.ActionEvent;
+<i>9</i>&nbsp;import java.awt.event.ItemListener;
+<i>10</i>&nbsp;import java.util.regex.Pattern;
+<i>11</i>&nbsp;import java.util.regex.PatternSyntaxException;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;import javax.swing.AbstractAction;
+<i>14</i>&nbsp;import javax.swing.Action;
+<i>15</i>&nbsp;import javax.swing.BorderFactory;
+<i>16</i>&nbsp;import javax.swing.ButtonGroup;
+<i>17</i>&nbsp;import javax.swing.JButton;
+<i>18</i>&nbsp;import javax.swing.JCheckBox;
+<i>19</i>&nbsp;import javax.swing.JComponent;
+<i>20</i>&nbsp;import javax.swing.JDialog;
+<i>21</i>&nbsp;import javax.swing.JLabel;
+<i>22</i>&nbsp;import javax.swing.JPanel;
+<i>23</i>&nbsp;import javax.swing.JRadioButton;
+<i>24</i>&nbsp;import javax.swing.JScrollPane;
+<i>25</i>&nbsp;import javax.swing.JTextField;
+<i>26</i>&nbsp;import javax.swing.ScrollPaneConstants;
+<i>27</i>&nbsp;import javax.swing.SwingConstants;
+<i>28</i>&nbsp;import javax.swing.event.CaretListener;
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;import net.sf.jabref.Globals;
+<i>31</i>&nbsp;import net.sf.jabref.gui.JabRefFrame;
+<i>32</i>&nbsp;import net.sf.jabref.gui.fieldeditors.TextField;
+<i>33</i>&nbsp;import net.sf.jabref.gui.keyboard.KeyBinding;
+<i>34</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>35</i>&nbsp;import net.sf.jabref.logic.search.SearchQuery;
+<i>36</i>&nbsp;import net.sf.jabref.model.entry.FieldName;
+<i>37</i>&nbsp;import net.sf.jabref.model.groups.AbstractGroup;
+<i>38</i>&nbsp;import net.sf.jabref.model.groups.ExplicitGroup;
+<i>39</i>&nbsp;import net.sf.jabref.model.groups.GroupHierarchyType;
+<i>40</i>&nbsp;import net.sf.jabref.model.groups.RegexKeywordGroup;
+<i>41</i>&nbsp;import net.sf.jabref.model.groups.SearchGroup;
+<i>42</i>&nbsp;import net.sf.jabref.model.groups.WordKeywordGroup;
+<i>43</i>&nbsp;import net.sf.jabref.model.strings.StringUtil;
+<i>44</i>&nbsp;import net.sf.jabref.preferences.JabRefPreferences;
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;import com.jgoodies.forms.builder.ButtonBarBuilder;
+<i>47</i>&nbsp;import com.jgoodies.forms.builder.DefaultFormBuilder;
+<i>48</i>&nbsp;import com.jgoodies.forms.layout.FormLayout;
+<i>49</i>&nbsp;
+<i>50</i>&nbsp;/**
+<i>51</i>&nbsp; * Dialog for creating or modifying groups. Operates directly on the Vector
+<i>52</i>&nbsp; * containing group information.
+<i>53</i>&nbsp; */
+<i>54</i>&nbsp;class GroupDialog extends JDialog {
+<i>55</i>&nbsp;
+<i>56</i>&nbsp;    private static final int INDEX_EXPLICIT_GROUP = 0;
+<i>57</i>&nbsp;    private static final int INDEX_KEYWORD_GROUP = 1;
+<i>58</i>&nbsp;    private static final int INDEX_SEARCH_GROUP = 2;
+<i>59</i>&nbsp;    private static final int TEXTFIELD_LENGTH = 30;
+<i>60</i>&nbsp;    // for all types
+<b class="nc"><i>61</i>&nbsp;    private final JTextField nameField = new JTextField(GroupDialog.TEXTFIELD_LENGTH);</b>
+<b class="nc"><i>62</i>&nbsp;    private final JRadioButton explicitRadioButton = new JRadioButton(</b>
+<b class="nc"><i>63</i>&nbsp;            Localization.lang(&quot;Statically group entries by manual assignment&quot;));</b>
+<b class="nc"><i>64</i>&nbsp;    private final JRadioButton keywordsRadioButton = new JRadioButton(</b>
+<b class="nc"><i>65</i>&nbsp;            Localization.lang(&quot;Dynamically group entries by searching a field for a keyword&quot;));</b>
+<b class="nc"><i>66</i>&nbsp;    private final JRadioButton searchRadioButton = new JRadioButton(</b>
+<b class="nc"><i>67</i>&nbsp;            Localization.lang(&quot;Dynamically group entries by a free-form search expression&quot;));</b>
+<b class="nc"><i>68</i>&nbsp;    private final JRadioButton independentButton = new JRadioButton(</b>
+<b class="nc"><i>69</i>&nbsp;            Localization.lang(&quot;Independent group: When selected, view only this group&#39;s entries&quot;));</b>
+<b class="nc"><i>70</i>&nbsp;    private final JRadioButton intersectionButton = new JRadioButton(</b>
+<b class="nc"><i>71</i>&nbsp;            Localization.lang(&quot;Refine supergroup: When selected, view entries contained in both this group and its supergroup&quot;));</b>
+<b class="nc"><i>72</i>&nbsp;    private final JRadioButton unionButton = new JRadioButton(</b>
+<b class="nc"><i>73</i>&nbsp;            Localization.lang(&quot;Include subgroups: When selected, view entries contained in this group or its subgroups&quot;));</b>
+<i>74</i>&nbsp;    // for KeywordGroup
+<b class="nc"><i>75</i>&nbsp;    private final JTextField keywordGroupSearchField = new JTextField(GroupDialog.TEXTFIELD_LENGTH);</b>
+<b class="nc"><i>76</i>&nbsp;    private final TextField keywordGroupSearchTerm = new TextField(FieldName.KEYWORDS, &quot;&quot;, false);</b>
+<b class="nc"><i>77</i>&nbsp;    private final JCheckBox keywordGroupCaseSensitive = new JCheckBox(Localization.lang(&quot;Case sensitive&quot;));</b>
+<b class="nc"><i>78</i>&nbsp;    private final JCheckBox keywordGroupRegExp = new JCheckBox(Localization.lang(&quot;regular expression&quot;));</b>
+<i>79</i>&nbsp;    // for SearchGroup
+<b class="nc"><i>80</i>&nbsp;    private final JTextField searchGroupSearchExpression = new JTextField(GroupDialog.TEXTFIELD_LENGTH);</b>
+<b class="nc"><i>81</i>&nbsp;    private final JCheckBox searchGroupCaseSensitive = new JCheckBox(Localization.lang(&quot;Case sensitive&quot;));</b>
+<b class="nc"><i>82</i>&nbsp;    private final JCheckBox searchGroupRegExp = new JCheckBox(Localization.lang(&quot;regular expression&quot;));</b>
+<i>83</i>&nbsp;    // for all types
+<b class="nc"><i>84</i>&nbsp;    private final JButton okButton = new JButton(Localization.lang(&quot;OK&quot;));</b>
+<b class="nc"><i>85</i>&nbsp;    private final JPanel optionsPanel = new JPanel();</b>
+<b class="nc"><i>86</i>&nbsp;    private final JLabel descriptionLabel = new JLabel() {</b>
+<i>87</i>&nbsp;
+<i>88</i>&nbsp;        @Override
+<i>89</i>&nbsp;        public Dimension getPreferredSize() {
+<b class="nc"><i>90</i>&nbsp;            Dimension d = super.getPreferredSize();</b>
+<i>91</i>&nbsp;            // width must be smaller than width of enclosing JScrollPane
+<i>92</i>&nbsp;            // to prevent a horizontal scroll bar
+<b class="nc"><i>93</i>&nbsp;            d.width = 1;</b>
+<b class="nc"><i>94</i>&nbsp;            return d;</b>
+<i>95</i>&nbsp;        }
+<i>96</i>&nbsp;    };
+<b class="nc"><i>97</i>&nbsp;    private final CardLayout optionsLayout = new CardLayout();</b>
+<i>98</i>&nbsp;    private boolean isOkPressed;
+<i>99</i>&nbsp;    private AbstractGroup resultingGroup;
+<i>100</i>&nbsp;
+<i>101</i>&nbsp;    /**
+<i>102</i>&nbsp;     * Shows a group add/edit dialog.
+<i>103</i>&nbsp;     *
+<i>104</i>&nbsp;     * @param jabrefFrame The parent frame.
+<i>105</i>&nbsp;     * @param editedGroup The group being edited, or null if a new group is to be
+<i>106</i>&nbsp;     *                    created.
+<i>107</i>&nbsp;     */
+<i>108</i>&nbsp;    public GroupDialog(JabRefFrame jabrefFrame, AbstractGroup editedGroup) {
+<b class="nc"><i>109</i>&nbsp;        super(jabrefFrame, Localization.lang(&quot;Edit group&quot;), true);</b>
+<i>110</i>&nbsp;
+<i>111</i>&nbsp;        // set default values (overwritten if editedGroup != null)
+<b class="nc"><i>112</i>&nbsp;        keywordGroupSearchField.setText(jabrefFrame.prefs().get(JabRefPreferences.GROUPS_DEFAULT_FIELD));</b>
+<i>113</i>&nbsp;
+<i>114</i>&nbsp;        // configure elements
+<b class="nc"><i>115</i>&nbsp;        ButtonGroup groupType = new ButtonGroup();</b>
+<b class="nc"><i>116</i>&nbsp;        groupType.add(explicitRadioButton);</b>
+<b class="nc"><i>117</i>&nbsp;        groupType.add(keywordsRadioButton);</b>
+<b class="nc"><i>118</i>&nbsp;        groupType.add(searchRadioButton);</b>
+<b class="nc"><i>119</i>&nbsp;        ButtonGroup groupHierarchy = new ButtonGroup();</b>
+<b class="nc"><i>120</i>&nbsp;        groupHierarchy.add(independentButton);</b>
+<b class="nc"><i>121</i>&nbsp;        groupHierarchy.add(intersectionButton);</b>
+<b class="nc"><i>122</i>&nbsp;        groupHierarchy.add(unionButton);</b>
+<b class="nc"><i>123</i>&nbsp;        descriptionLabel.setVerticalAlignment(SwingConstants.TOP);</b>
+<b class="nc"><i>124</i>&nbsp;        getRootPane().setDefaultButton(okButton);</b>
+<i>125</i>&nbsp;
+<i>126</i>&nbsp;        // build individual layout cards for each group
+<b class="nc"><i>127</i>&nbsp;        optionsPanel.setLayout(optionsLayout);</b>
+<i>128</i>&nbsp;        // ... for explicit group
+<b class="nc"><i>129</i>&nbsp;        optionsPanel.add(new JPanel(), String.valueOf(GroupDialog.INDEX_EXPLICIT_GROUP));</b>
+<i>130</i>&nbsp;        // ... for keyword group
+<b class="nc"><i>131</i>&nbsp;        FormLayout layoutKG = new FormLayout(</b>
+<i>132</i>&nbsp;                &quot;right:pref, 4dlu, fill:1dlu:grow, 2dlu, left:pref&quot;);
+<b class="nc"><i>133</i>&nbsp;        DefaultFormBuilder builderKG = new DefaultFormBuilder(layoutKG);</b>
+<b class="nc"><i>134</i>&nbsp;        builderKG.append(Localization.lang(&quot;Field&quot;));</b>
+<b class="nc"><i>135</i>&nbsp;        builderKG.append(keywordGroupSearchField, 3);</b>
+<b class="nc"><i>136</i>&nbsp;        builderKG.nextLine();</b>
+<b class="nc"><i>137</i>&nbsp;        builderKG.append(Localization.lang(&quot;Keyword&quot;));</b>
+<b class="nc"><i>138</i>&nbsp;        builderKG.append(keywordGroupSearchTerm);</b>
+<b class="nc"><i>139</i>&nbsp;        builderKG.nextLine();</b>
+<b class="nc"><i>140</i>&nbsp;        builderKG.append(keywordGroupCaseSensitive, 3);</b>
+<b class="nc"><i>141</i>&nbsp;        builderKG.nextLine();</b>
+<b class="nc"><i>142</i>&nbsp;        builderKG.append(keywordGroupRegExp, 3);</b>
+<b class="nc"><i>143</i>&nbsp;        optionsPanel.add(builderKG.getPanel(), String.valueOf(GroupDialog.INDEX_KEYWORD_GROUP));</b>
+<i>144</i>&nbsp;        // ... for search group
+<b class="nc"><i>145</i>&nbsp;        FormLayout layoutSG = new FormLayout(&quot;right:pref, 4dlu, fill:1dlu:grow&quot;);</b>
+<b class="nc"><i>146</i>&nbsp;        DefaultFormBuilder builderSG = new DefaultFormBuilder(layoutSG);</b>
+<b class="nc"><i>147</i>&nbsp;        builderSG.append(Localization.lang(&quot;Search expression&quot;));</b>
+<b class="nc"><i>148</i>&nbsp;        builderSG.append(searchGroupSearchExpression);</b>
+<b class="nc"><i>149</i>&nbsp;        builderSG.nextLine();</b>
+<b class="nc"><i>150</i>&nbsp;        builderSG.append(searchGroupCaseSensitive, 3);</b>
+<b class="nc"><i>151</i>&nbsp;        builderSG.nextLine();</b>
+<b class="nc"><i>152</i>&nbsp;        builderSG.append(searchGroupRegExp, 3);</b>
+<b class="nc"><i>153</i>&nbsp;        optionsPanel.add(builderSG.getPanel(), String.valueOf(GroupDialog.INDEX_SEARCH_GROUP));</b>
+<i>154</i>&nbsp;        // ... for buttons panel
+<b class="nc"><i>155</i>&nbsp;        FormLayout layoutBP = new FormLayout(&quot;pref, 4dlu, pref&quot;, &quot;p&quot;);</b>
+<b class="nc"><i>156</i>&nbsp;        layoutBP.setColumnGroups(new int[][] {{1, 3}});</b>
+<b class="nc"><i>157</i>&nbsp;        ButtonBarBuilder builderBP = new ButtonBarBuilder();</b>
+<b class="nc"><i>158</i>&nbsp;        builderBP.addGlue();</b>
+<b class="nc"><i>159</i>&nbsp;        builderBP.addButton(okButton);</b>
+<b class="nc"><i>160</i>&nbsp;        JButton mCancel = new JButton(Localization.lang(&quot;Cancel&quot;));</b>
+<b class="nc"><i>161</i>&nbsp;        builderBP.addButton(mCancel);</b>
+<b class="nc"><i>162</i>&nbsp;        builderBP.addGlue();</b>
+<b class="nc"><i>163</i>&nbsp;        builderBP.getPanel().setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));</b>
+<i>164</i>&nbsp;
+<i>165</i>&nbsp;        // create layout
+<b class="nc"><i>166</i>&nbsp;        FormLayout layoutAll = new FormLayout(</b>
+<i>167</i>&nbsp;                &quot;right:pref, 4dlu, fill:600px, 4dlu, fill:pref&quot;,
+<i>168</i>&nbsp;                &quot;p, 3dlu, p, 3dlu, p, 0dlu, p, 0dlu, p, 3dlu, p, 3dlu, p, &quot;
+<i>169</i>&nbsp;                        + &quot;0dlu, p, 0dlu, p, 3dlu, p, 3dlu, &quot;
+<i>170</i>&nbsp;                        + &quot;p, 3dlu, p, 3dlu, top:80dlu, 9dlu, p, 9dlu, p&quot;);
+<i>171</i>&nbsp;
+<b class="nc"><i>172</i>&nbsp;        DefaultFormBuilder builderAll = new DefaultFormBuilder(layoutAll);</b>
+<b class="nc"><i>173</i>&nbsp;        builderAll.appendSeparator(Localization.lang(&quot;General&quot;));</b>
+<b class="nc"><i>174</i>&nbsp;        builderAll.nextLine();</b>
+<b class="nc"><i>175</i>&nbsp;        builderAll.nextLine();</b>
+<b class="nc"><i>176</i>&nbsp;        builderAll.append(Localization.lang(&quot;Name&quot;));</b>
+<b class="nc"><i>177</i>&nbsp;        builderAll.append(nameField);</b>
+<b class="nc"><i>178</i>&nbsp;        builderAll.nextLine();</b>
+<b class="nc"><i>179</i>&nbsp;        builderAll.nextLine();</b>
+<b class="nc"><i>180</i>&nbsp;        builderAll.append(explicitRadioButton, 5);</b>
+<b class="nc"><i>181</i>&nbsp;        builderAll.nextLine();</b>
+<b class="nc"><i>182</i>&nbsp;        builderAll.nextLine();</b>
+<b class="nc"><i>183</i>&nbsp;        builderAll.append(keywordsRadioButton, 5);</b>
+<b class="nc"><i>184</i>&nbsp;        builderAll.nextLine();</b>
+<b class="nc"><i>185</i>&nbsp;        builderAll.nextLine();</b>
+<b class="nc"><i>186</i>&nbsp;        builderAll.append(searchRadioButton, 5);</b>
+<b class="nc"><i>187</i>&nbsp;        builderAll.nextLine();</b>
+<b class="nc"><i>188</i>&nbsp;        builderAll.nextLine();</b>
+<b class="nc"><i>189</i>&nbsp;        builderAll.appendSeparator(Localization.lang(&quot;Hierarchical context&quot;));</b>
+<b class="nc"><i>190</i>&nbsp;        builderAll.nextLine();</b>
+<b class="nc"><i>191</i>&nbsp;        builderAll.nextLine();</b>
+<b class="nc"><i>192</i>&nbsp;        builderAll.append(independentButton, 5);</b>
+<b class="nc"><i>193</i>&nbsp;        builderAll.nextLine();</b>
+<b class="nc"><i>194</i>&nbsp;        builderAll.nextLine();</b>
+<b class="nc"><i>195</i>&nbsp;        builderAll.append(intersectionButton, 5);</b>
+<b class="nc"><i>196</i>&nbsp;        builderAll.nextLine();</b>
+<b class="nc"><i>197</i>&nbsp;        builderAll.nextLine();</b>
+<b class="nc"><i>198</i>&nbsp;        builderAll.append(unionButton, 5);</b>
+<b class="nc"><i>199</i>&nbsp;        builderAll.nextLine();</b>
+<b class="nc"><i>200</i>&nbsp;        builderAll.nextLine();</b>
+<b class="nc"><i>201</i>&nbsp;        builderAll.appendSeparator(Localization.lang(&quot;Options&quot;));</b>
+<b class="nc"><i>202</i>&nbsp;        builderAll.nextLine();</b>
+<b class="nc"><i>203</i>&nbsp;        builderAll.nextLine();</b>
+<b class="nc"><i>204</i>&nbsp;        builderAll.append(optionsPanel, 5);</b>
+<b class="nc"><i>205</i>&nbsp;        builderAll.nextLine();</b>
+<b class="nc"><i>206</i>&nbsp;        builderAll.nextLine();</b>
+<b class="nc"><i>207</i>&nbsp;        builderAll.appendSeparator(Localization.lang(&quot;Description&quot;));</b>
+<b class="nc"><i>208</i>&nbsp;        builderAll.nextLine();</b>
+<b class="nc"><i>209</i>&nbsp;        builderAll.nextLine();</b>
+<b class="nc"><i>210</i>&nbsp;        JScrollPane sp = new JScrollPane(descriptionLabel,</b>
+<i>211</i>&nbsp;                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+<b class="nc"><i>212</i>&nbsp;                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED) {</b>
+<i>213</i>&nbsp;
+<i>214</i>&nbsp;            @Override
+<i>215</i>&nbsp;            public Dimension getPreferredSize() {
+<b class="nc"><i>216</i>&nbsp;                return getMaximumSize();</b>
+<i>217</i>&nbsp;            }
+<i>218</i>&nbsp;        };
+<b class="nc"><i>219</i>&nbsp;        builderAll.append(sp, 5);</b>
+<b class="nc"><i>220</i>&nbsp;        builderAll.nextLine();</b>
+<b class="nc"><i>221</i>&nbsp;        builderAll.nextLine();</b>
+<b class="nc"><i>222</i>&nbsp;        builderAll.appendSeparator();</b>
+<b class="nc"><i>223</i>&nbsp;        builderAll.nextLine();</b>
+<b class="nc"><i>224</i>&nbsp;        builderAll.nextLine();</b>
+<i>225</i>&nbsp;
+<b class="nc"><i>226</i>&nbsp;        Container cp = getContentPane();</b>
+<b class="nc"><i>227</i>&nbsp;        cp.add(builderAll.getPanel(), BorderLayout.CENTER);</b>
+<b class="nc"><i>228</i>&nbsp;        cp.add(builderBP.getPanel(), BorderLayout.SOUTH);</b>
+<b class="nc"><i>229</i>&nbsp;        pack();</b>
+<b class="nc"><i>230</i>&nbsp;        setResizable(false);</b>
+<b class="nc"><i>231</i>&nbsp;        updateComponents();</b>
+<b class="nc"><i>232</i>&nbsp;        setLayoutForSelectedGroup();</b>
+<b class="nc"><i>233</i>&nbsp;        setLocationRelativeTo(jabrefFrame);</b>
+<i>234</i>&nbsp;
+<i>235</i>&nbsp;        // add listeners
+<b class="nc"><i>236</i>&nbsp;        ItemListener radioButtonItemListener = e -&gt; {</b>
+<b class="nc"><i>237</i>&nbsp;            setLayoutForSelectedGroup();</b>
+<b class="nc"><i>238</i>&nbsp;            updateComponents();</b>
+<b class="nc"><i>239</i>&nbsp;        };</b>
+<b class="nc"><i>240</i>&nbsp;        explicitRadioButton.addItemListener(radioButtonItemListener);</b>
+<b class="nc"><i>241</i>&nbsp;        keywordsRadioButton.addItemListener(radioButtonItemListener);</b>
+<b class="nc"><i>242</i>&nbsp;        searchRadioButton.addItemListener(radioButtonItemListener);</b>
+<i>243</i>&nbsp;
+<b class="nc"><i>244</i>&nbsp;        Action cancelAction = new AbstractAction() {</b>
+<i>245</i>&nbsp;
+<i>246</i>&nbsp;            @Override
+<i>247</i>&nbsp;            public void actionPerformed(ActionEvent e) {
+<b class="nc"><i>248</i>&nbsp;                dispose();</b>
+<b class="nc"><i>249</i>&nbsp;            }</b>
+<i>250</i>&nbsp;        };
+<b class="nc"><i>251</i>&nbsp;        mCancel.addActionListener(cancelAction);</b>
+<b class="nc"><i>252</i>&nbsp;        builderAll.getPanel().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)</b>
+<b class="nc"><i>253</i>&nbsp;                .put(Globals.getKeyPrefs().getKey(KeyBinding.CLOSE_DIALOG), &quot;close&quot;);</b>
+<b class="nc"><i>254</i>&nbsp;        builderAll.getPanel().getActionMap().put(&quot;close&quot;, cancelAction);</b>
+<i>255</i>&nbsp;
+<b class="nc"><i>256</i>&nbsp;        okButton.addActionListener(e -&gt; {</b>
+<b class="nc"><i>257</i>&nbsp;                isOkPressed = true;</b>
+<i>258</i>&nbsp;            try {
+<b class="nc"><i>259</i>&nbsp;                if (explicitRadioButton.isSelected()) {</b>
+<b class="nc"><i>260</i>&nbsp;                    resultingGroup = new ExplicitGroup(nameField.getText().trim(), getContext(),</b>
+<b class="nc"><i>261</i>&nbsp;                            Globals.prefs.getKeywordDelimiter());</b>
+<b class="nc"><i>262</i>&nbsp;                } else if (keywordsRadioButton.isSelected()) {</b>
+<i>263</i>&nbsp;                    // regex is correct, otherwise OK would have been disabled
+<i>264</i>&nbsp;                    // therefore I don&#39;t catch anything here
+<b class="nc"><i>265</i>&nbsp;                    if (keywordGroupRegExp.isSelected()) {</b>
+<b class="nc"><i>266</i>&nbsp;                        resultingGroup = new RegexKeywordGroup(nameField.getText().trim(), getContext(),</b>
+<b class="nc"><i>267</i>&nbsp;                                keywordGroupSearchField.getText().trim(), keywordGroupSearchTerm.getText().trim(),</b>
+<b class="nc"><i>268</i>&nbsp;                                keywordGroupCaseSensitive.isSelected());</b>
+<i>269</i>&nbsp;                    } else {
+<b class="nc"><i>270</i>&nbsp;                        resultingGroup = new WordKeywordGroup(nameField.getText().trim(), getContext(),</b>
+<b class="nc"><i>271</i>&nbsp;                                keywordGroupSearchField.getText().trim(), keywordGroupSearchTerm.getText().trim(),</b>
+<b class="nc"><i>272</i>&nbsp;                                keywordGroupCaseSensitive.isSelected(), Globals.prefs.getKeywordDelimiter(), false);</b>
+<i>273</i>&nbsp;                    }
+<b class="nc"><i>274</i>&nbsp;                } else if (searchRadioButton.isSelected()) {</b>
+<i>275</i>&nbsp;                    try {
+<i>276</i>&nbsp;                        // regex is correct, otherwise OK would have been
+<i>277</i>&nbsp;                        // disabled
+<i>278</i>&nbsp;                        // therefore I don&#39;t catch anything here
+<b class="nc"><i>279</i>&nbsp;                        resultingGroup = new SearchGroup(nameField.getText().trim(), getContext(), searchGroupSearchExpression.getText().trim(),</b>
+<b class="nc"><i>280</i>&nbsp;                                isCaseSensitive(), isRegex());</b>
+<b class="nc"><i>281</i>&nbsp;                    } catch (Exception e1) {</b>
+<i>282</i>&nbsp;                        // should never happen
+<b class="nc"><i>283</i>&nbsp;                    }</b>
+<i>284</i>&nbsp;                }
+<b class="nc"><i>285</i>&nbsp;                dispose();</b>
+<b class="nc"><i>286</i>&nbsp;            } catch (IllegalArgumentException exception) {</b>
+<b class="nc"><i>287</i>&nbsp;                jabrefFrame.showMessage(exception.getLocalizedMessage());</b>
+<b class="nc"><i>288</i>&nbsp;            }</b>
+<b class="nc"><i>289</i>&nbsp;        });</b>
+<i>290</i>&nbsp;
+<b class="nc"><i>291</i>&nbsp;        CaretListener caretListener = e -&gt; updateComponents();</b>
+<b class="nc"><i>292</i>&nbsp;        ItemListener itemListener = e -&gt; updateComponents();</b>
+<i>293</i>&nbsp;
+<b class="nc"><i>294</i>&nbsp;        nameField.addCaretListener(caretListener);</b>
+<b class="nc"><i>295</i>&nbsp;        keywordGroupSearchField.addCaretListener(caretListener);</b>
+<b class="nc"><i>296</i>&nbsp;        keywordGroupSearchTerm.addCaretListener(caretListener);</b>
+<b class="nc"><i>297</i>&nbsp;        keywordGroupCaseSensitive.addItemListener(itemListener);</b>
+<b class="nc"><i>298</i>&nbsp;        keywordGroupRegExp.addItemListener(itemListener);</b>
+<b class="nc"><i>299</i>&nbsp;        searchGroupSearchExpression.addCaretListener(caretListener);</b>
+<b class="nc"><i>300</i>&nbsp;        searchGroupRegExp.addItemListener(itemListener);</b>
+<b class="nc"><i>301</i>&nbsp;        searchGroupCaseSensitive.addItemListener(itemListener);</b>
+<i>302</i>&nbsp;
+<i>303</i>&nbsp;        // configure for current type
+<b class="nc"><i>304</i>&nbsp;        if ((editedGroup != null) &amp;&amp; (editedGroup.getClass() == WordKeywordGroup.class)) {</b>
+<b class="nc"><i>305</i>&nbsp;            WordKeywordGroup group = (WordKeywordGroup) editedGroup;</b>
+<b class="nc"><i>306</i>&nbsp;            nameField.setText(group.getName());</b>
+<b class="nc"><i>307</i>&nbsp;            keywordGroupSearchField.setText(group.getSearchField());</b>
+<b class="nc"><i>308</i>&nbsp;            keywordGroupSearchTerm.setText(group.getSearchExpression());</b>
+<b class="nc"><i>309</i>&nbsp;            keywordGroupCaseSensitive.setSelected(group.isCaseSensitive());</b>
+<b class="nc"><i>310</i>&nbsp;            keywordGroupRegExp.setSelected(false);</b>
+<b class="nc"><i>311</i>&nbsp;            keywordsRadioButton.setSelected(true);</b>
+<b class="nc"><i>312</i>&nbsp;            setContext(editedGroup.getHierarchicalContext());</b>
+<b class="nc"><i>313</i>&nbsp;        } else if ((editedGroup != null) &amp;&amp; (editedGroup.getClass() == RegexKeywordGroup.class)) {</b>
+<b class="nc"><i>314</i>&nbsp;            RegexKeywordGroup group = (RegexKeywordGroup) editedGroup;</b>
+<b class="nc"><i>315</i>&nbsp;            nameField.setText(group.getName());</b>
+<b class="nc"><i>316</i>&nbsp;            keywordGroupSearchField.setText(group.getSearchField());</b>
+<b class="nc"><i>317</i>&nbsp;            keywordGroupSearchTerm.setText(group.getSearchExpression());</b>
+<b class="nc"><i>318</i>&nbsp;            keywordGroupCaseSensitive.setSelected(group.isCaseSensitive());</b>
+<b class="nc"><i>319</i>&nbsp;            keywordGroupRegExp.setSelected(true);</b>
+<b class="nc"><i>320</i>&nbsp;            keywordsRadioButton.setSelected(true);</b>
+<b class="nc"><i>321</i>&nbsp;            setContext(editedGroup.getHierarchicalContext());</b>
+<b class="nc"><i>322</i>&nbsp;        } else if ((editedGroup != null) &amp;&amp; (editedGroup.getClass() == SearchGroup.class)) {</b>
+<b class="nc"><i>323</i>&nbsp;            SearchGroup group = (SearchGroup) editedGroup;</b>
+<b class="nc"><i>324</i>&nbsp;            nameField.setText(group.getName());</b>
+<b class="nc"><i>325</i>&nbsp;            searchGroupSearchExpression.setText(group.getSearchExpression());</b>
+<b class="nc"><i>326</i>&nbsp;            searchGroupCaseSensitive.setSelected(group.isCaseSensitive());</b>
+<b class="nc"><i>327</i>&nbsp;            searchGroupRegExp.setSelected(group.isRegularExpression());</b>
+<b class="nc"><i>328</i>&nbsp;            searchRadioButton.setSelected(true);</b>
+<b class="nc"><i>329</i>&nbsp;            setContext(editedGroup.getHierarchicalContext());</b>
+<b class="nc"><i>330</i>&nbsp;        } else if ((editedGroup != null) &amp;&amp; (editedGroup.getClass() == ExplicitGroup.class)) {</b>
+<b class="nc"><i>331</i>&nbsp;            nameField.setText(editedGroup.getName());</b>
+<b class="nc"><i>332</i>&nbsp;            explicitRadioButton.setSelected(true);</b>
+<b class="nc"><i>333</i>&nbsp;            setContext(editedGroup.getHierarchicalContext());</b>
+<i>334</i>&nbsp;        } else { // creating new group -&gt; defaults!
+<b class="nc"><i>335</i>&nbsp;            explicitRadioButton.setSelected(true);</b>
+<b class="nc"><i>336</i>&nbsp;            setContext(GroupHierarchyType.INDEPENDENT);</b>
+<i>337</i>&nbsp;        }
+<b class="nc"><i>338</i>&nbsp;    }</b>
+<i>339</i>&nbsp;
+<i>340</i>&nbsp;    private static String formatRegExException(String regExp, Exception e) {
+<b class="nc"><i>341</i>&nbsp;        String[] sa = e.getMessage().split(&quot;\\n&quot;);</b>
+<b class="nc"><i>342</i>&nbsp;        StringBuilder sb = new StringBuilder();</b>
+<b class="nc"><i>343</i>&nbsp;        for (int i = 0; i &lt; sa.length; ++i) {</b>
+<b class="nc"><i>344</i>&nbsp;            if (i &gt; 0) {</b>
+<b class="nc"><i>345</i>&nbsp;                sb.append(&quot;&lt;br&gt;&quot;);</b>
+<i>346</i>&nbsp;            }
+<b class="nc"><i>347</i>&nbsp;            sb.append(StringUtil.quoteForHTML(sa[i]));</b>
+<i>348</i>&nbsp;        }
+<b class="nc"><i>349</i>&nbsp;        String s = Localization.lang(</b>
+<i>350</i>&nbsp;                &quot;The regular expression &lt;b&gt;%0&lt;/b&gt; is invalid:&quot;,
+<b class="nc"><i>351</i>&nbsp;                StringUtil.quoteForHTML(regExp))</b>
+<i>352</i>&nbsp;                + &quot;&lt;p&gt;&lt;tt&gt;&quot;
+<i>353</i>&nbsp;                + sb
+<i>354</i>&nbsp;                + &quot;&lt;/tt&gt;&quot;;
+<b class="nc"><i>355</i>&nbsp;        if (!(e instanceof PatternSyntaxException)) {</b>
+<b class="nc"><i>356</i>&nbsp;            return s;</b>
+<i>357</i>&nbsp;        }
+<b class="nc"><i>358</i>&nbsp;        int lastNewline = s.lastIndexOf(&quot;&lt;br&gt;&quot;);</b>
+<b class="nc"><i>359</i>&nbsp;        int hat = s.lastIndexOf(&#39;^&#39;);</b>
+<b class="nc"><i>360</i>&nbsp;        if ((lastNewline &gt;= 0) &amp;&amp; (hat &gt;= 0) &amp;&amp; (hat &gt; lastNewline)) {</b>
+<b class="nc"><i>361</i>&nbsp;            return s.substring(0, lastNewline + 4) + s.substring(lastNewline + 4).replace(&quot; &quot;, &quot;&amp;nbsp;&quot;);</b>
+<i>362</i>&nbsp;        }
+<b class="nc"><i>363</i>&nbsp;        return s;</b>
+<i>364</i>&nbsp;    }
+<i>365</i>&nbsp;
+<i>366</i>&nbsp;    public boolean okPressed() {
+<b class="nc"><i>367</i>&nbsp;        return isOkPressed;</b>
+<i>368</i>&nbsp;    }
+<i>369</i>&nbsp;
+<i>370</i>&nbsp;    public AbstractGroup getResultingGroup() {
+<b class="nc"><i>371</i>&nbsp;        return resultingGroup;</b>
+<i>372</i>&nbsp;    }
+<i>373</i>&nbsp;
+<i>374</i>&nbsp;    private void setLayoutForSelectedGroup() {
+<b class="nc"><i>375</i>&nbsp;        if (explicitRadioButton.isSelected()) {</b>
+<b class="nc"><i>376</i>&nbsp;            optionsLayout.show(optionsPanel, String.valueOf(GroupDialog.INDEX_EXPLICIT_GROUP));</b>
+<b class="nc"><i>377</i>&nbsp;        } else if (keywordsRadioButton.isSelected()) {</b>
+<b class="nc"><i>378</i>&nbsp;            optionsLayout.show(optionsPanel, String.valueOf(GroupDialog.INDEX_KEYWORD_GROUP));</b>
+<b class="nc"><i>379</i>&nbsp;        } else if (searchRadioButton.isSelected()) {</b>
+<b class="nc"><i>380</i>&nbsp;            optionsLayout.show(optionsPanel, String.valueOf(GroupDialog.INDEX_SEARCH_GROUP));</b>
+<i>381</i>&nbsp;        }
+<b class="nc"><i>382</i>&nbsp;    }</b>
+<i>383</i>&nbsp;
+<i>384</i>&nbsp;    private void updateComponents() {
+<i>385</i>&nbsp;        // all groups need a name
+<b class="nc"><i>386</i>&nbsp;        boolean okEnabled = !nameField.getText().trim().isEmpty();</b>
+<b class="nc"><i>387</i>&nbsp;        if (!okEnabled) {</b>
+<b class="nc"><i>388</i>&nbsp;            setDescription(Localization.lang(&quot;Please enter a name for the group.&quot;));</b>
+<b class="nc"><i>389</i>&nbsp;            okButton.setEnabled(false);</b>
+<b class="nc"><i>390</i>&nbsp;            return;</b>
+<i>391</i>&nbsp;        }
+<i>392</i>&nbsp;        String s1;
+<i>393</i>&nbsp;        String s2;
+<b class="nc"><i>394</i>&nbsp;        if (keywordsRadioButton.isSelected()) {</b>
+<b class="nc"><i>395</i>&nbsp;            s1 = keywordGroupSearchField.getText().trim();</b>
+<b class="nc"><i>396</i>&nbsp;            okEnabled = okEnabled &amp;&amp; s1.matches(&quot;\\w+&quot;);</b>
+<b class="nc"><i>397</i>&nbsp;            s2 = keywordGroupSearchTerm.getText().trim();</b>
+<b class="nc"><i>398</i>&nbsp;            okEnabled = okEnabled &amp;&amp; !s2.isEmpty();</b>
+<b class="nc"><i>399</i>&nbsp;            if (okEnabled) {</b>
+<b class="nc"><i>400</i>&nbsp;                if (keywordGroupRegExp.isSelected()) {</b>
+<i>401</i>&nbsp;                    try {
+<b class="nc"><i>402</i>&nbsp;                        Pattern.compile(s2);</b>
+<b class="nc"><i>403</i>&nbsp;                        setDescription(GroupDescriptions.getDescriptionForPreview(s1, s2, keywordGroupCaseSensitive.isSelected(),</b>
+<b class="nc"><i>404</i>&nbsp;                                keywordGroupRegExp.isSelected()));</b>
+<b class="nc"><i>405</i>&nbsp;                    } catch (PatternSyntaxException e) {</b>
+<b class="nc"><i>406</i>&nbsp;                        okEnabled = false;</b>
+<b class="nc"><i>407</i>&nbsp;                        setDescription(formatRegExException(s2, e));</b>
+<b class="nc"><i>408</i>&nbsp;                    }</b>
+<i>409</i>&nbsp;                } else {
+<b class="nc"><i>410</i>&nbsp;                    setDescription(GroupDescriptions.getDescriptionForPreview(s1, s2, keywordGroupCaseSensitive.isSelected(),</b>
+<b class="nc"><i>411</i>&nbsp;                            keywordGroupRegExp.isSelected()));</b>
+<i>412</i>&nbsp;                }
+<i>413</i>&nbsp;            } else {
+<b class="nc"><i>414</i>&nbsp;                setDescription(Localization.lang(</b>
+<i>415</i>&nbsp;                        &quot;Please enter the field to search (e.g. &lt;b&gt;keywords&lt;/b&gt;) and the keyword to search it for (e.g. &lt;b&gt;electrical&lt;/b&gt;).&quot;));
+<i>416</i>&nbsp;            }
+<b class="nc"><i>417</i>&nbsp;            setNameFontItalic(true);</b>
+<b class="nc"><i>418</i>&nbsp;        } else if (searchRadioButton.isSelected()) {</b>
+<b class="nc"><i>419</i>&nbsp;            s1 = searchGroupSearchExpression.getText().trim();</b>
+<b class="nc"><i>420</i>&nbsp;            okEnabled = okEnabled &amp; !s1.isEmpty();</b>
+<b class="nc"><i>421</i>&nbsp;            if (okEnabled) {</b>
+<b class="nc"><i>422</i>&nbsp;                setDescription(new SearchQuery(s1, isCaseSensitive(), isRegex()).getDescription());</b>
+<i>423</i>&nbsp;
+<b class="nc"><i>424</i>&nbsp;                if (isRegex()) {</b>
+<i>425</i>&nbsp;                    try {
+<b class="nc"><i>426</i>&nbsp;                        Pattern.compile(s1);</b>
+<b class="nc"><i>427</i>&nbsp;                    } catch (PatternSyntaxException e) {</b>
+<b class="nc"><i>428</i>&nbsp;                        okEnabled = false;</b>
+<b class="nc"><i>429</i>&nbsp;                        setDescription(formatRegExException(s1, e));</b>
+<b class="nc"><i>430</i>&nbsp;                    }</b>
+<i>431</i>&nbsp;                }
+<i>432</i>&nbsp;            } else {
+<b class="nc"><i>433</i>&nbsp;                setDescription(Localization</b>
+<b class="nc"><i>434</i>&nbsp;                        .lang(&quot;Please enter a search term. For example, to search all fields for &lt;b&gt;Smith&lt;/b&gt;, enter:&lt;p&gt;&quot;</b>
+<i>435</i>&nbsp;                                + &quot;&lt;tt&gt;smith&lt;/tt&gt;&lt;p&gt;&quot;
+<i>436</i>&nbsp;                                + &quot;To search the field &lt;b&gt;Author&lt;/b&gt; for &lt;b&gt;Smith&lt;/b&gt; and the field &lt;b&gt;Title&lt;/b&gt; for &lt;b&gt;electrical&lt;/b&gt;, enter:&lt;p&gt;&quot;
+<i>437</i>&nbsp;                                + &quot;&lt;tt&gt;author=smith and title=electrical&lt;/tt&gt;&quot;));
+<i>438</i>&nbsp;            }
+<b class="nc"><i>439</i>&nbsp;            setNameFontItalic(true);</b>
+<b class="nc"><i>440</i>&nbsp;        } else if (explicitRadioButton.isSelected()) {</b>
+<b class="nc"><i>441</i>&nbsp;            setDescription(GroupDescriptions.getDescriptionForPreview());</b>
+<b class="nc"><i>442</i>&nbsp;            setNameFontItalic(false);</b>
+<i>443</i>&nbsp;        }
+<b class="nc"><i>444</i>&nbsp;        okButton.setEnabled(okEnabled);</b>
+<b class="nc"><i>445</i>&nbsp;    }</b>
+<i>446</i>&nbsp;
+<i>447</i>&nbsp;    private boolean isRegex() {
+<b class="nc"><i>448</i>&nbsp;        return searchGroupRegExp.isSelected();</b>
+<i>449</i>&nbsp;    }
+<i>450</i>&nbsp;
+<i>451</i>&nbsp;    private boolean isCaseSensitive() {
+<b class="nc"><i>452</i>&nbsp;        return searchGroupCaseSensitive.isSelected();</b>
+<i>453</i>&nbsp;    }
+<i>454</i>&nbsp;
+<i>455</i>&nbsp;    private void setDescription(String description) {
+<b class="nc"><i>456</i>&nbsp;        descriptionLabel.setText(&quot;&lt;html&gt;&quot; + description + &quot;&lt;/html&gt;&quot;);</b>
+<b class="nc"><i>457</i>&nbsp;    }</b>
+<i>458</i>&nbsp;
+<i>459</i>&nbsp;    /**
+<i>460</i>&nbsp;     * Sets the font of the name entry field.
+<i>461</i>&nbsp;     */
+<i>462</i>&nbsp;    private void setNameFontItalic(boolean italic) {
+<b class="nc"><i>463</i>&nbsp;        Font f = nameField.getFont();</b>
+<b class="nc"><i>464</i>&nbsp;        if (f.isItalic() != italic) {</b>
+<b class="nc"><i>465</i>&nbsp;            f = f.deriveFont(italic ? Font.ITALIC : Font.PLAIN);</b>
+<b class="nc"><i>466</i>&nbsp;            nameField.setFont(f);</b>
+<i>467</i>&nbsp;        }
+<b class="nc"><i>468</i>&nbsp;    }</b>
+<i>469</i>&nbsp;
+<i>470</i>&nbsp;    /**
+<i>471</i>&nbsp;     * Returns the int representing the selected hierarchical group context.
+<i>472</i>&nbsp;     */
+<i>473</i>&nbsp;    private GroupHierarchyType getContext() {
+<b class="nc"><i>474</i>&nbsp;        if (independentButton.isSelected()) {</b>
+<b class="nc"><i>475</i>&nbsp;            return GroupHierarchyType.INDEPENDENT;</b>
+<i>476</i>&nbsp;        }
+<b class="nc"><i>477</i>&nbsp;        if (intersectionButton.isSelected()) {</b>
+<b class="nc"><i>478</i>&nbsp;            return GroupHierarchyType.REFINING;</b>
+<i>479</i>&nbsp;        }
+<b class="nc"><i>480</i>&nbsp;        if (unionButton.isSelected()) {</b>
+<b class="nc"><i>481</i>&nbsp;            return GroupHierarchyType.INCLUDING;</b>
+<i>482</i>&nbsp;        }
+<b class="nc"><i>483</i>&nbsp;        return GroupHierarchyType.INDEPENDENT; // default</b>
+<i>484</i>&nbsp;    }
+<i>485</i>&nbsp;
+<i>486</i>&nbsp;    private void setContext(GroupHierarchyType context) {
+<b class="nc"><i>487</i>&nbsp;        if (context == GroupHierarchyType.REFINING) {</b>
+<b class="nc"><i>488</i>&nbsp;            intersectionButton.setSelected(true);</b>
+<b class="nc"><i>489</i>&nbsp;        } else if (context == GroupHierarchyType.INCLUDING) {</b>
+<b class="nc"><i>490</i>&nbsp;            unionButton.setSelected(true);</b>
+<i>491</i>&nbsp;        } else {
+<b class="nc"><i>492</i>&nbsp;            independentButton.setSelected(true);</b>
+<i>493</i>&nbsp;        }
+<b class="nc"><i>494</i>&nbsp;    }</b>
+<i>495</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

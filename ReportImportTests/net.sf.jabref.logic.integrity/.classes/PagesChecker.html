@@ -1,0 +1,144 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: PagesChecker</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.integrity</a> ]
+</div>
+
+<h1>Coverage Summary for Class: PagesChecker (net.sf.jabref.logic.integrity)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PagesChecker</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 8)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.integrity;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.Optional;
+<i>4</i>&nbsp;import java.util.function.Predicate;
+<i>5</i>&nbsp;import java.util.regex.Pattern;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>8</i>&nbsp;import net.sf.jabref.model.database.BibDatabaseContext;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;public class PagesChecker implements ValueChecker {
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;    private static final String PAGES_EXP_BIBTEX = &quot;&quot; + &quot;\\A&quot; // begin String
+<i>13</i>&nbsp;            + &quot;\\d+&quot; // number
+<i>14</i>&nbsp;            + &quot;(?:&quot; // non-capture group
+<i>15</i>&nbsp;            + &quot;\\+|\\-{2}\\d+&quot; // + or --number (range)
+<i>16</i>&nbsp;            + &quot;)?&quot; // optional group
+<i>17</i>&nbsp;            + &quot;(?:&quot; // non-capture group
+<i>18</i>&nbsp;            + &quot;,&quot; // comma
+<i>19</i>&nbsp;            + &quot;\\d+(?:\\+|\\-{2}\\d+)?&quot; // repeat former pattern
+<i>20</i>&nbsp;            + &quot;)*&quot; // repeat group 0,*
+<i>21</i>&nbsp;            + &quot;\\z&quot;; // end String
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;    private static final String PAGES_EXP_BIBLATEX = &quot;&quot; + &quot;\\A&quot; // begin String
+<i>24</i>&nbsp;            + &quot;\\d+&quot; // number
+<i>25</i>&nbsp;            + &quot;(?:&quot; // non-capture group
+<i>26</i>&nbsp;            + &quot;\\+|\\-{1,2}\\d+&quot; // + or --number (range)
+<i>27</i>&nbsp;            + &quot;)?&quot; // optional group
+<i>28</i>&nbsp;            + &quot;(?:&quot; // non-capture group
+<i>29</i>&nbsp;            + &quot;,&quot; // comma
+<i>30</i>&nbsp;            + &quot;\\d+(?:\\+|\\-{1,2}\\d+)?&quot; // repeat former pattern
+<i>31</i>&nbsp;            + &quot;)*&quot; // repeat group 0,*
+<i>32</i>&nbsp;            + &quot;\\z&quot;; // end String
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;    private final Predicate&lt;String&gt; isValidPageNumber;
+<i>35</i>&nbsp;
+<b class="nc"><i>36</i>&nbsp;    public PagesChecker(BibDatabaseContext databaseContext) {</b>
+<b class="nc"><i>37</i>&nbsp;        if (databaseContext.isBiblatexMode()) {</b>
+<b class="nc"><i>38</i>&nbsp;            isValidPageNumber = Pattern.compile(PAGES_EXP_BIBLATEX).asPredicate();</b>
+<i>39</i>&nbsp;        } else {
+<b class="nc"><i>40</i>&nbsp;            isValidPageNumber = Pattern.compile(PAGES_EXP_BIBTEX).asPredicate();</b>
+<i>41</i>&nbsp;        }
+<b class="nc"><i>42</i>&nbsp;    }</b>
+<i>43</i>&nbsp;
+<i>44</i>&nbsp;    /**
+<i>45</i>&nbsp;     * From BibTex manual:
+<i>46</i>&nbsp;     *  One or more page numbers or range of numbers, such as 42--111 or 7,41,73--97 or 43+
+<i>47</i>&nbsp;     *  (the &#39;+&#39; in this last example indicates pages following that don&#39;t form a simple range).
+<i>48</i>&nbsp;     *  To make it easier to maintain Scribe-compatible databases, the standard styles convert
+<i>49</i>&nbsp;     *  a single dash (as in 7-33) to the double dash used in TEX to denote number ranges (as in 7--33).
+<i>50</i>&nbsp;     * BibLatex:
+<i>51</i>&nbsp;     *  same as above but allows single dash as well
+<i>52</i>&nbsp;     */
+<i>53</i>&nbsp;    @Override
+<i>54</i>&nbsp;    public Optional&lt;String&gt; checkValue(String value) {
+<b class="nc"><i>55</i>&nbsp;        if (!isValidPageNumber.test(value.trim())) {</b>
+<b class="nc"><i>56</i>&nbsp;            return Optional.of(Localization.lang(&quot;should contain a valid page number range&quot;));</b>
+<i>57</i>&nbsp;        }
+<i>58</i>&nbsp;
+<b class="nc"><i>59</i>&nbsp;        return Optional.empty();</b>
+<i>60</i>&nbsp;    }
+<i>61</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,119 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: HtmlToUnicodeFormatter</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.formatter.bibtexfields</a> ]
+</div>
+
+<h1>Coverage Summary for Class: HtmlToUnicodeFormatter (net.sf.jabref.logic.formatter.bibtexfields)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">HtmlToUnicodeFormatter</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    16.7%
+  </span>
+  <span class="absValue">
+    (1/ 6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    16.7%
+  </span>
+  <span class="absValue">
+    (1/ 6)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.formatter.bibtexfields;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>4</i>&nbsp;import net.sf.jabref.logic.layout.LayoutFormatter;
+<i>5</i>&nbsp;import net.sf.jabref.model.cleanup.Formatter;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import org.apache.commons.lang3.StringEscapeUtils;
+<i>8</i>&nbsp;
+<b class="fc"><i>9</i>&nbsp;public class HtmlToUnicodeFormatter implements LayoutFormatter, Formatter {</b>
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;    @Override
+<i>12</i>&nbsp;    public String getName() {
+<b class="nc"><i>13</i>&nbsp;        return &quot;HTML to Unicode&quot;;</b>
+<i>14</i>&nbsp;    }
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;    @Override
+<i>17</i>&nbsp;    public String getKey() {
+<b class="nc"><i>18</i>&nbsp;        return &quot;html_to_unicode&quot;;</b>
+<i>19</i>&nbsp;    }
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;    @Override
+<i>22</i>&nbsp;    public String getDescription() {
+<b class="nc"><i>23</i>&nbsp;        return Localization.lang(&quot;Converts HTML code to Unicode.&quot;);</b>
+<i>24</i>&nbsp;    }
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    @Override
+<i>27</i>&nbsp;    public String getExampleInput() {
+<b class="nc"><i>28</i>&nbsp;        return &quot;&lt;b&gt;bread&lt;/b&gt; &amp;amp; butter&quot;;</b>
+<i>29</i>&nbsp;    }
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;    @Override
+<i>32</i>&nbsp;    public String format(String fieldText) {
+<i>33</i>&nbsp;        // StringEscapeUtils converts characters and regex kills tags
+<b class="nc"><i>34</i>&nbsp;        return StringEscapeUtils.unescapeHtml4(fieldText).replaceAll(&quot;\\&lt;[^&gt;]*&gt;&quot;,&quot;&quot;);</b>
+<i>35</i>&nbsp;    }
+<i>36</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

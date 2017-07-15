@@ -1,0 +1,500 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: FetcherPreviewDialog</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.importer</a> ]
+</div>
+
+<h1>Coverage Summary for Class: FetcherPreviewDialog (net.sf.jabref.gui.importer)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">FetcherPreviewDialog</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 90)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">FetcherPreviewDialog$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">FetcherPreviewDialog$EntryTable</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 15)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">FetcherPreviewDialog$EntryTableFormat</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 8)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">FetcherPreviewDialog$PreviewRenderer</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">FetcherPreviewDialog$TableEntry</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 9)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 31)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 130)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.importer;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.BorderLayout;
+<i>4</i>&nbsp;import java.awt.Component;
+<i>5</i>&nbsp;import java.awt.Dimension;
+<i>6</i>&nbsp;import java.awt.event.ActionEvent;
+<i>7</i>&nbsp;import java.util.LinkedHashMap;
+<i>8</i>&nbsp;import java.util.Map;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;import javax.swing.AbstractAction;
+<i>11</i>&nbsp;import javax.swing.Action;
+<i>12</i>&nbsp;import javax.swing.ActionMap;
+<i>13</i>&nbsp;import javax.swing.BorderFactory;
+<i>14</i>&nbsp;import javax.swing.InputMap;
+<i>15</i>&nbsp;import javax.swing.JButton;
+<i>16</i>&nbsp;import javax.swing.JComponent;
+<i>17</i>&nbsp;import javax.swing.JDialog;
+<i>18</i>&nbsp;import javax.swing.JLabel;
+<i>19</i>&nbsp;import javax.swing.JOptionPane;
+<i>20</i>&nbsp;import javax.swing.JPanel;
+<i>21</i>&nbsp;import javax.swing.JScrollPane;
+<i>22</i>&nbsp;import javax.swing.JTable;
+<i>23</i>&nbsp;import javax.swing.table.TableCellRenderer;
+<i>24</i>&nbsp;import javax.swing.table.TableModel;
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;import net.sf.jabref.Globals;
+<i>27</i>&nbsp;import net.sf.jabref.gui.JabRefFrame;
+<i>28</i>&nbsp;import net.sf.jabref.gui.keyboard.KeyBinding;
+<i>29</i>&nbsp;import net.sf.jabref.logic.importer.OutputPrinter;
+<i>30</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;import ca.odell.glazedlists.BasicEventList;
+<i>33</i>&nbsp;import ca.odell.glazedlists.EventList;
+<i>34</i>&nbsp;import ca.odell.glazedlists.gui.TableFormat;
+<i>35</i>&nbsp;import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
+<i>36</i>&nbsp;import ca.odell.glazedlists.swing.DefaultEventTableModel;
+<i>37</i>&nbsp;import ca.odell.glazedlists.swing.GlazedListsSwing;
+<i>38</i>&nbsp;import com.jgoodies.forms.builder.ButtonBarBuilder;
+<i>39</i>&nbsp;import com.jgoodies.forms.builder.ButtonStackBuilder;
+<i>40</i>&nbsp;
+<i>41</i>&nbsp;/**
+<i>42</i>&nbsp; *
+<i>43</i>&nbsp; */
+<b class="nc"><i>44</i>&nbsp;public class FetcherPreviewDialog extends JDialog implements OutputPrinter {</b>
+<i>45</i>&nbsp;
+<b class="nc"><i>46</i>&nbsp;    private final EventList&lt;TableEntry&gt; entries = new BasicEventList&lt;&gt;();</b>
+<i>47</i>&nbsp;    private final JTable glTable;
+<i>48</i>&nbsp;    private boolean okPressed;
+<i>49</i>&nbsp;    private final JabRefFrame frame;
+<i>50</i>&nbsp;    private final int warningLimit;
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;
+<i>53</i>&nbsp;    public FetcherPreviewDialog(JabRefFrame frame, int warningLimit, int tableRowHeight) {
+<b class="nc"><i>54</i>&nbsp;        super(frame, Localization.lang(&quot;Title&quot;), true);</b>
+<b class="nc"><i>55</i>&nbsp;        this.frame = frame;</b>
+<b class="nc"><i>56</i>&nbsp;        this.warningLimit = warningLimit;</b>
+<i>57</i>&nbsp;
+<b class="nc"><i>58</i>&nbsp;        JButton ok = new JButton(Localization.lang(&quot;OK&quot;));</b>
+<b class="nc"><i>59</i>&nbsp;        ok.addActionListener(e -&gt; {</b>
+<b class="nc"><i>60</i>&nbsp;            if (verifySelection()) {</b>
+<b class="nc"><i>61</i>&nbsp;                okPressed = true;</b>
+<b class="nc"><i>62</i>&nbsp;                dispose();</b>
+<i>63</i>&nbsp;            }
+<b class="nc"><i>64</i>&nbsp;        });</b>
+<b class="nc"><i>65</i>&nbsp;        JButton cancel = new JButton(Localization.lang(&quot;Cancel&quot;));</b>
+<b class="nc"><i>66</i>&nbsp;        cancel.addActionListener(e -&gt; {</b>
+<b class="nc"><i>67</i>&nbsp;            okPressed = false;</b>
+<b class="nc"><i>68</i>&nbsp;            dispose();</b>
+<b class="nc"><i>69</i>&nbsp;        });</b>
+<b class="nc"><i>70</i>&nbsp;        JButton selectAll = new JButton(Localization.lang(&quot;Select all&quot;));</b>
+<b class="nc"><i>71</i>&nbsp;        selectAll.addActionListener(e -&gt; setSelectionAll(true));</b>
+<i>72</i>&nbsp;
+<b class="nc"><i>73</i>&nbsp;        JButton deselectAll = new JButton(Localization.lang(&quot;Deselect all&quot;));</b>
+<b class="nc"><i>74</i>&nbsp;        deselectAll.addActionListener(e -&gt; setSelectionAll(false));</b>
+<i>75</i>&nbsp;
+<b class="nc"><i>76</i>&nbsp;        DefaultEventTableModel&lt;TableEntry&gt; tableModelGl = (DefaultEventTableModel&lt;TableEntry&gt;) GlazedListsSwing</b>
+<b class="nc"><i>77</i>&nbsp;                .eventTableModelWithThreadProxyList(entries, new EntryTableFormat());</b>
+<b class="nc"><i>78</i>&nbsp;        glTable = new EntryTable(tableModelGl);</b>
+<b class="nc"><i>79</i>&nbsp;        glTable.setRowHeight(tableRowHeight);</b>
+<b class="nc"><i>80</i>&nbsp;        glTable.getColumnModel().getColumn(0).setMaxWidth(45);</b>
+<b class="nc"><i>81</i>&nbsp;        glTable.setPreferredScrollableViewportSize(new Dimension(1100, 600));</b>
+<b class="nc"><i>82</i>&nbsp;        DefaultEventSelectionModel&lt;TableEntry&gt; selectionModel = (DefaultEventSelectionModel&lt;TableEntry&gt;) GlazedListsSwing</b>
+<b class="nc"><i>83</i>&nbsp;                .eventSelectionModelWithThreadProxyList(entries);</b>
+<b class="nc"><i>84</i>&nbsp;        glTable.setSelectionModel(selectionModel);</b>
+<b class="nc"><i>85</i>&nbsp;        ButtonStackBuilder builder = new ButtonStackBuilder();</b>
+<b class="nc"><i>86</i>&nbsp;        builder.addButton(selectAll);</b>
+<b class="nc"><i>87</i>&nbsp;        builder.addButton(deselectAll);</b>
+<b class="nc"><i>88</i>&nbsp;        builder.getPanel().setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));</b>
+<i>89</i>&nbsp;
+<b class="nc"><i>90</i>&nbsp;        ButtonBarBuilder bb = new ButtonBarBuilder();</b>
+<b class="nc"><i>91</i>&nbsp;        bb.addGlue();</b>
+<b class="nc"><i>92</i>&nbsp;        bb.addButton(ok);</b>
+<b class="nc"><i>93</i>&nbsp;        bb.addButton(cancel);</b>
+<b class="nc"><i>94</i>&nbsp;        bb.addGlue();</b>
+<b class="nc"><i>95</i>&nbsp;        bb.getPanel().setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));</b>
+<i>96</i>&nbsp;
+<b class="nc"><i>97</i>&nbsp;        JPanel centerPan = new JPanel();</b>
+<b class="nc"><i>98</i>&nbsp;        centerPan.setLayout(new BorderLayout());</b>
+<b class="nc"><i>99</i>&nbsp;        centerPan.add(new JScrollPane(glTable), BorderLayout.CENTER);</b>
+<b class="nc"><i>100</i>&nbsp;        centerPan.add(builder.getPanel(), BorderLayout.WEST);</b>
+<i>101</i>&nbsp;
+<b class="nc"><i>102</i>&nbsp;        getContentPane().add(centerPan, BorderLayout.CENTER);</b>
+<b class="nc"><i>103</i>&nbsp;        getContentPane().add(bb.getPanel(), BorderLayout.SOUTH);</b>
+<i>104</i>&nbsp;
+<i>105</i>&nbsp;        // Key bindings:
+<b class="nc"><i>106</i>&nbsp;        Action closeAction = new AbstractAction() {</b>
+<i>107</i>&nbsp;
+<i>108</i>&nbsp;            @Override
+<i>109</i>&nbsp;            public void actionPerformed(ActionEvent e) {
+<b class="nc"><i>110</i>&nbsp;                dispose();</b>
+<b class="nc"><i>111</i>&nbsp;            }</b>
+<i>112</i>&nbsp;        };
+<b class="nc"><i>113</i>&nbsp;        ActionMap am = centerPan.getActionMap();</b>
+<b class="nc"><i>114</i>&nbsp;        InputMap im = centerPan.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);</b>
+<b class="nc"><i>115</i>&nbsp;        im.put(Globals.getKeyPrefs().getKey(KeyBinding.CLOSE_DIALOG), &quot;close&quot;);</b>
+<b class="nc"><i>116</i>&nbsp;        am.put(&quot;close&quot;, closeAction);</b>
+<i>117</i>&nbsp;
+<b class="nc"><i>118</i>&nbsp;        pack();</b>
+<i>119</i>&nbsp;
+<b class="nc"><i>120</i>&nbsp;    }</b>
+<i>121</i>&nbsp;
+<i>122</i>&nbsp;    /**
+<i>123</i>&nbsp;     * Check whether a large number of entries are selected, and if so, ask the user whether
+<i>124</i>&nbsp;     * to go on.
+<i>125</i>&nbsp;     * @return true if we should go on
+<i>126</i>&nbsp;     */
+<i>127</i>&nbsp;    private boolean verifySelection() {
+<b class="nc"><i>128</i>&nbsp;        int selected = 0;</b>
+<b class="nc"><i>129</i>&nbsp;        for (TableEntry entry : entries) {</b>
+<b class="nc"><i>130</i>&nbsp;            if (entry.isWanted()) {</b>
+<b class="nc"><i>131</i>&nbsp;                selected++;</b>
+<i>132</i>&nbsp;            }
+<b class="nc"><i>133</i>&nbsp;        }</b>
+<b class="nc"><i>134</i>&nbsp;        if (selected &gt; warningLimit) {</b>
+<b class="nc"><i>135</i>&nbsp;            int result = JOptionPane.showConfirmDialog(this,</b>
+<b class="nc"><i>136</i>&nbsp;                    Localization.lang(&quot;You have selected more than %0 entries for download. Some web sites &quot;</b>
+<i>137</i>&nbsp;                                    + &quot;might block you if you make too many rapid downloads. Do you want to continue?&quot;,
+<b class="nc"><i>138</i>&nbsp;                            String.valueOf(warningLimit)),</b>
+<b class="nc"><i>139</i>&nbsp;                    Localization.lang(&quot;Confirm selection&quot;), JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);</b>
+<b class="nc"><i>140</i>&nbsp;            return result == JOptionPane.YES_OPTION;</b>
+<i>141</i>&nbsp;        } else {
+<b class="nc"><i>142</i>&nbsp;            return true;</b>
+<i>143</i>&nbsp;        }
+<i>144</i>&nbsp;    }
+<i>145</i>&nbsp;
+<i>146</i>&nbsp;    public Map&lt;String, Boolean&gt; getSelection() {
+<b class="nc"><i>147</i>&nbsp;        LinkedHashMap&lt;String, Boolean&gt; selection = new LinkedHashMap&lt;&gt;();</b>
+<b class="nc"><i>148</i>&nbsp;        for (TableEntry e : entries) {</b>
+<b class="nc"><i>149</i>&nbsp;            selection.put(e.id, e.isWanted());</b>
+<b class="nc"><i>150</i>&nbsp;        }</b>
+<b class="nc"><i>151</i>&nbsp;        return selection;</b>
+<i>152</i>&nbsp;    }
+<i>153</i>&nbsp;
+<i>154</i>&nbsp;    /* (non-Javadoc)
+<i>155</i>&nbsp;    * @see net.sf.jabref.gui.ImportInspection#addEntry(net.sf.jabref.BibEntry)
+<i>156</i>&nbsp;    */
+<i>157</i>&nbsp;    public void addEntry(String entryId, JLabel preview) {
+<b class="nc"><i>158</i>&nbsp;        TableEntry entry = new TableEntry(entryId, preview);</b>
+<b class="nc"><i>159</i>&nbsp;        this.entries.getReadWriteLock().writeLock().lock();</b>
+<b class="nc"><i>160</i>&nbsp;        this.entries.add(entry);</b>
+<b class="nc"><i>161</i>&nbsp;        this.entries.getReadWriteLock().writeLock().unlock();</b>
+<b class="nc"><i>162</i>&nbsp;        glTable.repaint();</b>
+<b class="nc"><i>163</i>&nbsp;    }</b>
+<i>164</i>&nbsp;
+<i>165</i>&nbsp;    private void setSelectionAll(boolean select) {
+<b class="nc"><i>166</i>&nbsp;        for (int i = 0; i &lt; glTable.getRowCount(); i++) {</b>
+<b class="nc"><i>167</i>&nbsp;            glTable.setValueAt(select, i, 0);</b>
+<i>168</i>&nbsp;        }
+<b class="nc"><i>169</i>&nbsp;        glTable.repaint();</b>
+<b class="nc"><i>170</i>&nbsp;    }</b>
+<i>171</i>&nbsp;
+<i>172</i>&nbsp;
+<b class="nc"><i>173</i>&nbsp;    static class TableEntry {</b>
+<i>174</i>&nbsp;
+<i>175</i>&nbsp;        private final String id;
+<i>176</i>&nbsp;        private final JLabel preview;
+<i>177</i>&nbsp;        private boolean wanted;
+<i>178</i>&nbsp;
+<i>179</i>&nbsp;
+<b class="nc"><i>180</i>&nbsp;        public TableEntry(String id, JLabel preview) {</b>
+<b class="nc"><i>181</i>&nbsp;            this.id = id;</b>
+<b class="nc"><i>182</i>&nbsp;            this.preview = preview;</b>
+<b class="nc"><i>183</i>&nbsp;        }</b>
+<i>184</i>&nbsp;
+<i>185</i>&nbsp;        public boolean isWanted() {
+<b class="nc"><i>186</i>&nbsp;            return wanted;</b>
+<i>187</i>&nbsp;        }
+<i>188</i>&nbsp;
+<i>189</i>&nbsp;        public void setWanted(boolean wanted) {
+<b class="nc"><i>190</i>&nbsp;            this.wanted = wanted;</b>
+<b class="nc"><i>191</i>&nbsp;        }</b>
+<i>192</i>&nbsp;
+<i>193</i>&nbsp;        public JLabel getPreview() {
+<b class="nc"><i>194</i>&nbsp;            return preview;</b>
+<i>195</i>&nbsp;        }
+<i>196</i>&nbsp;
+<i>197</i>&nbsp;    }
+<i>198</i>&nbsp;
+<b class="nc"><i>199</i>&nbsp;    static class PreviewRenderer implements TableCellRenderer {</b>
+<i>200</i>&nbsp;
+<b class="nc"><i>201</i>&nbsp;        private final JLabel label = new JLabel();</b>
+<i>202</i>&nbsp;
+<i>203</i>&nbsp;
+<i>204</i>&nbsp;        @Override
+<i>205</i>&nbsp;        public Component getTableCellRendererComponent(JTable table, Object value,
+<i>206</i>&nbsp;                boolean isSelected, boolean hasFocus,
+<i>207</i>&nbsp;                int row, int column) {
+<b class="nc"><i>208</i>&nbsp;            JLabel valueLabel = (JLabel) value;</b>
+<b class="nc"><i>209</i>&nbsp;            label.setText(valueLabel.getText());</b>
+<b class="nc"><i>210</i>&nbsp;            return label;</b>
+<i>211</i>&nbsp;        }
+<i>212</i>&nbsp;    }
+<i>213</i>&nbsp;
+<i>214</i>&nbsp;    class EntryTable extends JTable {
+<i>215</i>&nbsp;
+<b class="nc"><i>216</i>&nbsp;        private final PreviewRenderer renderer = new PreviewRenderer();</b>
+<i>217</i>&nbsp;
+<i>218</i>&nbsp;
+<b class="nc"><i>219</i>&nbsp;        public EntryTable(TableModel model) {</b>
+<b class="nc"><i>220</i>&nbsp;            super(model);</b>
+<b class="nc"><i>221</i>&nbsp;            getTableHeader().setReorderingAllowed(false);</b>
+<b class="nc"><i>222</i>&nbsp;        }</b>
+<i>223</i>&nbsp;
+<i>224</i>&nbsp;        @Override
+<i>225</i>&nbsp;        public TableCellRenderer getCellRenderer(int row, int column) {
+<b class="nc"><i>226</i>&nbsp;            return column == 0 ? getDefaultRenderer(Boolean.class) : renderer;</b>
+<i>227</i>&nbsp;        }
+<i>228</i>&nbsp;
+<i>229</i>&nbsp;        /*
+<i>230</i>&nbsp;         * public TableCellEditor getCellEditor() { return
+<i>231</i>&nbsp;         * getDefaultEditor(Boolean.class); }
+<i>232</i>&nbsp;         */
+<i>233</i>&nbsp;
+<i>234</i>&nbsp;        @Override
+<i>235</i>&nbsp;        public Class&lt;?&gt; getColumnClass(int col) {
+<b class="nc"><i>236</i>&nbsp;            if (col == 0) {</b>
+<b class="nc"><i>237</i>&nbsp;                return Boolean.class;</b>
+<i>238</i>&nbsp;            } else {
+<b class="nc"><i>239</i>&nbsp;                return JLabel.class;</b>
+<i>240</i>&nbsp;            }
+<i>241</i>&nbsp;        }
+<i>242</i>&nbsp;
+<i>243</i>&nbsp;        @Override
+<i>244</i>&nbsp;        public boolean isCellEditable(int row, int column) {
+<b class="nc"><i>245</i>&nbsp;            return column == 0;</b>
+<i>246</i>&nbsp;        }
+<i>247</i>&nbsp;
+<i>248</i>&nbsp;        @Override
+<i>249</i>&nbsp;        public void setValueAt(Object value, int row, int column) {
+<i>250</i>&nbsp;            // Only column 0, which is controlled by BibEntry.searchHit, is
+<i>251</i>&nbsp;            // editable:
+<b class="nc"><i>252</i>&nbsp;            entries.getReadWriteLock().writeLock().lock();</b>
+<b class="nc"><i>253</i>&nbsp;            TableEntry entry = entries.get(row);</b>
+<b class="nc"><i>254</i>&nbsp;            entry.setWanted((Boolean) value);</b>
+<b class="nc"><i>255</i>&nbsp;            entries.getReadWriteLock().writeLock().unlock();</b>
+<b class="nc"><i>256</i>&nbsp;        }</b>
+<i>257</i>&nbsp;    }
+<i>258</i>&nbsp;
+<b class="nc"><i>259</i>&nbsp;    private static class EntryTableFormat implements TableFormat&lt;TableEntry&gt; {</b>
+<i>260</i>&nbsp;
+<i>261</i>&nbsp;        @Override
+<i>262</i>&nbsp;        public int getColumnCount() {
+<b class="nc"><i>263</i>&nbsp;            return 2;</b>
+<i>264</i>&nbsp;        }
+<i>265</i>&nbsp;
+<i>266</i>&nbsp;        @Override
+<i>267</i>&nbsp;        public String getColumnName(int i) {
+<b class="nc"><i>268</i>&nbsp;            if (i == 0) {</b>
+<b class="nc"><i>269</i>&nbsp;                return Localization.lang(&quot;Keep&quot;);</b>
+<i>270</i>&nbsp;            } else {
+<b class="nc"><i>271</i>&nbsp;                return Localization.lang(&quot;Preview&quot;);</b>
+<i>272</i>&nbsp;            }
+<i>273</i>&nbsp;        }
+<i>274</i>&nbsp;
+<i>275</i>&nbsp;        @Override
+<i>276</i>&nbsp;        public Object getColumnValue(TableEntry entry, int i) {
+<b class="nc"><i>277</i>&nbsp;            if (i == 0) {</b>
+<b class="nc"><i>278</i>&nbsp;                return entry.isWanted() ? Boolean.TRUE : Boolean.FALSE;</b>
+<i>279</i>&nbsp;            } else {
+<b class="nc"><i>280</i>&nbsp;                return entry.getPreview();</b>
+<i>281</i>&nbsp;            }
+<i>282</i>&nbsp;        }
+<i>283</i>&nbsp;
+<i>284</i>&nbsp;    }
+<i>285</i>&nbsp;
+<i>286</i>&nbsp;
+<i>287</i>&nbsp;    public boolean isOkPressed() {
+<b class="nc"><i>288</i>&nbsp;        return okPressed;</b>
+<i>289</i>&nbsp;    }
+<i>290</i>&nbsp;
+<i>291</i>&nbsp;    @Override
+<i>292</i>&nbsp;    public void setStatus(String s) {
+<b class="nc"><i>293</i>&nbsp;        frame.setStatus(s);</b>
+<b class="nc"><i>294</i>&nbsp;    }</b>
+<i>295</i>&nbsp;
+<i>296</i>&nbsp;    @Override
+<i>297</i>&nbsp;    public void showMessage(String message, String title, int msgType) {
+<b class="nc"><i>298</i>&nbsp;        JOptionPane.showMessageDialog(this, message, title, msgType);</b>
+<b class="nc"><i>299</i>&nbsp;    }</b>
+<i>300</i>&nbsp;
+<i>301</i>&nbsp;    @Override
+<i>302</i>&nbsp;    public void showMessage(String message) {
+<b class="nc"><i>303</i>&nbsp;        JOptionPane.showMessageDialog(this, message);</b>
+<b class="nc"><i>304</i>&nbsp;    }</b>
+<i>305</i>&nbsp;
+<i>306</i>&nbsp;    /**
+<i>307</i>&nbsp;     * Displays a dialog which tells the user that an error occurred while fetching entries
+<i>308</i>&nbsp;     */
+<i>309</i>&nbsp;    public void showErrorMessage(String fetcherTitle, String localizedMessage) {
+<b class="nc"><i>310</i>&nbsp;        showMessage(Localization.lang(&quot;Error while fetching from %0&quot;, fetcherTitle) + &quot;\n&quot; +</b>
+<b class="nc"><i>311</i>&nbsp;                        Localization.lang(&quot;Please try again later and/or check your network connection.&quot;) + &quot;\n&quot; +</b>
+<i>312</i>&nbsp;                        localizedMessage,
+<b class="nc"><i>313</i>&nbsp;                Localization.lang(&quot;Search %0&quot;, fetcherTitle), JOptionPane.ERROR_MESSAGE);</b>
+<b class="nc"><i>314</i>&nbsp;    }</b>
+<i>315</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

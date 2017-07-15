@@ -1,0 +1,505 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: IsiImporter</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.importer.fileformat</a> ]
+</div>
+
+<h1>Coverage Summary for Class: IsiImporter (net.sf.jabref.logic.importer.fileformat)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">IsiImporter</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 15)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 198)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.importer.fileformat;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.BufferedReader;
+<i>4</i>&nbsp;import java.io.IOException;
+<i>5</i>&nbsp;import java.util.ArrayList;
+<i>6</i>&nbsp;import java.util.HashMap;
+<i>7</i>&nbsp;import java.util.List;
+<i>8</i>&nbsp;import java.util.Map;
+<i>9</i>&nbsp;import java.util.Objects;
+<i>10</i>&nbsp;import java.util.regex.Matcher;
+<i>11</i>&nbsp;import java.util.regex.Pattern;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;import net.sf.jabref.logic.formatter.casechanger.TitleCaseFormatter;
+<i>14</i>&nbsp;import net.sf.jabref.logic.importer.Importer;
+<i>15</i>&nbsp;import net.sf.jabref.logic.importer.ParserResult;
+<i>16</i>&nbsp;import net.sf.jabref.logic.util.FileExtensions;
+<i>17</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>18</i>&nbsp;import net.sf.jabref.model.entry.FieldName;
+<i>19</i>&nbsp;import net.sf.jabref.model.entry.MonthUtil;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;/**
+<i>22</i>&nbsp; * Importer for the ISI Web of Science, INSPEC and Medline format.
+<i>23</i>&nbsp; * &lt;p&gt;
+<i>24</i>&nbsp; * Documentation about ISI WOS format:
+<i>25</i>&nbsp; * &lt;p&gt;
+<i>26</i>&nbsp; * &lt;ul&gt;
+<i>27</i>&nbsp; * &lt;li&gt;http://wos.isitrial.com/help/helpprn.html&lt;/li&gt;
+<i>28</i>&nbsp; * &lt;/ul&gt;
+<i>29</i>&nbsp; * &lt;p&gt;
+<i>30</i>&nbsp; * &lt;ul&gt;
+<i>31</i>&nbsp; * &lt;li&gt;Check compatibility with other ISI2Bib tools like:
+<i>32</i>&nbsp; * http://www-lab.imr.tohoku.ac.jp/~t-nissie/computer/software/isi/ or
+<i>33</i>&nbsp; * http://www.tug.org/tex-archive/biblio/bibtex/utils/isi2bibtex/isi2bibtex or
+<i>34</i>&nbsp; * http://web.mit.edu/emilio/www/utils.html&lt;/li&gt;
+<i>35</i>&nbsp; * &lt;li&gt;Deal with capitalization correctly&lt;/li&gt;
+<i>36</i>&nbsp; * &lt;/ul&gt;
+<i>37</i>&nbsp; */
+<b class="nc"><i>38</i>&nbsp;public class IsiImporter extends Importer {</b>
+<i>39</i>&nbsp;
+<b class="nc"><i>40</i>&nbsp;    private static final Pattern SUB_SUP_PATTERN = Pattern.compile(&quot;/(sub|sup)\\s+(.*?)\\s*/&quot;);</b>
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;    // 2006.09.05: Modified pattern to avoid false positives for other files due to an
+<i>43</i>&nbsp;    // extra | at the end:
+<b class="nc"><i>44</i>&nbsp;    private static final Pattern ISI_PATTERN = Pattern.compile(&quot;FN ISI Export Format|VR 1.|PY \\d{4}&quot;);</b>
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;    @Override
+<i>48</i>&nbsp;    public String getName() {
+<b class="nc"><i>49</i>&nbsp;        return &quot;ISI&quot;;</b>
+<i>50</i>&nbsp;    }
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;    @Override
+<i>53</i>&nbsp;    public FileExtensions getExtensions() {
+<b class="nc"><i>54</i>&nbsp;        return FileExtensions.ISI;</b>
+<i>55</i>&nbsp;    }
+<i>56</i>&nbsp;
+<i>57</i>&nbsp;    @Override
+<i>58</i>&nbsp;    public String getId() {
+<b class="nc"><i>59</i>&nbsp;        return &quot;isi&quot;;</b>
+<i>60</i>&nbsp;    }
+<i>61</i>&nbsp;
+<i>62</i>&nbsp;    @Override
+<i>63</i>&nbsp;    public String getDescription() {
+<b class="nc"><i>64</i>&nbsp;        return &quot;Importer for the ISI Web of Science, INSPEC and Medline format.&quot;;</b>
+<i>65</i>&nbsp;    }
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;    @Override
+<i>68</i>&nbsp;    public boolean isRecognizedFormat(BufferedReader reader) throws IOException {
+<i>69</i>&nbsp;        String str;
+<b class="nc"><i>70</i>&nbsp;        int i = 0;</b>
+<b class="nc"><i>71</i>&nbsp;        while (((str = reader.readLine()) != null) &amp;&amp; (i &lt; 50)) {</b>
+<i>72</i>&nbsp;
+<i>73</i>&nbsp;            /**
+<i>74</i>&nbsp;             * The following line gives false positives for RIS files, so it
+<i>75</i>&nbsp;             * should not be uncommented. The hypen is a characteristic of the
+<i>76</i>&nbsp;             * RIS format.
+<i>77</i>&nbsp;             *
+<i>78</i>&nbsp;             * str = str.replace(&quot; - &quot;, &quot;&quot;)
+<i>79</i>&nbsp;             */
+<b class="nc"><i>80</i>&nbsp;            if (IsiImporter.ISI_PATTERN.matcher(str).find()) {</b>
+<b class="nc"><i>81</i>&nbsp;                return true;</b>
+<i>82</i>&nbsp;            }
+<i>83</i>&nbsp;
+<b class="nc"><i>84</i>&nbsp;            i++;</b>
+<i>85</i>&nbsp;        }
+<b class="nc"><i>86</i>&nbsp;        return false;</b>
+<i>87</i>&nbsp;    }
+<i>88</i>&nbsp;
+<i>89</i>&nbsp;    public static void processSubSup(Map&lt;String, String&gt; map) {
+<i>90</i>&nbsp;
+<b class="nc"><i>91</i>&nbsp;        String[] subsup = {FieldName.TITLE, FieldName.ABSTRACT, FieldName.REVIEW, &quot;notes&quot;};</b>
+<i>92</i>&nbsp;
+<b class="nc"><i>93</i>&nbsp;        for (String aSubsup : subsup) {</b>
+<b class="nc"><i>94</i>&nbsp;            if (map.containsKey(aSubsup)) {</b>
+<i>95</i>&nbsp;
+<b class="nc"><i>96</i>&nbsp;                Matcher m = IsiImporter.SUB_SUP_PATTERN.matcher(map.get(aSubsup));</b>
+<b class="nc"><i>97</i>&nbsp;                StringBuffer sb = new StringBuffer();</b>
+<i>98</i>&nbsp;
+<b class="nc"><i>99</i>&nbsp;                while (m.find()) {</b>
+<i>100</i>&nbsp;
+<b class="nc"><i>101</i>&nbsp;                    String group2 = m.group(2);</b>
+<b class="nc"><i>102</i>&nbsp;                    group2 = group2.replaceAll(&quot;\\$&quot;, &quot;\\\\\\\\\\\\\\$&quot;); // Escaping</b>
+<i>103</i>&nbsp;                    // insanity!
+<i>104</i>&nbsp;                    // :-)
+<b class="nc"><i>105</i>&nbsp;                    if (group2.length() &gt; 1) {</b>
+<b class="nc"><i>106</i>&nbsp;                        group2 = &quot;{&quot; + group2 + &quot;}&quot;;</b>
+<i>107</i>&nbsp;                    }
+<b class="nc"><i>108</i>&nbsp;                    if (&quot;sub&quot;.equals(m.group(1))) {</b>
+<b class="nc"><i>109</i>&nbsp;                        m.appendReplacement(sb, &quot;\\$_&quot; + group2 + &quot;\\$&quot;);</b>
+<i>110</i>&nbsp;                    } else {
+<b class="nc"><i>111</i>&nbsp;                        m.appendReplacement(sb, &quot;\\$^&quot; + group2 + &quot;\\$&quot;);</b>
+<i>112</i>&nbsp;                    }
+<b class="nc"><i>113</i>&nbsp;                }</b>
+<b class="nc"><i>114</i>&nbsp;                m.appendTail(sb);</b>
+<b class="nc"><i>115</i>&nbsp;                map.put(aSubsup, sb.toString());</b>
+<i>116</i>&nbsp;            }
+<i>117</i>&nbsp;        }
+<b class="nc"><i>118</i>&nbsp;    }</b>
+<i>119</i>&nbsp;
+<i>120</i>&nbsp;    private static void processCapitalization(Map&lt;String, String&gt; map) {
+<i>121</i>&nbsp;
+<b class="nc"><i>122</i>&nbsp;        String[] subsup = {FieldName.TITLE, FieldName.JOURNAL, FieldName.PUBLISHER};</b>
+<i>123</i>&nbsp;
+<b class="nc"><i>124</i>&nbsp;        for (String aSubsup : subsup) {</b>
+<i>125</i>&nbsp;
+<b class="nc"><i>126</i>&nbsp;            if (map.containsKey(aSubsup)) {</b>
+<i>127</i>&nbsp;
+<b class="nc"><i>128</i>&nbsp;                String s = map.get(aSubsup);</b>
+<b class="nc"><i>129</i>&nbsp;                if (s.toUpperCase().equals(s)) {</b>
+<b class="nc"><i>130</i>&nbsp;                    s = new TitleCaseFormatter().format(s);</b>
+<b class="nc"><i>131</i>&nbsp;                    map.put(aSubsup, s);</b>
+<i>132</i>&nbsp;                }
+<i>133</i>&nbsp;            }
+<i>134</i>&nbsp;        }
+<b class="nc"><i>135</i>&nbsp;    }</b>
+<i>136</i>&nbsp;
+<i>137</i>&nbsp;    @Override
+<i>138</i>&nbsp;    public ParserResult importDatabase(BufferedReader reader) throws IOException {
+<b class="nc"><i>139</i>&nbsp;        Objects.requireNonNull(reader);</b>
+<i>140</i>&nbsp;
+<b class="nc"><i>141</i>&nbsp;        List&lt;BibEntry&gt; bibitems = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>142</i>&nbsp;        StringBuilder sb = new StringBuilder();</b>
+<i>143</i>&nbsp;
+<i>144</i>&nbsp;        // Pattern fieldPattern = Pattern.compile(&quot;^AU |^TI |^SO |^DT |^C1 |^AB
+<i>145</i>&nbsp;        // |^ID |^BP |^PY |^SE |^PY |^VL |^IS &quot;);
+<i>146</i>&nbsp;        String str;
+<i>147</i>&nbsp;
+<b class="nc"><i>148</i>&nbsp;        while ((str = reader.readLine()) != null) {</b>
+<b class="nc"><i>149</i>&nbsp;            if (str.length() &lt; 3) {</b>
+<b class="nc"><i>150</i>&nbsp;                continue;</b>
+<i>151</i>&nbsp;            }
+<i>152</i>&nbsp;
+<i>153</i>&nbsp;            // beginning of a new item
+<b class="nc"><i>154</i>&nbsp;            if (&quot;PT &quot;.equals(str.substring(0, 3))) {</b>
+<b class="nc"><i>155</i>&nbsp;                sb.append(&quot;::&quot;).append(str);</b>
+<i>156</i>&nbsp;            } else {
+<b class="nc"><i>157</i>&nbsp;                String beg = str.substring(0, 3).trim();</b>
+<i>158</i>&nbsp;
+<i>159</i>&nbsp;                // I could have used the fieldPattern regular expression instead
+<i>160</i>&nbsp;                // however this seems to be
+<i>161</i>&nbsp;                // quick and dirty and it works!
+<b class="nc"><i>162</i>&nbsp;                if (beg.length() == 2) {</b>
+<b class="nc"><i>163</i>&nbsp;                    sb.append(&quot; ## &quot;); // mark the beginning of each field</b>
+<b class="nc"><i>164</i>&nbsp;                    sb.append(str);</b>
+<i>165</i>&nbsp;                } else {
+<b class="nc"><i>166</i>&nbsp;                    sb.append(&quot;EOLEOL&quot;); // mark the end of each line</b>
+<b class="nc"><i>167</i>&nbsp;                    sb.append(str.trim()); // remove the initial spaces</b>
+<i>168</i>&nbsp;                }
+<b class="nc"><i>169</i>&nbsp;            }</b>
+<i>170</i>&nbsp;        }
+<i>171</i>&nbsp;
+<b class="nc"><i>172</i>&nbsp;        String[] entries = sb.toString().split(&quot;::&quot;);</b>
+<i>173</i>&nbsp;
+<b class="nc"><i>174</i>&nbsp;        Map&lt;String, String&gt; hm = new HashMap&lt;&gt;();</b>
+<i>175</i>&nbsp;
+<i>176</i>&nbsp;        // skip the first entry as it is either empty or has document header
+<b class="nc"><i>177</i>&nbsp;        for (String entry : entries) {</b>
+<b class="nc"><i>178</i>&nbsp;            String[] fields = entry.split(&quot; ## &quot;);</b>
+<i>179</i>&nbsp;
+<b class="nc"><i>180</i>&nbsp;            if (fields.length == 0) {</b>
+<b class="nc"><i>181</i>&nbsp;                fields = entry.split(&quot;\n&quot;);</b>
+<i>182</i>&nbsp;            }
+<i>183</i>&nbsp;
+<b class="nc"><i>184</i>&nbsp;            String Type = &quot;&quot;;</b>
+<b class="nc"><i>185</i>&nbsp;            String PT = &quot;&quot;;</b>
+<b class="nc"><i>186</i>&nbsp;            String pages = &quot;&quot;;</b>
+<b class="nc"><i>187</i>&nbsp;            hm.clear();</b>
+<i>188</i>&nbsp;
+<b class="nc"><i>189</i>&nbsp;            for (String field : fields) {</b>
+<i>190</i>&nbsp;                // empty field don&#39;t do anything
+<b class="nc"><i>191</i>&nbsp;                if (field.length() &lt;= 2) {</b>
+<b class="nc"><i>192</i>&nbsp;                    continue;</b>
+<i>193</i>&nbsp;                }
+<i>194</i>&nbsp;
+<b class="nc"><i>195</i>&nbsp;                String beg = field.substring(0, 2);</b>
+<b class="nc"><i>196</i>&nbsp;                String value = field.substring(3);</b>
+<b class="nc"><i>197</i>&nbsp;                if (value.startsWith(&quot; - &quot;)) {</b>
+<b class="nc"><i>198</i>&nbsp;                    value = value.substring(3);</b>
+<i>199</i>&nbsp;                }
+<b class="nc"><i>200</i>&nbsp;                value = value.trim();</b>
+<i>201</i>&nbsp;
+<b class="nc"><i>202</i>&nbsp;                if (&quot;PT&quot;.equals(beg)) {</b>
+<b class="nc"><i>203</i>&nbsp;                    if (value.startsWith(&quot;J&quot;)) {</b>
+<b class="nc"><i>204</i>&nbsp;                        PT = &quot;article&quot;;</b>
+<i>205</i>&nbsp;                    } else {
+<b class="nc"><i>206</i>&nbsp;                        PT = value;</b>
+<i>207</i>&nbsp;                    }
+<b class="nc"><i>208</i>&nbsp;                    Type = &quot;article&quot;; // make all of them PT?</b>
+<b class="nc"><i>209</i>&nbsp;                } else if (&quot;TY&quot;.equals(beg)) {</b>
+<b class="nc"><i>210</i>&nbsp;                    if (&quot;JOUR&quot;.equals(value)) {</b>
+<b class="nc"><i>211</i>&nbsp;                        Type = &quot;article&quot;;</b>
+<b class="nc"><i>212</i>&nbsp;                    } else if (&quot;CONF&quot;.equals(value)) {</b>
+<b class="nc"><i>213</i>&nbsp;                        Type = &quot;inproceedings&quot;;</b>
+<i>214</i>&nbsp;                    }
+<b class="nc"><i>215</i>&nbsp;                } else if (&quot;JO&quot;.equals(beg)) {</b>
+<b class="nc"><i>216</i>&nbsp;                    hm.put(FieldName.BOOKTITLE, value);</b>
+<b class="nc"><i>217</i>&nbsp;                } else if (&quot;AU&quot;.equals(beg)) {</b>
+<b class="nc"><i>218</i>&nbsp;                    String author = IsiImporter.isiAuthorsConvert(value.replace(&quot;EOLEOL&quot;, &quot; and &quot;));</b>
+<i>219</i>&nbsp;
+<i>220</i>&nbsp;                    // if there is already someone there then append with &quot;and&quot;
+<b class="nc"><i>221</i>&nbsp;                    if (hm.get(FieldName.AUTHOR) != null) {</b>
+<b class="nc"><i>222</i>&nbsp;                        author = hm.get(FieldName.AUTHOR) + &quot; and &quot; + author;</b>
+<i>223</i>&nbsp;                    }
+<i>224</i>&nbsp;
+<b class="nc"><i>225</i>&nbsp;                    hm.put(FieldName.AUTHOR, author);</b>
+<b class="nc"><i>226</i>&nbsp;                } else if (&quot;TI&quot;.equals(beg)) {</b>
+<b class="nc"><i>227</i>&nbsp;                    hm.put(FieldName.TITLE, value.replace(&quot;EOLEOL&quot;, &quot; &quot;));</b>
+<b class="nc"><i>228</i>&nbsp;                } else if (&quot;SO&quot;.equals(beg) || &quot;JA&quot;.equals(beg)) {</b>
+<b class="nc"><i>229</i>&nbsp;                    hm.put(FieldName.JOURNAL, value.replace(&quot;EOLEOL&quot;, &quot; &quot;));</b>
+<b class="nc"><i>230</i>&nbsp;                } else if (&quot;ID&quot;.equals(beg) || &quot;KW&quot;.equals(beg)) {</b>
+<i>231</i>&nbsp;
+<b class="nc"><i>232</i>&nbsp;                    value = value.replace(&quot;EOLEOL&quot;, &quot; &quot;);</b>
+<b class="nc"><i>233</i>&nbsp;                    String existingKeywords = hm.get(FieldName.KEYWORDS);</b>
+<b class="nc"><i>234</i>&nbsp;                    if ((existingKeywords == null) || existingKeywords.contains(value)) {</b>
+<b class="nc"><i>235</i>&nbsp;                        existingKeywords = value;</b>
+<i>236</i>&nbsp;                    } else {
+<b class="nc"><i>237</i>&nbsp;                        existingKeywords += &quot;, &quot; + value;</b>
+<i>238</i>&nbsp;                    }
+<b class="nc"><i>239</i>&nbsp;                    hm.put(FieldName.KEYWORDS, existingKeywords);</b>
+<i>240</i>&nbsp;
+<b class="nc"><i>241</i>&nbsp;                } else if (&quot;AB&quot;.equals(beg)) {</b>
+<b class="nc"><i>242</i>&nbsp;                    hm.put(FieldName.ABSTRACT, value.replace(&quot;EOLEOL&quot;, &quot; &quot;));</b>
+<b class="nc"><i>243</i>&nbsp;                } else if (&quot;BP&quot;.equals(beg) || &quot;BR&quot;.equals(beg) || &quot;SP&quot;.equals(beg)) {</b>
+<b class="nc"><i>244</i>&nbsp;                    pages = value;</b>
+<b class="nc"><i>245</i>&nbsp;                } else if (&quot;EP&quot;.equals(beg)) {</b>
+<b class="nc"><i>246</i>&nbsp;                    int detpos = value.indexOf(&#39; &#39;);</b>
+<i>247</i>&nbsp;
+<i>248</i>&nbsp;                    // tweak for IEEE Explore
+<b class="nc"><i>249</i>&nbsp;                    if ((detpos != -1) &amp;&amp; !value.substring(0, detpos).trim().isEmpty()) {</b>
+<b class="nc"><i>250</i>&nbsp;                        value = value.substring(0, detpos);</b>
+<i>251</i>&nbsp;                    }
+<i>252</i>&nbsp;
+<b class="nc"><i>253</i>&nbsp;                    pages = pages + &quot;--&quot; + value;</b>
+<b class="nc"><i>254</i>&nbsp;                } else if (&quot;PS&quot;.equals(beg)) {</b>
+<b class="nc"><i>255</i>&nbsp;                    pages = IsiImporter.parsePages(value);</b>
+<b class="nc"><i>256</i>&nbsp;                } else if (&quot;AR&quot;.equals(beg)) {</b>
+<b class="nc"><i>257</i>&nbsp;                    pages = value;</b>
+<b class="nc"><i>258</i>&nbsp;                } else if (&quot;IS&quot;.equals(beg)) {</b>
+<b class="nc"><i>259</i>&nbsp;                    hm.put(FieldName.NUMBER, value);</b>
+<b class="nc"><i>260</i>&nbsp;                } else if (&quot;PY&quot;.equals(beg)) {</b>
+<b class="nc"><i>261</i>&nbsp;                    hm.put(FieldName.YEAR, value);</b>
+<b class="nc"><i>262</i>&nbsp;                } else if (&quot;VL&quot;.equals(beg)) {</b>
+<b class="nc"><i>263</i>&nbsp;                    hm.put(FieldName.VOLUME, value);</b>
+<b class="nc"><i>264</i>&nbsp;                } else if (&quot;PU&quot;.equals(beg)) {</b>
+<b class="nc"><i>265</i>&nbsp;                    hm.put(FieldName.PUBLISHER, value);</b>
+<b class="nc"><i>266</i>&nbsp;                } else if (&quot;DI&quot;.equals(beg)) {</b>
+<b class="nc"><i>267</i>&nbsp;                    hm.put(FieldName.DOI, value);</b>
+<b class="nc"><i>268</i>&nbsp;                } else if (&quot;PD&quot;.equals(beg)) {</b>
+<i>269</i>&nbsp;
+<b class="nc"><i>270</i>&nbsp;                    String month = IsiImporter.parseMonth(value);</b>
+<b class="nc"><i>271</i>&nbsp;                    if (month != null) {</b>
+<b class="nc"><i>272</i>&nbsp;                        hm.put(FieldName.MONTH, month);</b>
+<i>273</i>&nbsp;                    }
+<i>274</i>&nbsp;
+<b class="nc"><i>275</i>&nbsp;                } else if (&quot;DT&quot;.equals(beg)) {</b>
+<b class="nc"><i>276</i>&nbsp;                    Type = value;</b>
+<b class="nc"><i>277</i>&nbsp;                    if (&quot;Review&quot;.equals(Type)) {</b>
+<b class="nc"><i>278</i>&nbsp;                        Type = &quot;article&quot;; // set &quot;Review&quot; in Note/Comment?</b>
+<b class="nc"><i>279</i>&nbsp;                    } else if (Type.startsWith(&quot;Article&quot;) || Type.startsWith(&quot;Journal&quot;) || &quot;article&quot;.equals(PT)) {</b>
+<b class="nc"><i>280</i>&nbsp;                        Type = &quot;article&quot;;</b>
+<i>281</i>&nbsp;                    } else {
+<b class="nc"><i>282</i>&nbsp;                        Type = BibEntry.DEFAULT_TYPE;</b>
+<i>283</i>&nbsp;                    }
+<b class="nc"><i>284</i>&nbsp;                } else if (&quot;CR&quot;.equals(beg)) {</b>
+<b class="nc"><i>285</i>&nbsp;                    hm.put(&quot;CitedReferences&quot;, value.replace(&quot;EOLEOL&quot;, &quot; ; &quot;).trim());</b>
+<i>286</i>&nbsp;                } else {
+<i>287</i>&nbsp;                    // Preserve all other entries except
+<b class="nc"><i>288</i>&nbsp;                    if (&quot;ER&quot;.equals(beg) || &quot;EF&quot;.equals(beg) || &quot;VR&quot;.equals(beg) || &quot;FN&quot;.equals(beg)) {</b>
+<b class="nc"><i>289</i>&nbsp;                        continue;</b>
+<i>290</i>&nbsp;                    }
+<b class="nc"><i>291</i>&nbsp;                    hm.put(beg.toLowerCase(), value);</b>
+<i>292</i>&nbsp;                }
+<i>293</i>&nbsp;            }
+<i>294</i>&nbsp;
+<b class="nc"><i>295</i>&nbsp;            if (!&quot;&quot;.equals(pages)) {</b>
+<b class="nc"><i>296</i>&nbsp;                hm.put(FieldName.PAGES, pages);</b>
+<i>297</i>&nbsp;            }
+<i>298</i>&nbsp;
+<i>299</i>&nbsp;            // Skip empty entries
+<b class="nc"><i>300</i>&nbsp;            if (hm.isEmpty()) {</b>
+<b class="nc"><i>301</i>&nbsp;                continue;</b>
+<i>302</i>&nbsp;            }
+<i>303</i>&nbsp;
+<b class="nc"><i>304</i>&nbsp;            BibEntry b = new BibEntry(Type);</b>
+<i>305</i>&nbsp;            // id assumes an existing database so don&#39;t
+<i>306</i>&nbsp;
+<i>307</i>&nbsp;            // Remove empty fields:
+<b class="nc"><i>308</i>&nbsp;            List&lt;Object&gt; toRemove = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>309</i>&nbsp;            for (Map.Entry&lt;String, String&gt; field : hm.entrySet()) {</b>
+<b class="nc"><i>310</i>&nbsp;                String content = field.getValue();</b>
+<b class="nc"><i>311</i>&nbsp;                if ((content == null) || content.trim().isEmpty()) {</b>
+<b class="nc"><i>312</i>&nbsp;                    toRemove.add(field.getKey());</b>
+<i>313</i>&nbsp;                }
+<b class="nc"><i>314</i>&nbsp;            }</b>
+<b class="nc"><i>315</i>&nbsp;            for (Object aToRemove : toRemove) {</b>
+<b class="nc"><i>316</i>&nbsp;                hm.remove(aToRemove);</b>
+<i>317</i>&nbsp;
+<b class="nc"><i>318</i>&nbsp;            }</b>
+<i>319</i>&nbsp;
+<i>320</i>&nbsp;            // Polish entries
+<b class="nc"><i>321</i>&nbsp;            IsiImporter.processSubSup(hm);</b>
+<b class="nc"><i>322</i>&nbsp;            IsiImporter.processCapitalization(hm);</b>
+<i>323</i>&nbsp;
+<b class="nc"><i>324</i>&nbsp;            b.setField(hm);</b>
+<i>325</i>&nbsp;
+<b class="nc"><i>326</i>&nbsp;            bibitems.add(b);</b>
+<i>327</i>&nbsp;        }
+<b class="nc"><i>328</i>&nbsp;        return new ParserResult(bibitems);</b>
+<i>329</i>&nbsp;    }
+<i>330</i>&nbsp;
+<i>331</i>&nbsp;    private static String parsePages(String value) {
+<b class="nc"><i>332</i>&nbsp;        int lastDash = value.lastIndexOf(&#39;-&#39;);</b>
+<b class="nc"><i>333</i>&nbsp;        return value.substring(0, lastDash) + &quot;--&quot; + value.substring(lastDash + 1);</b>
+<i>334</i>&nbsp;    }
+<i>335</i>&nbsp;
+<i>336</i>&nbsp;    public static String parseMonth(String value) {
+<i>337</i>&nbsp;
+<b class="nc"><i>338</i>&nbsp;        String[] parts = value.split(&quot;\\s|\\-&quot;);</b>
+<b class="nc"><i>339</i>&nbsp;        for (String part1 : parts) {</b>
+<b class="nc"><i>340</i>&nbsp;            MonthUtil.Month month = MonthUtil.getMonthByShortName(part1.toLowerCase());</b>
+<b class="nc"><i>341</i>&nbsp;            if (month.isValid()) {</b>
+<b class="nc"><i>342</i>&nbsp;                return month.bibtexFormat;</b>
+<i>343</i>&nbsp;            }
+<i>344</i>&nbsp;        }
+<i>345</i>&nbsp;
+<i>346</i>&nbsp;        // Try two digit month
+<b class="nc"><i>347</i>&nbsp;        for (String part : parts) {</b>
+<i>348</i>&nbsp;            try {
+<b class="nc"><i>349</i>&nbsp;                int number = Integer.parseInt(part);</b>
+<b class="nc"><i>350</i>&nbsp;                MonthUtil.Month month = MonthUtil.getMonthByNumber(number);</b>
+<b class="nc"><i>351</i>&nbsp;                if (month.isValid()) {</b>
+<b class="nc"><i>352</i>&nbsp;                    return month.bibtexFormat;</b>
+<i>353</i>&nbsp;                }
+<b class="nc"><i>354</i>&nbsp;            } catch (NumberFormatException ignored) {</b>
+<i>355</i>&nbsp;                // Ignored
+<b class="nc"><i>356</i>&nbsp;            }</b>
+<i>357</i>&nbsp;        }
+<b class="nc"><i>358</i>&nbsp;        return null;</b>
+<i>359</i>&nbsp;    }
+<i>360</i>&nbsp;
+<i>361</i>&nbsp;    /**
+<i>362</i>&nbsp;     * Will expand ISI first names.
+<i>363</i>&nbsp;     * &lt;p&gt;
+<i>364</i>&nbsp;     * Fixed bug from:
+<i>365</i>&nbsp;     * http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1542552&amp;group_id=92314&amp;atid=600306
+<i>366</i>&nbsp;     */
+<i>367</i>&nbsp;    public static String isiAuthorConvert(String author) {
+<i>368</i>&nbsp;
+<b class="nc"><i>369</i>&nbsp;        String[] s = author.split(&quot;,&quot;);</b>
+<b class="nc"><i>370</i>&nbsp;        if (s.length != 2) {</b>
+<b class="nc"><i>371</i>&nbsp;            return author;</b>
+<i>372</i>&nbsp;        }
+<i>373</i>&nbsp;
+<b class="nc"><i>374</i>&nbsp;        StringBuilder sb = new StringBuilder();</b>
+<i>375</i>&nbsp;
+<b class="nc"><i>376</i>&nbsp;        String last = s[0].trim();</b>
+<b class="nc"><i>377</i>&nbsp;        sb.append(last).append(&quot;, &quot;);</b>
+<i>378</i>&nbsp;
+<b class="nc"><i>379</i>&nbsp;        String first = s[1].trim();</b>
+<i>380</i>&nbsp;
+<b class="nc"><i>381</i>&nbsp;        String[] firstParts = first.split(&quot;\\s+&quot;);</b>
+<i>382</i>&nbsp;
+<b class="nc"><i>383</i>&nbsp;        for (int i = 0; i &lt; firstParts.length; i++) {</b>
+<i>384</i>&nbsp;
+<b class="nc"><i>385</i>&nbsp;            first = firstParts[i];</b>
+<i>386</i>&nbsp;
+<i>387</i>&nbsp;            // Do we have only uppercase chars?
+<b class="nc"><i>388</i>&nbsp;            if (first.toUpperCase().equals(first)) {</b>
+<b class="nc"><i>389</i>&nbsp;                first = first.replace(&quot;.&quot;, &quot;&quot;);</b>
+<b class="nc"><i>390</i>&nbsp;                for (int j = 0; j &lt; first.length(); j++) {</b>
+<b class="nc"><i>391</i>&nbsp;                    sb.append(first.charAt(j)).append(&#39;.&#39;);</b>
+<i>392</i>&nbsp;
+<b class="nc"><i>393</i>&nbsp;                    if (j &lt; (first.length() - 1)) {</b>
+<b class="nc"><i>394</i>&nbsp;                        sb.append(&#39; &#39;);</b>
+<i>395</i>&nbsp;                    }
+<i>396</i>&nbsp;                }
+<i>397</i>&nbsp;            } else {
+<b class="nc"><i>398</i>&nbsp;                sb.append(first);</b>
+<i>399</i>&nbsp;            }
+<b class="nc"><i>400</i>&nbsp;            if (i &lt; (firstParts.length - 1)) {</b>
+<b class="nc"><i>401</i>&nbsp;                sb.append(&#39; &#39;);</b>
+<i>402</i>&nbsp;            }
+<i>403</i>&nbsp;        }
+<b class="nc"><i>404</i>&nbsp;        return sb.toString();</b>
+<i>405</i>&nbsp;
+<i>406</i>&nbsp;    }
+<i>407</i>&nbsp;
+<i>408</i>&nbsp;    private static String[] isiAuthorsConvert(String[] authors) {
+<i>409</i>&nbsp;
+<b class="nc"><i>410</i>&nbsp;        String[] result = new String[authors.length];</b>
+<b class="nc"><i>411</i>&nbsp;        for (int i = 0; i &lt; result.length; i++) {</b>
+<b class="nc"><i>412</i>&nbsp;            result[i] = IsiImporter.isiAuthorConvert(authors[i]);</b>
+<i>413</i>&nbsp;        }
+<b class="nc"><i>414</i>&nbsp;        return result;</b>
+<i>415</i>&nbsp;    }
+<i>416</i>&nbsp;
+<i>417</i>&nbsp;    public static String isiAuthorsConvert(String authors) {
+<b class="nc"><i>418</i>&nbsp;        String[] s = IsiImporter.isiAuthorsConvert(authors.split(&quot; and |;&quot;));</b>
+<b class="nc"><i>419</i>&nbsp;        return String.join(&quot; and &quot;, s);</b>
+<i>420</i>&nbsp;    }
+<i>421</i>&nbsp;
+<i>422</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

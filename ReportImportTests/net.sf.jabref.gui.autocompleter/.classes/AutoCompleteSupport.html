@@ -1,0 +1,457 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: AutoCompleteSupport</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.autocompleter</a> ]
+</div>
+
+<h1>Coverage Summary for Class: AutoCompleteSupport (net.sf.jabref.gui.autocompleter)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AutoCompleteSupport</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 65)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">AutoCompleteSupport$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 6)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">AutoCompleteSupport$2</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 6)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">AutoCompleteSupport$ComboBoxEditorFocusHandler</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">AutoCompleteSupport$MoveAction</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 7)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 25)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 89)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.autocompleter;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.BorderLayout;
+<i>4</i>&nbsp;import java.awt.Color;
+<i>5</i>&nbsp;import java.awt.event.ActionEvent;
+<i>6</i>&nbsp;import java.awt.event.ActionListener;
+<i>7</i>&nbsp;import java.awt.event.FocusAdapter;
+<i>8</i>&nbsp;import java.awt.event.FocusEvent;
+<i>9</i>&nbsp;import java.awt.event.KeyEvent;
+<i>10</i>&nbsp;import java.util.List;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;import javax.swing.AbstractAction;
+<i>13</i>&nbsp;import javax.swing.BorderFactory;
+<i>14</i>&nbsp;import javax.swing.JComponent;
+<i>15</i>&nbsp;import javax.swing.JPopupMenu;
+<i>16</i>&nbsp;import javax.swing.KeyStroke;
+<i>17</i>&nbsp;import javax.swing.event.DocumentEvent;
+<i>18</i>&nbsp;import javax.swing.event.DocumentListener;
+<i>19</i>&nbsp;import javax.swing.event.PopupMenuEvent;
+<i>20</i>&nbsp;import javax.swing.event.PopupMenuListener;
+<i>21</i>&nbsp;import javax.swing.text.JTextComponent;
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;import net.sf.jabref.logic.autocompleter.AutoCompleter;
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;/**
+<i>26</i>&nbsp; * Endows a textbox with the ability to autocomplete the input. Based on code by Santhosh Kumar
+<i>27</i>&nbsp; * (http://www.jroller.com/santhosh/date/20050620) James Lemieux (Glazed Lists AutoCompleteSupport)
+<i>28</i>&nbsp; *
+<i>29</i>&nbsp; * @param &lt;E&gt; type of items displayed in the autocomplete popup
+<i>30</i>&nbsp; */
+<i>31</i>&nbsp;public class AutoCompleteSupport&lt;E&gt; {
+<i>32</i>&nbsp;
+<i>33</i>&nbsp;    private final AutoCompleteRenderer&lt;E&gt; renderer;
+<i>34</i>&nbsp;    private AutoCompleter&lt;E&gt; autoCompleter;
+<i>35</i>&nbsp;    private final JTextComponent textComp;
+<b class="nc"><i>36</i>&nbsp;    private final JPopupMenu popup = new JPopupMenu();</b>
+<b class="nc"><i>37</i>&nbsp;    private boolean selectsTextOnFocusGain = true;</b>
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;    /**
+<i>41</i>&nbsp;     * Constructs a new AutoCompleteSupport for the textbox using the autocompleter and a renderer.
+<i>42</i>&nbsp;     *
+<i>43</i>&nbsp;     * @param textComp the textbox component for which autocompletion should be enabled
+<i>44</i>&nbsp;     * @param autoCompleter the autocompleter providing the data
+<i>45</i>&nbsp;     * @param renderer the renderer displaying the popup
+<i>46</i>&nbsp;     */
+<i>47</i>&nbsp;    public AutoCompleteSupport(JTextComponent textComp, AutoCompleter&lt;E&gt; autoCompleter,
+<b class="nc"><i>48</i>&nbsp;            AutoCompleteRenderer&lt;E&gt; renderer) {</b>
+<b class="nc"><i>49</i>&nbsp;        this.renderer = renderer;</b>
+<b class="nc"><i>50</i>&nbsp;        this.textComp = textComp;</b>
+<b class="nc"><i>51</i>&nbsp;        this.autoCompleter = autoCompleter;</b>
+<i>52</i>&nbsp;
+<b class="nc"><i>53</i>&nbsp;    }</b>
+<i>54</i>&nbsp;
+<i>55</i>&nbsp;    /**
+<i>56</i>&nbsp;     * Constructs a new AutoCompleteSupport for the textbox. The possible autocomplete items are displayed as a simple
+<i>57</i>&nbsp;     * list. The autocompletion items are provided by an AutoCompleter which has to be specified later using
+<i>58</i>&nbsp;     * {@link setAutoCompleter}.
+<i>59</i>&nbsp;     *
+<i>60</i>&nbsp;     * @param textComp the textbox component for which autocompletion should be enabled
+<i>61</i>&nbsp;     */
+<i>62</i>&nbsp;    public AutoCompleteSupport(JTextComponent textComp) {
+<b class="nc"><i>63</i>&nbsp;        this(textComp, null, new ListAutoCompleteRenderer&lt;&gt;());</b>
+<b class="nc"><i>64</i>&nbsp;    }</b>
+<i>65</i>&nbsp;
+<i>66</i>&nbsp;    /**
+<i>67</i>&nbsp;     * Constructs a new AutoCompleteSupport for the textbox using the autocompleter and a renderer. The possible
+<i>68</i>&nbsp;     * autocomplete items are displayed as a simple list.
+<i>69</i>&nbsp;     *
+<i>70</i>&nbsp;     * @param textComp the textbox component for which autocompletion should be enabled
+<i>71</i>&nbsp;     * @param autoCompleter the autocompleter providing the data
+<i>72</i>&nbsp;     */
+<i>73</i>&nbsp;    public AutoCompleteSupport(JTextComponent textComp, AutoCompleter&lt;E&gt; autoCompleter) {
+<b class="nc"><i>74</i>&nbsp;        this(textComp, autoCompleter, new ListAutoCompleteRenderer&lt;&gt;());</b>
+<b class="nc"><i>75</i>&nbsp;    }</b>
+<i>76</i>&nbsp;
+<i>77</i>&nbsp;    /**
+<i>78</i>&nbsp;     * Inits the autocompletion popup. After this method is called, further input in the specified textbox will be
+<i>79</i>&nbsp;     * autocompleted.
+<i>80</i>&nbsp;     */
+<i>81</i>&nbsp;    public void install() {
+<i>82</i>&nbsp;        // ActionListeners for navigating the suggested autocomplete items with the arrow keys
+<b class="nc"><i>83</i>&nbsp;        final ActionListener upAction = new MoveAction(-1);</b>
+<b class="nc"><i>84</i>&nbsp;        final ActionListener downAction = new MoveAction(1);</b>
+<i>85</i>&nbsp;        // ActionListener hiding the autocomplete popup
+<b class="nc"><i>86</i>&nbsp;        final ActionListener hidePopupAction = e -&gt; popup.setVisible(false);</b>
+<i>87</i>&nbsp;
+<i>88</i>&nbsp;        // ActionListener accepting the currently selected item as the autocompletion
+<b class="nc"><i>89</i>&nbsp;        final ActionListener acceptAction = e -&gt; {</b>
+<b class="nc"><i>90</i>&nbsp;            E itemToInsert = renderer.getSelectedItem();</b>
+<b class="nc"><i>91</i>&nbsp;            if (itemToInsert == null) {</b>
+<b class="nc"><i>92</i>&nbsp;                return;</b>
+<i>93</i>&nbsp;            }
+<i>94</i>&nbsp;
+<b class="nc"><i>95</i>&nbsp;            String toInsert = autoCompleter.getAutoCompleteText(itemToInsert);</b>
+<i>96</i>&nbsp;
+<i>97</i>&nbsp;            // TODO: The following should be refactored. For example, the autocompleter shouldn&#39;t know whether we want to complete one word or multiple.
+<i>98</i>&nbsp;            // In most fields, we are only interested in the currently edited word, so we
+<i>99</i>&nbsp;            // seek from the caret backward to the closest space:
+<b class="nc"><i>100</i>&nbsp;            if (!autoCompleter.isSingleUnitField()) {</b>
+<i>101</i>&nbsp;                // Get position of last word separator (whitespace or comma)
+<b class="nc"><i>102</i>&nbsp;                int priv = textComp.getText().length() - 1;</b>
+<b class="nc"><i>103</i>&nbsp;                while ((priv &gt;= 0) &amp;&amp; !Character.isWhitespace(textComp.getText().charAt(priv))</b>
+<b class="nc"><i>104</i>&nbsp;                        &amp;&amp; (textComp.getText().charAt(priv) != &#39;,&#39;)) {</b>
+<b class="nc"><i>105</i>&nbsp;                    priv--;</b>
+<i>106</i>&nbsp;                }
+<i>107</i>&nbsp;                // priv points to whitespace char or priv is -1
+<i>108</i>&nbsp;                // copy everything from the next char up to the end of &quot;upToCaret&quot;
+<b class="nc"><i>109</i>&nbsp;                textComp.setText(textComp.getText().substring(0, priv + 1) + toInsert);</b>
+<b class="nc"><i>110</i>&nbsp;            } else {</b>
+<i>111</i>&nbsp;                // For fields such as &quot;journal&quot; it is more reasonable to try to complete on the entire
+<i>112</i>&nbsp;                // text field content, so we skip the searching and keep the entire part up to the caret:
+<b class="nc"><i>113</i>&nbsp;                textComp.setText(toInsert);</b>
+<i>114</i>&nbsp;            }
+<b class="nc"><i>115</i>&nbsp;            textComp.setCaretPosition(textComp.getText().length());</b>
+<b class="nc"><i>116</i>&nbsp;            popup.setVisible(false);</b>
+<b class="nc"><i>117</i>&nbsp;        };</b>
+<i>118</i>&nbsp;
+<i>119</i>&nbsp;        // Create popup
+<b class="nc"><i>120</i>&nbsp;        popup.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.LIGHT_GRAY));</b>
+<b class="nc"><i>121</i>&nbsp;        popup.setPopupSize(textComp.getWidth(), 200);</b>
+<b class="nc"><i>122</i>&nbsp;        popup.setLayout(new BorderLayout());</b>
+<b class="nc"><i>123</i>&nbsp;        popup.setFocusable(false);</b>
+<b class="nc"><i>124</i>&nbsp;        popup.setRequestFocusEnabled(false);</b>
+<b class="nc"><i>125</i>&nbsp;        popup.add(renderer.init(acceptAction));</b>
+<i>126</i>&nbsp;
+<i>127</i>&nbsp;        // Listen for changes to the text -&gt; update autocomplete suggestions
+<b class="nc"><i>128</i>&nbsp;        textComp.getDocument().addDocumentListener(new DocumentListener() {</b>
+<i>129</i>&nbsp;
+<i>130</i>&nbsp;            @Override
+<i>131</i>&nbsp;            public void insertUpdate(DocumentEvent e) {
+<b class="nc"><i>132</i>&nbsp;                postProcessTextChange();</b>
+<b class="nc"><i>133</i>&nbsp;            }</b>
+<i>134</i>&nbsp;
+<i>135</i>&nbsp;            @Override
+<i>136</i>&nbsp;            public void removeUpdate(DocumentEvent e) {
+<b class="nc"><i>137</i>&nbsp;                postProcessTextChange();</b>
+<b class="nc"><i>138</i>&nbsp;            }</b>
+<i>139</i>&nbsp;
+<i>140</i>&nbsp;            @Override
+<i>141</i>&nbsp;            public void changedUpdate(DocumentEvent e) {
+<i>142</i>&nbsp;                // Do nothing
+<b class="nc"><i>143</i>&nbsp;            }</b>
+<i>144</i>&nbsp;        });
+<i>145</i>&nbsp;
+<i>146</i>&nbsp;        // Listen for up/down arrow keys -&gt; move currently selected item up or down
+<i>147</i>&nbsp;        // We have to reimplement this function here since we cannot be sure that a simple list will be used to display the items
+<i>148</i>&nbsp;        // So better let the renderer decide what to do.
+<i>149</i>&nbsp;        // (Moreover, the list does not have the focus so probably would not recognize the keystrokes in the first place.)
+<b class="nc"><i>150</i>&nbsp;        textComp.registerKeyboardAction(downAction, KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0),</b>
+<i>151</i>&nbsp;                JComponent.WHEN_FOCUSED);
+<i>152</i>&nbsp;
+<b class="nc"><i>153</i>&nbsp;        textComp.registerKeyboardAction(upAction, KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), JComponent.WHEN_FOCUSED);</b>
+<i>154</i>&nbsp;
+<i>155</i>&nbsp;        // Listen for ESC key -&gt; hide popup
+<b class="nc"><i>156</i>&nbsp;        textComp.registerKeyboardAction(hidePopupAction, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),</b>
+<i>157</i>&nbsp;                JComponent.WHEN_IN_FOCUSED_WINDOW);
+<i>158</i>&nbsp;
+<i>159</i>&nbsp;        // Listen to focus events -&gt; select all the text on gaining the focus
+<b class="nc"><i>160</i>&nbsp;        this.textComp.addFocusListener(new ComboBoxEditorFocusHandler());</b>
+<i>161</i>&nbsp;
+<i>162</i>&nbsp;        // Listen for ENTER key if popup is visible -&gt; accept current autocomplete suggestion
+<b class="nc"><i>163</i>&nbsp;        popup.addPopupMenuListener(new PopupMenuListener() {</b>
+<i>164</i>&nbsp;
+<i>165</i>&nbsp;            @Override
+<i>166</i>&nbsp;            public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+<b class="nc"><i>167</i>&nbsp;                textComp.registerKeyboardAction(acceptAction, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),</b>
+<i>168</i>&nbsp;                        JComponent.WHEN_FOCUSED);
+<b class="nc"><i>169</i>&nbsp;            }</b>
+<i>170</i>&nbsp;
+<i>171</i>&nbsp;            @Override
+<i>172</i>&nbsp;            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+<b class="nc"><i>173</i>&nbsp;                textComp.unregisterKeyboardAction(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));</b>
+<b class="nc"><i>174</i>&nbsp;            }</b>
+<i>175</i>&nbsp;
+<i>176</i>&nbsp;            @Override
+<i>177</i>&nbsp;            public void popupMenuCanceled(PopupMenuEvent e) {
+<i>178</i>&nbsp;                // Do nothing
+<b class="nc"><i>179</i>&nbsp;            }</b>
+<i>180</i>&nbsp;        });
+<i>181</i>&nbsp;
+<b class="nc"><i>182</i>&nbsp;    }</b>
+<i>183</i>&nbsp;
+<i>184</i>&nbsp;    /**
+<i>185</i>&nbsp;     * Returns whether the text in the textbox is selected when the textbox gains focus. Defaults to true.
+<i>186</i>&nbsp;     *
+<i>187</i>&nbsp;     * @return
+<i>188</i>&nbsp;     */
+<i>189</i>&nbsp;    public boolean isSelectsTextOnFocusGain() {
+<b class="nc"><i>190</i>&nbsp;        return selectsTextOnFocusGain;</b>
+<i>191</i>&nbsp;    }
+<i>192</i>&nbsp;
+<i>193</i>&nbsp;    /**
+<i>194</i>&nbsp;     * Sets whether the text in the textbox is selected when the textbox gains focus. Default is true.
+<i>195</i>&nbsp;     *
+<i>196</i>&nbsp;     * @param selectsTextOnFocusGain new value
+<i>197</i>&nbsp;     */
+<i>198</i>&nbsp;    public void setSelectsTextOnFocusGain(boolean selectsTextOnFocusGain) {
+<b class="nc"><i>199</i>&nbsp;        this.selectsTextOnFocusGain = selectsTextOnFocusGain;</b>
+<b class="nc"><i>200</i>&nbsp;    }</b>
+<i>201</i>&nbsp;
+<i>202</i>&nbsp;    /**
+<i>203</i>&nbsp;     * The text changed so update autocomplete suggestions accordingly.
+<i>204</i>&nbsp;     */
+<i>205</i>&nbsp;    private void postProcessTextChange() {
+<b class="nc"><i>206</i>&nbsp;        if (autoCompleter == null) {</b>
+<b class="nc"><i>207</i>&nbsp;            popup.setVisible(false);</b>
+<b class="nc"><i>208</i>&nbsp;            return;</b>
+<i>209</i>&nbsp;        }
+<i>210</i>&nbsp;
+<b class="nc"><i>211</i>&nbsp;        String text = textComp.getText();</b>
+<b class="nc"><i>212</i>&nbsp;        List&lt;E&gt; candidates = autoCompleter.complete(text);</b>
+<b class="nc"><i>213</i>&nbsp;        renderer.update(candidates);</b>
+<b class="nc"><i>214</i>&nbsp;        if (textComp.isEnabled() &amp;&amp; (!candidates.isEmpty())) {</b>
+<b class="nc"><i>215</i>&nbsp;            renderer.selectItem(0);</b>
+<i>216</i>&nbsp;
+<b class="nc"><i>217</i>&nbsp;            popup.setPopupSize(textComp.getWidth(), 200);</b>
+<b class="nc"><i>218</i>&nbsp;            popup.show(textComp, 0, textComp.getHeight());</b>
+<i>219</i>&nbsp;        } else {
+<b class="nc"><i>220</i>&nbsp;            popup.setVisible(false);</b>
+<i>221</i>&nbsp;        }
+<i>222</i>&nbsp;
+<b class="nc"><i>223</i>&nbsp;        if (!textComp.hasFocus()) {</b>
+<b class="nc"><i>224</i>&nbsp;            textComp.requestFocusInWindow();</b>
+<i>225</i>&nbsp;        }
+<b class="nc"><i>226</i>&nbsp;    }</b>
+<i>227</i>&nbsp;
+<i>228</i>&nbsp;
+<i>229</i>&nbsp;    /**
+<i>230</i>&nbsp;     * The action invoked by hitting the up or down arrow key. If the popup is currently shown, that the action is
+<i>231</i>&nbsp;     * relayed to it. Otherwise the arrow keys trigger the popup.
+<i>232</i>&nbsp;     */
+<i>233</i>&nbsp;    private class MoveAction extends AbstractAction {
+<i>234</i>&nbsp;
+<i>235</i>&nbsp;        private final int offset;
+<i>236</i>&nbsp;
+<i>237</i>&nbsp;
+<b class="nc"><i>238</i>&nbsp;        public MoveAction(int offset) {</b>
+<b class="nc"><i>239</i>&nbsp;            this.offset = offset;</b>
+<b class="nc"><i>240</i>&nbsp;        }</b>
+<i>241</i>&nbsp;
+<i>242</i>&nbsp;        @Override
+<i>243</i>&nbsp;        public void actionPerformed(ActionEvent e) {
+<i>244</i>&nbsp;
+<b class="nc"><i>245</i>&nbsp;            if (popup.isVisible()) {</b>
+<b class="nc"><i>246</i>&nbsp;                renderer.selectItemRelative(offset);</b>
+<i>247</i>&nbsp;            } else {
+<b class="nc"><i>248</i>&nbsp;                popup.show(textComp, 0, textComp.getHeight());</b>
+<i>249</i>&nbsp;            }
+<i>250</i>&nbsp;
+<b class="nc"><i>251</i>&nbsp;        }</b>
+<i>252</i>&nbsp;    }
+<i>253</i>&nbsp;
+<i>254</i>&nbsp;    /**
+<i>255</i>&nbsp;     * Selects all text when the textbox gains focus. The behavior is controlled by the value returned from
+<i>256</i>&nbsp;     * {@link AutoCompleteSupport#isSelectsTextOnFocusGain()}.
+<i>257</i>&nbsp;     */
+<b class="nc"><i>258</i>&nbsp;    private class ComboBoxEditorFocusHandler extends FocusAdapter {</b>
+<i>259</i>&nbsp;
+<i>260</i>&nbsp;        @Override
+<i>261</i>&nbsp;        public void focusGained(FocusEvent e) {
+<b class="nc"><i>262</i>&nbsp;            if (isSelectsTextOnFocusGain() &amp;&amp; !e.isTemporary()) {</b>
+<b class="nc"><i>263</i>&nbsp;                textComp.selectAll();</b>
+<i>264</i>&nbsp;            }
+<b class="nc"><i>265</i>&nbsp;        }</b>
+<i>266</i>&nbsp;
+<i>267</i>&nbsp;        @Override
+<i>268</i>&nbsp;        public void focusLost(FocusEvent e) {
+<i>269</i>&nbsp;            // Do nothing
+<b class="nc"><i>270</i>&nbsp;        }</b>
+<i>271</i>&nbsp;    }
+<i>272</i>&nbsp;
+<i>273</i>&nbsp;
+<i>274</i>&nbsp;    /**
+<i>275</i>&nbsp;     * Sets the autocompleter used to present autocomplete suggestions.
+<i>276</i>&nbsp;     *
+<i>277</i>&nbsp;     * @param autoCompleter the autocompleter providing the data
+<i>278</i>&nbsp;     */
+<i>279</i>&nbsp;    public void setAutoCompleter(AutoCompleter&lt;E&gt; autoCompleter) {
+<b class="nc"><i>280</i>&nbsp;        this.autoCompleter = autoCompleter;</b>
+<b class="nc"><i>281</i>&nbsp;    }</b>
+<i>282</i>&nbsp;
+<i>283</i>&nbsp;    public void setVisible(boolean visible){
+<b class="nc"><i>284</i>&nbsp;        popup.setVisible(visible);</b>
+<b class="nc"><i>285</i>&nbsp;    }</b>
+<i>286</i>&nbsp;
+<i>287</i>&nbsp;    public boolean isVisible() {
+<b class="nc"><i>288</i>&nbsp;        return popup.isVisible();</b>
+<i>289</i>&nbsp;    }
+<i>290</i>&nbsp;
+<i>291</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,153 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ExportFileFilter</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.exporter</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ExportFileFilter (net.sf.jabref.gui.exporter)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ExportFileFilter</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 18)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.exporter;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.File;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;import javax.swing.filechooser.FileFilter;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import net.sf.jabref.logic.exporter.IExportFormat;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;/**
+<i>10</i>&nbsp; * File filter that lets the user choose export format while choosing file to
+<i>11</i>&nbsp; * export to. Contains a reference to the ExportFormat in question.
+<i>12</i>&nbsp; */
+<i>13</i>&nbsp;public class ExportFileFilter extends FileFilter implements Comparable&lt;ExportFileFilter&gt; {
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;    private final IExportFormat format;
+<i>16</i>&nbsp;    private final String extension;
+<i>17</i>&nbsp;    private final String name;
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;
+<b class="nc"><i>20</i>&nbsp;    public ExportFileFilter(IExportFormat format) {</b>
+<b class="nc"><i>21</i>&nbsp;        this.format = format;</b>
+<b class="nc"><i>22</i>&nbsp;        this.extension = format.getExtension();</b>
+<b class="nc"><i>23</i>&nbsp;        this.name = format.getDisplayName() + &quot; (*&quot; + extension</b>
+<i>24</i>&nbsp;                + &#39;)&#39;;
+<b class="nc"><i>25</i>&nbsp;    }</b>
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    public IExportFormat getExportFormat() {
+<b class="nc"><i>28</i>&nbsp;        return format;</b>
+<i>29</i>&nbsp;    }
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;    public String getExtension() {
+<b class="nc"><i>32</i>&nbsp;        return extension;</b>
+<i>33</i>&nbsp;    }
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    @Override
+<i>36</i>&nbsp;    public boolean accept(File file) {
+<b class="nc"><i>37</i>&nbsp;        if (file.isDirectory()) {</b>
+<b class="nc"><i>38</i>&nbsp;            return true;</b>
+<i>39</i>&nbsp;        } else {
+<b class="nc"><i>40</i>&nbsp;            return file.getPath().toLowerCase().endsWith(extension);</b>
+<i>41</i>&nbsp;        }
+<i>42</i>&nbsp;    }
+<i>43</i>&nbsp;
+<i>44</i>&nbsp;    @Override
+<i>45</i>&nbsp;    public String getDescription() {
+<b class="nc"><i>46</i>&nbsp;        return name;</b>
+<i>47</i>&nbsp;    }
+<i>48</i>&nbsp;
+<i>49</i>&nbsp;    @Override
+<i>50</i>&nbsp;    public int compareTo(ExportFileFilter o) {
+<b class="nc"><i>51</i>&nbsp;        return name.compareTo(o.name);</b>
+<i>52</i>&nbsp;    }
+<i>53</i>&nbsp;
+<i>54</i>&nbsp;    @Override
+<i>55</i>&nbsp;    public boolean equals(Object o) {
+<b class="nc"><i>56</i>&nbsp;        if (this == o) {</b>
+<b class="nc"><i>57</i>&nbsp;            return true;</b>
+<i>58</i>&nbsp;        }
+<i>59</i>&nbsp;
+<b class="nc"><i>60</i>&nbsp;        if (o instanceof ExportFileFilter) {</b>
+<b class="nc"><i>61</i>&nbsp;            return name.equals(((ExportFileFilter) o).name);</b>
+<i>62</i>&nbsp;        }
+<b class="nc"><i>63</i>&nbsp;        return false;</b>
+<i>64</i>&nbsp;    }
+<i>65</i>&nbsp;
+<i>66</i>&nbsp;    @Override
+<i>67</i>&nbsp;    public int hashCode() {
+<b class="nc"><i>68</i>&nbsp;        return name.hashCode();</b>
+<i>69</i>&nbsp;    }
+<i>70</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

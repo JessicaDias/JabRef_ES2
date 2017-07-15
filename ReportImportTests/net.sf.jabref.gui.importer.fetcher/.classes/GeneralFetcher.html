@@ -1,0 +1,368 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: GeneralFetcher</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.importer.fetcher</a> ]
+</div>
+
+<h1>Coverage Summary for Class: GeneralFetcher (net.sf.jabref.gui.importer.fetcher)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GeneralFetcher</td>
+<td class="coverageStat">
+  <span class="percent">
+    14.3%
+  </span>
+  <span class="absValue">
+    (2/ 14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    47.9%
+  </span>
+  <span class="absValue">
+    (67/ 140)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">GeneralFetcher$1</td>
+  </tr>
+  <tr>
+    <td class="name">GeneralFetcher$EntryFetcherComparator</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/ 2)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    25%
+  </span>
+  <span class="absValue">
+    (4/ 16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    48.6%
+  </span>
+  <span class="absValue">
+    (69/ 142)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.importer.fetcher;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.BorderLayout;
+<i>4</i>&nbsp;import java.awt.CardLayout;
+<i>5</i>&nbsp;import java.awt.Dimension;
+<i>6</i>&nbsp;import java.awt.GridBagConstraints;
+<i>7</i>&nbsp;import java.awt.GridBagLayout;
+<i>8</i>&nbsp;import java.awt.Insets;
+<i>9</i>&nbsp;import java.awt.event.ActionEvent;
+<i>10</i>&nbsp;import java.awt.event.ActionListener;
+<i>11</i>&nbsp;import java.util.Arrays;
+<i>12</i>&nbsp;import java.util.Comparator;
+<i>13</i>&nbsp;import java.util.List;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;import javax.swing.BorderFactory;
+<i>16</i>&nbsp;import javax.swing.JButton;
+<i>17</i>&nbsp;import javax.swing.JComboBox;
+<i>18</i>&nbsp;import javax.swing.JPanel;
+<i>19</i>&nbsp;import javax.swing.JTextField;
+<i>20</i>&nbsp;import javax.swing.SwingUtilities;
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;import net.sf.jabref.Globals;
+<i>23</i>&nbsp;import net.sf.jabref.JabRefExecutorService;
+<i>24</i>&nbsp;import net.sf.jabref.gui.IconTheme;
+<i>25</i>&nbsp;import net.sf.jabref.gui.JabRefFrame;
+<i>26</i>&nbsp;import net.sf.jabref.gui.SidePaneComponent;
+<i>27</i>&nbsp;import net.sf.jabref.gui.SidePaneManager;
+<i>28</i>&nbsp;import net.sf.jabref.gui.help.HelpAction;
+<i>29</i>&nbsp;import net.sf.jabref.gui.importer.FetcherPreviewDialog;
+<i>30</i>&nbsp;import net.sf.jabref.gui.importer.ImportInspectionDialog;
+<i>31</i>&nbsp;import net.sf.jabref.gui.keyboard.KeyBinding;
+<i>32</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>33</i>&nbsp;import net.sf.jabref.logic.util.OS;
+<i>34</i>&nbsp;import net.sf.jabref.preferences.JabRefPreferences;
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;public class GeneralFetcher extends SidePaneComponent implements ActionListener {
+<i>38</i>&nbsp;
+<b class="fc"><i>39</i>&nbsp;    private final JTextField tf = new JTextField();</b>
+<i>40</i>&nbsp;
+<b class="fc"><i>41</i>&nbsp;    private final CardLayout optionsCards = new CardLayout();</b>
+<b class="fc"><i>42</i>&nbsp;    private final JPanel optionsPanel = new JPanel(optionsCards);</b>
+<b class="fc"><i>43</i>&nbsp;    private final JPanel optPanel = new JPanel(new BorderLayout());</b>
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;    private final ToggleAction action;
+<i>46</i>&nbsp;    private final JabRefFrame frame;
+<i>47</i>&nbsp;    private EntryFetcher activeFetcher;
+<i>48</i>&nbsp;
+<i>49</i>&nbsp;
+<i>50</i>&nbsp;    public GeneralFetcher(JabRefFrame frame, SidePaneManager sidePaneManager) {
+<b class="fc"><i>51</i>&nbsp;        super(sidePaneManager, IconTheme.JabRefIcon.WWW.getSmallIcon(), Localization.lang(&quot;Web search&quot;));</b>
+<b class="fc"><i>52</i>&nbsp;        this.frame = frame;</b>
+<b class="fc"><i>53</i>&nbsp;        List&lt;EntryFetcher&gt; fetchers = new EntryFetchers(Globals.journalAbbreviationLoader).getEntryFetchers();</b>
+<b class="fc"><i>54</i>&nbsp;        EntryFetcher[] fetcherArray = fetchers.toArray(new EntryFetcher[fetchers.size()]);</b>
+<b class="fc"><i>55</i>&nbsp;        Arrays.sort(fetcherArray, new EntryFetcherComparator());</b>
+<i>56</i>&nbsp;        //JLabel[] choices = new JLabel[fetchers.size()];
+<b class="fc"><i>57</i>&nbsp;        String[] choices = new String[fetcherArray.length];</b>
+<b class="fc"><i>58</i>&nbsp;        for (int i = 0; i &lt; fetcherArray.length; i++) {</b>
+<b class="fc"><i>59</i>&nbsp;            choices[i] = fetcherArray[i].getTitle();</b>
+<i>60</i>&nbsp;        }
+<b class="fc"><i>61</i>&nbsp;        JComboBox&lt;String&gt; fetcherChoice = new JComboBox&lt;&gt;(choices);</b>
+<b class="fc"><i>62</i>&nbsp;        int defaultFetcher = Globals.prefs.getInt(JabRefPreferences.SELECTED_FETCHER_INDEX);</b>
+<b class="fc"><i>63</i>&nbsp;        if (defaultFetcher &gt;= fetcherArray.length) {</b>
+<b class="nc"><i>64</i>&nbsp;            defaultFetcher = 0;</b>
+<i>65</i>&nbsp;        }
+<b class="fc"><i>66</i>&nbsp;        this.activeFetcher = fetcherArray[defaultFetcher];</b>
+<b class="fc"><i>67</i>&nbsp;        fetcherChoice.setSelectedIndex(defaultFetcher);</b>
+<b class="fc"><i>68</i>&nbsp;        if (this.activeFetcher.getOptionsPanel() != null) {</b>
+<b class="fc"><i>69</i>&nbsp;            optPanel.add(this.activeFetcher.getOptionsPanel(), BorderLayout.CENTER);</b>
+<i>70</i>&nbsp;        }
+<b class="fc"><i>71</i>&nbsp;        HelpAction help = new HelpAction(activeFetcher.getHelpPage());</b>
+<b class="fc"><i>72</i>&nbsp;        JButton helpBut = help.getHelpButton();</b>
+<b class="fc"><i>73</i>&nbsp;        helpBut.setEnabled(activeFetcher.getHelpPage() != null);</b>
+<i>74</i>&nbsp;
+<b class="fc"><i>75</i>&nbsp;        fetcherChoice.addActionListener(actionEvent -&gt; {</b>
+<b class="nc"><i>76</i>&nbsp;            activeFetcher = fetcherArray[fetcherChoice.getSelectedIndex()];</b>
+<b class="nc"><i>77</i>&nbsp;            Globals.prefs.putInt(JabRefPreferences.SELECTED_FETCHER_INDEX, fetcherChoice.getSelectedIndex());</b>
+<b class="nc"><i>78</i>&nbsp;            if (activeFetcher.getHelpPage() == null) {</b>
+<b class="nc"><i>79</i>&nbsp;                helpBut.setEnabled(false);</b>
+<i>80</i>&nbsp;            } else {
+<b class="nc"><i>81</i>&nbsp;                help.setHelpFile(activeFetcher.getHelpPage());</b>
+<b class="nc"><i>82</i>&nbsp;                helpBut.setEnabled(true);</b>
+<i>83</i>&nbsp;            }
+<b class="nc"><i>84</i>&nbsp;            optionsCards.show(optionsPanel, String.valueOf(fetcherChoice.getSelectedIndex()));</b>
+<b class="nc"><i>85</i>&nbsp;            optPanel.removeAll();</b>
+<b class="nc"><i>86</i>&nbsp;            if (activeFetcher.getOptionsPanel() != null) {</b>
+<b class="nc"><i>87</i>&nbsp;                optPanel.add(activeFetcher.getOptionsPanel(), BorderLayout.CENTER);</b>
+<i>88</i>&nbsp;            }
+<b class="nc"><i>89</i>&nbsp;            revalidate();</b>
+<b class="nc"><i>90</i>&nbsp;        });</b>
+<i>91</i>&nbsp;
+<b class="fc"><i>92</i>&nbsp;        action = new ToggleAction(Localization.lang(&quot;Web search&quot;),</b>
+<b class="fc"><i>93</i>&nbsp;                Localization.lang(&quot;Toggle web search interface&quot;),</b>
+<b class="fc"><i>94</i>&nbsp;                Globals.getKeyPrefs().getKey(KeyBinding.WEB_SEARCH),</b>
+<i>95</i>&nbsp;                IconTheme.JabRefIcon.WWW);
+<i>96</i>&nbsp;
+<b class="fc"><i>97</i>&nbsp;        helpBut.setMargin(new Insets(0, 0, 0, 0));</b>
+<b class="fc"><i>98</i>&nbsp;        tf.setPreferredSize(new Dimension(1, tf.getPreferredSize().height));</b>
+<b class="fc"><i>99</i>&nbsp;        if (OS.OS_X) {</b>
+<b class="nc"><i>100</i>&nbsp;            tf.putClientProperty(&quot;JTextField.variant&quot;, &quot;search&quot;);</b>
+<i>101</i>&nbsp;        }
+<i>102</i>&nbsp;
+<b class="fc"><i>103</i>&nbsp;        tf.setName(&quot;tf&quot;);</b>
+<i>104</i>&nbsp;        // add action to reset-button. resets tf and requests focus
+<b class="fc"><i>105</i>&nbsp;        JButton reset = new JButton(Localization.lang(&quot;Reset&quot;));</b>
+<b class="fc"><i>106</i>&nbsp;        reset.addActionListener(event -&gt; {</b>
+<b class="nc"><i>107</i>&nbsp;            tf.setText(&quot;&quot;);</b>
+<b class="nc"><i>108</i>&nbsp;            tf.requestFocus();</b>
+<b class="nc"><i>109</i>&nbsp;        });</b>
+<i>110</i>&nbsp;
+<b class="fc"><i>111</i>&nbsp;        JPanel main = new JPanel();</b>
+<b class="fc"><i>112</i>&nbsp;        GridBagLayout gbl = new GridBagLayout();</b>
+<b class="fc"><i>113</i>&nbsp;        main.setLayout(gbl);</b>
+<b class="fc"><i>114</i>&nbsp;        GridBagConstraints con = new GridBagConstraints();</b>
+<b class="fc"><i>115</i>&nbsp;        con.fill = GridBagConstraints.BOTH;</b>
+<b class="fc"><i>116</i>&nbsp;        con.insets = new Insets(0, 0, 2, 0);</b>
+<b class="fc"><i>117</i>&nbsp;        con.gridwidth = GridBagConstraints.REMAINDER;</b>
+<b class="fc"><i>118</i>&nbsp;        con.weightx = 1;</b>
+<b class="fc"><i>119</i>&nbsp;        con.weighty = 1;</b>
+<b class="fc"><i>120</i>&nbsp;        con.insets = new Insets(1, 0, 1, 0);</b>
+<b class="fc"><i>121</i>&nbsp;        con.fill = GridBagConstraints.BOTH;</b>
+<b class="fc"><i>122</i>&nbsp;        gbl.setConstraints(fetcherChoice, con);</b>
+<b class="fc"><i>123</i>&nbsp;        main.add(fetcherChoice);</b>
+<b class="fc"><i>124</i>&nbsp;        con.insets = new Insets(0, 0, 0, 0);</b>
+<b class="fc"><i>125</i>&nbsp;        gbl.setConstraints(tf, con);</b>
+<b class="fc"><i>126</i>&nbsp;        main.add(tf);</b>
+<i>127</i>&nbsp;
+<i>128</i>&nbsp;        // Go Button
+<b class="fc"><i>129</i>&nbsp;        con.weighty = 0;</b>
+<b class="fc"><i>130</i>&nbsp;        con.gridwidth = 1;</b>
+<b class="fc"><i>131</i>&nbsp;        JButton go = new JButton(Localization.lang(&quot;Fetch&quot;));</b>
+<b class="fc"><i>132</i>&nbsp;        gbl.setConstraints(go, con);</b>
+<b class="fc"><i>133</i>&nbsp;        main.add(go);</b>
+<i>134</i>&nbsp;
+<i>135</i>&nbsp;        // Reset Button
+<b class="fc"><i>136</i>&nbsp;        reset.setName(&quot;reset&quot;);</b>
+<b class="fc"><i>137</i>&nbsp;        gbl.setConstraints(reset, con);</b>
+<b class="fc"><i>138</i>&nbsp;        main.add(reset);</b>
+<i>139</i>&nbsp;
+<i>140</i>&nbsp;        // Help Button
+<b class="fc"><i>141</i>&nbsp;        con.gridwidth = GridBagConstraints.REMAINDER;</b>
+<b class="fc"><i>142</i>&nbsp;        gbl.setConstraints(helpBut, con);</b>
+<b class="fc"><i>143</i>&nbsp;        main.add(helpBut);</b>
+<i>144</i>&nbsp;
+<b class="fc"><i>145</i>&nbsp;        gbl.setConstraints(optPanel, con);</b>
+<b class="fc"><i>146</i>&nbsp;        main.add(optPanel);</b>
+<i>147</i>&nbsp;
+<b class="fc"><i>148</i>&nbsp;        main.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));</b>
+<b class="fc"><i>149</i>&nbsp;        add(main, BorderLayout.CENTER);</b>
+<b class="fc"><i>150</i>&nbsp;        go.addActionListener(this);</b>
+<b class="fc"><i>151</i>&nbsp;        tf.addActionListener(this);</b>
+<b class="fc"><i>152</i>&nbsp;    }</b>
+<i>153</i>&nbsp;
+<i>154</i>&nbsp;    private JTextField getTextField() {
+<b class="nc"><i>155</i>&nbsp;        return tf;</b>
+<i>156</i>&nbsp;    }
+<i>157</i>&nbsp;
+<i>158</i>&nbsp;    @Override
+<i>159</i>&nbsp;    public ToggleAction getToggleAction() {
+<b class="fc"><i>160</i>&nbsp;        return action;</b>
+<i>161</i>&nbsp;    }
+<i>162</i>&nbsp;
+<i>163</i>&nbsp;    @Override
+<i>164</i>&nbsp;    public void actionPerformed(ActionEvent e) {
+<b class="nc"><i>165</i>&nbsp;        if (tf.getText().trim().isEmpty()) {</b>
+<b class="nc"><i>166</i>&nbsp;            frame.output(Localization.lang(&quot;Please enter a search string&quot;));</b>
+<b class="nc"><i>167</i>&nbsp;            return;</b>
+<i>168</i>&nbsp;        }
+<i>169</i>&nbsp;
+<b class="nc"><i>170</i>&nbsp;        if (frame.getCurrentBasePanel() == null) {</b>
+<b class="nc"><i>171</i>&nbsp;            frame.output(Localization.lang(&quot;Please open or start a new database before searching&quot;));</b>
+<b class="nc"><i>172</i>&nbsp;            return;</b>
+<i>173</i>&nbsp;        }
+<i>174</i>&nbsp;
+<i>175</i>&nbsp;        // We have two categories of fetchers. One category can show previews first and ask the
+<i>176</i>&nbsp;        // user which ones to download:
+<b class="nc"><i>177</i>&nbsp;        if (activeFetcher instanceof PreviewEntryFetcher) {</b>
+<b class="nc"><i>178</i>&nbsp;            frame.output(Localization.lang(&quot;Searching...&quot;));</b>
+<b class="nc"><i>179</i>&nbsp;            frame.setProgressBarIndeterminate(true);</b>
+<b class="nc"><i>180</i>&nbsp;            frame.setProgressBarVisible(true);</b>
+<b class="nc"><i>181</i>&nbsp;            final PreviewEntryFetcher pFetcher = (PreviewEntryFetcher) activeFetcher;</b>
+<b class="nc"><i>182</i>&nbsp;            final FetcherPreviewDialog dialog = new FetcherPreviewDialog(frame,</b>
+<b class="nc"><i>183</i>&nbsp;                    pFetcher.getWarningLimit(), pFetcher.getPreferredPreviewHeight());</b>
+<b class="nc"><i>184</i>&nbsp;            JabRefExecutorService.INSTANCE.execute(() -&gt; {</b>
+<b class="nc"><i>185</i>&nbsp;                final boolean result = pFetcher.processQueryGetPreview(tf.getText().trim(), dialog, dialog);</b>
+<b class="nc"><i>186</i>&nbsp;                SwingUtilities.invokeLater(() -&gt; {</b>
+<b class="nc"><i>187</i>&nbsp;                    frame.setProgressBarVisible(false);</b>
+<b class="nc"><i>188</i>&nbsp;                    frame.output(&quot;&quot;);</b>
+<b class="nc"><i>189</i>&nbsp;                    if (result) {</b>
+<b class="nc"><i>190</i>&nbsp;                        dialog.setLocationRelativeTo(frame);</b>
+<b class="nc"><i>191</i>&nbsp;                        dialog.setVisible(true);</b>
+<b class="nc"><i>192</i>&nbsp;                        if (dialog.isOkPressed()) {</b>
+<b class="nc"><i>193</i>&nbsp;                            final ImportInspectionDialog d2 = new ImportInspectionDialog(frame,</b>
+<b class="nc"><i>194</i>&nbsp;                                    frame.getCurrentBasePanel(), activeFetcher.getTitle(), false);</b>
+<b class="nc"><i>195</i>&nbsp;                            d2.addCallBack(activeFetcher);</b>
+<b class="nc"><i>196</i>&nbsp;                            d2.setLocationRelativeTo(frame);</b>
+<b class="nc"><i>197</i>&nbsp;                            d2.setVisible(true);</b>
+<b class="nc"><i>198</i>&nbsp;                            JabRefExecutorService.INSTANCE.execute(() -&gt; {</b>
+<b class="nc"><i>199</i>&nbsp;                                pFetcher.getEntries(dialog.getSelection(), d2);</b>
+<b class="nc"><i>200</i>&nbsp;                                d2.entryListComplete();</b>
+<b class="nc"><i>201</i>&nbsp;                            });</b>
+<i>202</i>&nbsp;                        }
+<i>203</i>&nbsp;                    }
+<b class="nc"><i>204</i>&nbsp;                });</b>
+<b class="nc"><i>205</i>&nbsp;            });</b>
+<b class="nc"><i>206</i>&nbsp;        }</b>
+<i>207</i>&nbsp;
+<i>208</i>&nbsp;        // The other category downloads the entries first, then asks the user which ones to keep:
+<i>209</i>&nbsp;        else {
+<b class="nc"><i>210</i>&nbsp;            final ImportInspectionDialog dialog = new ImportInspectionDialog(frame, frame.getCurrentBasePanel(),</b>
+<b class="nc"><i>211</i>&nbsp;                    activeFetcher.getTitle(), false);</b>
+<b class="nc"><i>212</i>&nbsp;            dialog.addCallBack(activeFetcher);</b>
+<b class="nc"><i>213</i>&nbsp;            dialog.setLocationRelativeTo(frame);</b>
+<b class="nc"><i>214</i>&nbsp;            dialog.setVisible(true);</b>
+<i>215</i>&nbsp;
+<b class="nc"><i>216</i>&nbsp;            JabRefExecutorService.INSTANCE.execute(() -&gt; {</b>
+<b class="nc"><i>217</i>&nbsp;                if (activeFetcher.processQuery(tf.getText().trim(), dialog, dialog)) {</b>
+<b class="nc"><i>218</i>&nbsp;                    dialog.entryListComplete();</b>
+<i>219</i>&nbsp;                } else {
+<b class="nc"><i>220</i>&nbsp;                    dialog.dispose();</b>
+<i>221</i>&nbsp;                }
+<b class="nc"><i>222</i>&nbsp;            });</b>
+<i>223</i>&nbsp;        }
+<b class="nc"><i>224</i>&nbsp;    }</b>
+<i>225</i>&nbsp;
+<i>226</i>&nbsp;    @Override
+<i>227</i>&nbsp;    public void grabFocus() {
+<b class="nc"><i>228</i>&nbsp;        getTextField().grabFocus();</b>
+<b class="nc"><i>229</i>&nbsp;    }</b>
+<i>230</i>&nbsp;
+<i>231</i>&nbsp;    @Override
+<i>232</i>&nbsp;    public void componentClosing() {
+<b class="nc"><i>233</i>&nbsp;        super.componentClosing();</b>
+<b class="nc"><i>234</i>&nbsp;        getToggleAction().setSelected(false);</b>
+<b class="nc"><i>235</i>&nbsp;        Globals.prefs.putBoolean(JabRefPreferences.WEB_SEARCH_VISIBLE, Boolean.FALSE);</b>
+<b class="nc"><i>236</i>&nbsp;    }</b>
+<i>237</i>&nbsp;
+<i>238</i>&nbsp;    @Override
+<i>239</i>&nbsp;    public void componentOpening() {
+<b class="nc"><i>240</i>&nbsp;        super.componentOpening();</b>
+<b class="nc"><i>241</i>&nbsp;        Globals.prefs.putBoolean(JabRefPreferences.WEB_SEARCH_VISIBLE, Boolean.TRUE);</b>
+<b class="nc"><i>242</i>&nbsp;    }</b>
+<i>243</i>&nbsp;
+<i>244</i>&nbsp;    @Override
+<i>245</i>&nbsp;    public int getRescalingWeight() {
+<b class="nc"><i>246</i>&nbsp;        return 0;</b>
+<i>247</i>&nbsp;    }
+<i>248</i>&nbsp;
+<b class="fc"><i>249</i>&nbsp;    private static class EntryFetcherComparator implements Comparator&lt;EntryFetcher&gt; {</b>
+<i>250</i>&nbsp;
+<i>251</i>&nbsp;        @Override
+<i>252</i>&nbsp;        public int compare(EntryFetcher entryFetcher, EntryFetcher entryFetcher1) {
+<b class="fc"><i>253</i>&nbsp;            return entryFetcher.getTitle().compareTo(entryFetcher1.getTitle());</b>
+<i>254</i>&nbsp;        }
+<i>255</i>&nbsp;    }
+<i>256</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

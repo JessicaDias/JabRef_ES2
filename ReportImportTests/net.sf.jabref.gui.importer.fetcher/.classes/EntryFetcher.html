@@ -1,0 +1,119 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: EntryFetcher</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.importer.fetcher</a> ]
+</div>
+
+<h1>Coverage Summary for Class: EntryFetcher (net.sf.jabref.gui.importer.fetcher)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">EntryFetcher</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.importer.fetcher;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import javax.swing.JPanel;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;import net.sf.jabref.gui.importer.ImportInspectionDialog;
+<i>6</i>&nbsp;import net.sf.jabref.logic.help.HelpFile;
+<i>7</i>&nbsp;import net.sf.jabref.logic.importer.ImportInspector;
+<i>8</i>&nbsp;import net.sf.jabref.logic.importer.OutputPrinter;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;/**
+<i>11</i>&nbsp; * @Deprecated
+<i>12</i>&nbsp; * Use {@link SearchBasedEntryFetcher} instead &lt;br&gt;
+<i>13</i>&nbsp; * Implement this interface to add another activeFetcher (something that grabs records
+<i>14</i>&nbsp; * from the Web for JabRef). Have a look at the existing implemenations
+<i>15</i>&nbsp; * OAI2Fetcher, IEEEXploreFetcher, JStorFetcher and
+<i>16</i>&nbsp; * CiteSeerEntryFetcher.
+<i>17</i>&nbsp; *
+<i>18</i>&nbsp; * Note: You also need to implement the method stopFetching from
+<i>19</i>&nbsp; * ImportInspectionDialog.Callback
+<i>20</i>&nbsp; *
+<i>21</i>&nbsp; * A Fetcher should not execute any GUI Operations, because it might be run in
+<i>22</i>&nbsp; * headless mode, but rather use the OutputPrinter for talking to the user.
+<i>23</i>&nbsp; */
+<i>24</i>&nbsp;@Deprecated
+<i>25</i>&nbsp;public interface EntryFetcher extends ImportInspectionDialog.CallBack {
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    /**
+<i>28</i>&nbsp;     * Handle a query entered by the user.
+<i>29</i>&nbsp;     *
+<i>30</i>&nbsp;     * The method is expected to block the caller until all entries have been
+<i>31</i>&nbsp;     * reported to the inspector.
+<i>32</i>&nbsp;     *
+<i>33</i>&nbsp;     * @param query
+<i>34</i>&nbsp;     *            The query text.
+<i>35</i>&nbsp;     * @param inspector
+<i>36</i>&nbsp;     *            The dialog to add imported entries to.
+<i>37</i>&nbsp;     * @param status
+<i>38</i>&nbsp;     *            An OutputPrinter passed to the activeFetcher for reporting about the
+<i>39</i>&nbsp;     *            status of the fetching.
+<i>40</i>&nbsp;     *
+<i>41</i>&nbsp;     * @return True if the query was completed successfully, false if an error
+<i>42</i>&nbsp;     *         occurred.
+<i>43</i>&nbsp;     */
+<i>44</i>&nbsp;    boolean processQuery(String query, ImportInspector inspector, OutputPrinter status);
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;    /**
+<i>47</i>&nbsp;     * The title for this activeFetcher, displayed in the menu and in the side pane.
+<i>48</i>&nbsp;     *
+<i>49</i>&nbsp;     * @return The title
+<i>50</i>&nbsp;     */
+<i>51</i>&nbsp;    String getTitle();
+<i>52</i>&nbsp;
+<i>53</i>&nbsp;    /**
+<i>54</i>&nbsp;     * Get the name of the help page for this activeFetcher.
+<i>55</i>&nbsp;     *
+<i>56</i>&nbsp;     * If given, a question mark is displayed in the side pane which leads to
+<i>57</i>&nbsp;     * the help page.
+<i>58</i>&nbsp;     *
+<i>59</i>&nbsp;     * @return The {@link HelpFile} enum constant for the help page
+<i>60</i>&nbsp;     */
+<i>61</i>&nbsp;    HelpFile getHelpPage();
+<i>62</i>&nbsp;
+<i>63</i>&nbsp;    /**
+<i>64</i>&nbsp;     * If this activeFetcher requires additional options, a panel for setting up these
+<i>65</i>&nbsp;     * should be returned in a JPanel by this method. This JPanel will be added
+<i>66</i>&nbsp;     * to the side pane component automatically.
+<i>67</i>&nbsp;     *
+<i>68</i>&nbsp;     * @return Options panel for this activeFetcher or null if this activeFetcher does not
+<i>69</i>&nbsp;     *         have any options.
+<i>70</i>&nbsp;     */
+<i>71</i>&nbsp;    JPanel getOptionsPanel();
+<i>72</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

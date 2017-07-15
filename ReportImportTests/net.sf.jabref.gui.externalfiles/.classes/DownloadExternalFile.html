@@ -1,0 +1,433 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: DownloadExternalFile</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.externalfiles</a> ]
+</div>
+
+<h1>Coverage Summary for Class: DownloadExternalFile (net.sf.jabref.gui.externalfiles)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DownloadExternalFile</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 140)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.externalfiles;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.File;
+<i>4</i>&nbsp;import java.io.IOException;
+<i>5</i>&nbsp;import java.net.MalformedURLException;
+<i>6</i>&nbsp;import java.net.URL;
+<i>7</i>&nbsp;import java.nio.file.Paths;
+<i>8</i>&nbsp;import java.util.List;
+<i>9</i>&nbsp;import java.util.Optional;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;import javax.swing.JOptionPane;
+<i>12</i>&nbsp;import javax.swing.SwingUtilities;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;import net.sf.jabref.Globals;
+<i>15</i>&nbsp;import net.sf.jabref.JabRefExecutorService;
+<i>16</i>&nbsp;import net.sf.jabref.gui.JabRefFrame;
+<i>17</i>&nbsp;import net.sf.jabref.gui.externalfiletype.ExternalFileType;
+<i>18</i>&nbsp;import net.sf.jabref.gui.externalfiletype.ExternalFileTypes;
+<i>19</i>&nbsp;import net.sf.jabref.gui.filelist.FileListEntry;
+<i>20</i>&nbsp;import net.sf.jabref.gui.filelist.FileListEntryEditor;
+<i>21</i>&nbsp;import net.sf.jabref.gui.net.MonitoredURLDownload;
+<i>22</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>23</i>&nbsp;import net.sf.jabref.logic.net.URLDownload;
+<i>24</i>&nbsp;import net.sf.jabref.logic.util.OS;
+<i>25</i>&nbsp;import net.sf.jabref.logic.util.io.FileUtil;
+<i>26</i>&nbsp;import net.sf.jabref.model.database.BibDatabaseContext;
+<i>27</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>28</i>&nbsp;import net.sf.jabref.preferences.JabRefPreferences;
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;import org.apache.commons.logging.Log;
+<i>31</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>32</i>&nbsp;
+<i>33</i>&nbsp;/**
+<i>34</i>&nbsp; * This class handles the download of an external file. Typically called when the user clicks
+<i>35</i>&nbsp; * the &quot;Download&quot; button in a FileListEditor shown in an EntryEditor.
+<i>36</i>&nbsp; * &lt;p/&gt;
+<i>37</i>&nbsp; * The FileListEditor constructs the DownloadExternalFile instance, then calls the download()
+<i>38</i>&nbsp; * method passing a reference to itself as a callback. The download() method asks for the URL,
+<i>39</i>&nbsp; * then starts the download. When the download is completed, it calls the downloadCompleted()
+<i>40</i>&nbsp; * method on the callback FileListEditor, which then needs to take care of linking to the file.
+<i>41</i>&nbsp; * The local filename is passed as an argument to the downloadCompleted() method.
+<i>42</i>&nbsp; * &lt;p/&gt;
+<i>43</i>&nbsp; * If the download is canceled, or failed, the user is informed. The callback is never called.
+<i>44</i>&nbsp; */
+<i>45</i>&nbsp;public class DownloadExternalFile {
+<i>46</i>&nbsp;
+<b class="nc"><i>47</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(DownloadExternalFile.class);</b>
+<i>48</i>&nbsp;
+<i>49</i>&nbsp;    private final JabRefFrame frame;
+<i>50</i>&nbsp;    private final BibDatabaseContext databaseContext;
+<i>51</i>&nbsp;    private final BibEntry entry;
+<i>52</i>&nbsp;    private FileListEntryEditor editor;
+<i>53</i>&nbsp;    private boolean downloadFinished;
+<i>54</i>&nbsp;    private boolean dontShowDialog;
+<i>55</i>&nbsp;
+<i>56</i>&nbsp;
+<b class="nc"><i>57</i>&nbsp;    public DownloadExternalFile(JabRefFrame frame, BibDatabaseContext databaseContext, BibEntry entry) {</b>
+<b class="nc"><i>58</i>&nbsp;        this.frame = frame;</b>
+<b class="nc"><i>59</i>&nbsp;        this.databaseContext = databaseContext;</b>
+<b class="nc"><i>60</i>&nbsp;        this.entry = entry;</b>
+<b class="nc"><i>61</i>&nbsp;    }</b>
+<i>62</i>&nbsp;
+<i>63</i>&nbsp;    /**
+<i>64</i>&nbsp;     * Start a download.
+<i>65</i>&nbsp;     *
+<i>66</i>&nbsp;     * @param callback The object to which the filename should be reported when download
+<i>67</i>&nbsp;     *                 is complete.
+<i>68</i>&nbsp;     */
+<i>69</i>&nbsp;    public void download(final DownloadCallback callback) throws IOException {
+<b class="nc"><i>70</i>&nbsp;        dontShowDialog = false;</b>
+<b class="nc"><i>71</i>&nbsp;        final String res = JOptionPane.showInputDialog(frame, Localization.lang(&quot;Enter URL to download&quot;));</b>
+<i>72</i>&nbsp;
+<b class="nc"><i>73</i>&nbsp;        if ((res == null) || res.trim().isEmpty()) {</b>
+<b class="nc"><i>74</i>&nbsp;            return;</b>
+<i>75</i>&nbsp;        }
+<i>76</i>&nbsp;
+<i>77</i>&nbsp;        URL url;
+<i>78</i>&nbsp;        try {
+<b class="nc"><i>79</i>&nbsp;            url = new URL(res);</b>
+<b class="nc"><i>80</i>&nbsp;        } catch (MalformedURLException ex1) {</b>
+<b class="nc"><i>81</i>&nbsp;            JOptionPane.showMessageDialog(frame, Localization.lang(&quot;Invalid URL&quot;), Localization.lang(&quot;Download file&quot;),</b>
+<i>82</i>&nbsp;                    JOptionPane.ERROR_MESSAGE);
+<b class="nc"><i>83</i>&nbsp;            return;</b>
+<b class="nc"><i>84</i>&nbsp;        }</b>
+<i>85</i>&nbsp;
+<b class="nc"><i>86</i>&nbsp;        download(url, callback);</b>
+<b class="nc"><i>87</i>&nbsp;    }</b>
+<i>88</i>&nbsp;
+<i>89</i>&nbsp;    /**
+<i>90</i>&nbsp;     * Start a download.
+<i>91</i>&nbsp;     *
+<i>92</i>&nbsp;     * @param callback The object to which the filename should be reported when download
+<i>93</i>&nbsp;     *                 is complete.
+<i>94</i>&nbsp;     */
+<i>95</i>&nbsp;    public void download(URL url, final DownloadCallback callback) throws IOException {
+<b class="nc"><i>96</i>&nbsp;        String res = url.toString();</b>
+<i>97</i>&nbsp;        String mimeType;
+<i>98</i>&nbsp;
+<i>99</i>&nbsp;        // First of all, start the download itself in the background to a temporary file:
+<b class="nc"><i>100</i>&nbsp;        final File tmp = File.createTempFile(&quot;jabref_download&quot;, &quot;tmp&quot;);</b>
+<b class="nc"><i>101</i>&nbsp;        tmp.deleteOnExit();</b>
+<i>102</i>&nbsp;
+<b class="nc"><i>103</i>&nbsp;        URLDownload udl = MonitoredURLDownload.buildMonitoredDownload(frame, url);</b>
+<i>104</i>&nbsp;
+<i>105</i>&nbsp;        try {
+<i>106</i>&nbsp;            // TODO: what if this takes long time?
+<i>107</i>&nbsp;            // TODO: stop editor dialog if this results in an error:
+<b class="nc"><i>108</i>&nbsp;            mimeType = udl.determineMimeType(); // Read MIME type</b>
+<b class="nc"><i>109</i>&nbsp;        } catch (IOException ex) {</b>
+<b class="nc"><i>110</i>&nbsp;            JOptionPane.showMessageDialog(frame, Localization.lang(&quot;Invalid URL&quot;) + &quot;: &quot; + ex.getMessage(),</b>
+<b class="nc"><i>111</i>&nbsp;                    Localization.lang(&quot;Download file&quot;), JOptionPane.ERROR_MESSAGE);</b>
+<b class="nc"><i>112</i>&nbsp;            LOGGER.info(&quot;Error while downloading &quot; + &quot;&#39;&quot; + res + &quot;&#39;&quot;, ex);</b>
+<b class="nc"><i>113</i>&nbsp;            return;</b>
+<b class="nc"><i>114</i>&nbsp;        }</b>
+<b class="nc"><i>115</i>&nbsp;        final URL urlF = url;</b>
+<b class="nc"><i>116</i>&nbsp;        final URLDownload udlF = udl;</b>
+<i>117</i>&nbsp;
+<b class="nc"><i>118</i>&nbsp;        JabRefExecutorService.INSTANCE.execute(() -&gt; {</b>
+<i>119</i>&nbsp;            try {
+<b class="nc"><i>120</i>&nbsp;                udlF.downloadToFile(tmp);</b>
+<b class="nc"><i>121</i>&nbsp;            } catch (IOException e2) {</b>
+<b class="nc"><i>122</i>&nbsp;                dontShowDialog = true;</b>
+<b class="nc"><i>123</i>&nbsp;                if ((editor != null) &amp;&amp; editor.isVisible()) {</b>
+<b class="nc"><i>124</i>&nbsp;                    editor.setVisible(false, false);</b>
+<i>125</i>&nbsp;                }
+<b class="nc"><i>126</i>&nbsp;                JOptionPane.showMessageDialog(frame, Localization.lang(&quot;Invalid URL&quot;) + &quot;: &quot; + e2.getMessage(),</b>
+<b class="nc"><i>127</i>&nbsp;                        Localization.lang(&quot;Download file&quot;), JOptionPane.ERROR_MESSAGE);</b>
+<b class="nc"><i>128</i>&nbsp;                LOGGER.info(&quot;Error while downloading &quot; + &quot;&#39;&quot; + urlF + &quot;&#39;&quot;, e2);</b>
+<b class="nc"><i>129</i>&nbsp;                return;</b>
+<b class="nc"><i>130</i>&nbsp;            }</b>
+<i>131</i>&nbsp;            // Download finished: call the method that stops the progress bar etc.:
+<b class="nc"><i>132</i>&nbsp;            SwingUtilities.invokeLater(DownloadExternalFile.this::downloadFinished);</b>
+<b class="nc"><i>133</i>&nbsp;        });</b>
+<i>134</i>&nbsp;
+<b class="nc"><i>135</i>&nbsp;        Optional&lt;ExternalFileType&gt; suggestedType = Optional.empty();</b>
+<b class="nc"><i>136</i>&nbsp;        if (mimeType != null) {</b>
+<b class="nc"><i>137</i>&nbsp;            LOGGER.debug(&quot;MIME Type suggested: &quot; + mimeType);</b>
+<b class="nc"><i>138</i>&nbsp;            suggestedType = ExternalFileTypes.getInstance().getExternalFileTypeByMimeType(mimeType);</b>
+<i>139</i>&nbsp;        }
+<i>140</i>&nbsp;        // Then, while the download is proceeding, let the user choose the details of the file:
+<i>141</i>&nbsp;        String suffix;
+<b class="nc"><i>142</i>&nbsp;        if (suggestedType.isPresent()) {</b>
+<b class="nc"><i>143</i>&nbsp;            suffix = suggestedType.get().getExtension();</b>
+<i>144</i>&nbsp;        } else {
+<i>145</i>&nbsp;            // If we did not find a file type from the MIME type, try based on extension:
+<b class="nc"><i>146</i>&nbsp;            suffix = getSuffix(res);</b>
+<b class="nc"><i>147</i>&nbsp;            if (suffix == null) {</b>
+<b class="nc"><i>148</i>&nbsp;                suffix = &quot;&quot;;</b>
+<i>149</i>&nbsp;            }
+<b class="nc"><i>150</i>&nbsp;            suggestedType = ExternalFileTypes.getInstance().getExternalFileTypeByExt(suffix);</b>
+<i>151</i>&nbsp;        }
+<i>152</i>&nbsp;
+<b class="nc"><i>153</i>&nbsp;        String suggestedName = getSuggestedFileName(suffix);</b>
+<b class="nc"><i>154</i>&nbsp;        List&lt;String&gt; fDirectory = databaseContext.getFileDirectories(Globals.prefs.getFileDirectoryPreferences());</b>
+<i>155</i>&nbsp;        String directory;
+<b class="nc"><i>156</i>&nbsp;        if (fDirectory.isEmpty()) {</b>
+<b class="nc"><i>157</i>&nbsp;            directory = null;</b>
+<i>158</i>&nbsp;        } else {
+<b class="nc"><i>159</i>&nbsp;            directory = fDirectory.get(0);</b>
+<i>160</i>&nbsp;        }
+<b class="nc"><i>161</i>&nbsp;        final String suggestDir = directory == null ? System.getProperty(&quot;user.home&quot;) : directory;</b>
+<b class="nc"><i>162</i>&nbsp;        File file = new File(new File(suggestDir), suggestedName);</b>
+<b class="nc"><i>163</i>&nbsp;        FileListEntry fileListEntry = new FileListEntry(&quot;&quot;, file.getCanonicalPath(), suggestedType);</b>
+<b class="nc"><i>164</i>&nbsp;        editor = new FileListEntryEditor(frame, fileListEntry, true, false, databaseContext);</b>
+<b class="nc"><i>165</i>&nbsp;        editor.getProgressBar().setIndeterminate(true);</b>
+<b class="nc"><i>166</i>&nbsp;        editor.setOkEnabled(false);</b>
+<b class="nc"><i>167</i>&nbsp;        editor.setExternalConfirm(closeEntry -&gt; {</b>
+<b class="nc"><i>168</i>&nbsp;            File f = directory == null ? new File(closeEntry.link) : expandFilename(directory, closeEntry.link);</b>
+<b class="nc"><i>169</i>&nbsp;            if (f.isDirectory()) {</b>
+<b class="nc"><i>170</i>&nbsp;                JOptionPane.showMessageDialog(frame, Localization.lang(&quot;Target file cannot be a directory.&quot;),</b>
+<b class="nc"><i>171</i>&nbsp;                        Localization.lang(&quot;Download file&quot;), JOptionPane.ERROR_MESSAGE);</b>
+<b class="nc"><i>172</i>&nbsp;                return false;</b>
+<i>173</i>&nbsp;            }
+<b class="nc"><i>174</i>&nbsp;            if (f.exists()) {</b>
+<b class="nc"><i>175</i>&nbsp;                return JOptionPane.showConfirmDialog(frame,</b>
+<b class="nc"><i>176</i>&nbsp;                        Localization.lang(&quot;&#39;%0&#39; exists. Overwrite file?&quot;, f.getName()),</b>
+<b class="nc"><i>177</i>&nbsp;                        Localization.lang(&quot;Download file&quot;), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION;</b>
+<i>178</i>&nbsp;            } else {
+<b class="nc"><i>179</i>&nbsp;                return true;</b>
+<i>180</i>&nbsp;            }
+<i>181</i>&nbsp;        });
+<b class="nc"><i>182</i>&nbsp;        if (dontShowDialog) {</b>
+<b class="nc"><i>183</i>&nbsp;            return;</b>
+<i>184</i>&nbsp;        } else {
+<b class="nc"><i>185</i>&nbsp;            editor.setVisible(true, false);</b>
+<i>186</i>&nbsp;        }
+<i>187</i>&nbsp;        // Editor closed. Go on:
+<b class="nc"><i>188</i>&nbsp;        if (editor.okPressed()) {</b>
+<b class="nc"><i>189</i>&nbsp;            File toFile = directory == null ? new File(fileListEntry.link) : expandFilename(directory,</b>
+<i>190</i>&nbsp;                    fileListEntry.link);
+<i>191</i>&nbsp;            String dirPrefix;
+<b class="nc"><i>192</i>&nbsp;            if (directory == null) {</b>
+<b class="nc"><i>193</i>&nbsp;                dirPrefix = null;</b>
+<i>194</i>&nbsp;            } else {
+<b class="nc"><i>195</i>&nbsp;                if (directory.endsWith(OS.FILE_SEPARATOR)) {</b>
+<b class="nc"><i>196</i>&nbsp;                    dirPrefix = directory;</b>
+<i>197</i>&nbsp;                } else {
+<b class="nc"><i>198</i>&nbsp;                    dirPrefix = directory + OS.FILE_SEPARATOR;</b>
+<i>199</i>&nbsp;                }
+<i>200</i>&nbsp;            }
+<i>201</i>&nbsp;
+<b class="nc"><i>202</i>&nbsp;            boolean success = FileUtil.copyFile(Paths.get(tmp.toURI()), Paths.get(toFile.toURI()), true);</b>
+<b class="nc"><i>203</i>&nbsp;            if (!success) {</b>
+<i>204</i>&nbsp;                // OOps, the file exists!
+<b class="nc"><i>205</i>&nbsp;                LOGGER.error(&quot;File already exists! DownloadExternalFile.download()&quot;);</b>
+<i>206</i>&nbsp;            }
+<i>207</i>&nbsp;
+<i>208</i>&nbsp;            // If the local file is in or below the main file directory, change the
+<i>209</i>&nbsp;            // path to relative:
+<b class="nc"><i>210</i>&nbsp;            if ((dirPrefix != null) &amp;&amp; fileListEntry.link.startsWith(directory)</b>
+<b class="nc"><i>211</i>&nbsp;                    &amp;&amp; (fileListEntry.link.length() &gt; dirPrefix.length())) {</b>
+<b class="nc"><i>212</i>&nbsp;                fileListEntry = new FileListEntry(fileListEntry.description,</b>
+<b class="nc"><i>213</i>&nbsp;                        fileListEntry.link.substring(dirPrefix.length()), fileListEntry.type);</b>
+<i>214</i>&nbsp;            }
+<b class="nc"><i>215</i>&nbsp;            callback.downloadComplete(fileListEntry);</b>
+<i>216</i>&nbsp;
+<b class="nc"><i>217</i>&nbsp;            if (!tmp.delete()) {</b>
+<b class="nc"><i>218</i>&nbsp;                LOGGER.info(&quot;Cannot delete temporary file&quot;);</b>
+<i>219</i>&nbsp;            }
+<b class="nc"><i>220</i>&nbsp;        } else {</b>
+<i>221</i>&nbsp;            // Canceled. Just delete the temp file:
+<b class="nc"><i>222</i>&nbsp;            if (downloadFinished &amp;&amp; !tmp.delete()) {</b>
+<b class="nc"><i>223</i>&nbsp;                LOGGER.info(&quot;Cannot delete temporary file&quot;);</b>
+<i>224</i>&nbsp;            }
+<i>225</i>&nbsp;        }
+<i>226</i>&nbsp;
+<b class="nc"><i>227</i>&nbsp;    }</b>
+<i>228</i>&nbsp;
+<i>229</i>&nbsp;    /**
+<i>230</i>&nbsp;     * Construct a File object pointing to the file linked, whether the link is
+<i>231</i>&nbsp;     * absolute or relative to the main directory.
+<i>232</i>&nbsp;     *
+<i>233</i>&nbsp;     * @param directory The main directory.
+<i>234</i>&nbsp;     * @param link      The absolute or relative link.
+<i>235</i>&nbsp;     * @return The expanded File.
+<i>236</i>&nbsp;     */
+<i>237</i>&nbsp;    private File expandFilename(String directory, String link) {
+<b class="nc"><i>238</i>&nbsp;        File toFile = new File(link);</b>
+<i>239</i>&nbsp;        // If this is a relative link, we should perhaps append the directory:
+<b class="nc"><i>240</i>&nbsp;        String dirPrefix = directory + OS.FILE_SEPARATOR;</b>
+<b class="nc"><i>241</i>&nbsp;        if (!toFile.isAbsolute()) {</b>
+<b class="nc"><i>242</i>&nbsp;            toFile = new File(dirPrefix + link);</b>
+<i>243</i>&nbsp;        }
+<b class="nc"><i>244</i>&nbsp;        return toFile;</b>
+<i>245</i>&nbsp;    }
+<i>246</i>&nbsp;
+<i>247</i>&nbsp;    /**
+<i>248</i>&nbsp;     * This is called by the download thread when download is completed.
+<i>249</i>&nbsp;     */
+<i>250</i>&nbsp;    private void downloadFinished() {
+<b class="nc"><i>251</i>&nbsp;        downloadFinished = true;</b>
+<b class="nc"><i>252</i>&nbsp;        editor.getProgressBar().setVisible(false);</b>
+<b class="nc"><i>253</i>&nbsp;        editor.getProgressBarLabel().setVisible(false);</b>
+<b class="nc"><i>254</i>&nbsp;        editor.setOkEnabled(true);</b>
+<b class="nc"><i>255</i>&nbsp;        editor.getProgressBar().setValue(editor.getProgressBar().getMaximum());</b>
+<b class="nc"><i>256</i>&nbsp;    }</b>
+<i>257</i>&nbsp;
+<i>258</i>&nbsp;    private String getSuggestedFileName(String suffix) {
+<b class="nc"><i>259</i>&nbsp;        String plannedName = FileUtil.createFileNameFromPattern(databaseContext.getDatabase(), entry,</b>
+<b class="nc"><i>260</i>&nbsp;                Globals.prefs.get(JabRefPreferences.IMPORT_FILENAMEPATTERN),</b>
+<b class="nc"><i>261</i>&nbsp;                Globals.prefs.getLayoutFormatterPreferences(Globals.journalAbbreviationLoader));</b>
+<i>262</i>&nbsp;
+<b class="nc"><i>263</i>&nbsp;        if (!suffix.isEmpty()) {</b>
+<b class="nc"><i>264</i>&nbsp;            plannedName += &quot;.&quot; + suffix;</b>
+<i>265</i>&nbsp;        }
+<i>266</i>&nbsp;
+<i>267</i>&nbsp;        /*
+<i>268</i>&nbsp;        * [ 1548875 ] download pdf produces unsupported filename
+<i>269</i>&nbsp;        *
+<i>270</i>&nbsp;        * http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1548875&amp;group_id=92314&amp;atid=600306
+<i>271</i>&nbsp;        * FIXME: rework this! just allow alphanumeric stuff or so?
+<i>272</i>&nbsp;        * https://msdn.microsoft.com/en-us/library/windows/desktop/aa365247(v=vs.85).aspx#naming_conventions
+<i>273</i>&nbsp;        * http://superuser.com/questions/358855/what-characters-are-safe-in-cross-platform-file-names-for-linux-windows-and-os
+<i>274</i>&nbsp;        * https://support.apple.com/en-us/HT202808
+<i>275</i>&nbsp;        */
+<b class="nc"><i>276</i>&nbsp;        if (OS.WINDOWS) {</b>
+<b class="nc"><i>277</i>&nbsp;            plannedName = plannedName.replaceAll(&quot;\\?|\\*|\\&lt;|\\&gt;|\\||\\\&quot;|\\:|\\.$|\\[|\\]&quot;, &quot;&quot;);</b>
+<b class="nc"><i>278</i>&nbsp;        } else if (OS.OS_X) {</b>
+<b class="nc"><i>279</i>&nbsp;            plannedName = plannedName.replace(&quot;:&quot;, &quot;&quot;);</b>
+<i>280</i>&nbsp;        }
+<i>281</i>&nbsp;
+<b class="nc"><i>282</i>&nbsp;        return plannedName;</b>
+<i>283</i>&nbsp;    }
+<i>284</i>&nbsp;
+<i>285</i>&nbsp;    /**
+<i>286</i>&nbsp;     * Look for the last &#39;.&#39; in the link, and return the following characters.
+<i>287</i>&nbsp;     * This gives the extension for most reasonably named links.
+<i>288</i>&nbsp;     *
+<i>289</i>&nbsp;     * @param link The link
+<i>290</i>&nbsp;     * @return The suffix, excluding the dot (e.g. &quot;pdf&quot;)
+<i>291</i>&nbsp;     */
+<i>292</i>&nbsp;    private String getSuffix(final String link) {
+<b class="nc"><i>293</i>&nbsp;        String strippedLink = link;</b>
+<i>294</i>&nbsp;        try {
+<i>295</i>&nbsp;            // Try to strip the query string, if any, to get the correct suffix:
+<b class="nc"><i>296</i>&nbsp;            URL url = new URL(link);</b>
+<b class="nc"><i>297</i>&nbsp;            if ((url.getQuery() != null) &amp;&amp; (url.getQuery().length() &lt; (link.length() - 1))) {</b>
+<b class="nc"><i>298</i>&nbsp;                strippedLink = link.substring(0, link.length() - url.getQuery().length() - 1);</b>
+<i>299</i>&nbsp;            }
+<b class="nc"><i>300</i>&nbsp;        } catch (MalformedURLException e) {</b>
+<i>301</i>&nbsp;            // Don&#39;t report this error, since this getting the suffix is a non-critical
+<i>302</i>&nbsp;            // operation, and this error will be triggered and reported elsewhere.
+<b class="nc"><i>303</i>&nbsp;        }</b>
+<i>304</i>&nbsp;        // First see if the stripped link gives a reasonable suffix:
+<i>305</i>&nbsp;        String suffix;
+<b class="nc"><i>306</i>&nbsp;        int strippedLinkIndex = strippedLink.lastIndexOf(&#39;.&#39;);</b>
+<b class="nc"><i>307</i>&nbsp;        if ((strippedLinkIndex &lt;= 0) || (strippedLinkIndex == (strippedLink.length() - 1))) {</b>
+<b class="nc"><i>308</i>&nbsp;            suffix = null;</b>
+<i>309</i>&nbsp;        } else {
+<b class="nc"><i>310</i>&nbsp;            suffix = strippedLink.substring(strippedLinkIndex + 1);</b>
+<i>311</i>&nbsp;        }
+<b class="nc"><i>312</i>&nbsp;        if (!ExternalFileTypes.getInstance().isExternalFileTypeByExt(suffix)) {</b>
+<i>313</i>&nbsp;            // If the suffix doesn&#39;t seem to give any reasonable file type, try
+<i>314</i>&nbsp;            // with the non-stripped link:
+<b class="nc"><i>315</i>&nbsp;            int index = link.lastIndexOf(&#39;.&#39;);</b>
+<b class="nc"><i>316</i>&nbsp;            if ((index &lt;= 0) || (index == (link.length() - 1))) {</b>
+<i>317</i>&nbsp;                // No occurrence, or at the end
+<i>318</i>&nbsp;                // Check if there are path separators in the suffix - if so, it is definitely
+<i>319</i>&nbsp;                // not a proper suffix, so we should give up:
+<b class="nc"><i>320</i>&nbsp;                if (strippedLink.substring(strippedLinkIndex + 1).indexOf(&#39;/&#39;) &gt;= 1) {</b>
+<b class="nc"><i>321</i>&nbsp;                    return &quot;&quot;;</b>
+<i>322</i>&nbsp;                } else {
+<b class="nc"><i>323</i>&nbsp;                    return suffix; // return the first one we found, anyway.</b>
+<i>324</i>&nbsp;                }
+<i>325</i>&nbsp;            } else {
+<i>326</i>&nbsp;                // Check if there are path separators in the suffix - if so, it is definitely
+<i>327</i>&nbsp;                // not a proper suffix, so we should give up:
+<b class="nc"><i>328</i>&nbsp;                if (link.substring(index + 1).indexOf(&#39;/&#39;) &gt;= 1) {</b>
+<b class="nc"><i>329</i>&nbsp;                    return &quot;&quot;;</b>
+<i>330</i>&nbsp;                } else {
+<b class="nc"><i>331</i>&nbsp;                    return link.substring(index + 1);</b>
+<i>332</i>&nbsp;                }
+<i>333</i>&nbsp;            }
+<i>334</i>&nbsp;        } else {
+<b class="nc"><i>335</i>&nbsp;            return suffix;</b>
+<i>336</i>&nbsp;        }
+<i>337</i>&nbsp;
+<i>338</i>&nbsp;    }
+<i>339</i>&nbsp;
+<i>340</i>&nbsp;
+<i>341</i>&nbsp;    /**
+<i>342</i>&nbsp;     * Callback interface that users of this class must implement in order to receive
+<i>343</i>&nbsp;     * notification when download is complete.
+<i>344</i>&nbsp;     */
+<i>345</i>&nbsp;    @FunctionalInterface
+<i>346</i>&nbsp;    public interface DownloadCallback {
+<i>347</i>&nbsp;
+<i>348</i>&nbsp;        void downloadComplete(FileListEntry file);
+<i>349</i>&nbsp;    }
+<i>350</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

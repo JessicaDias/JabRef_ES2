@@ -1,0 +1,134 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: XmlTransferable</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.fieldeditors</a> ]
+</div>
+
+<h1>Coverage Summary for Class: XmlTransferable (net.sf.jabref.gui.fieldeditors)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">XmlTransferable</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 16)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.fieldeditors;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.datatransfer.DataFlavor;
+<i>4</i>&nbsp;import java.awt.datatransfer.Transferable;
+<i>5</i>&nbsp;import java.awt.datatransfer.UnsupportedFlavorException;
+<i>6</i>&nbsp;import java.io.IOException;
+<i>7</i>&nbsp;import java.util.Arrays;
+<i>8</i>&nbsp;import java.util.List;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;public class XmlTransferable implements Transferable {
+<i>12</i>&nbsp;
+<b class="nc"><i>13</i>&nbsp;    private static final DataFlavor XML_FLAVOR = new DataFlavor(&quot;application/xml;charset=utf-8;class=java.lang.String&quot;, &quot;XML Format&quot;);</b>
+<b class="nc"><i>14</i>&nbsp;    private static final DataFlavor TEXT_FLAVOR = DataFlavor.stringFlavor;</b>
+<i>15</i>&nbsp;
+<b class="nc"><i>16</i>&nbsp;    private static final List&lt;DataFlavor&gt; ALL_FLAVORS = Arrays.asList(XML_FLAVOR, HtmlTransferable.HTML_FLAVOR, TEXT_FLAVOR);</b>
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;    private final String xmlText;
+<i>19</i>&nbsp;    private final String plainText;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;    public XmlTransferable(String text) {
+<b class="nc"><i>22</i>&nbsp;        this(text, text);</b>
+<b class="nc"><i>23</i>&nbsp;    }</b>
+<i>24</i>&nbsp;
+<b class="nc"><i>25</i>&nbsp;    public XmlTransferable(String xmlText, String plainText) {</b>
+<b class="nc"><i>26</i>&nbsp;        this.xmlText = xmlText;</b>
+<b class="nc"><i>27</i>&nbsp;        this.plainText = plainText;</b>
+<b class="nc"><i>28</i>&nbsp;    }</b>
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;    @Override
+<i>31</i>&nbsp;    public DataFlavor[] getTransferDataFlavors() {
+<b class="nc"><i>32</i>&nbsp;        return ALL_FLAVORS.toArray(new DataFlavor[ALL_FLAVORS.size()]);</b>
+<i>33</i>&nbsp;    }
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    @Override
+<i>36</i>&nbsp;    public boolean isDataFlavorSupported(DataFlavor flavor) {
+<b class="nc"><i>37</i>&nbsp;        return ALL_FLAVORS.parallelStream().anyMatch(flavor::equals);</b>
+<i>38</i>&nbsp;    }
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;    @Override
+<i>41</i>&nbsp;    public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+<b class="nc"><i>42</i>&nbsp;        if (flavor.equals(XML_FLAVOR) || flavor.equals(HtmlTransferable.HTML_FLAVOR)) {</b>
+<b class="nc"><i>43</i>&nbsp;            return xmlText;</b>
+<b class="nc"><i>44</i>&nbsp;        } else if (flavor.equals(TEXT_FLAVOR)) {</b>
+<b class="nc"><i>45</i>&nbsp;            return plainText;</b>
+<i>46</i>&nbsp;        } else {
+<b class="nc"><i>47</i>&nbsp;            throw new UnsupportedFlavorException(flavor);</b>
+<i>48</i>&nbsp;        }
+<i>49</i>&nbsp;    }
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

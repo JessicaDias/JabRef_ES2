@@ -1,0 +1,987 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: HTMLUnicodeConversionMaps</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.model.strings</a> ]
+</div>
+
+<h1>Coverage Summary for Class: HTMLUnicodeConversionMaps (net.sf.jabref.model.strings)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">HTMLUnicodeConversionMaps</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (2/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    97.4%
+  </span>
+  <span class="absValue">
+    (37/ 38)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.model.strings;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.HashMap;
+<i>4</i>&nbsp;import java.util.Map;
+<i>5</i>&nbsp;
+<b class="nc"><i>6</i>&nbsp;public class HTMLUnicodeConversionMaps {</b>
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;    /*   Portions © International Organization for Standardization 1986:
+<i>9</i>&nbsp;     Permission to copy in any form is granted for use with
+<i>10</i>&nbsp;     conforming SGML systems and applications as defined in
+<i>11</i>&nbsp;     ISO 8879, provided this notice is included in all copies.
+<i>12</i>&nbsp;     */
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;    // most of the LaTeX commands can be read at http://en.wikibooks.org/wiki/LaTeX/Accents
+<i>15</i>&nbsp;    // The symbols can be seen at http://www.fileformat.info/info/unicode/char/a4/index.htm. Replace &quot;a4&quot; with the U+ number
+<i>16</i>&nbsp;    // http://detexify.kirelabs.org/classify.html and http://www.ctan.org/tex-archive/info/symbols/comprehensive/ might help to find the right LaTeX command
+<i>17</i>&nbsp;    // http://llg.cubic.org/docs/ent2latex.html and http://www.w3.org/TR/xml-entity-names/byalpha.html are also useful
+<i>18</i>&nbsp;    // as well as http://www.w3.org/Math/characters/unicode.xml
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;    // An array of arrays of strings in the format:
+<i>21</i>&nbsp;    // {&quot;decimal number of HTML entity&quot;, &quot;text HTML entity&quot;, &quot;corresponding LaTeX command&quot;}
+<i>22</i>&nbsp;    // Leaving a field empty is OK as it then will not be included
+<b class="fc"><i>23</i>&nbsp;    private static final String[][] CONVERSION_LIST = new String[][] {{&quot;160&quot;, &quot;nbsp&quot;, &quot;{~}&quot;}, // no-break space = non-breaking space,</b>
+<i>24</i>&nbsp;            //                                 U+00A0 ISOnum
+<i>25</i>&nbsp;            {&quot;161&quot;, &quot;iexcl&quot;, &quot;{\\textexclamdown}&quot;}, // inverted exclamation mark, U+00A1 ISOnum
+<i>26</i>&nbsp;            {&quot;162&quot;, &quot;cent&quot;, &quot;{\\textcent}&quot;}, // cent sign, U+00A2 ISOnum
+<i>27</i>&nbsp;            {&quot;163&quot;, &quot;pound&quot;, &quot;{\\pounds}&quot;}, // pound sign, U+00A3 ISOnum
+<i>28</i>&nbsp;            {&quot;164&quot;, &quot;curren&quot;, &quot;{\\textcurrency}&quot;}, // currency sign, U+00A4 ISOnum
+<i>29</i>&nbsp;            {&quot;165&quot;, &quot;yen&quot;, &quot;{\\textyen}&quot;}, // yen sign = yuan sign, U+00A5 ISOnum
+<i>30</i>&nbsp;            {&quot;166&quot;, &quot;brvbar&quot;, &quot;{\\textbrokenbar}&quot;}, // broken bar = broken vertical bar,
+<i>31</i>&nbsp;            //                                 U+00A6 ISOnum
+<i>32</i>&nbsp;            {&quot;167&quot;, &quot;sect&quot;, &quot;{{\\S}}&quot;}, // section sign, U+00A7 ISOnum
+<i>33</i>&nbsp;            {&quot;168&quot;, &quot;uml&quot;, &quot;{\\\&quot;{}}&quot;}, // diaeresis = spacing diaeresis,
+<i>34</i>&nbsp;            //                                 U+00A8 ISOdia
+<i>35</i>&nbsp;            {&quot;169&quot;, &quot;copy&quot;, &quot;{\\copyright}&quot;}, // copyright sign, U+00A9 ISOnum
+<i>36</i>&nbsp;            {&quot;170&quot;, &quot;ordf&quot;, &quot;{\\textordfeminine}&quot;}, // feminine ordinal indicator, U+00AA ISOnum
+<i>37</i>&nbsp;            {&quot;171&quot;, &quot;laquo&quot;, &quot;{\\guillemotleft}&quot;}, // left-pointing double angle quotation mark
+<i>38</i>&nbsp;            //                                 = left pointing guillemet, U+00AB ISOnum
+<i>39</i>&nbsp;            {&quot;172&quot;, &quot;not&quot;, &quot;$\\neg$&quot;}, // not sign, U+00AC ISOnum
+<i>40</i>&nbsp;            {&quot;173&quot;, &quot;shy&quot;, &quot;\\-&quot;}, // soft hyphen = discretionary hyphen,
+<i>41</i>&nbsp;            //                                 U+00AD ISOnum
+<i>42</i>&nbsp;            {&quot;174&quot;, &quot;reg&quot;, &quot;{\\textregistered}&quot;}, // registered sign = registered trade mark sign,
+<i>43</i>&nbsp;            //                                 U+00AE ISOnum
+<i>44</i>&nbsp;            {&quot;175&quot;, &quot;macr&quot;, &quot;{\\={}}&quot;}, // macron = spacing macron = overline
+<i>45</i>&nbsp;            //                                 = APL overbar, U+00AF ISOdia
+<i>46</i>&nbsp;            {&quot;176&quot;, &quot;deg&quot;, &quot;{$^{\\circ}$}&quot;}, // degree sign, U+00B0 ISOnum
+<i>47</i>&nbsp;            {&quot;177&quot;, &quot;plusmn&quot;, &quot;$\\pm$&quot;}, // plus-minus sign = plus-or-minus sign,
+<i>48</i>&nbsp;            //                                 U+00B1 ISOnum
+<i>49</i>&nbsp;            {&quot;178&quot;, &quot;sup2&quot;, &quot;\\textsuperscript{2}&quot;}, // superscript two = superscript digit two
+<i>50</i>&nbsp;            //                                 = squared, U+00B2 ISOnum
+<i>51</i>&nbsp;            {&quot;179&quot;, &quot;sup3&quot;, &quot;\\textsuperscript{3}&quot;}, // superscript three = superscript digit three
+<i>52</i>&nbsp;            //                                 = cubed, U+00B3 ISOnum
+<i>53</i>&nbsp;            {&quot;180&quot;, &quot;acute&quot;, &quot;{\\&#39;{}}&quot;}, // acute accent = spacing acute,
+<i>54</i>&nbsp;            //                                 U+00B4 ISOdia
+<i>55</i>&nbsp;            {&quot;181&quot;, &quot;micro&quot;, &quot;$\\mu$&quot;}, // micro sign, U+00B5 ISOnum
+<i>56</i>&nbsp;            {&quot;&quot;, &quot;mu&quot;, &quot;$\\mu$&quot;}, // micro sign, U+00B5 ISOnum
+<i>57</i>&nbsp;            {&quot;182&quot;, &quot;para&quot;, &quot;{{\\P}}&quot;}, // pilcrow sign = paragraph sign,
+<i>58</i>&nbsp;            //                                 U+00B6 ISOnum
+<i>59</i>&nbsp;            {&quot;183&quot;, &quot;middot&quot;, &quot;$\\cdot$&quot;}, // middle dot = Georgian comma
+<i>60</i>&nbsp;            //                                 = Greek middle dot, U+00B7 ISOnum
+<i>61</i>&nbsp;            {&quot;184&quot;, &quot;cedil&quot;, &quot;{\\c{}}&quot;}, // cedilla = spacing cedilla, U+00B8 ISOdia
+<i>62</i>&nbsp;            {&quot;185&quot;, &quot;sup1&quot;, &quot;\\textsuperscript{1}&quot;}, // superscript one = superscript digit one,
+<i>63</i>&nbsp;            //                                 U+00B9 ISOnum
+<i>64</i>&nbsp;            {&quot;186&quot;, &quot;ordm&quot;, &quot;{\\textordmasculine}&quot;}, // masculine ordinal indicator,
+<i>65</i>&nbsp;            //                                 U+00BA ISOnum
+<i>66</i>&nbsp;            {&quot;187&quot;, &quot;raquo&quot;, &quot;{\\guillemotright}&quot;}, // right-pointing double angle quotation mark
+<i>67</i>&nbsp;            //                                 = right pointing guillemet, U+00BB ISOnum
+<i>68</i>&nbsp;            {&quot;188&quot;, &quot;frac14&quot;, &quot;$\\sfrac{1}{4}$&quot;}, // vulgar fraction one quarter
+<i>69</i>&nbsp;            //                                 = fraction one quarter, U+00BC ISOnum
+<i>70</i>&nbsp;            {&quot;189&quot;, &quot;frac12&quot;, &quot;$\\sfrac{1}{2}$&quot;}, // vulgar fraction one half
+<i>71</i>&nbsp;            //                                 = fraction one half, U+00BD ISOnum
+<i>72</i>&nbsp;            {&quot;190&quot;, &quot;frac34&quot;, &quot;$\\sfrac{3}{4}$&quot;}, // vulgar fraction three quarters
+<i>73</i>&nbsp;            //                                 = fraction three quarters, U+00BE ISOnum
+<i>74</i>&nbsp;            {&quot;191&quot;, &quot;iquest&quot;, &quot;{\\textquestiondown}&quot;}, // inverted question mark
+<i>75</i>&nbsp;            //                                 = turned question mark, U+00BF ISOnum
+<i>76</i>&nbsp;            {&quot;192&quot;, &quot;Agrave&quot;, &quot;{{\\`{A}}}&quot;}, // latin capital letter A with grave
+<i>77</i>&nbsp;            //                                 = latin capital letter A grave,
+<i>78</i>&nbsp;            //                                 U+00C0 ISOlat1
+<i>79</i>&nbsp;            {&quot;193&quot;, &quot;Aacute&quot;, &quot;{{\\&#39;{A}}}&quot;}, // latin capital letter A with acute,
+<i>80</i>&nbsp;            //                                 U+00C1 ISOlat1
+<i>81</i>&nbsp;            {&quot;194&quot;, &quot;Acirc&quot;, &quot;{{\\^{A}}}&quot;}, // latin capital letter A with circumflex,
+<i>82</i>&nbsp;            //                                 U+00C2 ISOlat1
+<i>83</i>&nbsp;            {&quot;195&quot;, &quot;Atilde&quot;, &quot;{{\\~{A}}}&quot;}, // latin capital letter A with tilde,
+<i>84</i>&nbsp;            //                                 U+00C3 ISOlat1
+<i>85</i>&nbsp;            {&quot;196&quot;, &quot;Auml&quot;, &quot;{{\\\&quot;{A}}}&quot;}, // latin capital letter A with diaeresis,
+<i>86</i>&nbsp;            //                                 U+00C4 ISOlat1
+<i>87</i>&nbsp;            {&quot;197&quot;, &quot;Aring&quot;, &quot;{{\\AA}}&quot;}, // latin capital letter A with ring above
+<i>88</i>&nbsp;            //                                 = latin capital letter A ring,
+<i>89</i>&nbsp;            //                                 U+00C5 ISOlat1
+<i>90</i>&nbsp;            {&quot;198&quot;, &quot;AElig&quot;, &quot;{{\\AE}}&quot;}, // latin capital letter AE
+<i>91</i>&nbsp;            //                                 = latin capital ligature AE,
+<i>92</i>&nbsp;            //                                 U+00C6 ISOlat1
+<i>93</i>&nbsp;            {&quot;199&quot;, &quot;Ccedil&quot;, &quot;{{\\c{C}}}&quot;}, // latin capital letter C with cedilla,
+<i>94</i>&nbsp;            //                                 U+00C7 ISOlat1
+<i>95</i>&nbsp;            {&quot;200&quot;, &quot;Egrave&quot;, &quot;{{\\`{E}}}&quot;}, // latin capital letter E with grave,
+<i>96</i>&nbsp;            //                                 U+00C8 ISOlat1
+<i>97</i>&nbsp;            {&quot;201&quot;, &quot;Eacute&quot;, &quot;{{\\&#39;{E}}}&quot;}, // latin capital letter E with acute,
+<i>98</i>&nbsp;            //                                 U+00C9 ISOlat1
+<i>99</i>&nbsp;            {&quot;202&quot;, &quot;Ecirc&quot;, &quot;{{\\^{E}}}&quot;}, // latin capital letter E with circumflex,
+<i>100</i>&nbsp;            //                                 U+00CA ISOlat1
+<i>101</i>&nbsp;            {&quot;203&quot;, &quot;Euml&quot;, &quot;{{\\\&quot;{E}}}&quot;}, // latin capital letter E with diaeresis,
+<i>102</i>&nbsp;            //                                 U+00CB ISOlat1
+<i>103</i>&nbsp;            {&quot;204&quot;, &quot;Igrave&quot;, &quot;{{\\`{I}}}&quot;}, // latin capital letter I with grave,
+<i>104</i>&nbsp;            //                                 U+00CC ISOlat1
+<i>105</i>&nbsp;            {&quot;205&quot;, &quot;Iacute&quot;, &quot;{{\\&#39;{I}}}&quot;}, // latin capital letter I with acute,
+<i>106</i>&nbsp;            //                                 U+00CD ISOlat1
+<i>107</i>&nbsp;            {&quot;206&quot;, &quot;Icirc&quot;, &quot;{{\\^{I}}}&quot;}, // latin capital letter I with circumflex,
+<i>108</i>&nbsp;            //                                 U+00CE ISOlat1
+<i>109</i>&nbsp;            {&quot;207&quot;, &quot;Iuml&quot;, &quot;{{\\\&quot;{I}}}&quot;}, // latin capital letter I with diaeresis,
+<i>110</i>&nbsp;            //                                 U+00CF ISOlat1
+<i>111</i>&nbsp;            {&quot;208&quot;, &quot;ETH&quot;, &quot;{{\\DH}}&quot;}, // latin capital letter ETH, U+00D0 ISOlat1
+<i>112</i>&nbsp;            {&quot;209&quot;, &quot;Ntilde&quot;, &quot;{{\\~{N}}}&quot;}, // latin capital letter N with tilde,
+<i>113</i>&nbsp;            //                                 U+00D1 ISOlat1
+<i>114</i>&nbsp;            {&quot;210&quot;, &quot;Ograve&quot;, &quot;{{\\`{O}}}&quot;}, // latin capital letter O with grave,
+<i>115</i>&nbsp;            //                                 U+00D2 ISOlat1
+<i>116</i>&nbsp;            {&quot;211&quot;, &quot;Oacute&quot;, &quot;{{\\&#39;{O}}}&quot;}, // latin capital letter O with acute,
+<i>117</i>&nbsp;            //                                 U+00D3 ISOlat1
+<i>118</i>&nbsp;            {&quot;212&quot;, &quot;Ocirc&quot;, &quot;{{\\^{O}}}&quot;}, // latin capital letter O with circumflex,
+<i>119</i>&nbsp;            //                                 U+00D4 ISOlat1
+<i>120</i>&nbsp;            {&quot;213&quot;, &quot;Otilde&quot;, &quot;{{\\~{O}}}&quot;}, // latin capital letter O with tilde,
+<i>121</i>&nbsp;            //                                 U+00D5 ISOlat1
+<i>122</i>&nbsp;            {&quot;214&quot;, &quot;Ouml&quot;, &quot;{{\\\&quot;{O}}}&quot;}, // latin capital letter O with diaeresis,
+<i>123</i>&nbsp;            //                                 U+00D6 ISOlat1
+<i>124</i>&nbsp;            {&quot;215&quot;, &quot;times&quot;, &quot;$\\times$&quot;}, // multiplication sign, U+00D7 ISOnum
+<i>125</i>&nbsp;            {&quot;216&quot;, &quot;Oslash&quot;, &quot;{{\\O}}&quot;}, // latin capital letter O with stroke
+<i>126</i>&nbsp;            //                                 = latin capital letter O slash,
+<i>127</i>&nbsp;            //                                 U+00D8 ISOlat1
+<i>128</i>&nbsp;            {&quot;217&quot;, &quot;Ugrave&quot;, &quot;{{\\`{U}}}&quot;}, // latin capital letter U with grave,
+<i>129</i>&nbsp;            //                                 U+00D9 ISOlat1
+<i>130</i>&nbsp;            {&quot;218&quot;, &quot;Uacute&quot;, &quot;{{\\&#39;{U}}}&quot;}, // latin capital letter U with acute,
+<i>131</i>&nbsp;            //                                 U+00DA ISOlat1
+<i>132</i>&nbsp;            {&quot;219&quot;, &quot;Ucirc&quot;, &quot;{{\\^{U}}}&quot;}, // latin capital letter U with circumflex,
+<i>133</i>&nbsp;            //                                 U+00DB ISOlat1
+<i>134</i>&nbsp;            {&quot;220&quot;, &quot;Uuml&quot;, &quot;{{\\\&quot;{U}}}&quot;}, // latin capital letter U with diaeresis,
+<i>135</i>&nbsp;            //                                 U+00DC ISOlat1
+<i>136</i>&nbsp;            {&quot;221&quot;, &quot;Yacute&quot;, &quot;{{\\&#39;{Y}}}&quot;}, // latin capital letter Y with acute,
+<i>137</i>&nbsp;            //                                 U+00DD ISOlat1
+<i>138</i>&nbsp;            {&quot;222&quot;, &quot;THORN&quot;, &quot;{{\\TH}}&quot;}, // latin capital letter THORN,
+<i>139</i>&nbsp;            //                                 U+00DE ISOlat1
+<i>140</i>&nbsp;            {&quot;223&quot;, &quot;szlig&quot;, &quot;{\\ss}&quot;}, // latin small letter sharp s = ess-zed,
+<i>141</i>&nbsp;            //                                 U+00DF ISOlat1
+<i>142</i>&nbsp;            {&quot;224&quot;, &quot;agrave&quot;, &quot;{\\`{a}}&quot;}, // latin small letter a with grave
+<i>143</i>&nbsp;            //                                 = latin small letter a grave,
+<i>144</i>&nbsp;            //                                 U+00E0 ISOlat1
+<i>145</i>&nbsp;            {&quot;225&quot;, &quot;aacute&quot;, &quot;{\\&#39;{a}}&quot;}, // latin small letter a with acute,
+<i>146</i>&nbsp;            //                                 U+00E1 ISOlat1
+<i>147</i>&nbsp;            {&quot;226&quot;, &quot;acirc&quot;, &quot;{\\^{a}}&quot;}, // latin small letter a with circumflex,
+<i>148</i>&nbsp;            //                                 U+00E2 ISOlat1
+<i>149</i>&nbsp;            {&quot;227&quot;, &quot;atilde&quot;, &quot;{\\~{a}}&quot;}, // latin small letter a with tilde,
+<i>150</i>&nbsp;            //                                 U+00E3 ISOlat1
+<i>151</i>&nbsp;            {&quot;228&quot;, &quot;auml&quot;, &quot;{\\\&quot;{a}}&quot;}, // latin small letter a with diaeresis,
+<i>152</i>&nbsp;            //                                 U+00E4 ISOlat1
+<i>153</i>&nbsp;            {&quot;229&quot;, &quot;aring&quot;, &quot;{{\\aa}}&quot;}, // latin small letter a with ring above
+<i>154</i>&nbsp;            //                                 = latin small letter a ring,
+<i>155</i>&nbsp;            //                                 U+00E5 ISOlat1
+<i>156</i>&nbsp;            {&quot;230&quot;, &quot;aelig&quot;, &quot;{\\ae}&quot;}, // latin small letter ae
+<i>157</i>&nbsp;            //                                 = latin small ligature ae, U+00E6 ISOlat1
+<i>158</i>&nbsp;            {&quot;231&quot;, &quot;ccedil&quot;, &quot;{\\c{c}}&quot;}, // latin small letter c with cedilla,
+<i>159</i>&nbsp;            //                                 U+00E7 ISOlat1
+<i>160</i>&nbsp;            {&quot;232&quot;, &quot;egrave&quot;, &quot;{\\`{e}}&quot;}, // latin small letter e with grave,
+<i>161</i>&nbsp;            //                                 U+00E8 ISOlat1
+<i>162</i>&nbsp;            {&quot;233&quot;, &quot;eacute&quot;, &quot;{\\&#39;{e}}&quot;}, // latin small letter e with acute,
+<i>163</i>&nbsp;            //                                 U+00E9 ISOlat1
+<i>164</i>&nbsp;            {&quot;234&quot;, &quot;ecirc&quot;, &quot;{\\^{e}}&quot;}, // latin small letter e with circumflex,
+<i>165</i>&nbsp;            //                                 U+00EA ISOlat1
+<i>166</i>&nbsp;            {&quot;235&quot;, &quot;euml&quot;, &quot;{\\\&quot;{e}}&quot;}, // latin small letter e with diaeresis,
+<i>167</i>&nbsp;            //                                 U+00EB ISOlat1
+<i>168</i>&nbsp;            {&quot;236&quot;, &quot;igrave&quot;, &quot;{\\`{i}}&quot;}, // latin small letter i with grave,
+<i>169</i>&nbsp;            //                                 U+00EC ISOlat1
+<i>170</i>&nbsp;            {&quot;237&quot;, &quot;iacute&quot;, &quot;{\\&#39;{i}}&quot;}, // latin small letter i with acute,
+<i>171</i>&nbsp;            //                                 U+00ED ISOlat1
+<i>172</i>&nbsp;            {&quot;238&quot;, &quot;icirc&quot;, &quot;{\\^{i}}&quot;}, // latin small letter i with circumflex,
+<i>173</i>&nbsp;            //                                 U+00EE ISOlat1
+<i>174</i>&nbsp;            {&quot;239&quot;, &quot;iuml&quot;, &quot;{\\\&quot;{i}}&quot;}, // latin small letter i with diaeresis,
+<i>175</i>&nbsp;            //                                 U+00EF ISOlat1
+<i>176</i>&nbsp;            {&quot;240&quot;, &quot;eth&quot;, &quot;{\\dh}&quot;}, // latin small letter eth, U+00F0 ISOlat1
+<i>177</i>&nbsp;            {&quot;241&quot;, &quot;ntilde&quot;, &quot;{\\~{n}}&quot;}, // latin small letter n with tilde,
+<i>178</i>&nbsp;            //                                 U+00F1 ISOlat1
+<i>179</i>&nbsp;            {&quot;242&quot;, &quot;ograve&quot;, &quot;{\\`{o}}&quot;}, // latin small letter o with grave,
+<i>180</i>&nbsp;            //                                 U+00F2 ISOlat1
+<i>181</i>&nbsp;            {&quot;243&quot;, &quot;oacute&quot;, &quot;{\\&#39;{o}}&quot;}, // latin small letter o with acute,
+<i>182</i>&nbsp;            //                                 U+00F3 ISOlat1
+<i>183</i>&nbsp;            {&quot;244&quot;, &quot;ocirc&quot;, &quot;{\\^{o}}&quot;}, // latin small letter o with circumflex,
+<i>184</i>&nbsp;            //                                 U+00F4 ISOlat1
+<i>185</i>&nbsp;            {&quot;245&quot;, &quot;otilde&quot;, &quot;{\\~{o}}&quot;}, // latin small letter o with tilde,
+<i>186</i>&nbsp;            //                                 U+00F5 ISOlat1
+<i>187</i>&nbsp;            {&quot;246&quot;, &quot;ouml&quot;, &quot;{\\\&quot;{o}}&quot;}, // latin small letter o with diaeresis,
+<i>188</i>&nbsp;            //                                 U+00F6 ISOlat1
+<i>189</i>&nbsp;            {&quot;247&quot;, &quot;divide&quot;, &quot;$\\div$&quot;}, // division sign, U+00F7 ISOnum
+<i>190</i>&nbsp;            {&quot;248&quot;, &quot;oslash&quot;, &quot;{\\o}&quot;}, // latin small letter o with stroke,
+<i>191</i>&nbsp;            //                                 = latin small letter o slash,
+<i>192</i>&nbsp;            //                                 U+00F8 ISOlat1
+<i>193</i>&nbsp;            {&quot;249&quot;, &quot;ugrave&quot;, &quot;{\\`{u}}&quot;}, // latin small letter u with grave,
+<i>194</i>&nbsp;            //                                 U+00F9 ISOlat1
+<i>195</i>&nbsp;            {&quot;250&quot;, &quot;uacute&quot;, &quot;{\\&#39;{u}}&quot;}, // latin small letter u with acute,
+<i>196</i>&nbsp;            //                                 U+00FA ISOlat1
+<i>197</i>&nbsp;            {&quot;251&quot;, &quot;ucirc&quot;, &quot;{\\^{u}}&quot;}, // latin small letter u with circumflex,
+<i>198</i>&nbsp;            //                                 U+00FB ISOlat1
+<i>199</i>&nbsp;            {&quot;252&quot;, &quot;uuml&quot;, &quot;{\\\&quot;{u}}&quot;}, // latin small letter u with diaeresis,
+<i>200</i>&nbsp;            //                                 U+00FC ISOlat1
+<i>201</i>&nbsp;            {&quot;253&quot;, &quot;yacute&quot;, &quot;{\\&#39;{y}}&quot;}, // latin small letter y with acute,
+<i>202</i>&nbsp;            //                                 U+00FD ISOlat1
+<i>203</i>&nbsp;            {&quot;254&quot;, &quot;thorn&quot;, &quot;{\\th}&quot;}, // latin small letter thorn,
+<i>204</i>&nbsp;            //                                 U+00FE ISOlat1
+<i>205</i>&nbsp;            {&quot;255&quot;, &quot;yuml&quot;, &quot;{\\\&quot;{y}}&quot;}, // latin small letter y with diaeresis,
+<i>206</i>&nbsp;            //                                 U+00FF ISOlat1
+<i>207</i>&nbsp;
+<i>208</i>&nbsp;            /* Greek */
+<i>209</i>&nbsp;            {&quot;913&quot;, &quot;Alpha&quot;, &quot;{{$\\Alpha$}}&quot;}, // greek capital letter alpha, U+0391
+<i>210</i>&nbsp;            {&quot;914&quot;, &quot;Beta&quot;, &quot;{{$\\Beta$}}&quot;}, // greek capital letter beta, U+0392
+<i>211</i>&nbsp;            {&quot;915&quot;, &quot;Gamma&quot;, &quot;{{$\\Gamma$}}&quot;}, // greek capital letter gamma,
+<i>212</i>&nbsp;            //                                   U+0393 ISOgrk3
+<i>213</i>&nbsp;            {&quot;916&quot;, &quot;Delta&quot;, &quot;{{$\\Delta$}}&quot;}, // greek capital letter delta,
+<i>214</i>&nbsp;            //                                   U+0394 ISOgrk3
+<i>215</i>&nbsp;            {&quot;917&quot;, &quot;Epsilon&quot;, &quot;{{$\\Epsilon$}}&quot;}, // greek capital letter epsilon, U+0395
+<i>216</i>&nbsp;            {&quot;918&quot;, &quot;Zeta&quot;, &quot;{{$\\Zeta$}}&quot;}, // greek capital letter zeta, U+0396
+<i>217</i>&nbsp;            {&quot;919&quot;, &quot;Eta&quot;, &quot;{{$\\Eta$}}&quot;}, // greek capital letter eta, U+0397
+<i>218</i>&nbsp;            {&quot;920&quot;, &quot;Theta&quot;, &quot;{{$\\Theta$}}&quot;}, // greek capital letter theta,
+<i>219</i>&nbsp;            //                                   U+0398 ISOgrk3
+<i>220</i>&nbsp;            {&quot;921&quot;, &quot;Iota&quot;, &quot;{{$\\Iota$}}&quot;}, // greek capital letter iota, U+0399
+<i>221</i>&nbsp;            {&quot;922&quot;, &quot;Kappa&quot;, &quot;{{$\\Kappa$}}&quot;}, // greek capital letter kappa, U+039A
+<i>222</i>&nbsp;            {&quot;923&quot;, &quot;Lambda&quot;, &quot;{{$\\Lambda$}}&quot;}, // greek capital letter lambda,
+<i>223</i>&nbsp;            //                                   U+039B ISOgrk3
+<i>224</i>&nbsp;            {&quot;924&quot;, &quot;Mu&quot;, &quot;{{$\\Mu$}}&quot;}, // greek capital letter mu, U+039C
+<i>225</i>&nbsp;            {&quot;925&quot;, &quot;Nu&quot;, &quot;{{$\\Nu$}}&quot;}, // greek capital letter nu, U+039D
+<i>226</i>&nbsp;            {&quot;926&quot;, &quot;Xi&quot;, &quot;{{$\\Xi$}}&quot;}, // greek capital letter xi, U+039E ISOgrk3
+<i>227</i>&nbsp;            {&quot;927&quot;, &quot;Omicron&quot;, &quot;{{$\\Omicron$}}&quot;}, // greek capital letter omicron, U+039F
+<i>228</i>&nbsp;            {&quot;928&quot;, &quot;Pi&quot;, &quot;{{$\\Pi$}}&quot;}, // greek capital letter pi, U+03A0 ISOgrk3
+<i>229</i>&nbsp;            {&quot;929&quot;, &quot;Rho&quot;, &quot;{{$\\Rho$}}&quot;}, // greek capital letter rho, U+03A1
+<i>230</i>&nbsp;            /* there is no Sigmaf, and no U+03A2 character either */
+<i>231</i>&nbsp;            {&quot;931&quot;, &quot;Sigma&quot;, &quot;{{$\\Sigma$}}&quot;}, // greek capital letter sigma,
+<i>232</i>&nbsp;            //                                   U+03A3 ISOgrk3
+<i>233</i>&nbsp;            {&quot;932&quot;, &quot;Tau&quot;, &quot;{{$\\Tau$}}&quot;}, // greek capital letter tau, U+03A4
+<i>234</i>&nbsp;            {&quot;933&quot;, &quot;Upsilon&quot;, &quot;{{$\\Upsilon$}}&quot;}, // greek capital letter upsilon,
+<i>235</i>&nbsp;            //                                   U+03A5 ISOgrk3
+<i>236</i>&nbsp;            {&quot;934&quot;, &quot;Phi&quot;, &quot;{{$\\Phi$}}&quot;}, // greek capital letter phi,
+<i>237</i>&nbsp;            //                                   U+03A6 ISOgrk3
+<i>238</i>&nbsp;            {&quot;935&quot;, &quot;Chi&quot;, &quot;{{$\\Chi$}}&quot;}, // greek capital letter chi, U+03A7
+<i>239</i>&nbsp;            {&quot;936&quot;, &quot;Psi&quot;, &quot;{{$\\Psi$}}&quot;}, // greek capital letter psi,
+<i>240</i>&nbsp;            //                                   U+03A8 ISOgrk3
+<i>241</i>&nbsp;            {&quot;937&quot;, &quot;Omega&quot;, &quot;{{$\\Omega$}}&quot;}, // greek capital letter omega,
+<i>242</i>&nbsp;            //                                   U+03A9 ISOgrk3
+<i>243</i>&nbsp;
+<i>244</i>&nbsp;            {&quot;945&quot;, &quot;alpha&quot;, &quot;$\\alpha$&quot;}, // greek small letter alpha,
+<i>245</i>&nbsp;            //                                   U+03B1 ISOgrk3
+<i>246</i>&nbsp;            {&quot;946&quot;, &quot;beta&quot;, &quot;$\\beta$&quot;}, // greek small letter beta, U+03B2 ISOgrk3
+<i>247</i>&nbsp;            {&quot;947&quot;, &quot;gamma&quot;, &quot;$\\gamma$&quot;}, // greek small letter gamma,
+<i>248</i>&nbsp;            //                                   U+03B3 ISOgrk3
+<i>249</i>&nbsp;            {&quot;948&quot;, &quot;delta&quot;, &quot;$\\delta$&quot;}, // greek small letter delta,
+<i>250</i>&nbsp;            //                                   U+03B4 ISOgrk3
+<i>251</i>&nbsp;            {&quot;949&quot;, &quot;epsilon&quot;, &quot;$\\epsilon$&quot;}, // greek small letter epsilon,
+<i>252</i>&nbsp;            //                                   U+03B5 ISOgrk3
+<i>253</i>&nbsp;            {&quot;950&quot;, &quot;zeta&quot;, &quot;$\\zeta$&quot;}, // greek small letter zeta, U+03B6 ISOgrk3
+<i>254</i>&nbsp;            {&quot;951&quot;, &quot;eta&quot;, &quot;$\\eta$&quot;}, // greek small letter eta, U+03B7 ISOgrk3
+<i>255</i>&nbsp;            {&quot;952&quot;, &quot;theta&quot;, &quot;$\\theta$&quot;}, // greek small letter theta,
+<i>256</i>&nbsp;            //                                   U+03B8 ISOgrk3
+<i>257</i>&nbsp;            {&quot;953&quot;, &quot;iota&quot;, &quot;$\\iota$&quot;}, // greek small letter iota, U+03B9 ISOgrk3
+<i>258</i>&nbsp;            {&quot;954&quot;, &quot;kappa&quot;, &quot;$\\kappa$&quot;}, // greek small letter kappa,
+<i>259</i>&nbsp;            //                                   U+03BA ISOgrk3
+<i>260</i>&nbsp;            {&quot;955&quot;, &quot;lambda&quot;, &quot;$\\lambda$&quot;}, // greek small letter lambda,
+<i>261</i>&nbsp;            //                                   U+03BB ISOgrk3
+<i>262</i>&nbsp;            {&quot;956&quot;, &quot;mu&quot;, &quot;$\\mu$&quot;}, // greek small letter mu, U+03BC ISOgrk3
+<i>263</i>&nbsp;            {&quot;957&quot;, &quot;nu&quot;, &quot;$\\nu$&quot;}, // greek small letter nu, U+03BD ISOgrk3
+<i>264</i>&nbsp;            {&quot;958&quot;, &quot;xi&quot;, &quot;$\\xi$&quot;}, // greek small letter xi, U+03BE ISOgrk3
+<i>265</i>&nbsp;            {&quot;959&quot;, &quot;omicron&quot;, &quot;$\\omicron$&quot;}, // greek small letter omicron, U+03BF NEW
+<i>266</i>&nbsp;            {&quot;960&quot;, &quot;pi&quot;, &quot;$\\phi$&quot;}, // greek small letter pi, U+03C0 ISOgrk3
+<i>267</i>&nbsp;            {&quot;961&quot;, &quot;rho&quot;, &quot;$\\rho$&quot;}, // greek small letter rho, U+03C1 ISOgrk3
+<i>268</i>&nbsp;            {&quot;962&quot;, &quot;sigmaf&quot;, &quot;$\\varsigma$&quot;}, // greek small letter final sigma,
+<i>269</i>&nbsp;            //                                   U+03C2 ISOgrk3
+<i>270</i>&nbsp;            {&quot;963&quot;, &quot;sigma&quot;, &quot;$\\sigma$&quot;}, // greek small letter sigma,
+<i>271</i>&nbsp;            //                                   U+03C3 ISOgrk3
+<i>272</i>&nbsp;            {&quot;964&quot;, &quot;tau&quot;, &quot;$\\tau$&quot;}, // greek small letter tau, U+03C4 ISOgrk3
+<i>273</i>&nbsp;            {&quot;965&quot;, &quot;upsilon&quot;, &quot;$\\upsilon$&quot;}, // greek small letter upsilon,
+<i>274</i>&nbsp;            {&quot;&quot;, &quot;upsi&quot;, &quot;$\\upsilon$&quot;}, // alias
+<i>275</i>&nbsp;            //                                   U+03C5 ISOgrk3
+<i>276</i>&nbsp;            {&quot;966&quot;, &quot;phi&quot;, &quot;$\\phi$&quot;}, // greek small letter phi, U+03C6 ISOgrk3
+<i>277</i>&nbsp;            {&quot;967&quot;, &quot;chi&quot;, &quot;$\\chi$&quot;}, // greek small letter chi, U+03C7 ISOgrk3
+<i>278</i>&nbsp;            {&quot;968&quot;, &quot;psi&quot;, &quot;$\\psi$&quot;}, // greek small letter psi, U+03C8 ISOgrk3
+<i>279</i>&nbsp;            {&quot;969&quot;, &quot;omega&quot;, &quot;$\\omega$&quot;}, // greek small letter omega,
+<i>280</i>&nbsp;            //                                   U+03C9 ISOgrk3
+<i>281</i>&nbsp;            {&quot;977&quot;, &quot;thetasym&quot;, &quot;$\\vartheta$&quot;}, // greek small letter theta symbol,
+<i>282</i>&nbsp;            {&quot;&quot;, &quot;thetav&quot;, &quot;$\\vartheta$&quot;}, // greek small letter theta symbol,
+<i>283</i>&nbsp;            {&quot;&quot;, &quot;vartheta&quot;, &quot;$\\vartheta$&quot;}, // greek small letter theta symbol,
+<i>284</i>&nbsp;            //                                   U+03D1 NEW
+<i>285</i>&nbsp;            {&quot;978&quot;, &quot;upsih&quot;, &quot;{{$\\Upsilon$}}&quot;}, // greek upsilon with hook symbol,
+<i>286</i>&nbsp;            //                                   U+03D2 NEW
+<i>287</i>&nbsp;            {&quot;982&quot;, &quot;piv&quot;, &quot;$\\varphi$&quot;}, // greek pi symbol, U+03D6 ISOgrk3
+<i>288</i>&nbsp;
+<i>289</i>&nbsp;            /* General Punctuation */
+<i>290</i>&nbsp;            {&quot;8226&quot;, &quot;bull&quot;, &quot;$\\bullet$&quot;}, // bullet = black small circle,
+<i>291</i>&nbsp;            //                                    U+2022 ISOpub
+<i>292</i>&nbsp;            /* bullet is NOT the same as bullet operator, U+2219 */
+<i>293</i>&nbsp;            {&quot;8230&quot;, &quot;hellip&quot;, &quot;{\\ldots}&quot;}, // horizontal ellipsis = three dot leader,
+<i>294</i>&nbsp;            //                                    U+2026 ISOpub
+<i>295</i>&nbsp;            {&quot;8242&quot;, &quot;prime&quot;, &quot;$\\prime$&quot;}, // prime = minutes = feet, U+2032 ISOtech
+<i>296</i>&nbsp;            {&quot;8243&quot;, &quot;Prime&quot;, &quot;$\\prime\\prime$&quot;}, // double prime = seconds = inches,
+<i>297</i>&nbsp;            //                                    U+2033 ISOtech
+<i>298</i>&nbsp;            {&quot;8254&quot;, &quot;oline&quot;, &quot;{\\={}}&quot;}, // overline = spacing overscore,
+<i>299</i>&nbsp;            //                                    U+203E NEW
+<i>300</i>&nbsp;            {&quot;8260&quot;, &quot;frasl&quot;, &quot;/&quot;}, // fraction slash, U+2044 NEW
+<i>301</i>&nbsp;
+<i>302</i>&nbsp;            /* Letterlike Symbols */
+<i>303</i>&nbsp;            {&quot;8472&quot;, &quot;weierp&quot;, &quot;$\\wp$&quot;}, // script capital P = power set
+<i>304</i>&nbsp;            //                                    = Weierstrass p, U+2118 ISOamso
+<i>305</i>&nbsp;            {&quot;8465&quot;, &quot;image&quot;, &quot;{{$\\Im$}}&quot;}, // blackletter capital I = imaginary part,
+<i>306</i>&nbsp;            //                                    U+2111 ISOamso
+<i>307</i>&nbsp;            {&quot;8476&quot;, &quot;real&quot;, &quot;{{$\\Re$}}&quot;}, // blackletter capital R = real part symbol,
+<i>308</i>&nbsp;            //                                    U+211C ISOamso
+<i>309</i>&nbsp;            {&quot;8482&quot;, &quot;trade&quot;, &quot;{\\texttrademark}&quot;}, // trade mark sign, U+2122 ISOnum
+<i>310</i>&nbsp;            {&quot;8501&quot;, &quot;alefsym&quot;, &quot;$\\aleph$&quot;}, // alef symbol = first transfinite cardinal,
+<i>311</i>&nbsp;            //                                    U+2135 NEW
+<i>312</i>&nbsp;            /*    alef symbol is NOT the same as hebrew letter alef,
+<i>313</i>&nbsp;             U+05D0 although the same glyph could be used to depict both characters */
+<i>314</i>&nbsp;            /* Arrows */
+<i>315</i>&nbsp;            {&quot;8592&quot;, &quot;larr&quot;, &quot;$\\leftarrow$&quot;}, // leftwards arrow, U+2190 ISOnum
+<i>316</i>&nbsp;            {&quot;8593&quot;, &quot;uarr&quot;, &quot;$\\uparrow$&quot;}, // upwards arrow, U+2191 ISOnum
+<i>317</i>&nbsp;            {&quot;8594&quot;, &quot;rarr&quot;, &quot;$\\rightarrow$&quot;}, // rightwards arrow, U+2192 ISOnum
+<i>318</i>&nbsp;            {&quot;8595&quot;, &quot;darr&quot;, &quot;$\\downarrow$&quot;}, // downwards arrow, U+2193 ISOnum
+<i>319</i>&nbsp;            {&quot;8596&quot;, &quot;harr&quot;, &quot;$\\leftrightarrow$&quot;}, // left right arrow, U+2194 ISOamsa
+<i>320</i>&nbsp;            {&quot;8629&quot;, &quot;crarr&quot;, &quot;$\\dlsh$&quot;}, // downwards arrow with corner leftwards
+<i>321</i>&nbsp;            //                                    = carriage return, U+21B5 NEW - require mathabx
+<i>322</i>&nbsp;            {&quot;8656&quot;, &quot;lArr&quot;, &quot;{{$\\Leftarrow$}}&quot;}, // leftwards double arrow, U+21D0 ISOtech
+<i>323</i>&nbsp;            /*  ISO 10646 does not say that lArr is the same as the &#39;is implied by&#39; arrow
+<i>324</i>&nbsp;             but also does not have any other character for that function. So ? lArr can
+<i>325</i>&nbsp;             be used for &#39;is implied by&#39; as ISOtech suggests */
+<i>326</i>&nbsp;            {&quot;8657&quot;, &quot;uArr&quot;, &quot;{{$\\Uparrow$}}&quot;}, // upwards double arrow, U+21D1 ISOamsa
+<i>327</i>&nbsp;            {&quot;8658&quot;, &quot;rArr&quot;, &quot;{{$\\Rightarrow$}}&quot;}, // rightwards double arrow,
+<i>328</i>&nbsp;            //                                     U+21D2 ISOtech
+<i>329</i>&nbsp;            /*   ISO 10646 does not say this is the &#39;implies&#39; character but does not have
+<i>330</i>&nbsp;             another character with this function so ?
+<i>331</i>&nbsp;             rArr can be used for &#39;implies&#39; as ISOtech suggests */
+<i>332</i>&nbsp;            {&quot;8659&quot;, &quot;dArr&quot;, &quot;{{$\\Downarrow$}}&quot;}, // downwards double arrow, U+21D3 ISOamsa
+<i>333</i>&nbsp;            {&quot;8660&quot;, &quot;hArr&quot;, &quot;{{$\\Leftrightarrow$}}&quot;}, // left right double arrow,
+<i>334</i>&nbsp;            //                                     U+21D4 ISOamsa
+<i>335</i>&nbsp;
+<i>336</i>&nbsp;            /* Mathematical Operators */
+<i>337</i>&nbsp;            {&quot;8704&quot;, &quot;forall&quot;, &quot;$\\forall$&quot;}, // for all, U+2200 ISOtech
+<i>338</i>&nbsp;            {&quot;8706&quot;, &quot;part&quot;, &quot;$\\partial$&quot;}, // partial differential, U+2202 ISOtech
+<i>339</i>&nbsp;            {&quot;8707&quot;, &quot;exist&quot;, &quot;$\\exists$&quot;}, // there exists, U+2203 ISOtech
+<i>340</i>&nbsp;            {&quot;8709&quot;, &quot;empty&quot;, &quot;$\\emptyset$&quot;}, // empty set = null set = diameter,
+<i>341</i>&nbsp;            //                                    U+2205 ISOamso
+<i>342</i>&nbsp;            {&quot;8711&quot;, &quot;nabla&quot;, &quot;$\\nabla$&quot;}, // nabla = backward difference,
+<i>343</i>&nbsp;            //                                    U+2207 ISOtech
+<i>344</i>&nbsp;            {&quot;8712&quot;, &quot;isin&quot;, &quot;$\\in$&quot;}, // element of, U+2208 ISOtech
+<i>345</i>&nbsp;            {&quot;8713&quot;, &quot;notin&quot;, &quot;$\\notin$&quot;}, // not an element of, U+2209 ISOtech
+<i>346</i>&nbsp;            {&quot;8715&quot;, &quot;ni&quot;, &quot;$\\ni$&quot;}, // contains as member, U+220B ISOtech
+<i>347</i>&nbsp;            /* should there be a more memorable name than &#39;ni&#39;? */
+<i>348</i>&nbsp;            {&quot;8719&quot;, &quot;prod&quot;, &quot;$\\prod$&quot;}, // n-ary product = product sign,
+<i>349</i>&nbsp;            //                                    U+220F ISOamsb
+<i>350</i>&nbsp;            /*    prod is NOT the same character as U+03A0 &#39;greek capital letter pi&#39; though
+<i>351</i>&nbsp;             the same glyph might be used for both  */
+<i>352</i>&nbsp;            {&quot;8721&quot;, &quot;sum&quot;, &quot;$\\sum$&quot;}, // n-ary sumation, U+2211 ISOamsb
+<i>353</i>&nbsp;            /*    sum is NOT the same character as U+03A3 &#39;greek capital letter sigma&#39;
+<i>354</i>&nbsp;             though the same glyph might be used for both */
+<i>355</i>&nbsp;            {&quot;8722&quot;, &quot;minus&quot;, &quot;$-$&quot;}, // minus sign, U+2212 ISOtech
+<i>356</i>&nbsp;            {&quot;8727&quot;, &quot;lowast&quot;, &quot;$\\ast$&quot;}, // asterisk operator, U+2217 ISOtech
+<i>357</i>&nbsp;            {&quot;8730&quot;, &quot;radic&quot;, &quot;$\\sqrt{}$&quot;}, // square root = radical sign,
+<i>358</i>&nbsp;            //                                    U+221A ISOtech
+<i>359</i>&nbsp;            {&quot;8733&quot;, &quot;prop&quot;, &quot;$\\propto$&quot;}, // proportional to, U+221D ISOtech
+<i>360</i>&nbsp;            {&quot;8734&quot;, &quot;infin&quot;, &quot;$\\infty$&quot;}, // infinity, U+221E ISOtech
+<i>361</i>&nbsp;            {&quot;8736&quot;, &quot;ang&quot;, &quot;$\\angle$&quot;}, // angle, U+2220 ISOamso
+<i>362</i>&nbsp;            {&quot;8743&quot;, &quot;and&quot;, &quot;$\\land$&quot;}, // logical and = wedge, U+2227 ISOtech
+<i>363</i>&nbsp;            {&quot;8744&quot;, &quot;or&quot;, &quot;$\\lor$&quot;}, // logical or = vee, U+2228 ISOtech
+<i>364</i>&nbsp;            {&quot;8745&quot;, &quot;cap&quot;, &quot;$\\cap$&quot;}, // intersection = cap, U+2229 ISOtech
+<i>365</i>&nbsp;            {&quot;8746&quot;, &quot;cup&quot;, &quot;$\\cup$&quot;}, // union = cup, U+222A ISOtech
+<i>366</i>&nbsp;            {&quot;8747&quot;, &quot;int&quot;, &quot;$\\int$&quot;}, // integral, U+222B ISOtech
+<i>367</i>&nbsp;            {&quot;8756&quot;, &quot;there4&quot;, &quot;$\\therefore$&quot;}, // therefore, U+2234 ISOtech; AMSSymb
+<i>368</i>&nbsp;            {&quot;8764&quot;, &quot;sim&quot;, &quot;$\\sim$&quot;}, // tilde operator = varies with = similar to,
+<i>369</i>&nbsp;            //                                    U+223C ISOtech
+<i>370</i>&nbsp;            /*  tilde operator is NOT the same character as the tilde, U+007E,
+<i>371</i>&nbsp;             although the same glyph might be used to represent both   */
+<i>372</i>&nbsp;            {&quot;8773&quot;, &quot;cong&quot;, &quot;$\\cong$&quot;}, // approximately equal to, U+2245 ISOtech
+<i>373</i>&nbsp;            {&quot;8776&quot;, &quot;asymp&quot;, &quot;$\\approx$&quot;}, // almost equal to = asymptotic to,
+<i>374</i>&nbsp;            //                                    U+2248 ISOamsr
+<i>375</i>&nbsp;            {&quot;8800&quot;, &quot;ne&quot;, &quot;$\\neq$&quot;}, // not equal to, U+2260 ISOtech
+<i>376</i>&nbsp;            {&quot;8801&quot;, &quot;equiv&quot;, &quot;$\\equiv$&quot;}, // identical to, U+2261 ISOtech
+<i>377</i>&nbsp;            {&quot;8804&quot;, &quot;le&quot;, &quot;$\\leq$&quot;}, // less-than or equal to, U+2264 ISOtech
+<i>378</i>&nbsp;            {&quot;8805&quot;, &quot;ge&quot;, &quot;$\\geq$&quot;}, // greater-than or equal to,
+<i>379</i>&nbsp;            //                                    U+2265 ISOtech
+<i>380</i>&nbsp;            {&quot;8834&quot;, &quot;sub&quot;, &quot;$\\subset$&quot;}, // subset of, U+2282 ISOtech
+<i>381</i>&nbsp;            {&quot;8835&quot;, &quot;sup&quot;, &quot;$\\supset$&quot;}, // superset of, U+2283 ISOtech
+<i>382</i>&nbsp;            /*    note that nsup, &#39;not a superset of, U+2283&#39; is not covered by the Symbol
+<i>383</i>&nbsp;             font encoding and is not included. Should it be, for symmetry?
+<i>384</i>&nbsp;             It is in ISOamsn   */
+<i>385</i>&nbsp;            {&quot;8836&quot;, &quot;nsub&quot;, &quot;$\\not\\subset$&quot;}, // not a subset of, U+2284 ISOamsn
+<i>386</i>&nbsp;            {&quot;8838&quot;, &quot;sube&quot;, &quot;$\\subseteq$&quot;}, // subset of or equal to, U+2286 ISOtech
+<i>387</i>&nbsp;            {&quot;8839&quot;, &quot;supe&quot;, &quot;$\\supseteq$&quot;}, // superset of or equal to,
+<i>388</i>&nbsp;            //                                    U+2287 ISOtech
+<i>389</i>&nbsp;            {&quot;8853&quot;, &quot;oplus&quot;, &quot;$\\oplus$&quot;}, // circled plus = direct sum,
+<i>390</i>&nbsp;            //                                    U+2295 ISOamsb
+<i>391</i>&nbsp;            {&quot;8855&quot;, &quot;otimes&quot;, &quot;$\\otimes$&quot;}, // circled times = vector product,
+<i>392</i>&nbsp;            //                                    U+2297 ISOamsb
+<i>393</i>&nbsp;            {&quot;8869&quot;, &quot;perp&quot;, &quot;$\\perp$&quot;}, // up tack = orthogonal to = perpendicular,
+<i>394</i>&nbsp;            //                                    U+22A5 ISOtech
+<i>395</i>&nbsp;            {&quot;8901&quot;, &quot;sdot&quot;, &quot;$\\cdot$&quot;}, // dot operator, U+22C5 ISOamsb
+<i>396</i>&nbsp;            /* dot operator is NOT the same character as U+00B7 middle dot */
+<i>397</i>&nbsp;            {&quot;8968&quot;, &quot;lceil&quot;, &quot;$\\lceil$&quot;}, // left ceiling = apl upstile,
+<i>398</i>&nbsp;            //                                    U+2308 ISOamsc
+<i>399</i>&nbsp;            {&quot;8969&quot;, &quot;rceil&quot;, &quot;$\\rceil$&quot;}, // right ceiling, U+2309 ISOamsc
+<i>400</i>&nbsp;            {&quot;8970&quot;, &quot;lfloor&quot;, &quot;$\\lfloor$&quot;}, // left floor = apl downstile,
+<i>401</i>&nbsp;            //                                    U+230A ISOamsc
+<i>402</i>&nbsp;            {&quot;8971&quot;, &quot;rfloor&quot;, &quot;$\\rfloor$&quot;}, // right floor, U+230B ISOamsc
+<i>403</i>&nbsp;
+<i>404</i>&nbsp;            /* Miscellaneous Technical */
+<i>405</i>&nbsp;            {&quot;9001&quot;, &quot;lang&quot;, &quot;$\\langle$&quot;}, // left-pointing angle bracket = bra,
+<i>406</i>&nbsp;            //                                    U+2329 ISOtech
+<i>407</i>&nbsp;            /*    lang is NOT the same character as U+003C &#39;less than&#39;
+<i>408</i>&nbsp;             or U+2039 &#39;single left-pointing angle quotation mark&#39; */
+<i>409</i>&nbsp;            {&quot;9002&quot;, &quot;rang&quot;, &quot;$\\rangle$&quot;}, // right-pointing angle bracket = ket,
+<i>410</i>&nbsp;            //                                    U+232A ISOtech
+<i>411</i>&nbsp;            /*    rang is NOT the same character as U+003E &#39;greater than&#39;
+<i>412</i>&nbsp;             or U+203A &#39;single right-pointing angle quotation mark&#39; */
+<i>413</i>&nbsp;            /* Geometric Shapes */
+<i>414</i>&nbsp;            {&quot;9674&quot;, &quot;loz&quot;, &quot;$\\lozenge$&quot;}, // lozenge, U+25CA ISOpub
+<i>415</i>&nbsp;
+<i>416</i>&nbsp;            /* Miscellaneous Symbols */
+<i>417</i>&nbsp;            {&quot;9824&quot;, &quot;spades&quot;, &quot;$\\spadesuit$&quot;}, // black spade suit, U+2660 ISOpub
+<i>418</i>&nbsp;            /* black here seems to mean filled as opposed to hollow */
+<i>419</i>&nbsp;            {&quot;9827&quot;, &quot;clubs&quot;, &quot;$\\clubsuit$&quot;}, // black club suit = shamrock,
+<i>420</i>&nbsp;            //                                    U+2663 ISOpub
+<i>421</i>&nbsp;            {&quot;9829&quot;, &quot;hearts&quot;, &quot;$\\heartsuit$&quot;}, // black heart suit = valentine,
+<i>422</i>&nbsp;            //                                    U+2665 ISOpub
+<i>423</i>&nbsp;            {&quot;9830&quot;, &quot;diams&quot;, &quot;$\\diamondsuit$&quot;}, // black diamond suit, U+2666 ISOpub
+<i>424</i>&nbsp;            {&quot;34&quot;, &quot;quot&quot;, &quot;\&quot;&quot;}, // quotation mark = APL quote,
+<i>425</i>&nbsp;            //                                   U+0022 ISOnum
+<i>426</i>&nbsp;            {&quot;38&quot;, &quot;amp&quot;, &quot;\\&amp;&quot;}, // ampersand, U+0026 ISOnum
+<i>427</i>&nbsp;            {&quot;60&quot;, &quot;lt&quot;, &quot;$&lt;$&quot;}, // less-than sign, U+003C ISOnum
+<i>428</i>&nbsp;            {&quot;62&quot;, &quot;gt&quot;, &quot;$&gt;$&quot;}, // greater-than sign, U+003E ISOnum
+<i>429</i>&nbsp;
+<i>430</i>&nbsp;
+<i>431</i>&nbsp;            /* General Punctuation */
+<i>432</i>&nbsp;            {&quot;8194&quot;, &quot;ensp&quot;, &quot;\\hspace{0.5em}&quot;}, // en space, U+2002 ISOpub
+<i>433</i>&nbsp;            {&quot;8195&quot;, &quot;emsp&quot;, &quot;\\hspace{1em}&quot;}, // em space, U+2003 ISOpub
+<i>434</i>&nbsp;            {&quot;8201&quot;, &quot;thinsp&quot;, &quot;\\hspace{0.167em}&quot;}, // thin space, U+2009 ISOpub
+<i>435</i>&nbsp;            {&quot;8202&quot;, &quot;&quot;, &quot;\\hspace{0.1em}&quot;}, // hair space, U+2010 ISOpub
+<i>436</i>&nbsp;            {&quot;8204&quot;, &quot;zwnj&quot;, &quot;\\/{}&quot;}, // zero width non-joiner,
+<i>437</i>&nbsp;            //                                   U+200C NEW RFC 2070
+<i>438</i>&nbsp;            {&quot;8205&quot;, &quot;zwj&quot;, &quot;&quot;}, // zero width joiner, U+200D NEW RFC 2070
+<i>439</i>&nbsp;            {&quot;8206&quot;, &quot;lrm&quot;, &quot;&quot;}, // left-to-right mark, U+200E NEW RFC 2070
+<i>440</i>&nbsp;            {&quot;8207&quot;, &quot;rlm&quot;, &quot;&quot;}, // right-to-left mark, U+200F NEW RFC 2070
+<i>441</i>&nbsp;            {&quot;8211&quot;, &quot;ndash&quot;, &quot;--&quot;}, // en dash, U+2013 ISOpub
+<i>442</i>&nbsp;            {&quot;8212&quot;, &quot;mdash&quot;, &quot;---&quot;}, // em dash, U+2014 ISOpub
+<i>443</i>&nbsp;            {&quot;8216&quot;, &quot;lsquo&quot;, &quot;{\\textquoteleft}&quot;}, // left single quotation mark,
+<i>444</i>&nbsp;            //                                   U+2018 ISOnum
+<i>445</i>&nbsp;            {&quot;8217&quot;, &quot;rsquo&quot;, &quot;{\\textquoteright}&quot;}, // right single quotation mark,
+<i>446</i>&nbsp;            //                                   U+2019 ISOnum
+<i>447</i>&nbsp;            {&quot;8218&quot;, &quot;sbquo&quot;, &quot;{\\quotesinglbase}&quot;}, // single low-9 quotation mark, U+201A NEW
+<i>448</i>&nbsp;            {&quot;8220&quot;, &quot;ldquo&quot;, &quot;{\\textquotedblleft}&quot;}, // left double quotation mark,
+<i>449</i>&nbsp;            //                                   U+201C ISOnum
+<i>450</i>&nbsp;            {&quot;8221&quot;, &quot;rdquo&quot;, &quot;{\\textquotedblright}&quot;}, // right double quotation mark,
+<i>451</i>&nbsp;            //                                   U+201D ISOnum
+<i>452</i>&nbsp;            {&quot;8222&quot;, &quot;bdquo&quot;, &quot;{\\quotedblbase}&quot;}, // double low-9 quotation mark, U+201E NEW
+<i>453</i>&nbsp;            {&quot;8224&quot;, &quot;dagger&quot;, &quot;{\\dag}&quot;}, // dagger, U+2020 ISOpub
+<i>454</i>&nbsp;            {&quot;8225&quot;, &quot;Dagger&quot;, &quot;{\\ddag}&quot;}, // double dagger, U+2021 ISOpub
+<i>455</i>&nbsp;            {&quot;8240&quot;, &quot;permil&quot;, &quot;{\\textperthousand}&quot;}, // per mille sign, U+2030 ISOtech
+<i>456</i>&nbsp;            {&quot;8249&quot;, &quot;lsaquo&quot;, &quot;{\\guilsinglleft}&quot;}, // single left-pointing angle quotation mark,
+<i>457</i>&nbsp;            //                                   U+2039 ISO proposed
+<i>458</i>&nbsp;            /* lsaquo is proposed but not yet ISO standardized */
+<i>459</i>&nbsp;            {&quot;8250&quot;, &quot;rsaquo&quot;, &quot;{\\guilsinglright}&quot;}, // single right-pointing angle quotation mark,
+<i>460</i>&nbsp;            //                                   U+203A ISO proposed
+<i>461</i>&nbsp;            /* rsaquo is proposed but not yet ISO standardized */
+<i>462</i>&nbsp;            {&quot;8364&quot;, &quot;euro&quot;, &quot;{\\texteuro}&quot;}, // euro sign, U+20AC NEW
+<i>463</i>&nbsp;
+<i>464</i>&nbsp;            /* Manually added */
+<i>465</i>&nbsp;            {&quot;35&quot;, &quot;&quot;, &quot;\\#&quot;}, // Hash
+<i>466</i>&nbsp;            {&quot;36&quot;, &quot;dollar&quot;, &quot;\\$&quot;}, // Dollar
+<i>467</i>&nbsp;            {&quot;37&quot;, &quot;percnt&quot;, &quot;\\%&quot;}, // Percent
+<i>468</i>&nbsp;            {&quot;39&quot;, &quot;apos&quot;, &quot;&#39;&quot;}, // Apostrophe
+<i>469</i>&nbsp;            {&quot;40&quot;, &quot;lpar&quot;, &quot;(&quot;}, // Left bracket
+<i>470</i>&nbsp;            {&quot;41&quot;, &quot;rpar&quot;, &quot;)&quot;}, // Right bracket
+<i>471</i>&nbsp;            {&quot;42&quot;, &quot;&quot;, &quot;*&quot;}, // Asterisk
+<i>472</i>&nbsp;            {&quot;43&quot;, &quot;plus&quot;, &quot;+&quot;}, // Plus
+<i>473</i>&nbsp;            {&quot;44&quot;, &quot;comma&quot;, &quot;,&quot;}, // Comma
+<i>474</i>&nbsp;            {&quot;45&quot;, &quot;hyphen&quot;, &quot;-&quot;}, // Hyphen
+<i>475</i>&nbsp;            {&quot;46&quot;, &quot;period&quot;, &quot;.&quot;}, // Period
+<i>476</i>&nbsp;            {&quot;47&quot;, &quot;slash&quot;, &quot;/&quot;}, // Slash (solidus)
+<i>477</i>&nbsp;            {&quot;58&quot;, &quot;colon&quot;, &quot;:&quot;}, // Colon
+<i>478</i>&nbsp;            {&quot;59&quot;, &quot;semi&quot;, &quot;;&quot;}, // Semi colon
+<i>479</i>&nbsp;            {&quot;61&quot;, &quot;equals&quot;, &quot;=&quot;}, // Equals to
+<i>480</i>&nbsp;            {&quot;91&quot;, &quot;lsqb&quot;, &quot;[&quot;}, // Left square bracket
+<i>481</i>&nbsp;            {&quot;92&quot;, &quot;bsol&quot;, &quot;{\\textbackslash}&quot;}, // Backslash
+<i>482</i>&nbsp;            {&quot;93&quot;, &quot;rsqb&quot;, &quot;]&quot;}, // Right square bracket
+<i>483</i>&nbsp;            {&quot;94&quot;, &quot;Hat&quot;, &quot;{\\^{}}&quot;}, // Circumflex
+<i>484</i>&nbsp;            {&quot;95&quot;, &quot;lowbar&quot;, &quot;\\_&quot;}, // Underscore
+<i>485</i>&nbsp;            {&quot;96&quot;, &quot;grave&quot;, &quot;{\\`{}}&quot;}, // Grave
+<i>486</i>&nbsp;            {&quot;123&quot;, &quot;lbrace&quot;, &quot;\\{&quot;}, // Left curly bracket
+<i>487</i>&nbsp;            {&quot;&quot;, &quot;lcub&quot;, &quot;\\{&quot;}, // Left curly bracket
+<i>488</i>&nbsp;            {&quot;124&quot;, &quot;vert&quot;, &quot;|&quot;}, // Vertical bar
+<i>489</i>&nbsp;            {&quot;&quot;, &quot;verbar&quot;, &quot;|&quot;}, // Vertical bar
+<i>490</i>&nbsp;            {&quot;&quot;, &quot;VerticalLine&quot;, &quot;|&quot;}, // Vertical bar
+<i>491</i>&nbsp;            {&quot;125&quot;, &quot;rbrace&quot;, &quot;\\}&quot;}, // Right curly bracket
+<i>492</i>&nbsp;            {&quot;&quot;, &quot;rcub&quot;, &quot;\\}&quot;}, // Right curly bracket
+<i>493</i>&nbsp;            // {&quot;138&quot;, &quot;&quot;, &quot;{{\\v{S}}}&quot;}, // Line tabulation set
+<i>494</i>&nbsp;            // {&quot;141&quot;, &quot;&quot;, &quot;&quot;}, // Reverse line feed
+<i>495</i>&nbsp;            {&quot;145&quot;, &quot;&quot;, &quot;`&quot;}, // Apostrophe
+<i>496</i>&nbsp;            {&quot;146&quot;, &quot;&quot;, &quot;&#39;&quot;}, // Apostrophe
+<i>497</i>&nbsp;            {&quot;147&quot;, &quot;&quot;, &quot;``&quot;}, // Quotation mark
+<i>498</i>&nbsp;            {&quot;148&quot;, &quot;&quot;, &quot;&#39;&#39;&quot;}, // Quotation mark
+<i>499</i>&nbsp;            {&quot;150&quot;, &quot;&quot;, &quot;--&quot;}, // En dash
+<i>500</i>&nbsp;            // {&quot;154&quot;, &quot;&quot;, &quot;{\\v{s}}&quot;}, // Single character introducer
+<i>501</i>&nbsp;            {&quot;256&quot;, &quot;&quot;, &quot;{{\\={A}}}&quot;}, // capital A with macron
+<i>502</i>&nbsp;            {&quot;257&quot;, &quot;&quot;, &quot;{\\={a}}&quot;}, // small a with macron
+<i>503</i>&nbsp;            {&quot;258&quot;, &quot;&quot;, &quot;{{\\u{A}}}&quot;}, // capital A with breve
+<i>504</i>&nbsp;            {&quot;259&quot;, &quot;&quot;, &quot;{\\u{a}}&quot;}, // small a with breve
+<i>505</i>&nbsp;            {&quot;260&quot;, &quot;Aogon&quot;, &quot;{{\\k{A}}}&quot;}, // capital A with ogonek
+<i>506</i>&nbsp;            {&quot;261&quot;, &quot;aogon&quot;, &quot;{\\k{a}}&quot;}, // small a with ogonek
+<i>507</i>&nbsp;            {&quot;262&quot;, &quot;Cacute&quot;, &quot;{{\\&#39;{C}}}&quot;}, // capital C with acute
+<i>508</i>&nbsp;            {&quot;263&quot;, &quot;cacute&quot;, &quot;{\\&#39;{c}}&quot;}, // small C with acute
+<i>509</i>&nbsp;            {&quot;264&quot;, &quot;Ccirc&quot;, &quot;{{\\^{C}}}&quot;}, // capital C with circumflex
+<i>510</i>&nbsp;            {&quot;265&quot;, &quot;ccirc&quot;, &quot;{\\^{c}}&quot;}, // small C with circumflex
+<i>511</i>&nbsp;            {&quot;266&quot;, &quot;Cdot&quot;, &quot;{{\\.{C}}}&quot;}, // capital C with dot above
+<i>512</i>&nbsp;            {&quot;267&quot;, &quot;cdot&quot;, &quot;{\\.{c}}&quot;}, // small C with dot above
+<i>513</i>&nbsp;            {&quot;268&quot;, &quot;Ccaron&quot;, &quot;{{\\v{C}}}&quot;}, // capital C with caron
+<i>514</i>&nbsp;            {&quot;269&quot;, &quot;ccaron&quot;, &quot;{\\v{c}}&quot;}, // small C with caron
+<i>515</i>&nbsp;            {&quot;270&quot;, &quot;&quot;, &quot;{{\\v{D}}}&quot;}, // capital D with caron
+<i>516</i>&nbsp;            {&quot;271&quot;, &quot;&quot;, &quot;{\\v{d}}&quot;}, // small d with caron
+<i>517</i>&nbsp;            {&quot;272&quot;, &quot;Dstrok&quot;, &quot;{{\\DJ}}&quot;}, // capital D with stroke
+<i>518</i>&nbsp;            {&quot;273&quot;, &quot;dstrok&quot;, &quot;{{\\dj}}&quot;}, // small d with stroke
+<i>519</i>&nbsp;            {&quot;274&quot;, &quot;&quot;, &quot;{{\\={E}}}&quot;}, // capital E with macron
+<i>520</i>&nbsp;            {&quot;275&quot;, &quot;&quot;, &quot;{\\={e}}&quot;}, // small e with macron
+<i>521</i>&nbsp;            {&quot;276&quot;, &quot;&quot;, &quot;{{\\u{E}}}&quot;}, // capital E with breve
+<i>522</i>&nbsp;            {&quot;277&quot;, &quot;&quot;, &quot;{\\u{e}}&quot;}, // small e with breve
+<i>523</i>&nbsp;            {&quot;278&quot;, &quot;&quot;, &quot;{{\\.{E}}}&quot;}, // capital E with dot above
+<i>524</i>&nbsp;            {&quot;279&quot;, &quot;&quot;, &quot;{\\.{e}}&quot;}, // small e with dot above
+<i>525</i>&nbsp;            {&quot;280&quot;, &quot;Eogon&quot;, &quot;{{\\k{E}}}&quot;}, // capital E with ogonek
+<i>526</i>&nbsp;            {&quot;281&quot;, &quot;eogon&quot;, &quot;{\\k{e}}&quot;}, // small e with ogonek
+<i>527</i>&nbsp;            {&quot;282&quot;, &quot;&quot;, &quot;{{\\v{E}}}&quot;}, // capital E with caron
+<i>528</i>&nbsp;            {&quot;283&quot;, &quot;&quot;, &quot;{\\v{e}}&quot;}, // small e with caron
+<i>529</i>&nbsp;            {&quot;284&quot;, &quot;&quot;, &quot;{{\\^{G}}}&quot;}, // capital G with circumflex
+<i>530</i>&nbsp;            {&quot;285&quot;, &quot;&quot;, &quot;{\\^{g}}&quot;}, // small g with circumflex
+<i>531</i>&nbsp;            {&quot;286&quot;, &quot;&quot;, &quot;{{\\u{G}}}&quot;}, // capital G with breve
+<i>532</i>&nbsp;            {&quot;287&quot;, &quot;&quot;, &quot;{\\u{g}}&quot;}, // small g with breve
+<i>533</i>&nbsp;            {&quot;288&quot;, &quot;&quot;, &quot;{{\\.{G}}}&quot;}, // capital G with dot above
+<i>534</i>&nbsp;            {&quot;289&quot;, &quot;&quot;, &quot;{\\.{g}}&quot;}, // small g with dot above
+<i>535</i>&nbsp;            {&quot;290&quot;, &quot;&quot;, &quot;{{\\c{G}}}&quot;}, // capital G with cedilla
+<i>536</i>&nbsp;            {&quot;291&quot;, &quot;&quot;, &quot;{\\c{g}}&quot;}, // small g with cedilla
+<i>537</i>&nbsp;            {&quot;292&quot;, &quot;&quot;, &quot;{{\\^{H}}}&quot;}, // capital H with circumflex
+<i>538</i>&nbsp;            {&quot;293&quot;, &quot;&quot;, &quot;{\\^{h}}&quot;}, // small h with circumflex
+<i>539</i>&nbsp;            {&quot;294&quot;, &quot;&quot;, &quot;{{\\B{H}}}&quot;}, // capital H with stroke
+<i>540</i>&nbsp;            {&quot;295&quot;, &quot;&quot;, &quot;{\\B{h}}&quot;}, // small h with stroke
+<i>541</i>&nbsp;            {&quot;296&quot;, &quot;&quot;, &quot;{{\\~{I}}}&quot;}, // capital I with tilde
+<i>542</i>&nbsp;            {&quot;297&quot;, &quot;&quot;, &quot;{\\~{\\i}}&quot;}, // small i with tilde
+<i>543</i>&nbsp;            {&quot;298&quot;, &quot;Imacr&quot;, &quot;{{\\={I}}}&quot;}, // capital I with macron
+<i>544</i>&nbsp;            {&quot;299&quot;, &quot;imacr&quot;, &quot;{\\={\\i}}&quot;}, // small i with macron
+<i>545</i>&nbsp;            {&quot;300&quot;, &quot;&quot;, &quot;{{\\u{I}}}&quot;}, // capital I with breve
+<i>546</i>&nbsp;            {&quot;301&quot;, &quot;&quot;, &quot;{\\u{\\i}}&quot;}, // small i with breve
+<i>547</i>&nbsp;            {&quot;302&quot;, &quot;Iogon&quot;, &quot;{{\\k{I}}}&quot;}, // capital I with ogonek
+<i>548</i>&nbsp;            {&quot;303&quot;, &quot;iogon&quot;, &quot;{\\k{i}}&quot;}, // small i with ogonek
+<i>549</i>&nbsp;            {&quot;304&quot;, &quot;Idot&quot;, &quot;{{\\.{I}}}&quot;}, // capital I with dot above
+<i>550</i>&nbsp;            {&quot;305&quot;, &quot;inodot&quot;, &quot;{\\i}&quot;}, // Small i without the dot
+<i>551</i>&nbsp;            {&quot;&quot;, &quot;imath&quot;, &quot;{\\i}&quot;}, // Small i without the dot
+<i>552</i>&nbsp;            {&quot;306&quot;, &quot;&quot;, &quot;{{\\IJ}}&quot;}, // Dutch di-graph IJ
+<i>553</i>&nbsp;            {&quot;307&quot;, &quot;&quot;, &quot;{{\\ij}}&quot;}, // Dutch di-graph ij
+<i>554</i>&nbsp;            {&quot;308&quot;, &quot;&quot;, &quot;{{\\^{J}}}&quot;}, // capital J with circumflex
+<i>555</i>&nbsp;            {&quot;309&quot;, &quot;&quot;, &quot;{\\^{\\j}}&quot;}, // small j with circumflex
+<i>556</i>&nbsp;            {&quot;310&quot;, &quot;&quot;, &quot;{{\\c{K}}}&quot;}, // capital K with cedilla
+<i>557</i>&nbsp;            {&quot;311&quot;, &quot;&quot;, &quot;{\\c{k}}&quot;}, // small k with cedilla
+<i>558</i>&nbsp;            {&quot;312&quot;, &quot;&quot;, &quot;{\\textkra}&quot;}, // Letter kra
+<i>559</i>&nbsp;            {&quot;313&quot;, &quot;&quot;, &quot;{{\\&#39;{L}}}&quot;}, // capital L with acute
+<i>560</i>&nbsp;            {&quot;314&quot;, &quot;&quot;, &quot;{\\&#39;{l}}&quot;}, // small l with acute
+<i>561</i>&nbsp;            {&quot;315&quot;, &quot;&quot;, &quot;{{\\c{L}}}&quot;}, // capital L with cedilla
+<i>562</i>&nbsp;            {&quot;316&quot;, &quot;&quot;, &quot;{\\c{l}}&quot;}, // small l with cedilla
+<i>563</i>&nbsp;            {&quot;317&quot;, &quot;&quot;, &quot;{{\\v{L}}}&quot;}, // capital L with caron
+<i>564</i>&nbsp;            {&quot;318&quot;, &quot;&quot;, &quot;{\\v{l}}&quot;}, // small l with caron
+<i>565</i>&nbsp;            //{&quot;319&quot;, &quot;Lmidot&quot;, &quot;{\\Lmidot}&quot;}, // upper case L with mid dot
+<i>566</i>&nbsp;            //{&quot;320&quot;, &quot;lmidot&quot;, &quot;{\\lmidot}&quot;}, // lower case l with mid dot
+<i>567</i>&nbsp;            {&quot;321&quot;, &quot;Lstrok&quot;, &quot;{{\\L}}&quot;}, // upper case L with stroke
+<i>568</i>&nbsp;            {&quot;322&quot;, &quot;lstrok&quot;, &quot;{{\\l}}&quot;}, // lower case l with stroke
+<i>569</i>&nbsp;            {&quot;323&quot;, &quot;Nacute&quot;, &quot;{{\\&#39;{N}}}&quot;}, // upper case N with acute
+<i>570</i>&nbsp;            {&quot;324&quot;, &quot;nacute&quot;, &quot;{{\\&#39;{n}}}&quot;}, // lower case n with acute
+<i>571</i>&nbsp;            {&quot;325&quot;, &quot;&quot;, &quot;{{\\c{N}}}&quot;}, // capital N with cedilla
+<i>572</i>&nbsp;            {&quot;326&quot;, &quot;&quot;, &quot;{\\c{n}}&quot;}, // small n with cedilla
+<i>573</i>&nbsp;            {&quot;327&quot;, &quot;&quot;, &quot;{{\\v{N}}}&quot;}, // capital N with caron
+<i>574</i>&nbsp;            {&quot;328&quot;, &quot;&quot;, &quot;{\\v{n}}&quot;}, // small n with caron
+<i>575</i>&nbsp;            {&quot;329&quot;, &quot;&quot;, &quot;{&#39;n}&quot;}, // small n preceded with apostroph
+<i>576</i>&nbsp;            {&quot;330&quot;, &quot;&quot;, &quot;{{\\NG}}&quot;}, // upper case letter Eng
+<i>577</i>&nbsp;            {&quot;331&quot;, &quot;&quot;, &quot;{{\\ng}}&quot;}, // lower case letter Eng
+<i>578</i>&nbsp;            {&quot;332&quot;, &quot;Omacro&quot;, &quot;{{\\={O}}}&quot;}, // the capital letter O with macron
+<i>579</i>&nbsp;            {&quot;333&quot;, &quot;omacro&quot;, &quot;{\\={o}}&quot;}, // the small letter o with macron
+<i>580</i>&nbsp;            {&quot;334&quot;, &quot;&quot;, &quot;{{\\u{O}}}&quot;}, // the capital letter O with breve
+<i>581</i>&nbsp;            {&quot;335&quot;, &quot;&quot;, &quot;{\\u{o}}&quot;}, // the small letter o with breve
+<i>582</i>&nbsp;            {&quot;336&quot;, &quot;&quot;, &quot;{{\\H{O}}}&quot;}, // the capital letter O with double acute
+<i>583</i>&nbsp;            {&quot;337&quot;, &quot;&quot;, &quot;{\\H{o}}&quot;}, // the small letter o with double acute
+<i>584</i>&nbsp;            {&quot;338&quot;, &quot;OElig&quot;, &quot;{{\\OE}}&quot;}, // OE-ligature
+<i>585</i>&nbsp;            {&quot;339&quot;, &quot;oelig&quot;, &quot;{{\\oe}}&quot;}, // oe-ligature
+<i>586</i>&nbsp;            {&quot;340&quot;, &quot;&quot;, &quot;{{\\&#39;{R}}}&quot;}, // upper case R with acute
+<i>587</i>&nbsp;            {&quot;341&quot;, &quot;&quot;, &quot;{{\\&#39;{r}}}&quot;}, // lower case r with acute
+<i>588</i>&nbsp;            {&quot;342&quot;, &quot;&quot;, &quot;{{\\c{R}}}&quot;}, // upper case R with cedilla
+<i>589</i>&nbsp;            {&quot;343&quot;, &quot;&quot;, &quot;{{\\c{r}}}&quot;}, // lower case r with cedilla
+<i>590</i>&nbsp;            {&quot;344&quot;, &quot;&quot;, &quot;{{\\v{R}}}&quot;}, // upper case R with caron
+<i>591</i>&nbsp;            {&quot;345&quot;, &quot;&quot;, &quot;{{\\v{r}}}&quot;}, // lower case r with caron
+<i>592</i>&nbsp;            {&quot;346&quot;, &quot;&quot;, &quot;{{\\&#39;{S}}}&quot;}, // upper case S with acute
+<i>593</i>&nbsp;            {&quot;347&quot;, &quot;&quot;, &quot;{{\\&#39;{s}}}&quot;}, // lower case s with acute
+<i>594</i>&nbsp;            {&quot;348&quot;, &quot;Scirc&quot;, &quot;{{\\^{S}}}&quot;}, // upper case S with circumflex
+<i>595</i>&nbsp;            {&quot;349&quot;, &quot;scirc&quot;, &quot;{\\^{s}}&quot;}, // lower case s with circumflex
+<i>596</i>&nbsp;            {&quot;350&quot;, &quot;Scedil&quot;, &quot;{{\\c{S}}}&quot;}, // upper case S with cedilla
+<i>597</i>&nbsp;            {&quot;351&quot;, &quot;scedil&quot;, &quot;{\\c{s}}&quot;}, // lower case s with cedilla
+<i>598</i>&nbsp;            {&quot;352&quot;, &quot;Scaron&quot;, &quot;{{\\v{S}}}&quot;}, // latin capital letter S with caron,
+<i>599</i>&nbsp;            {&quot;353&quot;, &quot;scaron&quot;, &quot;{\\v{s}}&quot;}, // latin small letter s with caron,
+<i>600</i>&nbsp;            {&quot;354&quot;, &quot;&quot;, &quot;{{\\c{T}}}&quot;}, // upper case T with cedilla
+<i>601</i>&nbsp;            {&quot;355&quot;, &quot;&quot;, &quot;{{\\c{T}}}&quot;}, // lower case t with cedilla
+<i>602</i>&nbsp;            {&quot;356&quot;, &quot;&quot;, &quot;{{\\v{T}}}&quot;}, // latin capital letter T with caron,
+<i>603</i>&nbsp;            {&quot;357&quot;, &quot;&quot;, &quot;{\\v{t}}&quot;}, // latin small letter t with caron,
+<i>604</i>&nbsp;            {&quot;358&quot;, &quot;&quot;, &quot;{{\\B{T}}}&quot;}, // latin capital letter T with stroke,
+<i>605</i>&nbsp;            {&quot;359&quot;, &quot;&quot;, &quot;{\\B{t}}&quot;}, // latin small letter t with stroke,
+<i>606</i>&nbsp;            {&quot;360&quot;, &quot;&quot;, &quot;{{\\~{U}}}&quot;}, // capital U with tilde
+<i>607</i>&nbsp;            {&quot;361&quot;, &quot;&quot;, &quot;{\\~{u}}&quot;}, // small u with tilde
+<i>608</i>&nbsp;            {&quot;362&quot;, &quot;&quot;, &quot;{{\\={U}}}&quot;}, // capital U with macron
+<i>609</i>&nbsp;            {&quot;363&quot;, &quot;&quot;, &quot;{\\={u}}&quot;}, // small u with macron
+<i>610</i>&nbsp;            {&quot;364&quot;, &quot;&quot;, &quot;{{\\u{U}}}&quot;}, // capital U with breve
+<i>611</i>&nbsp;            {&quot;365&quot;, &quot;&quot;, &quot;{\\u{u}}&quot;}, // small u with breve
+<i>612</i>&nbsp;            {&quot;366&quot;, &quot;&quot;, &quot;{{\\r{U}}}&quot;}, // capital U with ring
+<i>613</i>&nbsp;            {&quot;367&quot;, &quot;&quot;, &quot;{\\r{u}}&quot;}, // small u with ring
+<i>614</i>&nbsp;            {&quot;368&quot;, &quot;&quot;, &quot;{{\\={U}}}&quot;}, // capital U with double acute
+<i>615</i>&nbsp;            {&quot;369&quot;, &quot;&quot;, &quot;{\\={u}}&quot;}, // small u with double acute
+<i>616</i>&nbsp;            {&quot;370&quot;, &quot;Uogon&quot;, &quot;{{\\k{U}}}&quot;}, // capital U with ogonek
+<i>617</i>&nbsp;            {&quot;371&quot;, &quot;uogon&quot;, &quot;{\\k{u}}&quot;}, // small u with ogonek
+<i>618</i>&nbsp;            {&quot;372&quot;, &quot;&quot;, &quot;{{\\^{W}}}&quot;}, // capital W with circumflex
+<i>619</i>&nbsp;            {&quot;373&quot;, &quot;&quot;, &quot;{\\^{w}}&quot;}, // small w with circumflex
+<i>620</i>&nbsp;            {&quot;374&quot;, &quot;&quot;, &quot;{{\\^{Y}}}&quot;}, // capital Y with circumflex
+<i>621</i>&nbsp;            {&quot;375&quot;, &quot;&quot;, &quot;{\\^{y}}&quot;}, // small y with circumflex
+<i>622</i>&nbsp;            {&quot;376&quot;, &quot;Yuml&quot;, &quot;{{\\\&quot;{Y}}}&quot;}, // latin capital letter Y with diaeresis,
+<i>623</i>&nbsp;            {&quot;377&quot;, &quot;&quot;, &quot;{{\\&#39;{Z}}}&quot;}, // capital Z with acute
+<i>624</i>&nbsp;            {&quot;378&quot;, &quot;&quot;, &quot;{\\&#39;{z}}&quot;}, // small z with acute
+<i>625</i>&nbsp;            {&quot;379&quot;, &quot;&quot;, &quot;{{\\.{Z}}}&quot;}, // capital Z with dot above
+<i>626</i>&nbsp;            {&quot;380&quot;, &quot;&quot;, &quot;{\\.{z}}&quot;}, // small z with dot above
+<i>627</i>&nbsp;            {&quot;381&quot;, &quot;Zcaron&quot;, &quot;{{\\v{Z}}}&quot;}, // capital Z with caron
+<i>628</i>&nbsp;            {&quot;382&quot;, &quot;zcaron&quot;, &quot;{\\v{z}}&quot;}, // small z with caron
+<i>629</i>&nbsp;            // {&quot;383&quot;, &quot;&quot;, &quot;&quot;}, // long s
+<i>630</i>&nbsp;            {&quot;384&quot;, &quot;&quot;, &quot;{\\B{b}}&quot;}, // small b with stroke
+<i>631</i>&nbsp;
+<i>632</i>&nbsp;            {&quot;402&quot;, &quot;fnof&quot;, &quot;\\textit{f}&quot;}, // latin small f with hook = function
+<i>633</i>&nbsp;
+<i>634</i>&nbsp;            {&quot;405&quot;, &quot;&quot;, &quot;{{\\hv}}&quot;}, // small letter Hv
+<i>635</i>&nbsp;
+<i>636</i>&nbsp;            {&quot;416&quot;, &quot;&quot;, &quot;{{\\OHORN}}&quot;}, // capital O with horn
+<i>637</i>&nbsp;            {&quot;417&quot;, &quot;&quot;, &quot;{{\\ohorn}}&quot;}, // small o with horn
+<i>638</i>&nbsp;
+<i>639</i>&nbsp;            {&quot;431&quot;, &quot;&quot;, &quot;{{\\UHORN}}&quot;}, // capital U with horn
+<i>640</i>&nbsp;            {&quot;432&quot;, &quot;&quot;, &quot;{{\\uhorn}}&quot;}, // small u with horn
+<i>641</i>&nbsp;
+<i>642</i>&nbsp;            {&quot;490&quot;, &quot;Oogon&quot;, &quot;{{\\k{O}}}&quot;}, // capital letter O with ogonek
+<i>643</i>&nbsp;            {&quot;491&quot;, &quot;oogon&quot;, &quot;{\\k{o}}&quot;}, // small letter o with ogonek
+<i>644</i>&nbsp;            {&quot;492&quot;, &quot;&quot;, &quot;{{\\k{\\={O}}}}&quot;}, // capital letter O with ogonek and macron
+<i>645</i>&nbsp;            {&quot;493&quot;, &quot;&quot;, &quot;{\\k{\\={o}}}&quot;}, // small letter o with ogonek and macron
+<i>646</i>&nbsp;
+<i>647</i>&nbsp;            {&quot;536&quot;, &quot;&quot;, &quot;{{\\cb{S}}}&quot;}, // capital letter S with comma below, require combelow
+<i>648</i>&nbsp;            {&quot;537&quot;, &quot;&quot;, &quot;{\\cb{s}}&quot;}, // small letter S with comma below, require combelow
+<i>649</i>&nbsp;            {&quot;538&quot;, &quot;&quot;, &quot;{{\\cb{T}}}&quot;}, // capital letter T with comma below, require combelow
+<i>650</i>&nbsp;            {&quot;539&quot;, &quot;&quot;, &quot;{\\cb{t}}&quot;}, // small letter T with comma below, require combelow
+<i>651</i>&nbsp;            {&quot;710&quot;, &quot;circ&quot;, &quot;{\\^{}}&quot;}, // modifier letter circumflex accent,
+<i>652</i>&nbsp;            {&quot;726&quot;, &quot;&quot;, &quot;+&quot;}, // Modifier plus sign
+<i>653</i>&nbsp;            {&quot;727&quot;, &quot;&quot;, &quot;-&quot;}, // Modifier minus sign
+<i>654</i>&nbsp;            {&quot;728&quot;, &quot;breve&quot;, &quot;{\\u{}}&quot;}, // Breve
+<i>655</i>&nbsp;            {&quot;&quot;, &quot;Breve&quot;, &quot;{\\u{}}&quot;}, // Breve
+<i>656</i>&nbsp;            {&quot;729&quot;, &quot;dot&quot;, &quot;{\\.{}}&quot;}, // Dot above
+<i>657</i>&nbsp;            {&quot;730&quot;, &quot;ring&quot;, &quot;{\\r{}}&quot;}, // Ring above
+<i>658</i>&nbsp;            {&quot;731&quot;, &quot;ogon&quot;, &quot;{\\k{}}&quot;}, // Ogonek
+<i>659</i>&nbsp;            {&quot;732&quot;, &quot;tilde&quot;, &quot;\\~{}&quot;}, // Small tilde
+<i>660</i>&nbsp;            {&quot;733&quot;, &quot;dblac&quot;, &quot;{{\\H{}}}&quot;}, // Double acute
+<i>661</i>&nbsp;            {&quot;949&quot;, &quot;epsi&quot;, &quot;$\\epsilon$&quot;}, // Epsilon - double check
+<i>662</i>&nbsp;            {&quot;1013&quot;, &quot;epsiv&quot;, &quot;$\\varepsilonup$&quot;}, // lunate epsilon, requires txfonts
+<i>663</i>&nbsp;            //{&quot;1055&quot;, &quot;&quot;, &quot;{{\\cyrchar\\CYRP}}&quot;}, // Cyrillic capital Pe
+<i>664</i>&nbsp;            //{&quot;1082&quot;, &quot;&quot;, &quot;{\\cyrchar\\cyrk}&quot;}, // Cyrillic small Ka
+<i>665</i>&nbsp;            // {&quot;2013&quot;, &quot;&quot;, &quot;&quot;},    // NKO letter FA -- Maybe en dash = 0x2013?
+<i>666</i>&nbsp;            // {&quot;2014&quot;, &quot;&quot;, &quot;&quot;},    // NKO letter FA -- Maybe em dash = 0x2014?
+<i>667</i>&nbsp;            {&quot;8192&quot;, &quot;&quot;, &quot;\\hspace{0.5em}&quot;}, // en quad
+<i>668</i>&nbsp;            {&quot;8193&quot;, &quot;&quot;, &quot;\\hspace{1em}&quot;}, // em quad
+<i>669</i>&nbsp;            {&quot;8196&quot;, &quot;&quot;, &quot;\\hspace{0.333em}&quot;}, // Three-Per-Em Space
+<i>670</i>&nbsp;            {&quot;8197&quot;, &quot;&quot;, &quot;\\hspace{0.25em}&quot;}, // Four-Per-Em Space
+<i>671</i>&nbsp;            {&quot;8198&quot;, &quot;&quot;, &quot;\\hspace{0.167em}&quot;}, // Six-Per-Em Space
+<i>672</i>&nbsp;            {&quot;8208&quot;, &quot;hyphen&quot;, &quot;-&quot;}, // Hyphen
+<i>673</i>&nbsp;            {&quot;8229&quot;, &quot;nldr&quot;, &quot;\\.{}\\.{}&quot;}, // Double dots - en leader
+<i>674</i>&nbsp;            {&quot;8241&quot;, &quot;&quot;, &quot;{\\textpertenthousand}&quot;}, // per ten thousands sign
+<i>675</i>&nbsp;            {&quot;8244&quot;, &quot;&quot;, &quot;{$\\prime\\prime\\prime$}&quot;}, // triple prime
+<i>676</i>&nbsp;            {&quot;8251&quot;, &quot;&quot;, &quot;{\\textreferencemark}&quot;}, {&quot;8253&quot;, &quot;&quot;, &quot;{\\textinterrobang}&quot;},
+<i>677</i>&nbsp;            {&quot;8320&quot;, &quot;&quot;, &quot;$_{0}$&quot;}, // sub-script 0
+<i>678</i>&nbsp;            {&quot;8321&quot;, &quot;&quot;, &quot;$_{1}$&quot;}, // sub-script 1
+<i>679</i>&nbsp;            {&quot;8322&quot;, &quot;&quot;, &quot;$_{2}$&quot;}, // sub-script 2
+<i>680</i>&nbsp;            {&quot;8323&quot;, &quot;&quot;, &quot;$_{3}$&quot;}, // sub-script 3
+<i>681</i>&nbsp;            {&quot;8324&quot;, &quot;&quot;, &quot;$_{4}$&quot;}, // sub-script 4
+<i>682</i>&nbsp;            {&quot;8325&quot;, &quot;&quot;, &quot;$_{5}$&quot;}, // sub-script 5
+<i>683</i>&nbsp;            {&quot;8326&quot;, &quot;&quot;, &quot;$_{6}$&quot;}, // sub-script 6
+<i>684</i>&nbsp;            {&quot;8327&quot;, &quot;&quot;, &quot;$_{7}$&quot;}, // sub-script 7
+<i>685</i>&nbsp;            {&quot;8328&quot;, &quot;&quot;, &quot;$_{8}$&quot;}, // sub-script 8
+<i>686</i>&nbsp;            {&quot;8329&quot;, &quot;&quot;, &quot;$_{9}$&quot;}, // sub-script 9
+<i>687</i>&nbsp;            {&quot;8330&quot;, &quot;&quot;, &quot;$_{+}$&quot;}, // sub-script +
+<i>688</i>&nbsp;            {&quot;8331&quot;, &quot;&quot;, &quot;$_{-}$&quot;}, // sub-script -
+<i>689</i>&nbsp;            {&quot;8332&quot;, &quot;&quot;, &quot;$_{-}$&quot;}, // sub-script =
+<i>690</i>&nbsp;            {&quot;8333&quot;, &quot;&quot;, &quot;$_{(}$&quot;}, // sub-script (
+<i>691</i>&nbsp;            {&quot;8334&quot;, &quot;&quot;, &quot;$_{)}$&quot;}, // sub-script )
+<i>692</i>&nbsp;            {&quot;8450&quot;, &quot;complexes&quot;, &quot;$\\mathbb{C}$&quot;}, // double struck capital C -- requires e.g. amsfonts
+<i>693</i>&nbsp;            {&quot;8451&quot;, &quot;&quot;, &quot;{\\textcelsius}&quot;}, // Degree Celsius
+<i>694</i>&nbsp;            {&quot;8459&quot;, &quot;Hscr&quot;, &quot;{{$\\mathcal{H}$}}&quot;}, // script capital H -- possibly use \mathscr
+<i>695</i>&nbsp;            {&quot;8460&quot;, &quot;Hfr&quot;, &quot;{{$\\mathbb{H}$}}&quot;}, // black letter capital H -- requires e.g. amsfonts
+<i>696</i>&nbsp;            {&quot;8466&quot;, &quot;Lscr&quot;, &quot;{{$\\mathcal{L}$}}&quot;}, // script capital L -- possibly use \mathscr
+<i>697</i>&nbsp;            {&quot;8467&quot;, &quot;ell&quot;, &quot;{$\\ell$}&quot;}, // script small l
+<i>698</i>&nbsp;            {&quot;8469&quot;, &quot;naturals&quot;, &quot;{{$\\mathbb{N}$}}&quot;}, // double struck capital N -- requires e.g. amsfonts
+<i>699</i>&nbsp;            {&quot;8474&quot;, &quot;Qopf&quot;, &quot;{{$\\mathbb{Q}$}}&quot;}, // double struck capital Q -- requires e.g. amsfonts
+<i>700</i>&nbsp;            {&quot;8477&quot;, &quot;reals&quot;, &quot;{{$\\mathbb{R}$}}&quot;}, // double struck capital R -- requires e.g. amsfonts
+<i>701</i>&nbsp;            {&quot;8486&quot;, &quot;&quot;, &quot;${{\\Omega}}$&quot;}, // Omega
+<i>702</i>&nbsp;            {&quot;8491&quot;, &quot;angst&quot;, &quot;{{\\AA}}&quot;}, // Angstrom
+<i>703</i>&nbsp;            {&quot;8496&quot;, &quot;Escr&quot;, &quot;{{$\\mathcal{E}$}}&quot;}, // script capital E
+<i>704</i>&nbsp;            {&quot;8531&quot;, &quot;frac13&quot;, &quot;$\\sfrac{1}{3}$&quot;}, // Vulgar fraction one third
+<i>705</i>&nbsp;            {&quot;8532&quot;, &quot;frac23&quot;, &quot;$\\sfrac{2}{3}$&quot;}, // Vulgar fraction two thirds
+<i>706</i>&nbsp;            {&quot;8533&quot;, &quot;frac15&quot;, &quot;$\\sfrac{1}{5}$&quot;}, // Vulgar fraction one fifth
+<i>707</i>&nbsp;            {&quot;8534&quot;, &quot;frac25&quot;, &quot;$\\sfrac{2}{5}$&quot;}, // Vulgar fraction two fifths
+<i>708</i>&nbsp;            {&quot;8535&quot;, &quot;frac35&quot;, &quot;$\\sfrac{3}{5}$&quot;}, // Vulgar fraction three fifths
+<i>709</i>&nbsp;            {&quot;8536&quot;, &quot;frac45&quot;, &quot;$\\sfrac{4}{5}$&quot;}, // Vulgar fraction four fifths
+<i>710</i>&nbsp;            {&quot;8537&quot;, &quot;frac16&quot;, &quot;$\\sfrac{1}{6}$&quot;}, // Vulgar fraction one sixth
+<i>711</i>&nbsp;            {&quot;8538&quot;, &quot;frac56&quot;, &quot;$\\sfrac{5}{6}$&quot;}, // Vulgar fraction five sixths
+<i>712</i>&nbsp;            {&quot;8539&quot;, &quot;frac18&quot;, &quot;$\\sfrac{1}{8}$&quot;}, // Vulgar fraction one eighth
+<i>713</i>&nbsp;            {&quot;8540&quot;, &quot;frac38&quot;, &quot;$\\sfrac{3}{8}$&quot;}, // Vulgar fraction three eighths
+<i>714</i>&nbsp;            {&quot;8541&quot;, &quot;frac58&quot;, &quot;$\\sfrac{5}{8}$&quot;}, // Vulgar fraction five eighths
+<i>715</i>&nbsp;            {&quot;8542&quot;, &quot;frac78&quot;, &quot;$\\sfrac{7}{8}$&quot;}, // Vulgar fraction seven eighths
+<i>716</i>&nbsp;            {&quot;8710&quot;, &quot;&quot;, &quot;$\\triangle$&quot;}, // Increment - could use a more appropriate symbol
+<i>717</i>&nbsp;            {&quot;8714&quot;, &quot;&quot;, &quot;$\\in$&quot;}, // Small element in
+<i>718</i>&nbsp;            {&quot;8723&quot;, &quot;mp&quot;, &quot;$\\mp$&quot;}, // Minus-plus
+<i>719</i>&nbsp;            {&quot;8729&quot;, &quot;bullet&quot;, &quot;$\\bullet$&quot;}, // Bullet operator
+<i>720</i>&nbsp;            {&quot;8741&quot;, &quot;&quot;, &quot;$\\parallel$&quot;}, // Parallel to
+<i>721</i>&nbsp;            {&quot;8758&quot;, &quot;ratio&quot;, &quot;:&quot;}, // Colon/ratio
+<i>722</i>&nbsp;            {&quot;8771&quot;, &quot;sime&quot;, &quot;$\\simeq$&quot;}, // almost equal to = asymptotic to,
+<i>723</i>&nbsp;            {&quot;8776&quot;, &quot;ap&quot;, &quot;$\\approx$&quot;}, // almost equal to = asymptotic to,
+<i>724</i>&nbsp;            {&quot;8810&quot;, &quot;ll&quot;, &quot;$\\ll$&quot;}, // Much less than
+<i>725</i>&nbsp;            {&quot;&quot;, &quot;Lt&quot;, &quot;$\\ll$&quot;}, // Much less than
+<i>726</i>&nbsp;            {&quot;8811&quot;, &quot;gg&quot;, &quot;$\\gg$&quot;}, // Much greater than
+<i>727</i>&nbsp;            {&quot;&quot;, &quot;Gt&quot;, &quot;$\\gg$&quot;}, // Much greater than
+<i>728</i>&nbsp;            {&quot;8818&quot;, &quot;lsim&quot;, &quot;$\\lesssim$&quot;}, // Less than or equivalent to
+<i>729</i>&nbsp;            {&quot;8819&quot;, &quot;gsim&quot;, &quot;$\\gtrsim$&quot;}, // Greater than or equivalent to
+<i>730</i>&nbsp;            {&quot;8862&quot;, &quot;boxplus&quot;, &quot;$\\boxplus$&quot;}, // Boxed plus -- requires amssymb
+<i>731</i>&nbsp;            {&quot;8863&quot;, &quot;boxminus&quot;, &quot;$\\boxminus$&quot;}, // Boxed minus -- requires amssymb
+<i>732</i>&nbsp;            {&quot;8864&quot;, &quot;boxtimes&quot;, &quot;$\\boxtimes$&quot;}, // Boxed times -- requires amssymb
+<i>733</i>&nbsp;            {&quot;8882&quot;, &quot;vltri&quot;, &quot;$\\triangleleft$&quot;}, // Left triangle
+<i>734</i>&nbsp;            {&quot;8883&quot;, &quot;vrtri&quot;, &quot;$\\triangleright$&quot;}, // Right triangle
+<i>735</i>&nbsp;            {&quot;8896&quot;, &quot;xwedge&quot;, &quot;$\\bigwedge$&quot;}, // Big wedge
+<i>736</i>&nbsp;            {&quot;8897&quot;, &quot;xvee&quot;, &quot;$\\bigvee$&quot;}, // Big vee
+<i>737</i>&nbsp;            {&quot;8942&quot;, &quot;vdots&quot;, &quot;$\\vdots$&quot;}, // vertical ellipsis U+22EE
+<i>738</i>&nbsp;            {&quot;8943&quot;, &quot;cdots&quot;, &quot;$\\cdots$&quot;}, // midline horizontal ellipsis U+22EF
+<i>739</i>&nbsp;            /*{&quot;8944&quot;, &quot;&quot;, &quot;$\\ddots$&quot;}, // up right diagonal ellipsis U+22F0 */
+<i>740</i>&nbsp;            {&quot;8945&quot;, &quot;ddots&quot;, &quot;$\\ddots$&quot;}, // down right diagonal ellipsis U+22F1
+<i>741</i>&nbsp;
+<i>742</i>&nbsp;            {&quot;9426&quot;, &quot;circledc&quot;, &quot;{\\copyright}&quot;}, // circled small letter C
+<i>743</i>&nbsp;            {&quot;9633&quot;, &quot;square&quot;, &quot;$\\square$&quot;}, // White square
+<i>744</i>&nbsp;            {&quot;9651&quot;, &quot;xutri&quot;, &quot;$\\bigtriangleup$&quot;}, // White up-pointing big triangle
+<i>745</i>&nbsp;            {&quot;9653&quot;, &quot;utri&quot;, &quot;$\\triangle$&quot;}, // White up-pointing small triangle -- \vartriangle probably
+<i>746</i>&nbsp;            // better but requires amssymb
+<i>747</i>&nbsp;            {&quot;10877&quot;, &quot;les&quot;, &quot;$\\leqslant$&quot;}, // Less than slanted equal -- requires amssymb
+<i>748</i>&nbsp;            {&quot;10878&quot;, &quot;ges&quot;, &quot;$\\geqslant$&quot;}, // Less than slanted equal -- requires amssymb
+<i>749</i>&nbsp;            {&quot;64256&quot;, &quot;&quot;, &quot;ff&quot;}, // ff ligature (which LaTeX solves by itself)
+<i>750</i>&nbsp;            {&quot;64257&quot;, &quot;&quot;, &quot;fi&quot;}, // fi ligature (which LaTeX solves by itself)
+<i>751</i>&nbsp;            {&quot;64258&quot;, &quot;&quot;, &quot;fl&quot;}, // fl ligature (which LaTeX solves by itself)
+<i>752</i>&nbsp;            {&quot;64259&quot;, &quot;&quot;, &quot;ffi&quot;}, // ffi ligature (which LaTeX solves by itself)
+<i>753</i>&nbsp;            {&quot;64260&quot;, &quot;&quot;, &quot;ffl&quot;}, // ffl ligature (which LaTeX solves by itself)
+<i>754</i>&nbsp;            {&quot;119978&quot;, &quot;Oscr&quot;, &quot;$\\mathcal{O}$&quot;}, // script capital O -- possibly use \mathscr
+<i>755</i>&nbsp;            {&quot;119984&quot;, &quot;Uscr&quot;, &quot;$\\mathcal{U}$&quot;} // script capital U -- possibly use \mathscr
+<i>756</i>&nbsp;
+<i>757</i>&nbsp;    };
+<i>758</i>&nbsp;    // List of combining accents
+<b class="fc"><i>759</i>&nbsp;    private static final String[][] ACCENT_LIST = new String[][] {{&quot;768&quot;, &quot;`&quot;}, // Grave</b>
+<i>760</i>&nbsp;            {&quot;769&quot;, &quot;&#39;&quot;}, // Acute
+<i>761</i>&nbsp;            {&quot;770&quot;, &quot;^&quot;}, // Circumflex
+<i>762</i>&nbsp;            {&quot;771&quot;, &quot;~&quot;}, // Tilde
+<i>763</i>&nbsp;            {&quot;772&quot;, &quot;=&quot;}, // Macron
+<i>764</i>&nbsp;            {&quot;773&quot;, &quot;=&quot;}, // Overline - not completely correct
+<i>765</i>&nbsp;            {&quot;774&quot;, &quot;u&quot;}, // Breve
+<i>766</i>&nbsp;            {&quot;775&quot;, &quot;.&quot;}, // Dot above
+<i>767</i>&nbsp;            {&quot;776&quot;, &quot;\&quot;&quot;}, // Diaeresis
+<i>768</i>&nbsp;            {&quot;777&quot;, &quot;h&quot;}, // Hook above
+<i>769</i>&nbsp;            {&quot;778&quot;, &quot;r&quot;}, // Ring
+<i>770</i>&nbsp;            {&quot;779&quot;, &quot;H&quot;}, // Double acute
+<i>771</i>&nbsp;            {&quot;780&quot;, &quot;v&quot;}, // Caron
+<i>772</i>&nbsp;            {&quot;781&quot;, &quot;|&quot;}, // Vertical line above
+<i>773</i>&nbsp;            {&quot;782&quot;, &quot;U&quot;}, // Double vertical line above
+<i>774</i>&nbsp;            {&quot;783&quot;, &quot;G&quot;}, // Double grave
+<i>775</i>&nbsp;            {&quot;784&quot;, &quot;textdotbreve&quot;}, // Candrabindu
+<i>776</i>&nbsp;            {&quot;785&quot;, &quot;t&quot;}, // Inverted breve
+<i>777</i>&nbsp;            //        {&quot;786&quot;, &quot;&quot;},    // Turned comma above
+<i>778</i>&nbsp;            //        {&quot;787&quot;, &quot;&quot;},    // Comma above
+<i>779</i>&nbsp;            {&quot;788&quot;, &quot;textrevcommaabove&quot;}, // Reversed comma above
+<i>780</i>&nbsp;            {&quot;789&quot;, &quot;textcommaabover&quot;}, // Comma above right
+<i>781</i>&nbsp;            {&quot;790&quot;, &quot;textsubgrave&quot;}, // Grave accent below -requires tipa
+<i>782</i>&nbsp;            {&quot;791&quot;, &quot;textsubacute&quot;}, // Acute accent below - requires tipa
+<i>783</i>&nbsp;            {&quot;792&quot;, &quot;textadvancing&quot;}, // Left tack below - requires tipa
+<i>784</i>&nbsp;            {&quot;793&quot;, &quot;textretracting&quot;}, // Right tack below - requires tipa
+<i>785</i>&nbsp;            {&quot;794&quot;, &quot;textlangleabove&quot;}, // Left angle above
+<i>786</i>&nbsp;            {&quot;795&quot;, &quot;textrighthorn&quot;}, // Horn
+<i>787</i>&nbsp;            {&quot;796&quot;, &quot;textsublhalfring&quot;}, // Left half ring below - requires tipa
+<i>788</i>&nbsp;            {&quot;797&quot;, &quot;textraising&quot;}, // Up tack below - requires tipa
+<i>789</i>&nbsp;            {&quot;798&quot;, &quot;textlowering&quot;}, // Down tack below - requires tipa
+<i>790</i>&nbsp;            {&quot;799&quot;, &quot;textsubplus&quot;}, // Plus sign below - requires tipa
+<i>791</i>&nbsp;            {&quot;800&quot;, &quot;textsubbar&quot;}, // Minus sign below
+<i>792</i>&nbsp;            {&quot;801&quot;, &quot;textpalhookbelow&quot;}, // Palatalized hook below
+<i>793</i>&nbsp;            {&quot;802&quot;, &quot;M&quot;}, // Retroflex hook below - textrethookbelow?
+<i>794</i>&nbsp;            {&quot;803&quot;, &quot;d&quot;}, // Dot below
+<i>795</i>&nbsp;            {&quot;804&quot;, &quot;textsubumlaut&quot;}, // Diaeresis below - requires tipa
+<i>796</i>&nbsp;            {&quot;805&quot;, &quot;textsubring&quot;}, // Ring below - requires tipa
+<i>797</i>&nbsp;            {&quot;806&quot;, &quot;cb&quot;}, // Comma below - requires combelow
+<i>798</i>&nbsp;            {&quot;807&quot;, &quot;c&quot;}, // Cedilla
+<i>799</i>&nbsp;            {&quot;808&quot;, &quot;k&quot;}, // Ogonek
+<i>800</i>&nbsp;            {&quot;809&quot;, &quot;textsyllabic&quot;}, // Vertical line below - requires tipa
+<i>801</i>&nbsp;            {&quot;810&quot;, &quot;textsubbridge&quot;}, // Bridge below - requires tipa
+<i>802</i>&nbsp;            {&quot;811&quot;, &quot;textsubw&quot;}, // Inverted double arch below - requires tipa
+<i>803</i>&nbsp;            {&quot;812&quot;, &quot;textsubwedge&quot;}, // Caron below
+<i>804</i>&nbsp;            {&quot;813&quot;, &quot;textsubcircum&quot;}, // Circumflex accent below - requires tipa
+<i>805</i>&nbsp;            {&quot;814&quot;, &quot;textsubbreve&quot;}, // Breve below
+<i>806</i>&nbsp;            {&quot;815&quot;, &quot;textsubarch&quot;}, // Inverted breve below - requires tipa
+<i>807</i>&nbsp;            {&quot;816&quot;, &quot;textsubtilde&quot;}, // Tilde below - requires tipa
+<i>808</i>&nbsp;            {&quot;817&quot;, &quot;b&quot;}, // Macron below - not completely correct
+<i>809</i>&nbsp;            {&quot;818&quot;, &quot;b&quot;}, // Underline
+<i>810</i>&nbsp;            {&quot;819&quot;, &quot;subdoublebar&quot;}, // Double low line -- requires extraipa
+<i>811</i>&nbsp;            {&quot;820&quot;, &quot;textsuperimposetilde&quot;}, // Tilde overlay - requires tipa
+<i>812</i>&nbsp;            {&quot;821&quot;, &quot;B&quot;}, // Short stroke overlay - textsstrokethru?
+<i>813</i>&nbsp;            {&quot;822&quot;, &quot;textlstrokethru&quot;}, // Long stroke overlay
+<i>814</i>&nbsp;            {&quot;823&quot;, &quot;textsstrikethru&quot;}, // Short solidus overlay
+<i>815</i>&nbsp;            {&quot;824&quot;, &quot;textlstrikethru&quot;}, // Long solidus overlay
+<i>816</i>&nbsp;            {&quot;825&quot;, &quot;textsubrhalfring&quot;}, // Right half ring below - requires tipa
+<i>817</i>&nbsp;            {&quot;826&quot;, &quot;textinvsubbridge&quot;}, // inverted bridge below - requires tipa
+<i>818</i>&nbsp;            {&quot;827&quot;, &quot;textsubsquare&quot;}, // Square below - requires tipa
+<i>819</i>&nbsp;            {&quot;828&quot;, &quot;textseagull&quot;}, // Seagull below - requires tipa
+<i>820</i>&nbsp;            {&quot;829&quot;, &quot;textovercross&quot;}, // X above - requires tipa
+<i>821</i>&nbsp;            //        {&quot;830&quot;, &quot;&quot;},    // Vertical tilde
+<i>822</i>&nbsp;            //        {&quot;831&quot;, &quot;&quot;},    // Double overline
+<i>823</i>&nbsp;            //        {&quot;832&quot;, &quot;&quot;},    // Grave tone mark
+<i>824</i>&nbsp;            //        {&quot;833&quot;, &quot;&quot;},    // Acute tone mark
+<i>825</i>&nbsp;            //        {&quot;834&quot;, &quot;&quot;},    // Greek perispomeni
+<i>826</i>&nbsp;            //        {&quot;835&quot;, &quot;&quot;},    // Greek koronis
+<i>827</i>&nbsp;            //        {&quot;836&quot;, &quot;&quot;},    // Greek dialytika tonos
+<i>828</i>&nbsp;            //        {&quot;837&quot;, &quot;&quot;},    // Greek ypogegrammeni
+<i>829</i>&nbsp;            {&quot;838&quot;, &quot;overbridge&quot;}, // Bridge above - requires extraipa
+<i>830</i>&nbsp;            {&quot;839&quot;, &quot;subdoublebar&quot;}, // Equals sign below - requires extraipa
+<i>831</i>&nbsp;            {&quot;840&quot;, &quot;subdoublevert&quot;}, // Double vertical line below - requires extraipa
+<i>832</i>&nbsp;            {&quot;841&quot;, &quot;subcorner&quot;}, // Left angle below - requires extraipa
+<i>833</i>&nbsp;            {&quot;842&quot;, &quot;crtilde&quot;}, // Not tilde above - requires extraipa
+<i>834</i>&nbsp;            {&quot;843&quot;, &quot;dottedtilde&quot;}, // Homothetic above - requires extraipa
+<i>835</i>&nbsp;            {&quot;844&quot;, &quot;doubletilde&quot;}, // Almost equal to above - requires extraipa
+<i>836</i>&nbsp;            {&quot;845&quot;, &quot;spreadlips&quot;}, // Left right arrow below - requires extraipa
+<i>837</i>&nbsp;            {&quot;846&quot;, &quot;whistle&quot;}, // Upwards arrow below - requires extraipa
+<i>838</i>&nbsp;            {&quot;861&quot;, &quot;textdoublebreve&quot;}, // Double breve
+<i>839</i>&nbsp;            {&quot;862&quot;, &quot;textdoublemacron&quot;}, // Double macron
+<i>840</i>&nbsp;            {&quot;863&quot;, &quot;textdoublemacronbelow&quot;}, // Double macron below
+<i>841</i>&nbsp;            {&quot;864&quot;, &quot;textdoubletilde&quot;}, // Double tilde
+<i>842</i>&nbsp;            {&quot;865&quot;, &quot;texttoptiebar&quot;}, // Double inverted breve
+<i>843</i>&nbsp;            {&quot;866&quot;, &quot;sliding&quot;}, // Double rightwards arrow below - requires extraipa
+<i>844</i>&nbsp;    };
+<i>845</i>&nbsp;
+<b class="fc"><i>846</i>&nbsp;    public static final Map&lt;String, String&gt; HTML_LATEX_CONVERSION_MAP = new HashMap&lt;&gt;();</b>
+<b class="fc"><i>847</i>&nbsp;    public static final Map&lt;Integer, String&gt; ESCAPED_ACCENTS = new HashMap&lt;&gt;();</b>
+<b class="fc"><i>848</i>&nbsp;    public static final Map&lt;String, String&gt; UNICODE_ESCAPED_ACCENTS = new HashMap&lt;&gt;();</b>
+<b class="fc"><i>849</i>&nbsp;    public static final Map&lt;Integer, String&gt; NUMERICAL_LATEX_CONVERSION_MAP = new HashMap&lt;&gt;();</b>
+<b class="fc"><i>850</i>&nbsp;    public static final Map&lt;String, String&gt; UNICODE_LATEX_CONVERSION_MAP = new HashMap&lt;&gt;();</b>
+<b class="fc"><i>851</i>&nbsp;    public static final Map&lt;String, String&gt; LATEX_HTML_CONVERSION_MAP = new HashMap&lt;&gt;();</b>
+<b class="fc"><i>852</i>&nbsp;    public static final Map&lt;String, String&gt; LATEX_UNICODE_CONVERSION_MAP = new HashMap&lt;&gt;();</b>
+<i>853</i>&nbsp;
+<i>854</i>&nbsp;
+<i>855</i>&nbsp;    static {
+<b class="fc"><i>856</i>&nbsp;        for (String[] aConversionList : CONVERSION_LIST) {</b>
+<b class="fc"><i>857</i>&nbsp;            if (!(aConversionList[2].isEmpty())) {</b>
+<b class="fc"><i>858</i>&nbsp;                String strippedLaTeX = cleanLaTeX(aConversionList[2]);</b>
+<b class="fc"><i>859</i>&nbsp;                if (!(aConversionList[1].isEmpty())) {</b>
+<b class="fc"><i>860</i>&nbsp;                    HTML_LATEX_CONVERSION_MAP.put(&quot;&amp;&quot; + aConversionList[1] + &quot;;&quot;, aConversionList[2]);</b>
+<b class="fc"><i>861</i>&nbsp;                    if (!strippedLaTeX.isEmpty()) {</b>
+<b class="fc"><i>862</i>&nbsp;                        LATEX_HTML_CONVERSION_MAP.put(strippedLaTeX, &quot;&amp;&quot; + aConversionList[1] + &quot;;&quot;);</b>
+<i>863</i>&nbsp;                    }
+<b class="fc"><i>864</i>&nbsp;                } else if (!(aConversionList[0].isEmpty()) &amp;&amp; !strippedLaTeX.isEmpty()) {</b>
+<b class="fc"><i>865</i>&nbsp;                    LATEX_HTML_CONVERSION_MAP.put(strippedLaTeX, &quot;&amp;#&quot; + aConversionList[0] + &quot;;&quot;);</b>
+<i>866</i>&nbsp;                }
+<b class="fc"><i>867</i>&nbsp;                if (!(aConversionList[0].isEmpty())) {</b>
+<b class="fc"><i>868</i>&nbsp;                    NUMERICAL_LATEX_CONVERSION_MAP.put(Integer.decode(aConversionList[0]), aConversionList[2]);</b>
+<b class="fc"><i>869</i>&nbsp;                    if (Integer.decode(aConversionList[0]) &gt; 128) {</b>
+<b class="fc"><i>870</i>&nbsp;                        String unicodeSymbol = String.valueOf(Character.toChars(Integer.decode(aConversionList[0])));</b>
+<b class="fc"><i>871</i>&nbsp;                        UNICODE_LATEX_CONVERSION_MAP.put(unicodeSymbol, aConversionList[2]);</b>
+<b class="fc"><i>872</i>&nbsp;                        if (!strippedLaTeX.isEmpty()) {</b>
+<b class="fc"><i>873</i>&nbsp;                            LATEX_UNICODE_CONVERSION_MAP.put(strippedLaTeX, unicodeSymbol);</b>
+<i>874</i>&nbsp;                        }
+<i>875</i>&nbsp;                    }
+<i>876</i>&nbsp;                }
+<i>877</i>&nbsp;            }
+<i>878</i>&nbsp;        }
+<b class="fc"><i>879</i>&nbsp;        for (String[] anAccentList : ACCENT_LIST) {</b>
+<b class="fc"><i>880</i>&nbsp;            ESCAPED_ACCENTS.put(Integer.decode(anAccentList[0]), anAccentList[1]);</b>
+<b class="fc"><i>881</i>&nbsp;            UNICODE_ESCAPED_ACCENTS.put(anAccentList[1],</b>
+<b class="fc"><i>882</i>&nbsp;                    String.valueOf(Character.toChars(Integer.decode(anAccentList[0]))));</b>
+<i>883</i>&nbsp;        }
+<i>884</i>&nbsp;        // Manually added values which are killed by cleanLaTeX
+<b class="fc"><i>885</i>&nbsp;        LATEX_HTML_CONVERSION_MAP.put(&quot;$&quot;, &quot;&amp;dollar;&quot;);</b>
+<b class="fc"><i>886</i>&nbsp;        LATEX_UNICODE_CONVERSION_MAP.put(&quot;$&quot;, &quot;$&quot;);</b>
+<i>887</i>&nbsp;
+<i>888</i>&nbsp;        // Manual corrections
+<b class="fc"><i>889</i>&nbsp;        LATEX_HTML_CONVERSION_MAP.put(&quot;AA&quot;, &quot;&amp;Aring;&quot;); // Overwritten by &amp;angst; which is less supported</b>
+<b class="fc"><i>890</i>&nbsp;        LATEX_UNICODE_CONVERSION_MAP.put(&quot;AA&quot;, &quot;Å&quot;); // Overwritten by Ångstrom symbol</b>
+<i>891</i>&nbsp;
+<i>892</i>&nbsp;        // Manual additions
+<i>893</i>&nbsp;        // Support relax to the extent that it is simply removed
+<b class="fc"><i>894</i>&nbsp;        LATEX_HTML_CONVERSION_MAP.put(&quot;relax&quot;, &quot;&quot;);</b>
+<b class="fc"><i>895</i>&nbsp;        LATEX_UNICODE_CONVERSION_MAP.put(&quot;relax&quot;, &quot;&quot;);</b>
+<i>896</i>&nbsp;
+<b class="fc"><i>897</i>&nbsp;    }</b>
+<i>898</i>&nbsp;
+<i>899</i>&nbsp;    private static String cleanLaTeX(String escapedString) {
+<i>900</i>&nbsp;        // Get rid of \{}$ from the LaTeX-string
+<b class="fc"><i>901</i>&nbsp;        return escapedString.replaceAll(&quot;[\\\\\\{\\}\\$]&quot;, &quot;&quot;);</b>
+<i>902</i>&nbsp;    }
+<i>903</i>&nbsp;
+<i>904</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

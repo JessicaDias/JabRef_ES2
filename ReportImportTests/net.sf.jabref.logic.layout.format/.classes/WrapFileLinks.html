@@ -1,0 +1,424 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: WrapFileLinks</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.layout.format</a> ]
+</div>
+
+<h1>Coverage Summary for Class: WrapFileLinks (net.sf.jabref.logic.layout.format)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">WrapFileLinks</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 87)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">WrapFileLinks$FormatEntry</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 9)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 96)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.layout.format;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.File;
+<i>4</i>&nbsp;import java.io.IOException;
+<i>5</i>&nbsp;import java.util.ArrayList;
+<i>6</i>&nbsp;import java.util.HashMap;
+<i>7</i>&nbsp;import java.util.List;
+<i>8</i>&nbsp;import java.util.Map;
+<i>9</i>&nbsp;import java.util.Optional;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;import net.sf.jabref.logic.layout.AbstractParamLayoutFormatter;
+<i>12</i>&nbsp;import net.sf.jabref.logic.util.io.FileUtil;
+<i>13</i>&nbsp;import net.sf.jabref.model.entry.FileField;
+<i>14</i>&nbsp;import net.sf.jabref.model.entry.ParsedFileField;
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;import org.apache.commons.logging.Log;
+<i>17</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;/**
+<i>20</i>&nbsp; * This formatter iterates over all file links, or all file links of a specified
+<i>21</i>&nbsp; * type, outputting a format string given as the first argument. The format string
+<i>22</i>&nbsp; * can contain a number of escape sequences indicating file link information to
+<i>23</i>&nbsp; * be inserted into the string.
+<i>24</i>&nbsp; * &lt;p/&gt;
+<i>25</i>&nbsp; * This formatter can take an optional second argument specifying the name of a file
+<i>26</i>&nbsp; * type. If specified, the iteration will only include those files with a file type
+<i>27</i>&nbsp; * matching the given name (case-insensitively). If specified as an empty argument,
+<i>28</i>&nbsp; * all file links will be included.
+<i>29</i>&nbsp; * &lt;p/&gt;
+<i>30</i>&nbsp; * After the second argument, pairs of additional arguments can be added in order to
+<i>31</i>&nbsp; * specify regular expression replacements to be done upon the inserted link information
+<i>32</i>&nbsp; * before insertion into the output string. A non-paired argument will be ignored.
+<i>33</i>&nbsp; * In order to specify replacements without filtering on file types, use an empty second
+<i>34</i>&nbsp; * argument.
+<i>35</i>&nbsp; * &lt;p/&gt;
+<i>36</i>&nbsp; * &lt;p/&gt;
+<i>37</i>&nbsp; * &lt;p/&gt;
+<i>38</i>&nbsp; * The escape sequences for embedding information are as follows:
+<i>39</i>&nbsp; * &lt;p/&gt;
+<i>40</i>&nbsp; * \i   : This inserts the iteration index (starting from 1), and can be useful if
+<i>41</i>&nbsp; * the output list of files should be enumerated.
+<i>42</i>&nbsp; * \p   : This inserts the file path of the file link. Relative links below your file directory
+<i>43</i>&nbsp; *        will be expanded to their absolute path.
+<i>44</i>&nbsp; * \r   : This inserts the file path without expanding relative links.
+<i>45</i>&nbsp; * \f   : This inserts the name of the file link&#39;s type.
+<i>46</i>&nbsp; * \x   : This inserts the file&#39;s extension, if any.
+<i>47</i>&nbsp; * \d   : This inserts the file link&#39;s description, if any.
+<i>48</i>&nbsp; * &lt;p/&gt;
+<i>49</i>&nbsp; * For instance, an entry could contain a file link to the file &quot;/home/john/report.pdf&quot;
+<i>50</i>&nbsp; * of the &quot;PDF&quot; type with description &quot;John&#39;s final report&quot;.
+<i>51</i>&nbsp; * &lt;p/&gt;
+<i>52</i>&nbsp; * Using the WrapFileLinks formatter with the following argument:
+<i>53</i>&nbsp; * &lt;p/&gt;
+<i>54</i>&nbsp; * \format[WrapFileLinks(\i. \d (\p))]{\file}
+<i>55</i>&nbsp; * &lt;p/&gt;
+<i>56</i>&nbsp; * would give the following output:
+<i>57</i>&nbsp; * 1. John&#39;s final report (/home/john/report.pdf)
+<i>58</i>&nbsp; * &lt;p/&gt;
+<i>59</i>&nbsp; * If the entry contained a second file link to the file &quot;/home/john/draft.txt&quot; of the
+<i>60</i>&nbsp; * &quot;Text file&quot; type with description &#39;An early &quot;draft&quot;&#39;, the output would be as follows:
+<i>61</i>&nbsp; * 1. John&#39;s final report (/home/john/report.pdf)
+<i>62</i>&nbsp; * 2. An early &quot;draft&quot; (/home/john/draft.txt)
+<i>63</i>&nbsp; * &lt;p/&gt;
+<i>64</i>&nbsp; * If the formatter was called with a second argument, the list would be filtered.
+<i>65</i>&nbsp; * For instance:
+<i>66</i>&nbsp; * \format[WrapFileLinks(\i. \d (\p),text file)]{\file}
+<i>67</i>&nbsp; * &lt;p/&gt;
+<i>68</i>&nbsp; * would show only the text file:
+<i>69</i>&nbsp; * 1. An early &quot;draft&quot; (/home/john/draft.txt)
+<i>70</i>&nbsp; * &lt;p/&gt;
+<i>71</i>&nbsp; * If we wanted this output to be part of an XML styled output, the quotes in the
+<i>72</i>&nbsp; * file description could cause problems. Adding two additional arguments to translate
+<i>73</i>&nbsp; * the quotes into XML characters solves this:
+<i>74</i>&nbsp; * \format[WrapFileLinks(\i. \d (\p),text file,&quot;,&amp;quot;)]{\file}
+<i>75</i>&nbsp; * &lt;p/&gt;
+<i>76</i>&nbsp; * would give the following output:
+<i>77</i>&nbsp; * 1. An early &amp;quot;draft&amp;quot; (/home/john/draft.txt)
+<i>78</i>&nbsp; *
+<i>79</i>&nbsp; * Additional pairs of replacements can be added.
+<i>80</i>&nbsp; */
+<i>81</i>&nbsp;public class WrapFileLinks extends AbstractParamLayoutFormatter {
+<i>82</i>&nbsp;
+<b class="nc"><i>83</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(WrapFileLinks.class);</b>
+<i>84</i>&nbsp;
+<i>85</i>&nbsp;    private String fileType;
+<i>86</i>&nbsp;    private List&lt;FormatEntry&gt; format;
+<b class="nc"><i>87</i>&nbsp;    private final Map&lt;String, String&gt; replacements = new HashMap&lt;&gt;();</b>
+<i>88</i>&nbsp;
+<i>89</i>&nbsp;
+<i>90</i>&nbsp;    // Define codes for the various escape sequences that can be inserted:
+<i>91</i>&nbsp;    private static final int STRING = 0;
+<i>92</i>&nbsp;    private static final int ITERATION_COUNT = 1;
+<i>93</i>&nbsp;    private static final int FILE_PATH = 2;
+<i>94</i>&nbsp;    private static final int FILE_TYPE = 3;
+<i>95</i>&nbsp;    private static final int FILE_EXTENSION = 4;
+<i>96</i>&nbsp;    private static final int FILE_DESCRIPTION = 5;
+<i>97</i>&nbsp;    private static final int RELATIVE_FILE_PATH = 6;
+<i>98</i>&nbsp;
+<i>99</i>&nbsp;    // Define which escape sequences give what results:
+<b class="nc"><i>100</i>&nbsp;    private static final Map&lt;Character, Integer&gt; ESCAPE_SEQ = new HashMap&lt;&gt;();</b>
+<i>101</i>&nbsp;
+<i>102</i>&nbsp;    private final FileLinkPreferences prefs;
+<i>103</i>&nbsp;
+<i>104</i>&nbsp;    static {
+<b class="nc"><i>105</i>&nbsp;        WrapFileLinks.ESCAPE_SEQ.put(&#39;i&#39;, WrapFileLinks.ITERATION_COUNT);</b>
+<b class="nc"><i>106</i>&nbsp;        WrapFileLinks.ESCAPE_SEQ.put(&#39;p&#39;, WrapFileLinks.FILE_PATH);</b>
+<b class="nc"><i>107</i>&nbsp;        WrapFileLinks.ESCAPE_SEQ.put(&#39;r&#39;, WrapFileLinks.RELATIVE_FILE_PATH);</b>
+<b class="nc"><i>108</i>&nbsp;        WrapFileLinks.ESCAPE_SEQ.put(&#39;f&#39;, WrapFileLinks.FILE_TYPE);</b>
+<b class="nc"><i>109</i>&nbsp;        WrapFileLinks.ESCAPE_SEQ.put(&#39;x&#39;, WrapFileLinks.FILE_EXTENSION);</b>
+<b class="nc"><i>110</i>&nbsp;        WrapFileLinks.ESCAPE_SEQ.put(&#39;d&#39;, WrapFileLinks.FILE_DESCRIPTION);</b>
+<b class="nc"><i>111</i>&nbsp;    }</b>
+<i>112</i>&nbsp;
+<i>113</i>&nbsp;
+<b class="nc"><i>114</i>&nbsp;    public WrapFileLinks(FileLinkPreferences fileLinkPreferences) {</b>
+<b class="nc"><i>115</i>&nbsp;        this.prefs = fileLinkPreferences;</b>
+<b class="nc"><i>116</i>&nbsp;    }</b>
+<i>117</i>&nbsp;
+<i>118</i>&nbsp;    @Override
+<i>119</i>&nbsp;    public void setArgument(String arg) {
+<b class="nc"><i>120</i>&nbsp;        List&lt;String&gt; parts = AbstractParamLayoutFormatter.parseArgument(arg);</b>
+<b class="nc"><i>121</i>&nbsp;        format = parseFormatString(parts.get(0));</b>
+<b class="nc"><i>122</i>&nbsp;        if ((parts.size() &gt; 1) &amp;&amp; !parts.get(1).trim().isEmpty()) {</b>
+<b class="nc"><i>123</i>&nbsp;            fileType = parts.get(1);</b>
+<i>124</i>&nbsp;        }
+<b class="nc"><i>125</i>&nbsp;        if (parts.size() &gt; 2) {</b>
+<b class="nc"><i>126</i>&nbsp;            for (int i = 2; i &lt; (parts.size() - 1); i += 2) {</b>
+<b class="nc"><i>127</i>&nbsp;                replacements.put(parts.get(i), parts.get(i + 1));</b>
+<i>128</i>&nbsp;            }
+<i>129</i>&nbsp;        }
+<b class="nc"><i>130</i>&nbsp;    }</b>
+<i>131</i>&nbsp;
+<i>132</i>&nbsp;    @Override
+<i>133</i>&nbsp;    public String format(String field) {
+<i>134</i>&nbsp;
+<b class="nc"><i>135</i>&nbsp;        if (field == null) {</b>
+<b class="nc"><i>136</i>&nbsp;            return &quot;&quot;;</b>
+<i>137</i>&nbsp;        }
+<i>138</i>&nbsp;
+<b class="nc"><i>139</i>&nbsp;        StringBuilder sb = new StringBuilder();</b>
+<i>140</i>&nbsp;        // Build the list containing the links:
+<b class="nc"><i>141</i>&nbsp;        List&lt;ParsedFileField&gt; fileList = FileField.parse(field);</b>
+<i>142</i>&nbsp;
+<b class="nc"><i>143</i>&nbsp;        int piv = 1; // counter for relevant iterations</b>
+<b class="nc"><i>144</i>&nbsp;        for (ParsedFileField flEntry : fileList) {</b>
+<i>145</i>&nbsp;            // Use this entry if we don&#39;t discriminate on types, or if the type fits:
+<b class="nc"><i>146</i>&nbsp;            if ((fileType == null) || flEntry.getFileType().equalsIgnoreCase(fileType)) {</b>
+<i>147</i>&nbsp;
+<b class="nc"><i>148</i>&nbsp;                for (FormatEntry entry : format) {</b>
+<b class="nc"><i>149</i>&nbsp;                    switch (entry.getType()) {</b>
+<i>150</i>&nbsp;                    case STRING:
+<b class="nc"><i>151</i>&nbsp;                        sb.append(entry.getString());</b>
+<b class="nc"><i>152</i>&nbsp;                        break;</b>
+<i>153</i>&nbsp;                    case ITERATION_COUNT:
+<b class="nc"><i>154</i>&nbsp;                        sb.append(piv);</b>
+<b class="nc"><i>155</i>&nbsp;                        break;</b>
+<i>156</i>&nbsp;                    case FILE_PATH:
+<i>157</i>&nbsp;                        List&lt;String&gt; dirs;
+<i>158</i>&nbsp;                        // We need to resolve the file directory from the database&#39;s metadata,
+<i>159</i>&nbsp;                        // but that is not available from a formatter. Therefore, as an
+<i>160</i>&nbsp;                        // ugly hack, the export routine has set a global variable before
+<i>161</i>&nbsp;                        // starting the export, which contains the database&#39;s file directory:
+<b class="nc"><i>162</i>&nbsp;                        if ((prefs.getFileDirForDatabase() == null) || prefs.getFileDirForDatabase().isEmpty()) {</b>
+<b class="nc"><i>163</i>&nbsp;                            dirs = prefs.getGeneratedDirForDatabase();</b>
+<i>164</i>&nbsp;                        } else {
+<b class="nc"><i>165</i>&nbsp;                            dirs = prefs.getFileDirForDatabase();</b>
+<i>166</i>&nbsp;                        }
+<i>167</i>&nbsp;
+<b class="nc"><i>168</i>&nbsp;                        Optional&lt;File&gt; f = FileUtil.expandFilename(flEntry.getLink(), dirs);</b>
+<i>169</i>&nbsp;
+<i>170</i>&nbsp;                        /*
+<i>171</i>&nbsp;                         * Stumbled over this while investigating
+<i>172</i>&nbsp;                         *
+<i>173</i>&nbsp;                         * https://sourceforge.net/tracker/index.php?func=detail&amp;aid=1469903&amp;group_id=92314&amp;atid=600306
+<i>174</i>&nbsp;                         */
+<b class="nc"><i>175</i>&nbsp;                        if (f.isPresent()) {</b>
+<i>176</i>&nbsp;                            try {
+<b class="nc"><i>177</i>&nbsp;                                sb.append(replaceStrings(f.get().getCanonicalPath()));</b>
+<b class="nc"><i>178</i>&nbsp;                            } catch (IOException ex) {</b>
+<b class="nc"><i>179</i>&nbsp;                                LOGGER.warn(&quot;Problem getting path&quot;, ex);</b>
+<b class="nc"><i>180</i>&nbsp;                                sb.append(replaceStrings(f.get().getPath()));</b>
+<b class="nc"><i>181</i>&nbsp;                            }</b>
+<i>182</i>&nbsp;                        } else {
+<b class="nc"><i>183</i>&nbsp;                            sb.append(replaceStrings(flEntry.getLink()));</b>
+<i>184</i>&nbsp;                        }
+<i>185</i>&nbsp;
+<b class="nc"><i>186</i>&nbsp;                        break;</b>
+<i>187</i>&nbsp;                    case RELATIVE_FILE_PATH:
+<i>188</i>&nbsp;
+<i>189</i>&nbsp;                        /*
+<i>190</i>&nbsp;                         * Stumbled over this while investigating
+<i>191</i>&nbsp;                         *
+<i>192</i>&nbsp;                         * https://sourceforge.net/tracker/index.php?func=detail&amp;aid=1469903&amp;group_id=92314&amp;atid=600306
+<i>193</i>&nbsp;                         */
+<b class="nc"><i>194</i>&nbsp;                        sb.append(replaceStrings(flEntry.getLink()));//f.toURI().toString();</b>
+<i>195</i>&nbsp;
+<b class="nc"><i>196</i>&nbsp;                        break;</b>
+<i>197</i>&nbsp;                    case FILE_EXTENSION:
+<b class="nc"><i>198</i>&nbsp;                        FileUtil.getFileExtension(flEntry.getLink())</b>
+<b class="nc"><i>199</i>&nbsp;                                .ifPresent(extension -&gt; sb.append(replaceStrings(extension)));</b>
+<b class="nc"><i>200</i>&nbsp;                        break;</b>
+<i>201</i>&nbsp;                    case FILE_TYPE:
+<b class="nc"><i>202</i>&nbsp;                        sb.append(replaceStrings(flEntry.getFileType()));</b>
+<b class="nc"><i>203</i>&nbsp;                        break;</b>
+<i>204</i>&nbsp;                    case FILE_DESCRIPTION:
+<b class="nc"><i>205</i>&nbsp;                        sb.append(replaceStrings(flEntry.getDescription()));</b>
+<b class="nc"><i>206</i>&nbsp;                        break;</b>
+<i>207</i>&nbsp;                    default:
+<i>208</i>&nbsp;                        break;
+<i>209</i>&nbsp;                    }
+<b class="nc"><i>210</i>&nbsp;                }</b>
+<i>211</i>&nbsp;
+<b class="nc"><i>212</i>&nbsp;                piv++; // update counter</b>
+<i>213</i>&nbsp;            }
+<b class="nc"><i>214</i>&nbsp;        }</b>
+<i>215</i>&nbsp;
+<b class="nc"><i>216</i>&nbsp;        return sb.toString();</b>
+<i>217</i>&nbsp;    }
+<i>218</i>&nbsp;
+<i>219</i>&nbsp;    private String replaceStrings(String text) {
+<b class="nc"><i>220</i>&nbsp;        String result = text;</b>
+<b class="nc"><i>221</i>&nbsp;        for (Map.Entry&lt;String, String&gt; stringStringEntry : replacements.entrySet()) {</b>
+<b class="nc"><i>222</i>&nbsp;            String to = stringStringEntry.getValue();</b>
+<b class="nc"><i>223</i>&nbsp;            result = result.replaceAll(stringStringEntry.getKey(), to);</b>
+<b class="nc"><i>224</i>&nbsp;        }</b>
+<b class="nc"><i>225</i>&nbsp;        return result;</b>
+<i>226</i>&nbsp;
+<i>227</i>&nbsp;    }
+<i>228</i>&nbsp;
+<i>229</i>&nbsp;
+<i>230</i>&nbsp;    /**
+<i>231</i>&nbsp;     * Parse a format string and return a list of FormatEntry objects. The format
+<i>232</i>&nbsp;     * string is basically marked up with &quot;\i&quot; marking that the iteration number should
+<i>233</i>&nbsp;     * be inserted, and with &quot;\p&quot; marking that the file path of the current iteration
+<i>234</i>&nbsp;     * should be inserted, plus additional markers.
+<i>235</i>&nbsp;     *
+<i>236</i>&nbsp;     * @param format The marked-up string.
+<i>237</i>&nbsp;     * @return the resulting format entries.
+<i>238</i>&nbsp;     */
+<i>239</i>&nbsp;    private static List&lt;FormatEntry&gt; parseFormatString(String format) {
+<b class="nc"><i>240</i>&nbsp;        List&lt;FormatEntry&gt; l = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>241</i>&nbsp;        StringBuilder sb = new StringBuilder();</b>
+<b class="nc"><i>242</i>&nbsp;        boolean escaped = false;</b>
+<b class="nc"><i>243</i>&nbsp;        for (int i = 0; i &lt; format.length(); i++) {</b>
+<b class="nc"><i>244</i>&nbsp;            char c = format.charAt(i);</b>
+<b class="nc"><i>245</i>&nbsp;            if (escaped) {</b>
+<b class="nc"><i>246</i>&nbsp;                escaped = false; // we know we&#39;ll be out of escape mode after this</b>
+<i>247</i>&nbsp;                // Check if this escape sequence is meaningful:
+<b class="nc"><i>248</i>&nbsp;                if (c == &#39;\\&#39;) {</b>
+<i>249</i>&nbsp;                    // Escaped backslash: means that we add a backslash:
+<b class="nc"><i>250</i>&nbsp;                    sb.append(&#39;\\&#39;);</b>
+<b class="nc"><i>251</i>&nbsp;                } else if (WrapFileLinks.ESCAPE_SEQ.containsKey(c)) {</b>
+<i>252</i>&nbsp;                    // Ok, we have the code. Add the previous string (if any) and
+<i>253</i>&nbsp;                    // the entry indicated by the escape sequence:
+<b class="nc"><i>254</i>&nbsp;                    if (sb.length() &gt; 0) {</b>
+<b class="nc"><i>255</i>&nbsp;                        l.add(new FormatEntry(sb.toString()));</b>
+<i>256</i>&nbsp;                        // Clear the buffer:
+<b class="nc"><i>257</i>&nbsp;                        sb = new StringBuilder();</b>
+<i>258</i>&nbsp;                    }
+<b class="nc"><i>259</i>&nbsp;                    l.add(new FormatEntry(WrapFileLinks.ESCAPE_SEQ.get(c)));</b>
+<i>260</i>&nbsp;                } else {
+<i>261</i>&nbsp;                    // Unknown escape sequence.
+<b class="nc"><i>262</i>&nbsp;                    sb.append(&#39;\\&#39;);</b>
+<b class="nc"><i>263</i>&nbsp;                    sb.append(c);</b>
+<i>264</i>&nbsp;                }
+<i>265</i>&nbsp;            } else {
+<i>266</i>&nbsp;                // Check if we are at the start of an escape sequence:
+<b class="nc"><i>267</i>&nbsp;                if (c == &#39;\\&#39;) {</b>
+<b class="nc"><i>268</i>&nbsp;                    escaped = true;</b>
+<i>269</i>&nbsp;                } else {
+<b class="nc"><i>270</i>&nbsp;                    sb.append(c);</b>
+<i>271</i>&nbsp;                }
+<i>272</i>&nbsp;            }
+<i>273</i>&nbsp;        }
+<i>274</i>&nbsp;        // Finished scanning the string. If we collected text at the end, add an entry for it:
+<b class="nc"><i>275</i>&nbsp;        if (sb.length() &gt; 0) {</b>
+<b class="nc"><i>276</i>&nbsp;            l.add(new FormatEntry(sb.toString()));</b>
+<i>277</i>&nbsp;        }
+<i>278</i>&nbsp;
+<b class="nc"><i>279</i>&nbsp;        return l;</b>
+<i>280</i>&nbsp;    }
+<i>281</i>&nbsp;
+<i>282</i>&nbsp;
+<i>283</i>&nbsp;    /**
+<i>284</i>&nbsp;     * This class defines the building blocks of a parsed format strings. Each FormatEntry
+<i>285</i>&nbsp;     * represents either a literal string or a piece of information pertaining to the file
+<i>286</i>&nbsp;     * link to be exported or to the iteration through a series of file links. For literal
+<i>287</i>&nbsp;     * strings this class encapsulates the literal itself, while for other types of information,
+<i>288</i>&nbsp;     * only a type code is provided, and the subclass needs to fill in the proper information
+<i>289</i>&nbsp;     * based on the file link to be exported or the iteration status.
+<i>290</i>&nbsp;     */
+<i>291</i>&nbsp;    static class FormatEntry {
+<i>292</i>&nbsp;
+<i>293</i>&nbsp;        private final int type;
+<i>294</i>&nbsp;        private String string;
+<i>295</i>&nbsp;
+<i>296</i>&nbsp;
+<b class="nc"><i>297</i>&nbsp;        public FormatEntry(int type) {</b>
+<b class="nc"><i>298</i>&nbsp;            this.type = type;</b>
+<b class="nc"><i>299</i>&nbsp;        }</b>
+<i>300</i>&nbsp;
+<b class="nc"><i>301</i>&nbsp;        public FormatEntry(String value) {</b>
+<b class="nc"><i>302</i>&nbsp;            this.type = WrapFileLinks.STRING;</b>
+<b class="nc"><i>303</i>&nbsp;            this.string = value;</b>
+<b class="nc"><i>304</i>&nbsp;        }</b>
+<i>305</i>&nbsp;
+<i>306</i>&nbsp;        public int getType() {
+<b class="nc"><i>307</i>&nbsp;            return type;</b>
+<i>308</i>&nbsp;        }
+<i>309</i>&nbsp;
+<i>310</i>&nbsp;        public String getString() {
+<b class="nc"><i>311</i>&nbsp;            return string;</b>
+<i>312</i>&nbsp;        }
+<i>313</i>&nbsp;    }
+<i>314</i>&nbsp;
+<i>315</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

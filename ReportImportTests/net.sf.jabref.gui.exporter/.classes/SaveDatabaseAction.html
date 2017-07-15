@@ -1,0 +1,543 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: SaveDatabaseAction</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.exporter</a> ]
+</div>
+
+<h1>Coverage Summary for Class: SaveDatabaseAction (net.sf.jabref.gui.exporter)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SaveDatabaseAction</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 20)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 204)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.exporter;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.File;
+<i>4</i>&nbsp;import java.io.IOException;
+<i>5</i>&nbsp;import java.nio.charset.Charset;
+<i>6</i>&nbsp;import java.nio.charset.UnsupportedCharsetException;
+<i>7</i>&nbsp;import java.nio.file.Path;
+<i>8</i>&nbsp;import java.util.Optional;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;import javax.swing.JOptionPane;
+<i>11</i>&nbsp;import javax.swing.JTextArea;
+<i>12</i>&nbsp;import javax.swing.SwingUtilities;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;import net.sf.jabref.Globals;
+<i>15</i>&nbsp;import net.sf.jabref.JabRefExecutorService;
+<i>16</i>&nbsp;import net.sf.jabref.collab.ChangeScanner;
+<i>17</i>&nbsp;import net.sf.jabref.collab.FileUpdatePanel;
+<i>18</i>&nbsp;import net.sf.jabref.gui.BasePanel;
+<i>19</i>&nbsp;import net.sf.jabref.gui.FileDialog;
+<i>20</i>&nbsp;import net.sf.jabref.gui.JabRefFrame;
+<i>21</i>&nbsp;import net.sf.jabref.gui.autosaveandbackup.AutosaveUIManager;
+<i>22</i>&nbsp;import net.sf.jabref.gui.worker.AbstractWorker;
+<i>23</i>&nbsp;import net.sf.jabref.gui.worker.CallBack;
+<i>24</i>&nbsp;import net.sf.jabref.logic.autosaveandbackup.AutosaveManager;
+<i>25</i>&nbsp;import net.sf.jabref.logic.autosaveandbackup.BackupManager;
+<i>26</i>&nbsp;import net.sf.jabref.logic.exporter.BibtexDatabaseWriter;
+<i>27</i>&nbsp;import net.sf.jabref.logic.exporter.FileSaveSession;
+<i>28</i>&nbsp;import net.sf.jabref.logic.exporter.SaveException;
+<i>29</i>&nbsp;import net.sf.jabref.logic.exporter.SavePreferences;
+<i>30</i>&nbsp;import net.sf.jabref.logic.exporter.SaveSession;
+<i>31</i>&nbsp;import net.sf.jabref.logic.l10n.Encodings;
+<i>32</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>33</i>&nbsp;import net.sf.jabref.logic.util.FileExtensions;
+<i>34</i>&nbsp;import net.sf.jabref.logic.util.io.FileBasedLock;
+<i>35</i>&nbsp;import net.sf.jabref.model.database.BibDatabaseContext;
+<i>36</i>&nbsp;import net.sf.jabref.model.database.DatabaseLocation;
+<i>37</i>&nbsp;import net.sf.jabref.model.database.event.ChangePropagation;
+<i>38</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>39</i>&nbsp;import net.sf.jabref.preferences.JabRefPreferences;
+<i>40</i>&nbsp;import net.sf.jabref.shared.DBMSConnectionProperties;
+<i>41</i>&nbsp;import net.sf.jabref.shared.prefs.SharedDatabasePreferences;
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;import com.jgoodies.forms.builder.FormBuilder;
+<i>44</i>&nbsp;import com.jgoodies.forms.layout.FormLayout;
+<i>45</i>&nbsp;import org.apache.commons.logging.Log;
+<i>46</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>47</i>&nbsp;
+<i>48</i>&nbsp;/**
+<i>49</i>&nbsp; * Action for the &quot;Save&quot; and &quot;Save as&quot; operations called from BasePanel. This class is also used for
+<i>50</i>&nbsp; * save operations when closing a database or quitting the applications.
+<i>51</i>&nbsp; *
+<i>52</i>&nbsp; * The operations run synchronously, but offload the save operation from the event thread using Spin.
+<i>53</i>&nbsp; * Callers can query whether the operation was canceled, or whether it was successful.
+<i>54</i>&nbsp; */
+<i>55</i>&nbsp;public class SaveDatabaseAction extends AbstractWorker {
+<b class="nc"><i>56</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(SaveDatabaseAction.class);</b>
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;    private final BasePanel panel;
+<i>59</i>&nbsp;    private final JabRefFrame frame;
+<i>60</i>&nbsp;    private boolean success;
+<i>61</i>&nbsp;    private boolean canceled;
+<i>62</i>&nbsp;    private boolean fileLockedError;
+<i>63</i>&nbsp;
+<i>64</i>&nbsp;    private Optional&lt;Path&gt; filePath;
+<i>65</i>&nbsp;
+<i>66</i>&nbsp;
+<b class="nc"><i>67</i>&nbsp;    public SaveDatabaseAction(BasePanel panel) {</b>
+<b class="nc"><i>68</i>&nbsp;        this.panel = panel;</b>
+<b class="nc"><i>69</i>&nbsp;        this.frame = panel.frame();</b>
+<b class="nc"><i>70</i>&nbsp;        this.filePath = Optional.empty();</b>
+<b class="nc"><i>71</i>&nbsp;    }</b>
+<i>72</i>&nbsp;
+<i>73</i>&nbsp;    /**
+<i>74</i>&nbsp;     * @param panel BasePanel which contains the database to be saved
+<i>75</i>&nbsp;     * @param filePath Path to the file the database should be saved to
+<i>76</i>&nbsp;     */
+<i>77</i>&nbsp;    public SaveDatabaseAction(BasePanel panel, Path filePath) {
+<b class="nc"><i>78</i>&nbsp;        this(panel);</b>
+<b class="nc"><i>79</i>&nbsp;        this.filePath = Optional.ofNullable(filePath);</b>
+<b class="nc"><i>80</i>&nbsp;    }</b>
+<i>81</i>&nbsp;
+<i>82</i>&nbsp;    @Override
+<i>83</i>&nbsp;    public void init() throws Exception {
+<b class="nc"><i>84</i>&nbsp;        success = false;</b>
+<b class="nc"><i>85</i>&nbsp;        canceled = false;</b>
+<b class="nc"><i>86</i>&nbsp;        fileLockedError = false;</b>
+<b class="nc"><i>87</i>&nbsp;        if (panel.getBibDatabaseContext().getDatabaseFile().isPresent()) {</b>
+<i>88</i>&nbsp;            // Check for external modifications: if true, save not performed so do not tell the user a save is underway but return instead.
+<b class="nc"><i>89</i>&nbsp;            if (checkExternalModification()) {</b>
+<b class="nc"><i>90</i>&nbsp;                return;</b>
+<i>91</i>&nbsp;            }
+<i>92</i>&nbsp;
+<b class="nc"><i>93</i>&nbsp;            panel.frame().output(Localization.lang(&quot;Saving database&quot;) + &quot;...&quot;);</b>
+<b class="nc"><i>94</i>&nbsp;            panel.setSaving(true);</b>
+<b class="nc"><i>95</i>&nbsp;        } else if (filePath.isPresent()) {</b>
+<i>96</i>&nbsp;            // save as directly if the target file location is known
+<b class="nc"><i>97</i>&nbsp;            saveAs(filePath.get().toFile());</b>
+<i>98</i>&nbsp;        } else {
+<b class="nc"><i>99</i>&nbsp;            saveAs();</b>
+<i>100</i>&nbsp;        }
+<b class="nc"><i>101</i>&nbsp;    }</b>
+<i>102</i>&nbsp;
+<i>103</i>&nbsp;    @Override
+<i>104</i>&nbsp;    public void update() {
+<b class="nc"><i>105</i>&nbsp;        if (success) {</b>
+<i>106</i>&nbsp;            // Reset title of tab
+<b class="nc"><i>107</i>&nbsp;            frame.setTabTitle(panel, panel.getTabTitle(),</b>
+<b class="nc"><i>108</i>&nbsp;                    panel.getBibDatabaseContext().getDatabaseFile().get().getAbsolutePath());</b>
+<b class="nc"><i>109</i>&nbsp;            frame.output(Localization.lang(&quot;Saved database&quot;) + &quot; &#39;&quot;</b>
+<b class="nc"><i>110</i>&nbsp;                    + panel.getBibDatabaseContext().getDatabaseFile().get().getPath() + &quot;&#39;.&quot;);</b>
+<b class="nc"><i>111</i>&nbsp;            frame.setWindowTitle();</b>
+<b class="nc"><i>112</i>&nbsp;            frame.updateAllTabTitles();</b>
+<b class="nc"><i>113</i>&nbsp;        } else if (!canceled) {</b>
+<b class="nc"><i>114</i>&nbsp;            if (fileLockedError) {</b>
+<i>115</i>&nbsp;                // TODO: user should have the option to override the lock file.
+<b class="nc"><i>116</i>&nbsp;                frame.output(Localization.lang(&quot;Could not save, file locked by another JabRef instance.&quot;));</b>
+<i>117</i>&nbsp;            } else {
+<b class="nc"><i>118</i>&nbsp;                frame.output(Localization.lang(&quot;Save failed&quot;));</b>
+<i>119</i>&nbsp;            }
+<i>120</i>&nbsp;        }
+<b class="nc"><i>121</i>&nbsp;    }</b>
+<i>122</i>&nbsp;
+<i>123</i>&nbsp;    @Override
+<i>124</i>&nbsp;    public void run() {
+<b class="nc"><i>125</i>&nbsp;        if (canceled || !panel.getBibDatabaseContext().getDatabaseFile().isPresent()) {</b>
+<b class="nc"><i>126</i>&nbsp;            return;</b>
+<i>127</i>&nbsp;        }
+<i>128</i>&nbsp;
+<i>129</i>&nbsp;        try {
+<i>130</i>&nbsp;            // Make sure the current edit is stored
+<b class="nc"><i>131</i>&nbsp;            panel.storeCurrentEdit();</b>
+<i>132</i>&nbsp;
+<i>133</i>&nbsp;            // If set in preferences, generate missing BibTeX keys
+<b class="nc"><i>134</i>&nbsp;            panel.autoGenerateKeysBeforeSaving();</b>
+<i>135</i>&nbsp;
+<b class="nc"><i>136</i>&nbsp;            if (FileBasedLock.waitForFileLock(panel.getBibDatabaseContext().getDatabaseFile().get().toPath())) {</b>
+<i>137</i>&nbsp;                // Check for external modifications to alleviate multiuser concurrency issue when near
+<i>138</i>&nbsp;                // simultaneous saves occur to a shared database file: if true, do not perform the save
+<i>139</i>&nbsp;                // rather return instead.
+<b class="nc"><i>140</i>&nbsp;                if (checkExternalModification()) {</b>
+<b class="nc"><i>141</i>&nbsp;                    return;</b>
+<i>142</i>&nbsp;                }
+<i>143</i>&nbsp;
+<i>144</i>&nbsp;                // Save the database
+<b class="nc"><i>145</i>&nbsp;                success = saveDatabase(panel.getBibDatabaseContext().getDatabaseFile().get(), false,</b>
+<b class="nc"><i>146</i>&nbsp;                        panel.getBibDatabaseContext().getMetaData().getEncoding().orElse(Globals.prefs.getDefaultEncoding()));</b>
+<i>147</i>&nbsp;
+<b class="nc"><i>148</i>&nbsp;                Globals.getFileUpdateMonitor().updateTimeStamp(panel.getFileMonitorHandle());</b>
+<i>149</i>&nbsp;            } else {
+<b class="nc"><i>150</i>&nbsp;                success = false;</b>
+<b class="nc"><i>151</i>&nbsp;                fileLockedError = true;</b>
+<i>152</i>&nbsp;            }
+<i>153</i>&nbsp;
+<i>154</i>&nbsp;            // release panel from save status
+<b class="nc"><i>155</i>&nbsp;            panel.setSaving(false);</b>
+<i>156</i>&nbsp;
+<b class="nc"><i>157</i>&nbsp;            if (success) {</b>
+<b class="nc"><i>158</i>&nbsp;                panel.getUndoManager().markUnchanged();</b>
+<i>159</i>&nbsp;                // (Only) after a successful save the following
+<i>160</i>&nbsp;                // statement marks that the base is unchanged
+<i>161</i>&nbsp;                // since last save:
+<b class="nc"><i>162</i>&nbsp;                panel.setNonUndoableChange(false);</b>
+<b class="nc"><i>163</i>&nbsp;                panel.setBaseChanged(false);</b>
+<b class="nc"><i>164</i>&nbsp;                panel.setUpdatedExternally(false);</b>
+<i>165</i>&nbsp;            }
+<b class="nc"><i>166</i>&nbsp;        } catch (SaveException ex) {</b>
+<b class="nc"><i>167</i>&nbsp;            if (ex == SaveException.FILE_LOCKED) {</b>
+<b class="nc"><i>168</i>&nbsp;                success = false;</b>
+<b class="nc"><i>169</i>&nbsp;                fileLockedError = true;</b>
+<b class="nc"><i>170</i>&nbsp;                return;</b>
+<i>171</i>&nbsp;            }
+<b class="nc"><i>172</i>&nbsp;            LOGGER.error(&quot;Problem saving file&quot;, ex);</b>
+<b class="nc"><i>173</i>&nbsp;        }</b>
+<b class="nc"><i>174</i>&nbsp;    }</b>
+<i>175</i>&nbsp;
+<i>176</i>&nbsp;    private boolean saveDatabase(File file, boolean selectedOnly, Charset encoding) throws SaveException {
+<i>177</i>&nbsp;        SaveSession session;
+<i>178</i>&nbsp;
+<i>179</i>&nbsp;        // block user input
+<b class="nc"><i>180</i>&nbsp;        frame.block();</b>
+<i>181</i>&nbsp;
+<i>182</i>&nbsp;        try {
+<b class="nc"><i>183</i>&nbsp;            SavePreferences prefs = SavePreferences.loadForSaveFromPreferences(Globals.prefs).withEncoding(encoding);</b>
+<b class="nc"><i>184</i>&nbsp;            BibtexDatabaseWriter&lt;SaveSession&gt; databaseWriter = new BibtexDatabaseWriter&lt;&gt;(FileSaveSession::new);</b>
+<i>185</i>&nbsp;
+<b class="nc"><i>186</i>&nbsp;            if (selectedOnly) {</b>
+<b class="nc"><i>187</i>&nbsp;                session = databaseWriter.savePartOfDatabase(panel.getBibDatabaseContext(), panel.getSelectedEntries(), prefs);</b>
+<i>188</i>&nbsp;            } else {
+<b class="nc"><i>189</i>&nbsp;                session = databaseWriter.saveDatabase(panel.getBibDatabaseContext(), prefs);</b>
+<i>190</i>&nbsp;            }
+<i>191</i>&nbsp;
+<b class="nc"><i>192</i>&nbsp;            panel.registerUndoableChanges(session);</b>
+<i>193</i>&nbsp;
+<b class="nc"><i>194</i>&nbsp;        } catch (UnsupportedCharsetException ex) {</b>
+<b class="nc"><i>195</i>&nbsp;            JOptionPane.showMessageDialog(frame,</b>
+<b class="nc"><i>196</i>&nbsp;                    Localization.lang(&quot;Could not save file.&quot;)</b>
+<b class="nc"><i>197</i>&nbsp;                            + Localization.lang(&quot;Character encoding &#39;%0&#39; is not supported.&quot;, encoding.displayName()),</b>
+<b class="nc"><i>198</i>&nbsp;                    Localization.lang(&quot;Save database&quot;), JOptionPane.ERROR_MESSAGE);</b>
+<i>199</i>&nbsp;            // FIXME: rethrow anti-pattern
+<b class="nc"><i>200</i>&nbsp;            throw new SaveException(&quot;rt&quot;);</b>
+<b class="nc"><i>201</i>&nbsp;        } catch (SaveException ex) {</b>
+<b class="nc"><i>202</i>&nbsp;            if (ex == SaveException.FILE_LOCKED) {</b>
+<b class="nc"><i>203</i>&nbsp;                throw ex;</b>
+<i>204</i>&nbsp;            }
+<b class="nc"><i>205</i>&nbsp;            if (ex.specificEntry()) {</b>
+<b class="nc"><i>206</i>&nbsp;                BibEntry entry = ex.getEntry();</b>
+<i>207</i>&nbsp;                // Error occured during processing of an entry. Highlight it!
+<b class="nc"><i>208</i>&nbsp;                panel.highlightEntry(entry);</b>
+<b class="nc"><i>209</i>&nbsp;            } else {</b>
+<b class="nc"><i>210</i>&nbsp;                LOGGER.error(&quot;A problem occured when trying to save the file&quot;, ex);</b>
+<i>211</i>&nbsp;            }
+<i>212</i>&nbsp;
+<b class="nc"><i>213</i>&nbsp;            JOptionPane.showMessageDialog(frame, Localization.lang(&quot;Could not save file.&quot;) + &quot;.\n&quot; + ex.getMessage(),</b>
+<b class="nc"><i>214</i>&nbsp;                    Localization.lang(&quot;Save database&quot;), JOptionPane.ERROR_MESSAGE);</b>
+<i>215</i>&nbsp;            // FIXME: rethrow anti-pattern
+<b class="nc"><i>216</i>&nbsp;            throw new SaveException(&quot;rt&quot;);</b>
+<i>217</i>&nbsp;        } finally {
+<i>218</i>&nbsp;            // re-enable user input
+<b class="nc"><i>219</i>&nbsp;            frame.unblock();</b>
+<b class="nc"><i>220</i>&nbsp;        }</b>
+<i>221</i>&nbsp;
+<i>222</i>&nbsp;        // handle encoding problems
+<b class="nc"><i>223</i>&nbsp;        boolean success = true;</b>
+<b class="nc"><i>224</i>&nbsp;        if (!session.getWriter().couldEncodeAll()) {</b>
+<b class="nc"><i>225</i>&nbsp;            FormBuilder builder = FormBuilder.create().layout(new FormLayout(&quot;left:pref, 4dlu, fill:pref&quot;, &quot;pref, 4dlu, pref&quot;));</b>
+<b class="nc"><i>226</i>&nbsp;            JTextArea ta = new JTextArea(session.getWriter().getProblemCharacters());</b>
+<b class="nc"><i>227</i>&nbsp;            ta.setEditable(false);</b>
+<b class="nc"><i>228</i>&nbsp;            builder.add(Localization.lang(&quot;The chosen encoding &#39;%0&#39; could not encode the following characters:&quot;, session.getEncoding().displayName())).xy(1, 1);</b>
+<b class="nc"><i>229</i>&nbsp;            builder.add(ta).xy(3, 1);</b>
+<b class="nc"><i>230</i>&nbsp;            builder.add(Localization.lang(&quot;What do you want to do?&quot;)).xy(1, 3);</b>
+<b class="nc"><i>231</i>&nbsp;            String tryDiff = Localization.lang(&quot;Try different encoding&quot;);</b>
+<b class="nc"><i>232</i>&nbsp;            int answer = JOptionPane.showOptionDialog(frame, builder.getPanel(), Localization.lang(&quot;Save database&quot;),</b>
+<i>233</i>&nbsp;                    JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null,
+<b class="nc"><i>234</i>&nbsp;                    new String[] {Localization.lang(&quot;Save&quot;), tryDiff, Localization.lang(&quot;Cancel&quot;)}, tryDiff);</b>
+<i>235</i>&nbsp;
+<b class="nc"><i>236</i>&nbsp;            if (answer == JOptionPane.NO_OPTION) {</b>
+<i>237</i>&nbsp;                // The user wants to use another encoding.
+<b class="nc"><i>238</i>&nbsp;                Object choice = JOptionPane.showInputDialog(frame, Localization.lang(&quot;Select encoding&quot;),</b>
+<b class="nc"><i>239</i>&nbsp;                        Localization.lang(&quot;Save database&quot;), JOptionPane.QUESTION_MESSAGE, null,</b>
+<i>240</i>&nbsp;                        Encodings.ENCODINGS_DISPLAYNAMES, encoding);
+<b class="nc"><i>241</i>&nbsp;                if (choice == null) {</b>
+<b class="nc"><i>242</i>&nbsp;                    success = false;</b>
+<i>243</i>&nbsp;                } else {
+<b class="nc"><i>244</i>&nbsp;                    Charset newEncoding = Charset.forName((String) choice);</b>
+<b class="nc"><i>245</i>&nbsp;                    return saveDatabase(file, selectedOnly, newEncoding);</b>
+<i>246</i>&nbsp;                }
+<b class="nc"><i>247</i>&nbsp;            } else if (answer == JOptionPane.CANCEL_OPTION) {</b>
+<b class="nc"><i>248</i>&nbsp;                success = false;</b>
+<i>249</i>&nbsp;            }
+<i>250</i>&nbsp;        }
+<i>251</i>&nbsp;
+<i>252</i>&nbsp;        // backup file?
+<i>253</i>&nbsp;        try {
+<b class="nc"><i>254</i>&nbsp;            if (success) {</b>
+<b class="nc"><i>255</i>&nbsp;                session.commit(file.toPath());</b>
+<i>256</i>&nbsp;                // Make sure to remember which encoding we used.
+<b class="nc"><i>257</i>&nbsp;                panel.getBibDatabaseContext().getMetaData().setEncoding(encoding, ChangePropagation.DO_NOT_POST_EVENT);</b>
+<i>258</i>&nbsp;            } else {
+<b class="nc"><i>259</i>&nbsp;                session.cancel();</b>
+<i>260</i>&nbsp;            }
+<b class="nc"><i>261</i>&nbsp;        } catch (SaveException e) {</b>
+<b class="nc"><i>262</i>&nbsp;            int ans = JOptionPane.showConfirmDialog(null,</b>
+<b class="nc"><i>263</i>&nbsp;                    Localization.lang(&quot;Save failed during backup creation&quot;) + &quot;. &quot;</b>
+<b class="nc"><i>264</i>&nbsp;                            + Localization.lang(&quot;Save without backup?&quot;),</b>
+<b class="nc"><i>265</i>&nbsp;                    Localization.lang(&quot;Unable to create backup&quot;), JOptionPane.YES_NO_OPTION);</b>
+<b class="nc"><i>266</i>&nbsp;            if (ans == JOptionPane.YES_OPTION) {</b>
+<b class="nc"><i>267</i>&nbsp;                session.setUseBackup(false);</b>
+<b class="nc"><i>268</i>&nbsp;                session.commit(file.toPath());</b>
+<b class="nc"><i>269</i>&nbsp;                panel.getBibDatabaseContext().getMetaData().setEncoding(encoding, ChangePropagation.DO_NOT_POST_EVENT);</b>
+<i>270</i>&nbsp;            } else {
+<b class="nc"><i>271</i>&nbsp;                success = false;</b>
+<i>272</i>&nbsp;            }
+<b class="nc"><i>273</i>&nbsp;        }</b>
+<i>274</i>&nbsp;
+<b class="nc"><i>275</i>&nbsp;        return success;</b>
+<i>276</i>&nbsp;    }
+<i>277</i>&nbsp;
+<i>278</i>&nbsp;    /**
+<i>279</i>&nbsp;     * Run the &quot;Save&quot; operation. This method offloads the actual save operation to a background thread, but
+<i>280</i>&nbsp;     * still runs synchronously using Spin (the method returns only after completing the operation).
+<i>281</i>&nbsp;     */
+<i>282</i>&nbsp;    public void runCommand() throws Exception {
+<i>283</i>&nbsp;        // This part uses Spin&#39;s features:
+<b class="nc"><i>284</i>&nbsp;        Runnable worker = getWorker();</b>
+<i>285</i>&nbsp;        // The Worker returned by getWorker() has been wrapped
+<i>286</i>&nbsp;        // by Spin.off(), which makes its methods be run in
+<i>287</i>&nbsp;        // a different thread from the EDT.
+<b class="nc"><i>288</i>&nbsp;        CallBack callback = getCallBack();</b>
+<i>289</i>&nbsp;
+<b class="nc"><i>290</i>&nbsp;        init(); // This method runs in this same thread, the EDT.</b>
+<i>291</i>&nbsp;        // Useful for initial GUI actions, like printing a message.
+<i>292</i>&nbsp;
+<i>293</i>&nbsp;        // The CallBack returned by getCallBack() has been wrapped
+<i>294</i>&nbsp;        // by Spin.over(), which makes its methods be run on
+<i>295</i>&nbsp;        // the EDT.
+<b class="nc"><i>296</i>&nbsp;        worker.run(); // Runs the potentially time-consuming action</b>
+<i>297</i>&nbsp;        // without freezing the GUI. The magic is that THIS line
+<i>298</i>&nbsp;        // of execution will not continue until run() is finished.
+<b class="nc"><i>299</i>&nbsp;        callback.update(); // Runs the update() method on the EDT.</b>
+<b class="nc"><i>300</i>&nbsp;    }</b>
+<i>301</i>&nbsp;
+<i>302</i>&nbsp;    public void save() throws Exception {
+<b class="nc"><i>303</i>&nbsp;        runCommand();</b>
+<b class="nc"><i>304</i>&nbsp;        frame.updateEnabledState();</b>
+<b class="nc"><i>305</i>&nbsp;    }</b>
+<i>306</i>&nbsp;
+<i>307</i>&nbsp;    public void saveAs() throws Exception {
+<i>308</i>&nbsp;        // configure file dialog
+<b class="nc"><i>309</i>&nbsp;        FileDialog dialog = new FileDialog(frame);</b>
+<b class="nc"><i>310</i>&nbsp;        dialog.withExtension(FileExtensions.BIBTEX_DB);</b>
+<b class="nc"><i>311</i>&nbsp;        dialog.setDefaultExtension(FileExtensions.BIBTEX_DB);</b>
+<i>312</i>&nbsp;
+<b class="nc"><i>313</i>&nbsp;        Optional&lt;Path&gt; path = dialog.saveNewFile();</b>
+<b class="nc"><i>314</i>&nbsp;        if (path.isPresent()) {</b>
+<b class="nc"><i>315</i>&nbsp;            saveAs(path.get().toFile());</b>
+<i>316</i>&nbsp;        } else {
+<b class="nc"><i>317</i>&nbsp;            canceled = true;</b>
+<b class="nc"><i>318</i>&nbsp;            return;</b>
+<i>319</i>&nbsp;        }
+<b class="nc"><i>320</i>&nbsp;    }</b>
+<i>321</i>&nbsp;
+<i>322</i>&nbsp;    /**
+<i>323</i>&nbsp;     * Run the &quot;Save as&quot; operation. This method offloads the actual save operation to a background thread, but
+<i>324</i>&nbsp;     * still runs synchronously using Spin (the method returns only after completing the operation).
+<i>325</i>&nbsp;     */
+<i>326</i>&nbsp;    public void saveAs(File file) throws Exception {
+<b class="nc"><i>327</i>&nbsp;        BibDatabaseContext context = panel.getBibDatabaseContext();</b>
+<i>328</i>&nbsp;
+<b class="nc"><i>329</i>&nbsp;        if (context.getLocation() == DatabaseLocation.SHARED) {</b>
+<i>330</i>&nbsp;            // Save all properties dependent on the ID. This makes it possible to restore them.
+<b class="nc"><i>331</i>&nbsp;            DBMSConnectionProperties properties = context.getDBMSSynchronizer().getDBProcessor().getDBMSConnectionProperties();</b>
+<b class="nc"><i>332</i>&nbsp;            new SharedDatabasePreferences(context.getDatabase().generateSharedDatabaseID()).putAllDBMSConnectionProperties(properties);</b>
+<i>333</i>&nbsp;        }
+<i>334</i>&nbsp;
+<b class="nc"><i>335</i>&nbsp;        context.setDatabaseFile(file);</b>
+<b class="nc"><i>336</i>&nbsp;        if (file.getParent() != null) {</b>
+<b class="nc"><i>337</i>&nbsp;            Globals.prefs.put(JabRefPreferences.WORKING_DIRECTORY, file.getParent());</b>
+<i>338</i>&nbsp;        }
+<b class="nc"><i>339</i>&nbsp;        runCommand();</b>
+<i>340</i>&nbsp;        // If the operation failed, revert the file field and return:
+<b class="nc"><i>341</i>&nbsp;        if (!success) {</b>
+<b class="nc"><i>342</i>&nbsp;            return;</b>
+<i>343</i>&nbsp;        }
+<i>344</i>&nbsp;        // Register so we get notifications about outside changes to the file.
+<i>345</i>&nbsp;
+<i>346</i>&nbsp;        try {
+<b class="nc"><i>347</i>&nbsp;            panel.setFileMonitorHandle(Globals.getFileUpdateMonitor().addUpdateListener(panel,</b>
+<b class="nc"><i>348</i>&nbsp;                    context.getDatabaseFile().orElse(null)));</b>
+<b class="nc"><i>349</i>&nbsp;        } catch (IOException ex) {</b>
+<b class="nc"><i>350</i>&nbsp;            LOGGER.error(&quot;Problem registering file change notifications&quot;, ex);</b>
+<b class="nc"><i>351</i>&nbsp;        }</b>
+<i>352</i>&nbsp;
+<b class="nc"><i>353</i>&nbsp;        if (readyForAutosave(context)) {</b>
+<b class="nc"><i>354</i>&nbsp;            AutosaveManager autosaver = AutosaveManager.start(context);</b>
+<b class="nc"><i>355</i>&nbsp;            autosaver.registerListener(new AutosaveUIManager(panel));</b>
+<i>356</i>&nbsp;        }
+<i>357</i>&nbsp;
+<b class="nc"><i>358</i>&nbsp;        if (readyForBackup(context)) {</b>
+<b class="nc"><i>359</i>&nbsp;            BackupManager.start(context);</b>
+<i>360</i>&nbsp;        }
+<i>361</i>&nbsp;
+<b class="nc"><i>362</i>&nbsp;        context.getDatabaseFile().ifPresent(presentFile -&gt; frame.getFileHistory().newFile(presentFile.getPath()));</b>
+<b class="nc"><i>363</i>&nbsp;        frame.updateEnabledState();</b>
+<b class="nc"><i>364</i>&nbsp;    }</b>
+<i>365</i>&nbsp;
+<i>366</i>&nbsp;    private boolean readyForAutosave(BibDatabaseContext context) {
+<b class="nc"><i>367</i>&nbsp;        return (context.getLocation() == DatabaseLocation.SHARED ||</b>
+<b class="nc"><i>368</i>&nbsp;                ((context.getLocation() == DatabaseLocation.LOCAL) &amp;&amp; Globals.prefs.getBoolean(JabRefPreferences.LOCAL_AUTO_SAVE))) &amp;&amp;</b>
+<b class="nc"><i>369</i>&nbsp;                context.getDatabaseFile().isPresent();</b>
+<i>370</i>&nbsp;    }
+<i>371</i>&nbsp;
+<i>372</i>&nbsp;    private boolean readyForBackup(BibDatabaseContext context) {
+<b class="nc"><i>373</i>&nbsp;        return context.getLocation() == DatabaseLocation.LOCAL &amp;&amp; context.getDatabaseFile().isPresent();</b>
+<i>374</i>&nbsp;    }
+<i>375</i>&nbsp;
+<i>376</i>&nbsp;    /**
+<i>377</i>&nbsp;     * Query whether the last operation was successful.
+<i>378</i>&nbsp;     *
+<i>379</i>&nbsp;     * @return true if the last Save/SaveAs operation completed successfully, false otherwise.
+<i>380</i>&nbsp;     */
+<i>381</i>&nbsp;    public boolean isSuccess() {
+<b class="nc"><i>382</i>&nbsp;        return success;</b>
+<i>383</i>&nbsp;    }
+<i>384</i>&nbsp;
+<i>385</i>&nbsp;    /**
+<i>386</i>&nbsp;     * Query whether the last operation was canceled.
+<i>387</i>&nbsp;     *
+<i>388</i>&nbsp;     * @return true if the last Save/SaveAs operation was canceled from the file dialog or from another
+<i>389</i>&nbsp;     * query dialog, false otherwise.
+<i>390</i>&nbsp;     */
+<i>391</i>&nbsp;    public boolean isCanceled() {
+<b class="nc"><i>392</i>&nbsp;        return canceled;</b>
+<i>393</i>&nbsp;    }
+<i>394</i>&nbsp;
+<i>395</i>&nbsp;    /**
+<i>396</i>&nbsp;     * Check whether or not the external database has been modified. If so need to alert the user to accept external updates prior to
+<i>397</i>&nbsp;     * saving the database. This is necessary to avoid overwriting other users work when using a multiuser database file.
+<i>398</i>&nbsp;     *
+<i>399</i>&nbsp;     * @return true if the external database file has been modified and the user must choose to accept the changes and false if no modifications
+<i>400</i>&nbsp;     * were found or there is no requested protection for the database file.
+<i>401</i>&nbsp;     */
+<i>402</i>&nbsp;    private boolean checkExternalModification() {
+<i>403</i>&nbsp;        // Check for external modifications:
+<b class="nc"><i>404</i>&nbsp;        if (panel.isUpdatedExternally()</b>
+<b class="nc"><i>405</i>&nbsp;                || Globals.getFileUpdateMonitor().hasBeenModified(panel.getFileMonitorHandle())) {</b>
+<b class="nc"><i>406</i>&nbsp;            String[] opts = new String[] {Localization.lang(&quot;Review changes&quot;), Localization.lang(&quot;Save&quot;),</b>
+<b class="nc"><i>407</i>&nbsp;                    Localization.lang(&quot;Cancel&quot;)};</b>
+<b class="nc"><i>408</i>&nbsp;            int answer = JOptionPane.showOptionDialog(panel.frame(),</b>
+<b class="nc"><i>409</i>&nbsp;                    Localization.lang(&quot;File has been updated externally. &quot; + &quot;What do you want to do?&quot;),</b>
+<b class="nc"><i>410</i>&nbsp;                    Localization.lang(&quot;File updated externally&quot;), JOptionPane.YES_NO_CANCEL_OPTION,</b>
+<i>411</i>&nbsp;                    JOptionPane.QUESTION_MESSAGE, null, opts, opts[0]);
+<i>412</i>&nbsp;
+<b class="nc"><i>413</i>&nbsp;            if (answer == JOptionPane.CANCEL_OPTION) {</b>
+<b class="nc"><i>414</i>&nbsp;                canceled = true;</b>
+<b class="nc"><i>415</i>&nbsp;                return true;</b>
+<b class="nc"><i>416</i>&nbsp;            } else if (answer == JOptionPane.YES_OPTION) {</b>
+<b class="nc"><i>417</i>&nbsp;                canceled = true;</b>
+<i>418</i>&nbsp;
+<b class="nc"><i>419</i>&nbsp;                JabRefExecutorService.INSTANCE.execute(() -&gt; {</b>
+<i>420</i>&nbsp;
+<b class="nc"><i>421</i>&nbsp;                    if (!FileBasedLock</b>
+<b class="nc"><i>422</i>&nbsp;                            .waitForFileLock(panel.getBibDatabaseContext().getDatabaseFile().get().toPath())) {</b>
+<i>423</i>&nbsp;                        // TODO: GUI handling of the situation when the externally modified file keeps being locked.
+<b class="nc"><i>424</i>&nbsp;                        LOGGER.error(&quot;File locked, this will be trouble.&quot;);</b>
+<i>425</i>&nbsp;                    }
+<i>426</i>&nbsp;
+<b class="nc"><i>427</i>&nbsp;                    ChangeScanner scanner = new ChangeScanner(panel.frame(), panel,</b>
+<b class="nc"><i>428</i>&nbsp;                            panel.getBibDatabaseContext().getDatabaseFile().get());</b>
+<b class="nc"><i>429</i>&nbsp;                    JabRefExecutorService.INSTANCE.executeInterruptableTaskAndWait(scanner);</b>
+<b class="nc"><i>430</i>&nbsp;                    if (scanner.changesFound()) {</b>
+<b class="nc"><i>431</i>&nbsp;                        scanner.displayResult(resolved -&gt; {</b>
+<b class="nc"><i>432</i>&nbsp;                            if (resolved) {</b>
+<b class="nc"><i>433</i>&nbsp;                                panel.setUpdatedExternally(false);</b>
+<b class="nc"><i>434</i>&nbsp;                                SwingUtilities.invokeLater(() -&gt; panel.getSidePaneManager().hide(FileUpdatePanel.class));</b>
+<i>435</i>&nbsp;                            } else {
+<b class="nc"><i>436</i>&nbsp;                                canceled = true;</b>
+<i>437</i>&nbsp;                            }
+<b class="nc"><i>438</i>&nbsp;                        });</b>
+<i>439</i>&nbsp;                    }
+<b class="nc"><i>440</i>&nbsp;                });</b>
+<i>441</i>&nbsp;
+<b class="nc"><i>442</i>&nbsp;                return true;</b>
+<i>443</i>&nbsp;            } else { // User indicated to store anyway.
+<b class="nc"><i>444</i>&nbsp;                if (panel.getBibDatabaseContext().getMetaData().isProtected()) {</b>
+<b class="nc"><i>445</i>&nbsp;                    JOptionPane.showMessageDialog(frame,</b>
+<i>446</i>&nbsp;                            Localization
+<b class="nc"><i>447</i>&nbsp;                                    .lang(&quot;Database is protected. Cannot save until external changes have been reviewed.&quot;),</b>
+<b class="nc"><i>448</i>&nbsp;                            Localization.lang(&quot;Protected database&quot;), JOptionPane.ERROR_MESSAGE);</b>
+<b class="nc"><i>449</i>&nbsp;                    canceled = true;</b>
+<i>450</i>&nbsp;                } else {
+<b class="nc"><i>451</i>&nbsp;                    panel.setUpdatedExternally(false);</b>
+<b class="nc"><i>452</i>&nbsp;                    panel.getSidePaneManager().hide(FileUpdatePanel.class);</b>
+<i>453</i>&nbsp;                }
+<i>454</i>&nbsp;            }
+<i>455</i>&nbsp;        }
+<i>456</i>&nbsp;
+<i>457</i>&nbsp;        // Return false as either no external database file modifications have been found or overwrite is requested any way
+<b class="nc"><i>458</i>&nbsp;        return false;</b>
+<i>459</i>&nbsp;    }
+<i>460</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

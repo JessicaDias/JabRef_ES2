@@ -1,0 +1,138 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ContainsAndRegexBasedSearchRuleDescriber</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.search.rules.describer</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ContainsAndRegexBasedSearchRuleDescriber (net.sf.jabref.logic.search.rules.describer)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ContainsAndRegexBasedSearchRuleDescriber</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 25)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.search.rules.describer;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.LinkedList;
+<i>4</i>&nbsp;import java.util.List;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>7</i>&nbsp;import net.sf.jabref.model.search.rules.SentenceAnalyzer;
+<i>8</i>&nbsp;import net.sf.jabref.model.strings.StringUtil;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;public class ContainsAndRegexBasedSearchRuleDescriber implements SearchDescriber {
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;    private final boolean regExp;
+<i>13</i>&nbsp;    private final boolean caseSensitive;
+<i>14</i>&nbsp;    private final String query;
+<i>15</i>&nbsp;
+<b class="nc"><i>16</i>&nbsp;    public ContainsAndRegexBasedSearchRuleDescriber(boolean caseSensitive, boolean regExp, String query) {</b>
+<b class="nc"><i>17</i>&nbsp;        this.caseSensitive = caseSensitive;</b>
+<b class="nc"><i>18</i>&nbsp;        this.regExp = regExp;</b>
+<b class="nc"><i>19</i>&nbsp;        this.query = query;</b>
+<b class="nc"><i>20</i>&nbsp;    }</b>
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;    @Override
+<i>23</i>&nbsp;    public String getDescription() {
+<b class="nc"><i>24</i>&nbsp;        List&lt;String&gt; words = new SentenceAnalyzer(query).getWords();</b>
+<b class="nc"><i>25</i>&nbsp;        String firstWord = words.isEmpty() ? &quot;&quot; : words.get(0);</b>
+<i>26</i>&nbsp;
+<b class="nc"><i>27</i>&nbsp;        StringBuilder searchDescription = new StringBuilder(regExp ? Localization.lang(</b>
+<i>28</i>&nbsp;                &quot;This search contains entries in which any field contains the regular expression &lt;b&gt;%0&lt;/b&gt;&quot;,
+<b class="nc"><i>29</i>&nbsp;                StringUtil.quoteForHTML(firstWord))</b>
+<b class="nc"><i>30</i>&nbsp;                : Localization.lang(&quot;This search contains entries in which any field contains the term &lt;b&gt;%0&lt;/b&gt;&quot;,</b>
+<b class="nc"><i>31</i>&nbsp;                        StringUtil.quoteForHTML(firstWord)));</b>
+<i>32</i>&nbsp;
+<b class="nc"><i>33</i>&nbsp;        if(words.size() &gt; 1) {</b>
+<b class="nc"><i>34</i>&nbsp;            List&lt;String&gt; unprocessedWords = words.subList(1, words.size());</b>
+<b class="nc"><i>35</i>&nbsp;            List&lt;String&gt; unprocessedWordsInHtmlFormat = new LinkedList&lt;&gt;();</b>
+<b class="nc"><i>36</i>&nbsp;            for(String word : unprocessedWords) {</b>
+<b class="nc"><i>37</i>&nbsp;                unprocessedWordsInHtmlFormat.add(String.format(&quot;&lt;b&gt;%s&lt;/b&gt;&quot;, StringUtil.quoteForHTML(word)));</b>
+<b class="nc"><i>38</i>&nbsp;            }</b>
+<b class="nc"><i>39</i>&nbsp;            String andSeparator = String.format(&quot; %s &quot;, Localization.lang(&quot;and&quot;));</b>
+<b class="nc"><i>40</i>&nbsp;            searchDescription.append(String.join(andSeparator, unprocessedWordsInHtmlFormat));</b>
+<i>41</i>&nbsp;        }
+<i>42</i>&nbsp;
+<b class="nc"><i>43</i>&nbsp;        String caseSensitiveDescription = getCaseSensitiveDescription();</b>
+<b class="nc"><i>44</i>&nbsp;        String genericDescription = &quot;&lt;p&gt;&lt;br&gt;&quot; + Localization.lang(&quot;Hint: To search specific fields only, enter for example:&lt;p&gt;&lt;tt&gt;author=smith and title=electrical&lt;/tt&gt;&quot;);</b>
+<b class="nc"><i>45</i>&nbsp;        return String.format(&quot;%s (%s). %s&quot;, searchDescription.toString(), caseSensitiveDescription, genericDescription);</b>
+<i>46</i>&nbsp;    }
+<i>47</i>&nbsp;
+<i>48</i>&nbsp;    private String getCaseSensitiveDescription() {
+<b class="nc"><i>49</i>&nbsp;        if(caseSensitive) {</b>
+<b class="nc"><i>50</i>&nbsp;            return Localization.lang(&quot;case sensitive&quot;);</b>
+<i>51</i>&nbsp;        } else {
+<b class="nc"><i>52</i>&nbsp;            return Localization.lang(&quot;case insensitive&quot;);</b>
+<i>53</i>&nbsp;        }
+<i>54</i>&nbsp;    }
+<i>55</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

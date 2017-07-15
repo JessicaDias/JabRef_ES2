@@ -1,0 +1,223 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Cleanups</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.cleanup</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Cleanups (net.sf.jabref.logic.cleanup)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Cleanups</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    16.7%
+  </span>
+  <span class="absValue">
+    (1/ 6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    36.9%
+  </span>
+  <span class="absValue">
+    (24/ 65)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.cleanup;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.ArrayList;
+<i>4</i>&nbsp;import java.util.Collections;
+<i>5</i>&nbsp;import java.util.List;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import net.sf.jabref.logic.formatter.Formatters;
+<i>8</i>&nbsp;import net.sf.jabref.logic.formatter.IdentityFormatter;
+<i>9</i>&nbsp;import net.sf.jabref.logic.formatter.bibtexfields.HtmlToLatexFormatter;
+<i>10</i>&nbsp;import net.sf.jabref.logic.formatter.bibtexfields.HtmlToUnicodeFormatter;
+<i>11</i>&nbsp;import net.sf.jabref.logic.formatter.bibtexfields.NormalizeDateFormatter;
+<i>12</i>&nbsp;import net.sf.jabref.logic.formatter.bibtexfields.NormalizeMonthFormatter;
+<i>13</i>&nbsp;import net.sf.jabref.logic.formatter.bibtexfields.NormalizePagesFormatter;
+<i>14</i>&nbsp;import net.sf.jabref.logic.formatter.bibtexfields.OrdinalsToSuperscriptFormatter;
+<i>15</i>&nbsp;import net.sf.jabref.logic.formatter.bibtexfields.UnicodeToLatexFormatter;
+<i>16</i>&nbsp;import net.sf.jabref.logic.layout.format.LatexToUnicodeFormatter;
+<i>17</i>&nbsp;import net.sf.jabref.model.cleanup.FieldFormatterCleanup;
+<i>18</i>&nbsp;import net.sf.jabref.model.cleanup.FieldFormatterCleanups;
+<i>19</i>&nbsp;import net.sf.jabref.model.cleanup.Formatter;
+<i>20</i>&nbsp;import net.sf.jabref.model.entry.FieldName;
+<i>21</i>&nbsp;import net.sf.jabref.model.strings.StringUtil;
+<i>22</i>&nbsp;
+<b class="nc"><i>23</i>&nbsp;public class Cleanups {</b>
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;    public static final FieldFormatterCleanups DEFAULT_SAVE_ACTIONS;
+<i>26</i>&nbsp;    public static final FieldFormatterCleanups RECOMMEND_BIBTEX_ACTIONS;
+<i>27</i>&nbsp;    public static final FieldFormatterCleanups RECOMMEND_BIBLATEX_ACTIONS;
+<i>28</i>&nbsp;    public static List&lt;Formatter&gt; availableFormatters;
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;    static {
+<b class="fc"><i>32</i>&nbsp;        availableFormatters = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i>33</i>&nbsp;        availableFormatters.addAll(Formatters.ALL);</b>
+<i>34</i>&nbsp;
+<b class="fc"><i>35</i>&nbsp;        List&lt;FieldFormatterCleanup&gt; defaultFormatters = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i>36</i>&nbsp;        defaultFormatters.add(new FieldFormatterCleanup(FieldName.PAGES, new NormalizePagesFormatter()));</b>
+<b class="fc"><i>37</i>&nbsp;        defaultFormatters.add(new FieldFormatterCleanup(FieldName.DATE, new NormalizeDateFormatter()));</b>
+<b class="fc"><i>38</i>&nbsp;        defaultFormatters.add(new FieldFormatterCleanup(FieldName.MONTH, new NormalizeMonthFormatter()));</b>
+<b class="fc"><i>39</i>&nbsp;        DEFAULT_SAVE_ACTIONS = new FieldFormatterCleanups(false, defaultFormatters);</b>
+<i>40</i>&nbsp;
+<b class="fc"><i>41</i>&nbsp;        List&lt;FieldFormatterCleanup&gt; recommendedBibTeXFormatters = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i>42</i>&nbsp;        recommendedBibTeXFormatters.addAll(defaultFormatters);</b>
+<b class="fc"><i>43</i>&nbsp;        recommendedBibTeXFormatters.add(new FieldFormatterCleanup(FieldName.TITLE, new HtmlToLatexFormatter()));</b>
+<b class="fc"><i>44</i>&nbsp;        recommendedBibTeXFormatters.add(new FieldFormatterCleanup(FieldName.TITLE, new UnicodeToLatexFormatter()));</b>
+<b class="fc"><i>45</i>&nbsp;        recommendedBibTeXFormatters.add(new FieldFormatterCleanup(FieldName.BOOKTITLE, new UnicodeToLatexFormatter()));</b>
+<b class="fc"><i>46</i>&nbsp;        recommendedBibTeXFormatters.add(new FieldFormatterCleanup(FieldName.JOURNAL, new UnicodeToLatexFormatter()));</b>
+<b class="fc"><i>47</i>&nbsp;        recommendedBibTeXFormatters.add(new FieldFormatterCleanup(FieldName.AUTHOR, new UnicodeToLatexFormatter()));</b>
+<b class="fc"><i>48</i>&nbsp;        recommendedBibTeXFormatters.add(new FieldFormatterCleanup(FieldName.EDITOR, new UnicodeToLatexFormatter()));</b>
+<b class="fc"><i>49</i>&nbsp;        recommendedBibTeXFormatters.add(new FieldFormatterCleanup(FieldName.INTERNAL_ALL_TEXT_FIELDS_FIELD, new OrdinalsToSuperscriptFormatter()));</b>
+<b class="fc"><i>50</i>&nbsp;        RECOMMEND_BIBTEX_ACTIONS = new FieldFormatterCleanups(false, recommendedBibTeXFormatters);</b>
+<i>51</i>&nbsp;
+<b class="fc"><i>52</i>&nbsp;        List&lt;FieldFormatterCleanup&gt; recommendedBibLaTeXFormatters = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i>53</i>&nbsp;        recommendedBibLaTeXFormatters.addAll(defaultFormatters);</b>
+<b class="fc"><i>54</i>&nbsp;        recommendedBibLaTeXFormatters.add(new FieldFormatterCleanup(FieldName.TITLE, new HtmlToUnicodeFormatter()));</b>
+<b class="fc"><i>55</i>&nbsp;        recommendedBibLaTeXFormatters.add(new FieldFormatterCleanup(FieldName.INTERNAL_ALL_TEXT_FIELDS_FIELD, new LatexToUnicodeFormatter()));</b>
+<b class="fc"><i>56</i>&nbsp;        recommendedBibLaTeXFormatters.add(new FieldFormatterCleanup(FieldName.INTERNAL_ALL_TEXT_FIELDS_FIELD, new OrdinalsToSuperscriptFormatter()));</b>
+<b class="fc"><i>57</i>&nbsp;        RECOMMEND_BIBLATEX_ACTIONS = new FieldFormatterCleanups(false, recommendedBibLaTeXFormatters);</b>
+<b class="fc"><i>58</i>&nbsp;    }</b>
+<i>59</i>&nbsp;
+<i>60</i>&nbsp;    public static List&lt;Formatter&gt; getAvailableFormatters() {
+<b class="nc"><i>61</i>&nbsp;        return Collections.unmodifiableList(availableFormatters);</b>
+<i>62</i>&nbsp;    }
+<i>63</i>&nbsp;
+<i>64</i>&nbsp;    public static List&lt;FieldFormatterCleanup&gt; parse(String formatterString) {
+<i>65</i>&nbsp;
+<b class="nc"><i>66</i>&nbsp;        if ((formatterString == null) || formatterString.isEmpty()) {</b>
+<i>67</i>&nbsp;            // no save actions defined in the meta data
+<b class="nc"><i>68</i>&nbsp;            return new ArrayList&lt;&gt;();</b>
+<i>69</i>&nbsp;        }
+<i>70</i>&nbsp;
+<b class="nc"><i>71</i>&nbsp;        List&lt;FieldFormatterCleanup&gt; actions = new ArrayList&lt;&gt;();</b>
+<i>72</i>&nbsp;
+<i>73</i>&nbsp;        //read concrete actions
+<b class="nc"><i>74</i>&nbsp;        int startIndex = 0;</b>
+<i>75</i>&nbsp;
+<i>76</i>&nbsp;        // first remove all newlines for easier parsing
+<b class="nc"><i>77</i>&nbsp;        String remainingString = formatterString;</b>
+<i>78</i>&nbsp;
+<b class="nc"><i>79</i>&nbsp;        remainingString = StringUtil.unifyLineBreaks(remainingString, &quot;&quot;);</b>
+<i>80</i>&nbsp;        try {
+<b class="nc"><i>81</i>&nbsp;            while (startIndex &lt; formatterString.length()) {</b>
+<i>82</i>&nbsp;                // read the field name
+<b class="nc"><i>83</i>&nbsp;                int currentIndex = remainingString.indexOf(&#39;[&#39;);</b>
+<b class="nc"><i>84</i>&nbsp;                        String fieldKey = remainingString.substring(0, currentIndex);</b>
+<b class="nc"><i>85</i>&nbsp;                int endIndex = remainingString.indexOf(&#39;]&#39;);</b>
+<b class="nc"><i>86</i>&nbsp;                startIndex += endIndex + 1;</b>
+<i>87</i>&nbsp;
+<i>88</i>&nbsp;                //read each formatter
+<b class="nc"><i>89</i>&nbsp;                int tokenIndex = remainingString.indexOf(&#39;,&#39;);</b>
+<i>90</i>&nbsp;                do {
+<b class="nc"><i>91</i>&nbsp;                    boolean doBreak = false;</b>
+<b class="nc"><i>92</i>&nbsp;                    if ((tokenIndex == -1) || (tokenIndex &gt; endIndex)) {</b>
+<b class="nc"><i>93</i>&nbsp;                        tokenIndex = remainingString.indexOf(&#39;]&#39;);</b>
+<b class="nc"><i>94</i>&nbsp;                        doBreak = true;</b>
+<i>95</i>&nbsp;                    }
+<i>96</i>&nbsp;
+<b class="nc"><i>97</i>&nbsp;                    String formatterKey = remainingString.substring(currentIndex + 1, tokenIndex);</b>
+<b class="nc"><i>98</i>&nbsp;                    actions.add(new FieldFormatterCleanup(fieldKey, getFormatterFromString(formatterKey)));</b>
+<i>99</i>&nbsp;
+<b class="nc"><i>100</i>&nbsp;                    remainingString = remainingString.substring(tokenIndex + 1);</b>
+<b class="nc"><i>101</i>&nbsp;                    if (remainingString.startsWith(&quot;]&quot;) || doBreak) {</b>
+<b class="nc"><i>102</i>&nbsp;                        break;</b>
+<i>103</i>&nbsp;                    }
+<b class="nc"><i>104</i>&nbsp;                    tokenIndex = remainingString.indexOf(&#39;,&#39;);</b>
+<i>105</i>&nbsp;
+<b class="nc"><i>106</i>&nbsp;                    currentIndex = -1;</b>
+<b class="nc"><i>107</i>&nbsp;                } while (true);</b>
+<i>108</i>&nbsp;
+<i>109</i>&nbsp;
+<b class="nc"><i>110</i>&nbsp;            }</b>
+<b class="nc"><i>111</i>&nbsp;        } catch (StringIndexOutOfBoundsException ignore) {</b>
+<i>112</i>&nbsp;            // if this exception occurs, the remaining part of the save actions string is invalid.
+<i>113</i>&nbsp;            // Thus we stop parsing and take what we have parsed until now
+<b class="nc"><i>114</i>&nbsp;            return actions;</b>
+<b class="nc"><i>115</i>&nbsp;        }</b>
+<b class="nc"><i>116</i>&nbsp;        return actions;</b>
+<i>117</i>&nbsp;    }
+<i>118</i>&nbsp;
+<i>119</i>&nbsp;    public static FieldFormatterCleanups parse(List&lt;String&gt; formatterMetaList) {
+<i>120</i>&nbsp;
+<b class="nc"><i>121</i>&nbsp;        if ((formatterMetaList != null) &amp;&amp; (formatterMetaList.size() &gt;= 2)) {</b>
+<b class="nc"><i>122</i>&nbsp;            boolean enablementStatus = FieldFormatterCleanups.ENABLED.equals(formatterMetaList.get(0));</b>
+<b class="nc"><i>123</i>&nbsp;            String formatterString = formatterMetaList.get(1);</b>
+<b class="nc"><i>124</i>&nbsp;            return new FieldFormatterCleanups(enablementStatus, parse(formatterString));</b>
+<i>125</i>&nbsp;        } else {
+<i>126</i>&nbsp;            // return default actions
+<b class="nc"><i>127</i>&nbsp;            return DEFAULT_SAVE_ACTIONS;</b>
+<i>128</i>&nbsp;        }
+<i>129</i>&nbsp;
+<i>130</i>&nbsp;    }
+<i>131</i>&nbsp;
+<i>132</i>&nbsp;    private static Formatter getFormatterFromString(String formatterName) {
+<b class="nc"><i>133</i>&nbsp;        for (Formatter formatter : availableFormatters) {</b>
+<b class="nc"><i>134</i>&nbsp;            if (formatterName.equals(formatter.getKey())) {</b>
+<b class="nc"><i>135</i>&nbsp;                return formatter;</b>
+<i>136</i>&nbsp;            }
+<b class="nc"><i>137</i>&nbsp;        }</b>
+<b class="nc"><i>138</i>&nbsp;        return new IdentityFormatter();</b>
+<i>139</i>&nbsp;    }
+<i>140</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

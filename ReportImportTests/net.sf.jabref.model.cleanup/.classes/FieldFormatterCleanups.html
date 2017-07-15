@@ -1,0 +1,205 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: FieldFormatterCleanups</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.model.cleanup</a> ]
+</div>
+
+<h1>Coverage Summary for Class: FieldFormatterCleanups (net.sf.jabref.model.cleanup)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">FieldFormatterCleanups</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    33.3%
+  </span>
+  <span class="absValue">
+    (3/ 9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    57.4%
+  </span>
+  <span class="absValue">
+    (27/ 47)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.model.cleanup;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.ArrayList;
+<i>4</i>&nbsp;import java.util.Collections;
+<i>5</i>&nbsp;import java.util.HashMap;
+<i>6</i>&nbsp;import java.util.List;
+<i>7</i>&nbsp;import java.util.Map;
+<i>8</i>&nbsp;import java.util.Objects;
+<i>9</i>&nbsp;import java.util.StringJoiner;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;import net.sf.jabref.model.FieldChange;
+<i>12</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;public class FieldFormatterCleanups {
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;    public static final String ENABLED = &quot;enabled&quot;;
+<i>17</i>&nbsp;    public static final String DISABLED = &quot;disabled&quot;;
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;    private final List&lt;FieldFormatterCleanup&gt; actions;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;    private final boolean enabled;
+<i>22</i>&nbsp;
+<b class="fc"><i>23</i>&nbsp;    public FieldFormatterCleanups(boolean enabled, List&lt;FieldFormatterCleanup&gt; actions) {</b>
+<b class="fc"><i>24</i>&nbsp;        this.enabled = enabled;</b>
+<b class="fc"><i>25</i>&nbsp;        this.actions = Objects.requireNonNull(actions);</b>
+<b class="fc"><i>26</i>&nbsp;    }</b>
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;    public boolean isEnabled() {
+<b class="nc"><i>29</i>&nbsp;        return enabled;</b>
+<i>30</i>&nbsp;    }
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;    public List&lt;FieldFormatterCleanup&gt; getConfiguredActions() {
+<b class="nc"><i>33</i>&nbsp;        return Collections.unmodifiableList(actions);</b>
+<i>34</i>&nbsp;    }
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;    @Override
+<i>37</i>&nbsp;    public boolean equals(Object o) {
+<b class="nc"><i>38</i>&nbsp;        if (this == o) {</b>
+<b class="nc"><i>39</i>&nbsp;            return true;</b>
+<i>40</i>&nbsp;        }
+<b class="nc"><i>41</i>&nbsp;        if ((o == null) || (getClass() != o.getClass())) {</b>
+<b class="nc"><i>42</i>&nbsp;            return false;</b>
+<i>43</i>&nbsp;        }
+<i>44</i>&nbsp;
+<b class="nc"><i>45</i>&nbsp;        FieldFormatterCleanups that = (FieldFormatterCleanups) o;</b>
+<i>46</i>&nbsp;
+<b class="nc"><i>47</i>&nbsp;        if (enabled != that.enabled) {</b>
+<b class="nc"><i>48</i>&nbsp;            return false;</b>
+<i>49</i>&nbsp;        }
+<b class="nc"><i>50</i>&nbsp;        return actions.equals(that.actions);</b>
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;    }
+<i>53</i>&nbsp;
+<i>54</i>&nbsp;    @Override
+<i>55</i>&nbsp;    public int hashCode() {
+<b class="nc"><i>56</i>&nbsp;        return Objects.hash(actions, enabled);</b>
+<i>57</i>&nbsp;    }
+<i>58</i>&nbsp;
+<i>59</i>&nbsp;    public List&lt;FieldChange&gt; applySaveActions(BibEntry entry) {
+<b class="nc"><i>60</i>&nbsp;        if (enabled) {</b>
+<b class="nc"><i>61</i>&nbsp;            return applyAllActions(entry);</b>
+<i>62</i>&nbsp;        } else {
+<b class="nc"><i>63</i>&nbsp;            return new ArrayList&lt;&gt;();</b>
+<i>64</i>&nbsp;        }
+<i>65</i>&nbsp;    }
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;    private List&lt;FieldChange&gt; applyAllActions(BibEntry entry) {
+<b class="nc"><i>68</i>&nbsp;        List&lt;FieldChange&gt; result = new ArrayList&lt;&gt;();</b>
+<i>69</i>&nbsp;
+<b class="nc"><i>70</i>&nbsp;        for (FieldFormatterCleanup action : actions) {</b>
+<b class="nc"><i>71</i>&nbsp;            result.addAll(action.cleanup(entry));</b>
+<b class="nc"><i>72</i>&nbsp;        }</b>
+<i>73</i>&nbsp;
+<b class="nc"><i>74</i>&nbsp;        return result;</b>
+<i>75</i>&nbsp;    }
+<i>76</i>&nbsp;
+<i>77</i>&nbsp;    public List&lt;String&gt; getAsStringList(String newline) {
+<b class="fc"><i>78</i>&nbsp;        List&lt;String&gt; stringRepresentation = new ArrayList&lt;&gt;();</b>
+<i>79</i>&nbsp;
+<b class="fc"><i>80</i>&nbsp;        if (enabled) {</b>
+<b class="nc"><i>81</i>&nbsp;            stringRepresentation.add(ENABLED);</b>
+<i>82</i>&nbsp;        } else {
+<b class="fc"><i>83</i>&nbsp;            stringRepresentation.add(DISABLED);</b>
+<i>84</i>&nbsp;        }
+<i>85</i>&nbsp;
+<b class="fc"><i>86</i>&nbsp;        String formatterString = getMetaDataString(actions, newline);</b>
+<b class="fc"><i>87</i>&nbsp;        stringRepresentation.add(formatterString);</b>
+<b class="fc"><i>88</i>&nbsp;        return stringRepresentation;</b>
+<i>89</i>&nbsp;    }
+<i>90</i>&nbsp;
+<i>91</i>&nbsp;    private static String getMetaDataString(List&lt;FieldFormatterCleanup&gt; actionList, String newline) {
+<i>92</i>&nbsp;        //first, group all formatters by the field for which they apply
+<b class="fc"><i>93</i>&nbsp;        Map&lt;String, List&lt;String&gt;&gt; groupedByField = new HashMap&lt;&gt;();</b>
+<b class="fc"><i>94</i>&nbsp;        for (FieldFormatterCleanup cleanup : actionList) {</b>
+<b class="fc"><i>95</i>&nbsp;            String key = cleanup.getField();</b>
+<i>96</i>&nbsp;
+<i>97</i>&nbsp;            // add new list into the hashmap if needed
+<b class="fc"><i>98</i>&nbsp;            if (!groupedByField.containsKey(key)) {</b>
+<b class="fc"><i>99</i>&nbsp;                groupedByField.put(key, new ArrayList&lt;&gt;());</b>
+<i>100</i>&nbsp;            }
+<i>101</i>&nbsp;
+<i>102</i>&nbsp;            //add the formatter to the map if it is not already there
+<b class="fc"><i>103</i>&nbsp;            List&lt;String&gt; formattersForKey = groupedByField.get(key);</b>
+<b class="fc"><i>104</i>&nbsp;            if (!formattersForKey.contains(cleanup.getFormatter().getKey())) {</b>
+<b class="fc"><i>105</i>&nbsp;                formattersForKey.add(cleanup.getFormatter().getKey());</b>
+<i>106</i>&nbsp;            }
+<b class="fc"><i>107</i>&nbsp;        }</b>
+<i>108</i>&nbsp;
+<i>109</i>&nbsp;        // convert the contents of the hashmap into the correct serialization
+<b class="fc"><i>110</i>&nbsp;        StringBuilder result = new StringBuilder();</b>
+<b class="fc"><i>111</i>&nbsp;        for (Map.Entry&lt;String, List&lt;String&gt;&gt; entry : groupedByField.entrySet()) {</b>
+<b class="fc"><i>112</i>&nbsp;            result.append(entry.getKey());</b>
+<i>113</i>&nbsp;
+<b class="fc"><i>114</i>&nbsp;            StringJoiner joiner = new StringJoiner(&quot;,&quot;, &quot;[&quot;, &quot;]&quot; + newline);</b>
+<b class="fc"><i>115</i>&nbsp;            entry.getValue().forEach(joiner::add);</b>
+<b class="fc"><i>116</i>&nbsp;            result.append(joiner.toString());</b>
+<b class="fc"><i>117</i>&nbsp;        }</b>
+<i>118</i>&nbsp;
+<b class="fc"><i>119</i>&nbsp;        return result.toString();</b>
+<i>120</i>&nbsp;    }
+<i>121</i>&nbsp;
+<i>122</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

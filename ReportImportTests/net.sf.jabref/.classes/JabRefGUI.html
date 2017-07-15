@@ -1,0 +1,387 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: JabRefGUI</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref</a> ]
+</div>
+
+<h1>Coverage Summary for Class: JabRefGUI (net.sf.jabref)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">JabRefGUI</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 136)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.Frame;
+<i>4</i>&nbsp;import java.io.File;
+<i>5</i>&nbsp;import java.sql.SQLException;
+<i>6</i>&nbsp;import java.util.ArrayList;
+<i>7</i>&nbsp;import java.util.Collections;
+<i>8</i>&nbsp;import java.util.Enumeration;
+<i>9</i>&nbsp;import java.util.Iterator;
+<i>10</i>&nbsp;import java.util.List;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;import javax.swing.JOptionPane;
+<i>13</i>&nbsp;import javax.swing.UIDefaults;
+<i>14</i>&nbsp;import javax.swing.UIManager;
+<i>15</i>&nbsp;import javax.swing.UnsupportedLookAndFeelException;
+<i>16</i>&nbsp;import javax.swing.plaf.FontUIResource;
+<i>17</i>&nbsp;import javax.swing.plaf.metal.MetalLookAndFeel;
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;import net.sf.jabref.gui.BasePanel;
+<i>20</i>&nbsp;import net.sf.jabref.gui.GUIGlobals;
+<i>21</i>&nbsp;import net.sf.jabref.gui.JabRefFrame;
+<i>22</i>&nbsp;import net.sf.jabref.gui.autosaveandbackup.BackupUIManager;
+<i>23</i>&nbsp;import net.sf.jabref.gui.importer.ParserResultWarningDialog;
+<i>24</i>&nbsp;import net.sf.jabref.gui.importer.actions.OpenDatabaseAction;
+<i>25</i>&nbsp;import net.sf.jabref.gui.shared.SharedDatabaseUIManager;
+<i>26</i>&nbsp;import net.sf.jabref.gui.worker.VersionWorker;
+<i>27</i>&nbsp;import net.sf.jabref.logic.autosaveandbackup.BackupManager;
+<i>28</i>&nbsp;import net.sf.jabref.logic.importer.OpenDatabase;
+<i>29</i>&nbsp;import net.sf.jabref.logic.importer.ParserResult;
+<i>30</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>31</i>&nbsp;import net.sf.jabref.logic.util.OS;
+<i>32</i>&nbsp;import net.sf.jabref.logic.util.Version;
+<i>33</i>&nbsp;import net.sf.jabref.preferences.JabRefPreferences;
+<i>34</i>&nbsp;import net.sf.jabref.shared.exception.DatabaseNotSupportedException;
+<i>35</i>&nbsp;import net.sf.jabref.shared.exception.InvalidDBMSConnectionPropertiesException;
+<i>36</i>&nbsp;import net.sf.jabref.shared.exception.NotASharedDatabaseException;
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
+<i>39</i>&nbsp;import com.jgoodies.looks.plastic.theme.SkyBluer;
+<i>40</i>&nbsp;import org.apache.commons.logging.Log;
+<i>41</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;public class JabRefGUI {
+<b class="nc"><i>44</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(JabRefGUI.class);</b>
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;    private static JabRefFrame mainFrame;
+<i>47</i>&nbsp;
+<i>48</i>&nbsp;    private final List&lt;ParserResult&gt; bibDatabases;
+<i>49</i>&nbsp;    private final boolean isBlank;
+<b class="nc"><i>50</i>&nbsp;    private final List&lt;ParserResult&gt; failed = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>51</i>&nbsp;    private final List&lt;ParserResult&gt; toOpenTab = new ArrayList&lt;&gt;();</b>
+<i>52</i>&nbsp;
+<i>53</i>&nbsp;    private String focusedFile;
+<i>54</i>&nbsp;
+<b class="nc"><i>55</i>&nbsp;    public JabRefGUI(List&lt;ParserResult&gt; argsDatabases, boolean isBlank) {</b>
+<b class="nc"><i>56</i>&nbsp;        this.bibDatabases = argsDatabases;</b>
+<b class="nc"><i>57</i>&nbsp;        this.isBlank = isBlank;</b>
+<i>58</i>&nbsp;
+<i>59</i>&nbsp;        // passed file (we take the first one) should be focused
+<b class="nc"><i>60</i>&nbsp;        focusedFile = argsDatabases.stream().findFirst().flatMap(ParserResult::getFile).map(File::getAbsolutePath)</b>
+<b class="nc"><i>61</i>&nbsp;                .orElse(Globals.prefs.get(JabRefPreferences.LAST_FOCUSED));</b>
+<i>62</i>&nbsp;
+<b class="nc"><i>63</i>&nbsp;        openWindow();</b>
+<b class="nc"><i>64</i>&nbsp;        JabRefGUI.checkForNewVersion(false);</b>
+<b class="nc"><i>65</i>&nbsp;    }</b>
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;    public static void checkForNewVersion(boolean manualExecution) {
+<b class="nc"><i>68</i>&nbsp;        Version toBeIgnored = Globals.prefs.getVersionPreferences().getIgnoredVersion();</b>
+<b class="nc"><i>69</i>&nbsp;        Version currentVersion = Globals.BUILD_INFO.getVersion();</b>
+<b class="nc"><i>70</i>&nbsp;        new VersionWorker(JabRefGUI.getMainFrame(), manualExecution, currentVersion, toBeIgnored).execute();</b>
+<b class="nc"><i>71</i>&nbsp;    }</b>
+<i>72</i>&nbsp;
+<i>73</i>&nbsp;    private void openWindow() {
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;        // This property is set to make the Mac OSX Java VM move the menu bar to the top of the screen
+<b class="nc"><i>76</i>&nbsp;        if (OS.OS_X) {</b>
+<b class="nc"><i>77</i>&nbsp;            System.setProperty(&quot;apple.laf.useScreenMenuBar&quot;, &quot;true&quot;);</b>
+<i>78</i>&nbsp;        }
+<i>79</i>&nbsp;
+<i>80</i>&nbsp;        // Set antialiasing on everywhere. This only works in JRE &gt;= 1.5.
+<i>81</i>&nbsp;        // Or... it doesn&#39;t work, period.
+<i>82</i>&nbsp;        // TODO test and maybe remove this! I found this commented out with no additional info ( payload@lavabit.com )
+<i>83</i>&nbsp;        // Enabled since JabRef 2.11 beta 4
+<b class="nc"><i>84</i>&nbsp;        System.setProperty(&quot;swing.aatext&quot;, &quot;true&quot;);</b>
+<i>85</i>&nbsp;        // Default is &quot;on&quot;.
+<i>86</i>&nbsp;        // &quot;lcd&quot; instead of &quot;on&quot; because of http://wiki.netbeans.org/FaqFontRendering and http://docs.oracle.com/javase/6/docs/technotes/guides/2d/flags.html#aaFonts
+<b class="nc"><i>87</i>&nbsp;        System.setProperty(&quot;awt.useSystemAAFontSettings&quot;, &quot;lcd&quot;);</b>
+<i>88</i>&nbsp;
+<i>89</i>&nbsp;        // look and feel. This MUST be the first thing to do before loading any Swing-specific code!
+<b class="nc"><i>90</i>&nbsp;        setLookAndFeel();</b>
+<i>91</i>&nbsp;
+<i>92</i>&nbsp;        // If the option is enabled, open the last edited databases, if any.
+<b class="nc"><i>93</i>&nbsp;        if (!isBlank &amp;&amp; Globals.prefs.getBoolean(JabRefPreferences.OPEN_LAST_EDITED)) {</b>
+<b class="nc"><i>94</i>&nbsp;            openLastEditedDatabases();</b>
+<i>95</i>&nbsp;        }
+<i>96</i>&nbsp;
+<b class="nc"><i>97</i>&nbsp;        GUIGlobals.init();</b>
+<i>98</i>&nbsp;
+<b class="nc"><i>99</i>&nbsp;        LOGGER.debug(&quot;Initializing frame&quot;);</b>
+<b class="nc"><i>100</i>&nbsp;        JabRefGUI.mainFrame = new JabRefFrame();</b>
+<i>101</i>&nbsp;
+<i>102</i>&nbsp;        // Add all bibDatabases databases to the frame:
+<b class="nc"><i>103</i>&nbsp;        boolean first = false;</b>
+<b class="nc"><i>104</i>&nbsp;        if (!bibDatabases.isEmpty()) {</b>
+<b class="nc"><i>105</i>&nbsp;            for (Iterator&lt;ParserResult&gt; parserResultIterator = bibDatabases.iterator(); parserResultIterator.hasNext();) {</b>
+<b class="nc"><i>106</i>&nbsp;                ParserResult pr = parserResultIterator.next();</b>
+<i>107</i>&nbsp;                // Define focused tab
+<b class="nc"><i>108</i>&nbsp;                if (pr.getFile().get().getAbsolutePath().equals(focusedFile)) {</b>
+<b class="nc"><i>109</i>&nbsp;                    first = true;</b>
+<i>110</i>&nbsp;                }
+<i>111</i>&nbsp;
+<b class="nc"><i>112</i>&nbsp;                if (pr.isInvalid()) {</b>
+<b class="nc"><i>113</i>&nbsp;                    failed.add(pr);</b>
+<b class="nc"><i>114</i>&nbsp;                    parserResultIterator.remove();</b>
+<b class="nc"><i>115</i>&nbsp;                } else if (pr.getDatabase().isShared()) {</b>
+<i>116</i>&nbsp;                    try {
+<b class="nc"><i>117</i>&nbsp;                        new SharedDatabaseUIManager(mainFrame).openSharedDatabaseFromParserResult(pr);</b>
+<b class="nc"><i>118</i>&nbsp;                    } catch (SQLException | DatabaseNotSupportedException | InvalidDBMSConnectionPropertiesException |</b>
+<i>119</i>&nbsp;                            NotASharedDatabaseException e) {
+<b class="nc"><i>120</i>&nbsp;                        pr.getDatabaseContext().clearDatabaseFile(); // do not open the original file</b>
+<b class="nc"><i>121</i>&nbsp;                        pr.getDatabase().clearSharedDatabaseID();</b>
+<i>122</i>&nbsp;
+<b class="nc"><i>123</i>&nbsp;                        LOGGER.error(&quot;Connection error&quot;, e);</b>
+<b class="nc"><i>124</i>&nbsp;                        JOptionPane.showMessageDialog(mainFrame,</b>
+<b class="nc"><i>125</i>&nbsp;                                e.getMessage() + &quot;\n\n&quot; + Localization.lang(&quot;A local copy will be opened.&quot;),</b>
+<b class="nc"><i>126</i>&nbsp;                                Localization.lang(&quot;Connection error&quot;), JOptionPane.WARNING_MESSAGE);</b>
+<b class="nc"><i>127</i>&nbsp;                    }</b>
+<b class="nc"><i>128</i>&nbsp;                    toOpenTab.add(pr);</b>
+<b class="nc"><i>129</i>&nbsp;                } else if (pr.toOpenTab()) {</b>
+<i>130</i>&nbsp;                    // things to be appended to an opened tab should be done after opening all tabs
+<i>131</i>&nbsp;                    // add them to the list
+<b class="nc"><i>132</i>&nbsp;                    toOpenTab.add(pr);</b>
+<i>133</i>&nbsp;                } else {
+<b class="nc"><i>134</i>&nbsp;                    JabRefGUI.getMainFrame().addParserResult(pr, first);</b>
+<b class="nc"><i>135</i>&nbsp;                    first = false;</b>
+<i>136</i>&nbsp;                }
+<b class="nc"><i>137</i>&nbsp;            }</b>
+<i>138</i>&nbsp;        }
+<i>139</i>&nbsp;
+<i>140</i>&nbsp;        // finally add things to the currently opened tab
+<b class="nc"><i>141</i>&nbsp;        for (ParserResult pr : toOpenTab) {</b>
+<b class="nc"><i>142</i>&nbsp;            JabRefGUI.getMainFrame().addParserResult(pr, first);</b>
+<b class="nc"><i>143</i>&nbsp;            first = false;</b>
+<b class="nc"><i>144</i>&nbsp;        }</b>
+<i>145</i>&nbsp;
+<i>146</i>&nbsp;        // If we are set to remember the window location, we also remember the maximised
+<i>147</i>&nbsp;        // state. This needs to be set after the window has been made visible, so we
+<i>148</i>&nbsp;        // do it here:
+<b class="nc"><i>149</i>&nbsp;        if (Globals.prefs.getBoolean(JabRefPreferences.WINDOW_MAXIMISED)) {</b>
+<b class="nc"><i>150</i>&nbsp;            JabRefGUI.getMainFrame().setExtendedState(Frame.MAXIMIZED_BOTH);</b>
+<i>151</i>&nbsp;        }
+<i>152</i>&nbsp;
+<b class="nc"><i>153</i>&nbsp;        JabRefGUI.getMainFrame().setVisible(true);</b>
+<i>154</i>&nbsp;
+<b class="nc"><i>155</i>&nbsp;        for (ParserResult pr : failed) {</b>
+<b class="nc"><i>156</i>&nbsp;            String message = &quot;&lt;html&gt;&quot; + Localization.lang(&quot;Error opening file &#39;%0&#39;.&quot;, pr.getFile().get().getName())</b>
+<i>157</i>&nbsp;                    + &quot;&lt;p&gt;&quot;
+<b class="nc"><i>158</i>&nbsp;                    + pr.getErrorMessage() + &quot;&lt;/html&gt;&quot;;</b>
+<i>159</i>&nbsp;
+<b class="nc"><i>160</i>&nbsp;            JOptionPane.showMessageDialog(JabRefGUI.getMainFrame(), message, Localization.lang(&quot;Error opening file&quot;),</b>
+<i>161</i>&nbsp;                    JOptionPane.ERROR_MESSAGE);
+<b class="nc"><i>162</i>&nbsp;        }</b>
+<i>163</i>&nbsp;
+<i>164</i>&nbsp;        // Display warnings, if any
+<b class="nc"><i>165</i>&nbsp;        int tabNumber = 0;</b>
+<b class="nc"><i>166</i>&nbsp;        for (ParserResult pr : bibDatabases) {</b>
+<b class="nc"><i>167</i>&nbsp;            ParserResultWarningDialog.showParserResultWarningDialog(pr, JabRefGUI.getMainFrame(), tabNumber++);</b>
+<b class="nc"><i>168</i>&nbsp;        }</b>
+<i>169</i>&nbsp;
+<i>170</i>&nbsp;        // After adding the databases, go through each and see if
+<i>171</i>&nbsp;        // any post open actions need to be done. For instance, checking
+<i>172</i>&nbsp;        // if we found new entry types that can be imported, or checking
+<i>173</i>&nbsp;        // if the database contents should be modified due to new features
+<i>174</i>&nbsp;        // in this version of JabRef.
+<i>175</i>&nbsp;        // Note that we have to check whether i does not go over getBasePanelCount().
+<i>176</i>&nbsp;        // This is because importToOpen might have been used, which adds to
+<i>177</i>&nbsp;        // loadedDatabases, but not to getBasePanelCount()
+<i>178</i>&nbsp;
+<b class="nc"><i>179</i>&nbsp;        for (int i = 0; (i &lt; bibDatabases.size()) &amp;&amp; (i &lt; JabRefGUI.getMainFrame().getBasePanelCount()); i++) {</b>
+<b class="nc"><i>180</i>&nbsp;            ParserResult pr = bibDatabases.get(i);</b>
+<b class="nc"><i>181</i>&nbsp;            BasePanel panel = JabRefGUI.getMainFrame().getBasePanelAt(i);</b>
+<b class="nc"><i>182</i>&nbsp;            OpenDatabaseAction.performPostOpenActions(panel, pr, true);</b>
+<i>183</i>&nbsp;        }
+<i>184</i>&nbsp;
+<b class="nc"><i>185</i>&nbsp;        LOGGER.debug(&quot;Finished adding panels&quot;);</b>
+<i>186</i>&nbsp;
+<b class="nc"><i>187</i>&nbsp;        if (!bibDatabases.isEmpty()) {</b>
+<b class="nc"><i>188</i>&nbsp;            JabRefGUI.getMainFrame().getCurrentBasePanel().getMainTable().requestFocus();</b>
+<i>189</i>&nbsp;        }
+<b class="nc"><i>190</i>&nbsp;    }</b>
+<i>191</i>&nbsp;
+<i>192</i>&nbsp;    private void openLastEditedDatabases() {
+<b class="nc"><i>193</i>&nbsp;        if (Globals.prefs.get(JabRefPreferences.LAST_EDITED) == null) {</b>
+<b class="nc"><i>194</i>&nbsp;            return;</b>
+<i>195</i>&nbsp;        }
+<b class="nc"><i>196</i>&nbsp;        List&lt;String&gt; lastFiles = Globals.prefs.getStringList(JabRefPreferences.LAST_EDITED);</b>
+<i>197</i>&nbsp;
+<b class="nc"><i>198</i>&nbsp;        for (String fileName : lastFiles) {</b>
+<b class="nc"><i>199</i>&nbsp;            File dbFile = new File(fileName);</b>
+<i>200</i>&nbsp;
+<i>201</i>&nbsp;            // Already parsed via command line parameter, e.g., &quot;jabref.jar somefile.bib&quot;
+<b class="nc"><i>202</i>&nbsp;            if (isLoaded(dbFile) || !dbFile.exists()) {</b>
+<b class="nc"><i>203</i>&nbsp;                continue;</b>
+<i>204</i>&nbsp;            }
+<i>205</i>&nbsp;
+<b class="nc"><i>206</i>&nbsp;            if (BackupManager.checkForBackupFile(dbFile.toPath())) {</b>
+<b class="nc"><i>207</i>&nbsp;                BackupUIManager.showRestoreBackupDialog(mainFrame, dbFile.toPath());</b>
+<i>208</i>&nbsp;            }
+<i>209</i>&nbsp;
+<b class="nc"><i>210</i>&nbsp;            ParserResult parsedDatabase = OpenDatabase.loadDatabase(fileName,</b>
+<b class="nc"><i>211</i>&nbsp;                    Globals.prefs.getImportFormatPreferences());</b>
+<i>212</i>&nbsp;
+<b class="nc"><i>213</i>&nbsp;            if (parsedDatabase.isEmpty()) {</b>
+<b class="nc"><i>214</i>&nbsp;                LOGGER.error(Localization.lang(&quot;Error opening file&quot;) + &quot; &#39;&quot; + dbFile.getPath() + &quot;&#39;&quot;);</b>
+<i>215</i>&nbsp;            } else {
+<b class="nc"><i>216</i>&nbsp;                bibDatabases.add(parsedDatabase);</b>
+<i>217</i>&nbsp;            }
+<b class="nc"><i>218</i>&nbsp;        }</b>
+<b class="nc"><i>219</i>&nbsp;    }</b>
+<i>220</i>&nbsp;
+<i>221</i>&nbsp;    private boolean isLoaded(File fileToOpen) {
+<b class="nc"><i>222</i>&nbsp;        for (ParserResult pr : bibDatabases) {</b>
+<b class="nc"><i>223</i>&nbsp;            if (pr.getFile().isPresent() &amp;&amp; pr.getFile().get().equals(fileToOpen)) {</b>
+<b class="nc"><i>224</i>&nbsp;                return true;</b>
+<i>225</i>&nbsp;            }
+<b class="nc"><i>226</i>&nbsp;        }</b>
+<b class="nc"><i>227</i>&nbsp;        return false;</b>
+<i>228</i>&nbsp;    }
+<i>229</i>&nbsp;
+<i>230</i>&nbsp;    private void setLookAndFeel() {
+<i>231</i>&nbsp;        try {
+<i>232</i>&nbsp;            String lookFeel;
+<b class="nc"><i>233</i>&nbsp;            String systemLookFeel = UIManager.getSystemLookAndFeelClassName();</b>
+<i>234</i>&nbsp;
+<b class="nc"><i>235</i>&nbsp;            if (Globals.prefs.getBoolean(JabRefPreferences.USE_DEFAULT_LOOK_AND_FEEL)) {</b>
+<i>236</i>&nbsp;                // FIXME: Problems with OpenJDK and GTK L&amp;F
+<i>237</i>&nbsp;                // See https://github.com/JabRef/jabref/issues/393, https://github.com/JabRef/jabref/issues/638
+<b class="nc"><i>238</i>&nbsp;                if (System.getProperty(&quot;java.runtime.name&quot;).contains(&quot;OpenJDK&quot;)) {</b>
+<i>239</i>&nbsp;                    // Metal L&amp;F
+<b class="nc"><i>240</i>&nbsp;                    lookFeel = UIManager.getCrossPlatformLookAndFeelClassName();</b>
+<b class="nc"><i>241</i>&nbsp;                    LOGGER.warn(</b>
+<i>242</i>&nbsp;                            &quot;There seem to be problems with OpenJDK and the default GTK Look&amp;Feel. Using Metal L&amp;F instead. Change to another L&amp;F with caution.&quot;);
+<i>243</i>&nbsp;                } else {
+<b class="nc"><i>244</i>&nbsp;                    lookFeel = systemLookFeel;</b>
+<i>245</i>&nbsp;                }
+<i>246</i>&nbsp;            } else {
+<b class="nc"><i>247</i>&nbsp;                lookFeel = Globals.prefs.get(JabRefPreferences.WIN_LOOK_AND_FEEL);</b>
+<i>248</i>&nbsp;            }
+<i>249</i>&nbsp;
+<i>250</i>&nbsp;            // FIXME: Open JDK problem
+<b class="nc"><i>251</i>&nbsp;            if (UIManager.getCrossPlatformLookAndFeelClassName().equals(lookFeel)</b>
+<b class="nc"><i>252</i>&nbsp;                    &amp;&amp; !System.getProperty(&quot;java.runtime.name&quot;).contains(&quot;OpenJDK&quot;)) {</b>
+<i>253</i>&nbsp;                // try to avoid ending up with the ugly Metal L&amp;F
+<b class="nc"><i>254</i>&nbsp;                Plastic3DLookAndFeel lnf = new Plastic3DLookAndFeel();</b>
+<b class="nc"><i>255</i>&nbsp;                MetalLookAndFeel.setCurrentTheme(new SkyBluer());</b>
+<b class="nc"><i>256</i>&nbsp;                com.jgoodies.looks.Options.setPopupDropShadowEnabled(true);</b>
+<b class="nc"><i>257</i>&nbsp;                UIManager.setLookAndFeel(lnf);</b>
+<b class="nc"><i>258</i>&nbsp;            } else {</b>
+<i>259</i>&nbsp;                try {
+<b class="nc"><i>260</i>&nbsp;                    UIManager.setLookAndFeel(lookFeel);</b>
+<b class="nc"><i>261</i>&nbsp;                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException |</b>
+<i>262</i>&nbsp;                        UnsupportedLookAndFeelException e) {
+<i>263</i>&nbsp;                    // specified look and feel does not exist on the classpath, so use system l&amp;f
+<b class="nc"><i>264</i>&nbsp;                    UIManager.setLookAndFeel(systemLookFeel);</b>
+<i>265</i>&nbsp;                    // also set system l&amp;f as default
+<b class="nc"><i>266</i>&nbsp;                    Globals.prefs.put(JabRefPreferences.WIN_LOOK_AND_FEEL, systemLookFeel);</b>
+<i>267</i>&nbsp;                    // notify the user
+<b class="nc"><i>268</i>&nbsp;                    JOptionPane.showMessageDialog(JabRefGUI.getMainFrame(),</b>
+<i>269</i>&nbsp;                            Localization
+<b class="nc"><i>270</i>&nbsp;                                    .lang(&quot;Unable to find the requested look and feel and thus the default one is used.&quot;),</b>
+<b class="nc"><i>271</i>&nbsp;                            Localization.lang(&quot;Warning&quot;), JOptionPane.WARNING_MESSAGE);</b>
+<b class="nc"><i>272</i>&nbsp;                    LOGGER.warn(&quot;Unable to find requested look and feel&quot;, e);</b>
+<b class="nc"><i>273</i>&nbsp;                }</b>
+<i>274</i>&nbsp;            }
+<b class="nc"><i>275</i>&nbsp;        } catch (Exception e) {</b>
+<b class="nc"><i>276</i>&nbsp;            LOGGER.warn(&quot;Look and feel could not be set&quot;, e);</b>
+<b class="nc"><i>277</i>&nbsp;        }</b>
+<i>278</i>&nbsp;
+<i>279</i>&nbsp;        // In JabRef v2.8, we did it only on NON-Mac. Now, we try on all platforms
+<b class="nc"><i>280</i>&nbsp;        boolean overrideDefaultFonts = Globals.prefs.getBoolean(JabRefPreferences.OVERRIDE_DEFAULT_FONTS);</b>
+<b class="nc"><i>281</i>&nbsp;        if (overrideDefaultFonts) {</b>
+<b class="nc"><i>282</i>&nbsp;            int fontSize = Globals.prefs.getInt(JabRefPreferences.MENU_FONT_SIZE);</b>
+<b class="nc"><i>283</i>&nbsp;            UIDefaults defaults = UIManager.getDefaults();</b>
+<b class="nc"><i>284</i>&nbsp;            Enumeration&lt;Object&gt; keys = defaults.keys();</b>
+<b class="nc"><i>285</i>&nbsp;            for (Object key : Collections.list(keys)) {</b>
+<b class="nc"><i>286</i>&nbsp;                if ((key instanceof String) &amp;&amp; ((String) key).endsWith(&quot;.font&quot;)) {</b>
+<b class="nc"><i>287</i>&nbsp;                    FontUIResource font = (FontUIResource) UIManager.get(key);</b>
+<b class="nc"><i>288</i>&nbsp;                    font = new FontUIResource(font.getName(), font.getStyle(), fontSize);</b>
+<b class="nc"><i>289</i>&nbsp;                    defaults.put(key, font);</b>
+<i>290</i>&nbsp;                }
+<b class="nc"><i>291</i>&nbsp;            }</b>
+<i>292</i>&nbsp;        }
+<b class="nc"><i>293</i>&nbsp;    }</b>
+<i>294</i>&nbsp;
+<i>295</i>&nbsp;    public static JabRefFrame getMainFrame() {
+<b class="nc"><i>296</i>&nbsp;        return mainFrame;</b>
+<i>297</i>&nbsp;    }
+<i>298</i>&nbsp;
+<i>299</i>&nbsp;    // Only used for testing, other than that do NOT set the mainFrame...
+<i>300</i>&nbsp;    public static void setMainFrame(JabRefFrame mainFrame) {
+<b class="nc"><i>301</i>&nbsp;        JabRefGUI.mainFrame = mainFrame;</b>
+<b class="nc"><i>302</i>&nbsp;    }</b>
+<i>303</i>&nbsp;
+<i>304</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,209 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ImportFormats</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.importer</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ImportFormats (net.sf.jabref.gui.importer)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ImportFormats</td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (2/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (2/ 3)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">ImportFormats$1ImportAction</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    82.4%
+  </span>
+  <span class="absValue">
+    (28/ 34)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    83.3%
+  </span>
+  <span class="absValue">
+    (5/ 6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    81.1%
+  </span>
+  <span class="absValue">
+    (30/ 37)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.importer;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.event.ActionEvent;
+<i>4</i>&nbsp;import java.io.File;
+<i>5</i>&nbsp;import java.nio.file.Path;
+<i>6</i>&nbsp;import java.util.Collections;
+<i>7</i>&nbsp;import java.util.List;
+<i>8</i>&nbsp;import java.util.Objects;
+<i>9</i>&nbsp;import java.util.Optional;
+<i>10</i>&nbsp;import java.util.SortedSet;
+<i>11</i>&nbsp;import java.util.stream.Collectors;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;import javax.swing.AbstractAction;
+<i>14</i>&nbsp;import javax.swing.Action;
+<i>15</i>&nbsp;import javax.swing.JOptionPane;
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;import net.sf.jabref.Globals;
+<i>18</i>&nbsp;import net.sf.jabref.gui.FileDialog;
+<i>19</i>&nbsp;import net.sf.jabref.gui.JabRefFrame;
+<i>20</i>&nbsp;import net.sf.jabref.gui.actions.MnemonicAwareAction;
+<i>21</i>&nbsp;import net.sf.jabref.gui.keyboard.KeyBinding;
+<i>22</i>&nbsp;import net.sf.jabref.logic.importer.Importer;
+<i>23</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>24</i>&nbsp;import net.sf.jabref.logic.util.FileExtensions;
+<i>25</i>&nbsp;import net.sf.jabref.preferences.JabRefPreferences;
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;import org.apache.commons.logging.Log;
+<i>28</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>29</i>&nbsp;
+<b class="nc"><i>30</i>&nbsp;public class ImportFormats {</b>
+<b class="fc"><i>31</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(ImportFormats.class);</b>
+<i>32</i>&nbsp;
+<i>33</i>&nbsp;    /**
+<i>34</i>&nbsp;     * Create an AbstractAction for performing an Import operation.
+<i>35</i>&nbsp;     * @param frame The JabRefFrame of this JabRef instance.
+<i>36</i>&nbsp;     * @param openInNew Indicate whether the action should open into a new database or
+<i>37</i>&nbsp;     *  into the currently open one.
+<i>38</i>&nbsp;     * @return The action.
+<i>39</i>&nbsp;     */
+<i>40</i>&nbsp;    public static AbstractAction getImportAction(JabRefFrame frame, boolean openInNew) {
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;        class ImportAction extends MnemonicAwareAction {
+<i>43</i>&nbsp;
+<i>44</i>&nbsp;            private final JabRefFrame frame;
+<i>45</i>&nbsp;            private final boolean newDatabase;
+<i>46</i>&nbsp;
+<b class="fc"><i>47</i>&nbsp;            public ImportAction(JabRefFrame frame, boolean newDatabase) {</b>
+<b class="fc"><i>48</i>&nbsp;                this.frame = frame;</b>
+<b class="fc"><i>49</i>&nbsp;                this.newDatabase = newDatabase;</b>
+<i>50</i>&nbsp;
+<b class="fc"><i>51</i>&nbsp;                if (newDatabase) {</b>
+<b class="fc"><i>52</i>&nbsp;                    putValue(Action.NAME, Localization.menuTitle(&quot;Import into new database&quot;));</b>
+<b class="fc"><i>53</i>&nbsp;                    putValue(Action.ACCELERATOR_KEY, Globals.getKeyPrefs().getKey(KeyBinding.IMPORT_INTO_NEW_DATABASE));</b>
+<i>54</i>&nbsp;                } else {
+<b class="fc"><i>55</i>&nbsp;                    putValue(Action.NAME, Localization.menuTitle(&quot;Import into current database&quot;));</b>
+<b class="fc"><i>56</i>&nbsp;                    putValue(Action.ACCELERATOR_KEY, Globals.getKeyPrefs().getKey(KeyBinding.IMPORT_INTO_CURRENT_DATABASE));</b>
+<i>57</i>&nbsp;                }
+<b class="fc"><i>58</i>&nbsp;            }</b>
+<i>59</i>&nbsp;
+<i>60</i>&nbsp;            @Override
+<i>61</i>&nbsp;            public void actionPerformed(ActionEvent e) {
+<b class="fc"><i>62</i>&nbsp;                SortedSet&lt;Importer&gt; importers = Globals.IMPORT_FORMAT_READER.getImportFormats();</b>
+<b class="fc"><i>63</i>&nbsp;                List&lt;FileExtensions&gt; extensions = importers.stream().map(p -&gt; p.getExtensions()).collect(Collectors.toList());</b>
+<b class="fc"><i>64</i>&nbsp;                FileDialog dialog = new FileDialog(frame, Globals.prefs.get(JabRefPreferences.IMPORT_WORKING_DIRECTORY));</b>
+<i>65</i>&nbsp;                // Add file filter for all supported types
+<b class="fc"><i>66</i>&nbsp;                ImportFileFilter allImports = new ImportFileFilter(Localization.lang(&quot;Available import formats&quot;), importers);</b>
+<b class="fc"><i>67</i>&nbsp;                dialog.setFileFilter(allImports);</b>
+<i>68</i>&nbsp;                // Add filters for extensions
+<b class="fc"><i>69</i>&nbsp;                dialog.withExtensions(extensions);</b>
+<i>70</i>&nbsp;
+<b class="fc"><i>71</i>&nbsp;                Optional&lt;Path&gt; selectedFile = dialog.showDialogAndGetSelectedFile();</b>
+<i>72</i>&nbsp;
+<b class="fc"><i>73</i>&nbsp;                selectedFile.ifPresent(sel -&gt; {</b>
+<i>74</i>&nbsp;                    try {
+<b class="fc"><i>75</i>&nbsp;                        File file = sel.toFile();</b>
+<i>76</i>&nbsp;
+<b class="fc"><i>77</i>&nbsp;                        if (!file.exists()) {</b>
+<b class="nc"><i>78</i>&nbsp;                            JOptionPane.showMessageDialog(frame,</b>
+<b class="nc"><i>79</i>&nbsp;                                    Localization.lang(&quot;File not found&quot;) + &quot;: &#39;&quot; + file.getName() + &quot;&#39;.&quot;,</b>
+<b class="nc"><i>80</i>&nbsp;                                    Localization.lang(&quot;Import&quot;), JOptionPane.ERROR_MESSAGE);</b>
+<b class="nc"><i>81</i>&nbsp;                            return;</b>
+<i>82</i>&nbsp;                        }
+<i>83</i>&nbsp;
+<b class="fc"><i>84</i>&nbsp;                        Optional&lt;Importer&gt; format = importers.stream()</b>
+<b class="fc"><i>85</i>&nbsp;                                .filter(i -&gt; Objects.equals(i.getExtensions().getDescription(), dialog.getFileFilter().getDescription()))</b>
+<b class="fc"><i>86</i>&nbsp;                                .findFirst();</b>
+<b class="fc"><i>87</i>&nbsp;                        ImportMenuItem importMenu = new ImportMenuItem(frame, newDatabase, format.orElse(null));</b>
+<b class="fc"><i>88</i>&nbsp;                        importMenu.automatedImport(Collections.singletonList(file.getAbsolutePath()));</b>
+<i>89</i>&nbsp;                        // Set last working dir for import
+<b class="fc"><i>90</i>&nbsp;                        Globals.prefs.put(JabRefPreferences.IMPORT_WORKING_DIRECTORY, file.getParent());</b>
+<b class="nc"><i>91</i>&nbsp;                    } catch (Exception ex) {</b>
+<b class="nc"><i>92</i>&nbsp;                        LOGGER.warn(&quot;Cannot import file&quot;, ex);</b>
+<b class="fc"><i>93</i>&nbsp;                    }</b>
+<b class="fc"><i>94</i>&nbsp;                });</b>
+<b class="fc"><i>95</i>&nbsp;            }</b>
+<i>96</i>&nbsp;        }
+<i>97</i>&nbsp;
+<b class="fc"><i>98</i>&nbsp;        return new ImportAction(frame, openInNew);</b>
+<i>99</i>&nbsp;    }
+<i>100</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

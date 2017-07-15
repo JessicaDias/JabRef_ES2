@@ -1,0 +1,137 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: FetchAndMergeEntry</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.mergeentries</a> ]
+</div>
+
+<h1>Coverage Summary for Class: FetchAndMergeEntry (net.sf.jabref.gui.mergeentries)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">FetchAndMergeEntry</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 13)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.mergeentries;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.Arrays;
+<i>4</i>&nbsp;import java.util.List;
+<i>5</i>&nbsp;import java.util.stream.Collectors;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import net.sf.jabref.gui.BasePanel;
+<i>8</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>9</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>10</i>&nbsp;import net.sf.jabref.model.entry.FieldName;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;/**
+<i>13</i>&nbsp; * Class for fetching and merging information based on a specific field
+<i>14</i>&nbsp; *
+<i>15</i>&nbsp; */
+<i>16</i>&nbsp;public class FetchAndMergeEntry {
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;    // A list of all field which are supported
+<b class="nc"><i>19</i>&nbsp;    public static List&lt;String&gt; SUPPORTED_FIELDS = Arrays.asList(FieldName.DOI, FieldName.EPRINT, FieldName.ISBN);</b>
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;    /**
+<i>22</i>&nbsp;     * Convenience constructor for a single field
+<i>23</i>&nbsp;     *
+<i>24</i>&nbsp;     * @param entry - BibEntry to fetch information for
+<i>25</i>&nbsp;     * @param panel - current BasePanel
+<i>26</i>&nbsp;     * @param field - field to get information from
+<i>27</i>&nbsp;     */
+<i>28</i>&nbsp;    public FetchAndMergeEntry(BibEntry entry, BasePanel panel, String field) {
+<b class="nc"><i>29</i>&nbsp;        this(entry, panel, Arrays.asList(field));</b>
+<b class="nc"><i>30</i>&nbsp;    }</b>
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;    /**
+<i>33</i>&nbsp;     * Default constructor
+<i>34</i>&nbsp;     *
+<i>35</i>&nbsp;     * @param entry - BibEntry to fetch information for
+<i>36</i>&nbsp;     * @param panel - current BasePanel
+<i>37</i>&nbsp;     * @param fields - List of fields to get information from, one at a time in given order
+<i>38</i>&nbsp;     */
+<b class="nc"><i>39</i>&nbsp;    public FetchAndMergeEntry(BibEntry entry, BasePanel panel, List&lt;String&gt; fields) {</b>
+<b class="nc"><i>40</i>&nbsp;        for (String field : fields) {</b>
+<b class="nc"><i>41</i>&nbsp;            if (entry.hasField(field)) {</b>
+<b class="nc"><i>42</i>&nbsp;                new FetchAndMergeWorker(panel, entry, field).execute();</b>
+<i>43</i>&nbsp;            } else {
+<b class="nc"><i>44</i>&nbsp;                panel.frame().setStatus(Localization.lang(&quot;No %0 found&quot;, FieldName.getDisplayName(field)));</b>
+<i>45</i>&nbsp;            }
+<b class="nc"><i>46</i>&nbsp;        }</b>
+<b class="nc"><i>47</i>&nbsp;    }</b>
+<i>48</i>&nbsp;
+<i>49</i>&nbsp;    public static String getDisplayNameOfSupportedFields() {
+<b class="nc"><i>50</i>&nbsp;        return FieldName.orFields(SUPPORTED_FIELDS.stream()</b>
+<b class="nc"><i>51</i>&nbsp;                .map(FieldName::getDisplayName)</b>
+<b class="nc"><i>52</i>&nbsp;                .collect(Collectors.toList()));</b>
+<i>53</i>&nbsp;    }
+<i>54</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,216 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: CustomExportList</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.exporter</a> ]
+</div>
+
+<h1>Coverage Summary for Class: CustomExportList (net.sf.jabref.logic.exporter)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CustomExportList</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    15.4%
+  </span>
+  <span class="absValue">
+    (2/ 13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    10.2%
+  </span>
+  <span class="absValue">
+    (6/ 59)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.exporter;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.Comparator;
+<i>4</i>&nbsp;import java.util.List;
+<i>5</i>&nbsp;import java.util.Map;
+<i>6</i>&nbsp;import java.util.Objects;
+<i>7</i>&nbsp;import java.util.Optional;
+<i>8</i>&nbsp;import java.util.TreeMap;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;import net.sf.jabref.logic.journals.JournalAbbreviationLoader;
+<i>11</i>&nbsp;import net.sf.jabref.logic.layout.LayoutFormatterPreferences;
+<i>12</i>&nbsp;import net.sf.jabref.preferences.JabRefPreferences;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;import ca.odell.glazedlists.BasicEventList;
+<i>15</i>&nbsp;import ca.odell.glazedlists.EventList;
+<i>16</i>&nbsp;import ca.odell.glazedlists.SortedList;
+<i>17</i>&nbsp;import org.apache.commons.logging.Log;
+<i>18</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;/**
+<i>21</i>&nbsp; * This class handles user defined custom export formats. They are initially
+<i>22</i>&nbsp; * read from Preferences, and kept alphabetically (sorted by name). Formats can
+<i>23</i>&nbsp; * be added or removed. When modified, the sort() method must be called to make
+<i>24</i>&nbsp; * sure the formats stay properly sorted. When the method store() is called,
+<i>25</i>&nbsp; * export formats are written to Preferences.
+<i>26</i>&nbsp; */
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;public class CustomExportList {
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;    private final EventList&lt;List&lt;String&gt;&gt; list;
+<i>31</i>&nbsp;    private final SortedList&lt;List&lt;String&gt;&gt; sorted;
+<b class="fc"><i>32</i>&nbsp;    private final Map&lt;String, ExportFormat&gt; formats = new TreeMap&lt;&gt;();</b>
+<i>33</i>&nbsp;
+<b class="fc"><i>34</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(CustomExportList.class);</b>
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;
+<b class="fc"><i>37</i>&nbsp;    public CustomExportList(Comparator&lt;List&lt;String&gt;&gt; comp) {</b>
+<b class="fc"><i>38</i>&nbsp;        list = new BasicEventList&lt;&gt;();</b>
+<b class="fc"><i>39</i>&nbsp;        sorted = new SortedList&lt;&gt;(list, comp);</b>
+<b class="fc"><i>40</i>&nbsp;    }</b>
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;    public Map&lt;String, ExportFormat&gt; getCustomExportFormats(JabRefPreferences prefs,
+<i>43</i>&nbsp;            JournalAbbreviationLoader loader) {
+<b class="nc"><i>44</i>&nbsp;        Objects.requireNonNull(prefs);</b>
+<b class="nc"><i>45</i>&nbsp;        Objects.requireNonNull(loader);</b>
+<b class="nc"><i>46</i>&nbsp;        formats.clear();</b>
+<b class="nc"><i>47</i>&nbsp;        readPrefs(prefs, loader);</b>
+<b class="nc"><i>48</i>&nbsp;        return formats;</b>
+<i>49</i>&nbsp;    }
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;    public int size() {
+<b class="nc"><i>52</i>&nbsp;        return list.size();</b>
+<i>53</i>&nbsp;    }
+<i>54</i>&nbsp;
+<i>55</i>&nbsp;    public EventList&lt;List&lt;String&gt;&gt; getSortedList() {
+<b class="nc"><i>56</i>&nbsp;        return sorted;</b>
+<i>57</i>&nbsp;    }
+<i>58</i>&nbsp;
+<i>59</i>&nbsp;    private void readPrefs(JabRefPreferences prefs, JournalAbbreviationLoader loader) {
+<b class="nc"><i>60</i>&nbsp;        Objects.requireNonNull(prefs);</b>
+<b class="nc"><i>61</i>&nbsp;        Objects.requireNonNull(loader);</b>
+<b class="nc"><i>62</i>&nbsp;        formats.clear();</b>
+<b class="nc"><i>63</i>&nbsp;        list.clear();</b>
+<b class="nc"><i>64</i>&nbsp;        int i = 0;</b>
+<i>65</i>&nbsp;        List&lt;String&gt; s;
+<b class="nc"><i>66</i>&nbsp;        LayoutFormatterPreferences layoutPreferences = prefs.getLayoutFormatterPreferences(loader);</b>
+<b class="nc"><i>67</i>&nbsp;        SavePreferences savePreferences = SavePreferences.loadForExportFromPreferences(prefs);</b>
+<b class="nc"><i>68</i>&nbsp;        while (!((s = prefs.getStringList(JabRefPreferences.CUSTOM_EXPORT_FORMAT + i)).isEmpty())) {</b>
+<b class="nc"><i>69</i>&nbsp;            Optional&lt;ExportFormat&gt; format = createFormat(s, layoutPreferences, savePreferences);</b>
+<b class="nc"><i>70</i>&nbsp;            if (format.isPresent()) {</b>
+<b class="nc"><i>71</i>&nbsp;                formats.put(format.get().getConsoleName(), format.get());</b>
+<b class="nc"><i>72</i>&nbsp;                list.add(s);</b>
+<i>73</i>&nbsp;            } else {
+<b class="nc"><i>74</i>&nbsp;                String customExportFormat = prefs.get(JabRefPreferences.CUSTOM_EXPORT_FORMAT + i);</b>
+<b class="nc"><i>75</i>&nbsp;                LOGGER.error(&quot;Error initializing custom export format from string &quot; + customExportFormat);</b>
+<i>76</i>&nbsp;            }
+<b class="nc"><i>77</i>&nbsp;            i++;</b>
+<b class="nc"><i>78</i>&nbsp;        }</b>
+<b class="nc"><i>79</i>&nbsp;    }</b>
+<i>80</i>&nbsp;
+<i>81</i>&nbsp;    private Optional&lt;ExportFormat&gt; createFormat(List&lt;String&gt; s, LayoutFormatterPreferences layoutPreferences,
+<i>82</i>&nbsp;            SavePreferences savePreferences) {
+<b class="nc"><i>83</i>&nbsp;        if (s.size() &lt; 3) {</b>
+<b class="nc"><i>84</i>&nbsp;            return Optional.empty();</b>
+<i>85</i>&nbsp;        }
+<i>86</i>&nbsp;        String lfFileName;
+<b class="nc"><i>87</i>&nbsp;        if (s.get(1).endsWith(&quot;.layout&quot;)) {</b>
+<b class="nc"><i>88</i>&nbsp;            lfFileName = s.get(1).substring(0, s.get(1).length() - 7);</b>
+<i>89</i>&nbsp;        } else {
+<b class="nc"><i>90</i>&nbsp;            lfFileName = s.get(1);</b>
+<i>91</i>&nbsp;        }
+<b class="nc"><i>92</i>&nbsp;        ExportFormat format = new ExportFormat(s.get(0), s.get(0), lfFileName, null, s.get(2), layoutPreferences,</b>
+<i>93</i>&nbsp;                savePreferences);
+<b class="nc"><i>94</i>&nbsp;        format.setCustomExport(true);</b>
+<b class="nc"><i>95</i>&nbsp;        return Optional.of(format);</b>
+<i>96</i>&nbsp;    }
+<i>97</i>&nbsp;
+<i>98</i>&nbsp;    public void addFormat(List&lt;String&gt; s, LayoutFormatterPreferences layoutPreferences, SavePreferences savePreferences) {
+<b class="nc"><i>99</i>&nbsp;        createFormat(s, layoutPreferences, savePreferences).ifPresent(format -&gt; {</b>
+<b class="nc"><i>100</i>&nbsp;            formats.put(format.getConsoleName(), format);</b>
+<b class="nc"><i>101</i>&nbsp;            list.add(s);</b>
+<b class="nc"><i>102</i>&nbsp;        });</b>
+<b class="nc"><i>103</i>&nbsp;    }</b>
+<i>104</i>&nbsp;
+<i>105</i>&nbsp;    public void remove(List&lt;String&gt; toRemove, LayoutFormatterPreferences layoutPreferences,
+<i>106</i>&nbsp;            SavePreferences savePreferences) {
+<b class="nc"><i>107</i>&nbsp;        createFormat(toRemove, layoutPreferences, savePreferences).ifPresent(format -&gt; {</b>
+<b class="nc"><i>108</i>&nbsp;            formats.remove(format.getConsoleName());</b>
+<b class="nc"><i>109</i>&nbsp;            list.remove(toRemove);</b>
+<b class="nc"><i>110</i>&nbsp;        });</b>
+<b class="nc"><i>111</i>&nbsp;    }</b>
+<i>112</i>&nbsp;
+<i>113</i>&nbsp;    public void store(JabRefPreferences prefs) {
+<i>114</i>&nbsp;
+<b class="nc"><i>115</i>&nbsp;        if (list.isEmpty()) {</b>
+<b class="nc"><i>116</i>&nbsp;            purge(0, prefs);</b>
+<i>117</i>&nbsp;        } else {
+<b class="nc"><i>118</i>&nbsp;            for (int i = 0; i &lt; list.size(); i++) {</b>
+<b class="nc"><i>119</i>&nbsp;                prefs.putStringList(JabRefPreferences.CUSTOM_EXPORT_FORMAT + i, list.get(i));</b>
+<i>120</i>&nbsp;            }
+<b class="nc"><i>121</i>&nbsp;            purge(list.size(), prefs);</b>
+<i>122</i>&nbsp;        }
+<b class="nc"><i>123</i>&nbsp;    }</b>
+<i>124</i>&nbsp;
+<i>125</i>&nbsp;    private void purge(int from, JabRefPreferences prefs) {
+<b class="nc"><i>126</i>&nbsp;        int i = from;</b>
+<b class="nc"><i>127</i>&nbsp;        while (!prefs.getStringList(JabRefPreferences.CUSTOM_EXPORT_FORMAT + i).isEmpty()) {</b>
+<b class="nc"><i>128</i>&nbsp;            prefs.remove(JabRefPreferences.CUSTOM_EXPORT_FORMAT + i);</b>
+<b class="nc"><i>129</i>&nbsp;            i++;</b>
+<i>130</i>&nbsp;        }
+<b class="nc"><i>131</i>&nbsp;    }</b>
+<i>132</i>&nbsp;
+<i>133</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

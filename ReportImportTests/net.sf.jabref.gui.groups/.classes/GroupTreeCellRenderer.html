@@ -1,0 +1,231 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: GroupTreeCellRenderer</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.groups</a> ]
+</div>
+
+<h1>Coverage Summary for Class: GroupTreeCellRenderer (net.sf.jabref.gui.groups)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GroupTreeCellRenderer</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 58)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.groups;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.Color;
+<i>4</i>&nbsp;import java.awt.Component;
+<i>5</i>&nbsp;import java.util.ArrayList;
+<i>6</i>&nbsp;import java.util.List;
+<i>7</i>&nbsp;import java.util.Objects;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;import javax.swing.BorderFactory;
+<i>10</i>&nbsp;import javax.swing.Icon;
+<i>11</i>&nbsp;import javax.swing.JLabel;
+<i>12</i>&nbsp;import javax.swing.JTree;
+<i>13</i>&nbsp;import javax.swing.border.Border;
+<i>14</i>&nbsp;import javax.swing.tree.DefaultTreeCellRenderer;
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;import net.sf.jabref.model.groups.GroupTreeNode;
+<i>17</i>&nbsp;import net.sf.jabref.model.strings.StringUtil;
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;/**
+<i>20</i>&nbsp; * Renders a GroupTreeNode using its group&#39;s getName() method, rather that its toString() method.
+<i>21</i>&nbsp; *
+<i>22</i>&nbsp; * @author jzieren
+<i>23</i>&nbsp; */
+<b class="nc"><i>24</i>&nbsp;public class GroupTreeCellRenderer extends DefaultTreeCellRenderer {</b>
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    /** The cell over which the user is currently dragging */
+<i>27</i>&nbsp;    private Object highlight1Cell;
+<b class="nc"><i>28</i>&nbsp;    private List&lt;GroupTreeNode&gt; overlappingGroups = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>29</i>&nbsp;    private List&lt;GroupTreeNode&gt; matchingGroups = new ArrayList&lt;&gt;();</b>
+<i>30</i>&nbsp;    private Object highlightBorderCell;
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;
+<i>33</i>&nbsp;    @Override
+<i>34</i>&nbsp;    public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf,
+<i>35</i>&nbsp;            int row, boolean tmpHasFocus) {
+<i>36</i>&nbsp;        // show as selected
+<b class="nc"><i>37</i>&nbsp;        selected = (Objects.equals(highlight1Cell, value)) || sel;</b>
+<b class="nc"><i>38</i>&nbsp;        Component c = super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, tmpHasFocus);</b>
+<i>39</i>&nbsp;        // this is sometimes called from deep within somewhere, with a dummy
+<i>40</i>&nbsp;        // value (probably for layout etc.), so we&#39;ve got to check here!
+<b class="nc"><i>41</i>&nbsp;        if (!(value instanceof GroupTreeNodeViewModel)) {</b>
+<b class="nc"><i>42</i>&nbsp;            return c;</b>
+<i>43</i>&nbsp;        }
+<b class="nc"><i>44</i>&nbsp;        if (!(c instanceof JLabel)) {</b>
+<b class="nc"><i>45</i>&nbsp;            return c; // sanity check</b>
+<i>46</i>&nbsp;        }
+<i>47</i>&nbsp;
+<b class="nc"><i>48</i>&nbsp;        GroupTreeNodeViewModel viewModel = (GroupTreeNodeViewModel) value;</b>
+<b class="nc"><i>49</i>&nbsp;        JLabel label = (JLabel) c;</b>
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;        Border border;
+<b class="nc"><i>52</i>&nbsp;        if (Objects.equals(highlightBorderCell, value)) {</b>
+<b class="nc"><i>53</i>&nbsp;            border = BorderFactory.createLineBorder(Color.BLACK);</b>
+<i>54</i>&nbsp;        } else {
+<b class="nc"><i>55</i>&nbsp;            border = BorderFactory.createEmptyBorder();</b>
+<i>56</i>&nbsp;        }
+<b class="nc"><i>57</i>&nbsp;        if (label.getBorder() != border) {</b>
+<b class="nc"><i>58</i>&nbsp;            label.setBorder(border);</b>
+<i>59</i>&nbsp;        }
+<i>60</i>&nbsp;
+<b class="nc"><i>61</i>&nbsp;        Boolean red = printInRed(viewModel) &amp;&amp; !selected; // do not print currently selected node in red</b>
+<b class="nc"><i>62</i>&nbsp;        Boolean underlined = printUnderlined(viewModel);</b>
+<b class="nc"><i>63</i>&nbsp;        StringBuilder sb = new StringBuilder(60);</b>
+<b class="nc"><i>64</i>&nbsp;        sb.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc"><i>65</i>&nbsp;        if (red) {</b>
+<b class="nc"><i>66</i>&nbsp;            sb.append(&quot;&lt;font color=\&quot;#FF0000\&quot;&gt;&quot;);</b>
+<i>67</i>&nbsp;        }
+<b class="nc"><i>68</i>&nbsp;        if (underlined) {</b>
+<b class="nc"><i>69</i>&nbsp;            sb.append(&quot;&lt;u&gt;&quot;);</b>
+<i>70</i>&nbsp;        }
+<b class="nc"><i>71</i>&nbsp;        if (viewModel.printInItalics()) {</b>
+<b class="nc"><i>72</i>&nbsp;            sb.append(&quot;&lt;i&gt;&quot;);</b>
+<i>73</i>&nbsp;        }
+<b class="nc"><i>74</i>&nbsp;        sb.append(StringUtil.quoteForHTML(viewModel.getText()));</b>
+<b class="nc"><i>75</i>&nbsp;        if (viewModel.printInItalics()) {</b>
+<b class="nc"><i>76</i>&nbsp;            sb.append(&quot;&lt;/i&gt;&quot;);</b>
+<i>77</i>&nbsp;        }
+<b class="nc"><i>78</i>&nbsp;        if (underlined) {</b>
+<b class="nc"><i>79</i>&nbsp;            sb.append(&quot;&lt;/u&gt;&quot;);</b>
+<i>80</i>&nbsp;        }
+<b class="nc"><i>81</i>&nbsp;        if (red) {</b>
+<b class="nc"><i>82</i>&nbsp;            sb.append(&quot;&lt;/font&gt;&quot;);</b>
+<i>83</i>&nbsp;        }
+<b class="nc"><i>84</i>&nbsp;        sb.append(&quot;&lt;/html&gt;&quot;);</b>
+<i>85</i>&nbsp;
+<b class="nc"><i>86</i>&nbsp;        String text = sb.toString();</b>
+<b class="nc"><i>87</i>&nbsp;        if (!label.getText().equals(text)) {</b>
+<b class="nc"><i>88</i>&nbsp;            label.setText(text);</b>
+<i>89</i>&nbsp;        }
+<b class="nc"><i>90</i>&nbsp;        label.setToolTipText(viewModel.getDescription());</b>
+<i>91</i>&nbsp;
+<b class="nc"><i>92</i>&nbsp;        Icon icon = viewModel.getIcon();</b>
+<b class="nc"><i>93</i>&nbsp;        if (label.getIcon() != icon) {</b>
+<b class="nc"><i>94</i>&nbsp;            label.setIcon(icon);</b>
+<i>95</i>&nbsp;        }
+<b class="nc"><i>96</i>&nbsp;        return c;</b>
+<i>97</i>&nbsp;    }
+<i>98</i>&nbsp;
+<i>99</i>&nbsp;    private boolean printInRed(GroupTreeNodeViewModel viewModel) {
+<b class="nc"><i>100</i>&nbsp;        if(viewModel.isAllEntriesGroup()) {</b>
+<i>101</i>&nbsp;            // Do not print all entries group in red
+<b class="nc"><i>102</i>&nbsp;            return false;</b>
+<i>103</i>&nbsp;        }
+<i>104</i>&nbsp;
+<b class="nc"><i>105</i>&nbsp;        return overlappingGroups.contains(viewModel.getNode());</b>
+<i>106</i>&nbsp;    }
+<i>107</i>&nbsp;
+<i>108</i>&nbsp;    private boolean printUnderlined(GroupTreeNodeViewModel viewModel) {
+<b class="nc"><i>109</i>&nbsp;        if(viewModel.isAllEntriesGroup()) {</b>
+<i>110</i>&nbsp;            // Do not underline all entries group
+<b class="nc"><i>111</i>&nbsp;            return false;</b>
+<i>112</i>&nbsp;        }
+<b class="nc"><i>113</i>&nbsp;        return matchingGroups.contains(viewModel.getNode());</b>
+<i>114</i>&nbsp;    }
+<i>115</i>&nbsp;
+<i>116</i>&nbsp;    /**
+<i>117</i>&nbsp;     * For use when dragging: The specified cell is always rendered as selected.
+<i>118</i>&nbsp;     *
+<i>119</i>&nbsp;     * @param cell The cell over which the user is currently dragging.
+<i>120</i>&nbsp;     */
+<i>121</i>&nbsp;    public void setHighlight1Cell(Object cell) {
+<b class="nc"><i>122</i>&nbsp;        this.highlight1Cell = cell;</b>
+<b class="nc"><i>123</i>&nbsp;    }</b>
+<i>124</i>&nbsp;
+<i>125</i>&nbsp;    /**
+<i>126</i>&nbsp;     * Highlights the specified groups in red.
+<i>127</i>&nbsp;     */
+<i>128</i>&nbsp;    public void setOverlappingGroups(List&lt;GroupTreeNode&gt; nodes) {
+<b class="nc"><i>129</i>&nbsp;        Objects.requireNonNull(nodes);</b>
+<b class="nc"><i>130</i>&nbsp;        this.overlappingGroups = nodes;</b>
+<b class="nc"><i>131</i>&nbsp;    }</b>
+<i>132</i>&nbsp;
+<i>133</i>&nbsp;    /**
+<i>134</i>&nbsp;     * Highlights the specified groups by underlining.
+<i>135</i>&nbsp;     */
+<i>136</i>&nbsp;    public void setMatchingGroups(List&lt;GroupTreeNode&gt; nodes) {
+<b class="nc"><i>137</i>&nbsp;        Objects.requireNonNull(nodes);</b>
+<b class="nc"><i>138</i>&nbsp;        this.matchingGroups = nodes;</b>
+<b class="nc"><i>139</i>&nbsp;    }</b>
+<i>140</i>&nbsp;
+<i>141</i>&nbsp;    /**
+<i>142</i>&nbsp;     * Highlights the specified cells (by drawing a border around it), or disables highlight if highlightBorderCell ==
+<i>143</i>&nbsp;     * null.
+<i>144</i>&nbsp;     */
+<i>145</i>&nbsp;    public void setHighlightBorderCell(Object highlightBorderCell) {
+<b class="nc"><i>146</i>&nbsp;        this.highlightBorderCell = highlightBorderCell;</b>
+<b class="nc"><i>147</i>&nbsp;    }</b>
+<i>148</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

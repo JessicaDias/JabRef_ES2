@@ -1,0 +1,172 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: AbstractGroup</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.model.groups</a> ]
+</div>
+
+<h1>Coverage Summary for Class: AbstractGroup (net.sf.jabref.model.groups)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AbstractGroup</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 17)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.model.groups;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.List;
+<i>4</i>&nbsp;import java.util.Objects;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>7</i>&nbsp;import net.sf.jabref.model.search.SearchMatcher;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;/**
+<i>10</i>&nbsp; * Base class for all groups.
+<i>11</i>&nbsp; */
+<i>12</i>&nbsp;public abstract class AbstractGroup implements SearchMatcher {
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;    /**
+<i>15</i>&nbsp;     * The group&#39;s name.
+<i>16</i>&nbsp;     */
+<i>17</i>&nbsp;    protected final String name;
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;    /**
+<i>20</i>&nbsp;     * The hierarchical context of the group.
+<i>21</i>&nbsp;     */
+<i>22</i>&nbsp;    protected final GroupHierarchyType context;
+<i>23</i>&nbsp;
+<b class="nc"><i>24</i>&nbsp;    protected AbstractGroup(String name, GroupHierarchyType context) {</b>
+<b class="nc"><i>25</i>&nbsp;        this.name = name;</b>
+<b class="nc"><i>26</i>&nbsp;        this.context = Objects.requireNonNull(context);</b>
+<b class="nc"><i>27</i>&nbsp;    }</b>
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;    /**
+<i>30</i>&nbsp;     * Returns the way this group relates to its sub- or supergroup.
+<i>31</i>&nbsp;     */
+<i>32</i>&nbsp;    public GroupHierarchyType getHierarchicalContext() {
+<b class="nc"><i>33</i>&nbsp;        return context;</b>
+<i>34</i>&nbsp;    }
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;    /**
+<i>37</i>&nbsp;     * Returns this group&#39;s name, e.g. for display in a list/tree.
+<i>38</i>&nbsp;     */
+<i>39</i>&nbsp;    public final String getName() {
+<b class="nc"><i>40</i>&nbsp;        return name;</b>
+<i>41</i>&nbsp;    }
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;    /**
+<i>44</i>&nbsp;     * @return true if this group contains the specified entry, false otherwise.
+<i>45</i>&nbsp;     */
+<i>46</i>&nbsp;    public abstract boolean contains(BibEntry entry);
+<i>47</i>&nbsp;
+<i>48</i>&nbsp;    @Override
+<i>49</i>&nbsp;    public boolean isMatch(BibEntry entry) {
+<b class="nc"><i>50</i>&nbsp;        return contains(entry);</b>
+<i>51</i>&nbsp;    }
+<i>52</i>&nbsp;
+<i>53</i>&nbsp;    /**
+<i>54</i>&nbsp;     * @return true if this group contains any of the specified entries, false otherwise.
+<i>55</i>&nbsp;     */
+<i>56</i>&nbsp;    public boolean containsAny(List&lt;BibEntry&gt; entries) {
+<b class="nc"><i>57</i>&nbsp;        for (BibEntry entry : entries) {</b>
+<b class="nc"><i>58</i>&nbsp;            if (contains(entry)) {</b>
+<b class="nc"><i>59</i>&nbsp;                return true;</b>
+<i>60</i>&nbsp;            }
+<b class="nc"><i>61</i>&nbsp;        }</b>
+<b class="nc"><i>62</i>&nbsp;        return false;</b>
+<i>63</i>&nbsp;    }
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;    /**
+<i>66</i>&nbsp;     * @return true if this group contains all of the specified entries, false otherwise.
+<i>67</i>&nbsp;     */
+<i>68</i>&nbsp;    public boolean containsAll(List&lt;BibEntry&gt; entries) {
+<b class="nc"><i>69</i>&nbsp;        for (BibEntry entry : entries) {</b>
+<b class="nc"><i>70</i>&nbsp;            if (!contains(entry)) {</b>
+<b class="nc"><i>71</i>&nbsp;                return false;</b>
+<i>72</i>&nbsp;            }
+<b class="nc"><i>73</i>&nbsp;        }</b>
+<b class="nc"><i>74</i>&nbsp;        return true;</b>
+<i>75</i>&nbsp;    }
+<i>76</i>&nbsp;
+<i>77</i>&nbsp;    /**
+<i>78</i>&nbsp;     * Returns true if this group is dynamic, i.e. uses a search definition or
+<i>79</i>&nbsp;     * equiv. that might match new entries, or false if this group contains a
+<i>80</i>&nbsp;     * fixed set of entries and thus will never match a new entry that was not
+<i>81</i>&nbsp;     * explicitly added to it.
+<i>82</i>&nbsp;     */
+<i>83</i>&nbsp;    public abstract boolean isDynamic();
+<i>84</i>&nbsp;
+<i>85</i>&nbsp;    /**
+<i>86</i>&nbsp;     * @return A deep copy of this object.
+<i>87</i>&nbsp;     */
+<i>88</i>&nbsp;    public abstract AbstractGroup deepCopy();
+<i>89</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

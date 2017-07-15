@@ -1,0 +1,193 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: DuplicationChecker</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.model.database</a> ]
+</div>
+
+<h1>Coverage Summary for Class: DuplicationChecker (net.sf.jabref.model.database)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DuplicationChecker</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (6/ 9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    42.9%
+  </span>
+  <span class="absValue">
+    (12/ 28)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.model.database;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.HashMap;
+<i>4</i>&nbsp;import java.util.Map;
+<i>5</i>&nbsp;import java.util.Optional;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import net.sf.jabref.model.database.event.EntryAddedEvent;
+<i>8</i>&nbsp;import net.sf.jabref.model.database.event.EntryRemovedEvent;
+<i>9</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>10</i>&nbsp;import net.sf.jabref.model.entry.event.FieldChangedEvent;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;import com.google.common.eventbus.Subscribe;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;/**
+<i>15</i>&nbsp; * Determines which bibtex cite keys are duplicates in a single {@link BibDatabase}.
+<i>16</i>&nbsp; */
+<b class="fc"><i>17</i>&nbsp;public class DuplicationChecker {</b>
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;    /** use a map instead of a set since I need to know how many of each key is in there */
+<b class="fc"><i>20</i>&nbsp;    private final Map&lt;String, Integer&gt; allKeys = new HashMap&lt;&gt;();</b>
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;    /**
+<i>24</i>&nbsp;     * Checks if there is more than one occurrence of this key
+<i>25</i>&nbsp;     */
+<i>26</i>&nbsp;    public boolean isDuplicateCiteKeyExisting(String citeKey) {
+<b class="fc"><i>27</i>&nbsp;        return getNumberOfKeyOccurrences(citeKey) &gt; 1;</b>
+<i>28</i>&nbsp;    }
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;    /**
+<i>31</i>&nbsp;     * Checks if there is more than one occurrence of the cite key
+<i>32</i>&nbsp;     */
+<i>33</i>&nbsp;    public boolean isDuplicateCiteKeyExisting(BibEntry entry) {
+<b class="fc"><i>34</i>&nbsp;        return isDuplicateCiteKeyExisting(entry.getCiteKeyOptional().orElse(null));</b>
+<i>35</i>&nbsp;    }
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    /**
+<i>38</i>&nbsp;     * Returns the number of occurrences of the given key in this database.
+<i>39</i>&nbsp;     */
+<i>40</i>&nbsp;    public int getNumberOfKeyOccurrences(String citeKey) {
+<b class="fc"><i>41</i>&nbsp;        return allKeys.getOrDefault(citeKey, 0);</b>
+<i>42</i>&nbsp;    }
+<i>43</i>&nbsp;
+<i>44</i>&nbsp;    /**
+<i>45</i>&nbsp;     * Helper function for counting the number of the key usages.
+<i>46</i>&nbsp;     * Adds the given key to the internal keyset together with the count of it.
+<i>47</i>&nbsp;     * The counter is increased if the key already exists, otherwise set to 1.
+<i>48</i>&nbsp;     * &lt;br&gt;
+<i>49</i>&nbsp;     * Special case: If a null or empty key is passed, it is not counted and thus not added.
+<i>50</i>&nbsp;     *
+<i>51</i>&nbsp;     * Reasoning:
+<i>52</i>&nbsp;     * Consider this: I add a key xxx, then I add another key xxx. I get a warning. I delete the key xxx.
+<i>53</i>&nbsp;     * Consider JabRef simply removing this key from a set of allKeys.
+<i>54</i>&nbsp;     * Then I add another key xxx. I don&#39;t get a warning!
+<i>55</i>&nbsp;     * Thus, I need a way to count the number of keys of each type.
+<i>56</i>&nbsp;     * Solution: hashmap=&gt;int (increment each time at add and decrement each time at remove)
+<i>57</i>&nbsp;     */
+<i>58</i>&nbsp;    private void addKeyToSet(String key) {
+<b class="fc"><i>59</i>&nbsp;        if (key == null || key.isEmpty()) {</b>
+<b class="nc"><i>60</i>&nbsp;            return;</b>
+<i>61</i>&nbsp;        }
+<i>62</i>&nbsp;
+<b class="fc"><i>63</i>&nbsp;        allKeys.put(key, getNumberOfKeyOccurrences(key) + 1);</b>
+<b class="fc"><i>64</i>&nbsp;    }</b>
+<i>65</i>&nbsp;
+<i>66</i>&nbsp;    /**
+<i>67</i>&nbsp;     * Helper function for counting the number of the key usages.
+<i>68</i>&nbsp;     * Removes the given key from the internal keyset together with the count of it, if the key is set to 1.
+<i>69</i>&nbsp;     * If it is not set to 1, the counter will be decreased.
+<i>70</i>&nbsp;     * &lt;br&gt;
+<i>71</i>&nbsp;     * Special case: If a null or empty key is passed, it is not counted and thus not removed.
+<i>72</i>&nbsp;     */
+<i>73</i>&nbsp;    private void removeKeyFromSet(String key) {
+<b class="nc"><i>74</i>&nbsp;        if (key == null || key.isEmpty()) {</b>
+<b class="nc"><i>75</i>&nbsp;            return;</b>
+<i>76</i>&nbsp;        }
+<i>77</i>&nbsp;
+<b class="nc"><i>78</i>&nbsp;        int numberOfKeyOccurrences = getNumberOfKeyOccurrences(key);</b>
+<b class="nc"><i>79</i>&nbsp;        if (numberOfKeyOccurrences &gt; 1) {</b>
+<b class="nc"><i>80</i>&nbsp;            allKeys.put(key, numberOfKeyOccurrences - 1);</b>
+<i>81</i>&nbsp;        } else {
+<b class="nc"><i>82</i>&nbsp;            allKeys.remove(key);</b>
+<i>83</i>&nbsp;        }
+<b class="nc"><i>84</i>&nbsp;    }</b>
+<i>85</i>&nbsp;
+<i>86</i>&nbsp;    @Subscribe
+<i>87</i>&nbsp;    public void listen(FieldChangedEvent fieldChangedEvent) {
+<b class="nc"><i>88</i>&nbsp;        if (fieldChangedEvent.getFieldName().equals(BibEntry.KEY_FIELD)) {</b>
+<b class="nc"><i>89</i>&nbsp;            removeKeyFromSet(fieldChangedEvent.getOldValue());</b>
+<b class="nc"><i>90</i>&nbsp;            addKeyToSet(fieldChangedEvent.getNewValue());</b>
+<i>91</i>&nbsp;        }
+<b class="nc"><i>92</i>&nbsp;    }</b>
+<i>93</i>&nbsp;
+<i>94</i>&nbsp;    @Subscribe
+<i>95</i>&nbsp;    public void listen(EntryRemovedEvent entryRemovedEvent) {
+<b class="nc"><i>96</i>&nbsp;        Optional&lt;String&gt; citeKey = entryRemovedEvent.getBibEntry().getCiteKeyOptional();</b>
+<b class="nc"><i>97</i>&nbsp;        if (citeKey.isPresent()) {</b>
+<b class="nc"><i>98</i>&nbsp;            removeKeyFromSet(citeKey.get());</b>
+<i>99</i>&nbsp;        }
+<b class="nc"><i>100</i>&nbsp;    }</b>
+<i>101</i>&nbsp;
+<i>102</i>&nbsp;    @Subscribe
+<i>103</i>&nbsp;    public void listen(EntryAddedEvent entryAddedEvent) {
+<b class="fc"><i>104</i>&nbsp;        Optional&lt;String&gt; citekey = entryAddedEvent.getBibEntry().getCiteKeyOptional();</b>
+<b class="fc"><i>105</i>&nbsp;        if (citekey.isPresent()) {</b>
+<b class="fc"><i>106</i>&nbsp;            addKeyToSet(citekey.get());</b>
+<i>107</i>&nbsp;        }
+<b class="fc"><i>108</i>&nbsp;    }</b>
+<i>109</i>&nbsp;
+<i>110</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,148 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: RemoteListenerServer</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.remote.server</a> ]
+</div>
+
+<h1>Coverage Summary for Class: RemoteListenerServer (net.sf.jabref.logic.remote.server)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">RemoteListenerServer</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 26)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.remote.server;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.IOException;
+<i>4</i>&nbsp;import java.net.InetAddress;
+<i>5</i>&nbsp;import java.net.ServerSocket;
+<i>6</i>&nbsp;import java.net.Socket;
+<i>7</i>&nbsp;import java.net.SocketException;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;import net.sf.jabref.logic.remote.shared.Protocol;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;import org.apache.commons.logging.Log;
+<i>12</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;public class RemoteListenerServer implements Runnable {
+<b class="nc"><i>15</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(RemoteListenerServer.class);</b>
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;    private static final int BACKLOG = 1;
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;    private static final int ONE_SECOND_TIMEOUT = 1000;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;    private final MessageHandler messageHandler;
+<i>22</i>&nbsp;    private final ServerSocket serverSocket;
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;
+<b class="nc"><i>25</i>&nbsp;    public RemoteListenerServer(MessageHandler messageHandler, int port) throws IOException {</b>
+<b class="nc"><i>26</i>&nbsp;        this.serverSocket = new ServerSocket(port, BACKLOG, InetAddress.getByName(&quot;localhost&quot;));</b>
+<b class="nc"><i>27</i>&nbsp;        this.messageHandler = messageHandler;</b>
+<b class="nc"><i>28</i>&nbsp;    }</b>
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;    @Override
+<i>31</i>&nbsp;    public void run() {
+<i>32</i>&nbsp;        try {
+<b class="nc"><i>33</i>&nbsp;            while (!Thread.interrupted()) {</b>
+<b class="nc"><i>34</i>&nbsp;                try (Socket socket = serverSocket.accept()) {</b>
+<b class="nc"><i>35</i>&nbsp;                    socket.setSoTimeout(ONE_SECOND_TIMEOUT);</b>
+<i>36</i>&nbsp;
+<b class="nc"><i>37</i>&nbsp;                    Protocol protocol = new Protocol(socket);</b>
+<b class="nc"><i>38</i>&nbsp;                    protocol.sendMessage(Protocol.IDENTIFIER);</b>
+<b class="nc"><i>39</i>&nbsp;                    String message = protocol.receiveMessage();</b>
+<b class="nc"><i>40</i>&nbsp;                    protocol.close();</b>
+<b class="nc"><i>41</i>&nbsp;                    if (message.isEmpty()) {</b>
+<i>42</i>&nbsp;                        continue;
+<i>43</i>&nbsp;                    }
+<b class="nc"><i>44</i>&nbsp;                    messageHandler.handleMessage(message);</b>
+<i>45</i>&nbsp;
+<b class="nc"><i>46</i>&nbsp;                } catch (SocketException ex) {</b>
+<b class="nc"><i>47</i>&nbsp;                    return;</b>
+<b class="nc"><i>48</i>&nbsp;                } catch (IOException e) {</b>
+<b class="nc"><i>49</i>&nbsp;                    LOGGER.warn(&quot;RemoteListenerServer crashed&quot;, e);</b>
+<b class="nc"><i>50</i>&nbsp;                }</b>
+<i>51</i>&nbsp;            }
+<i>52</i>&nbsp;        } finally {
+<b class="nc"><i>53</i>&nbsp;            closeServerSocket();</b>
+<b class="nc"><i>54</i>&nbsp;        }</b>
+<b class="nc"><i>55</i>&nbsp;    }</b>
+<i>56</i>&nbsp;
+<i>57</i>&nbsp;    public void closeServerSocket() {
+<i>58</i>&nbsp;        try {
+<b class="nc"><i>59</i>&nbsp;            serverSocket.close();</b>
+<b class="nc"><i>60</i>&nbsp;        } catch (IOException ignored) {</b>
+<i>61</i>&nbsp;            // Ignored
+<b class="nc"><i>62</i>&nbsp;        }</b>
+<b class="nc"><i>63</i>&nbsp;    }</b>
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

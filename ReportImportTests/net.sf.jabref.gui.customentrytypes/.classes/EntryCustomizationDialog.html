@@ -1,0 +1,604 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: EntryCustomizationDialog</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.customentrytypes</a> ]
+</div>
+
+<h1>Coverage Summary for Class: EntryCustomizationDialog (net.sf.jabref.gui.customentrytypes)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">EntryCustomizationDialog</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 209)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">EntryCustomizationDialog$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">EntryCustomizationDialog$DataListener</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 13)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">EntryCustomizationDialog$DefaultListener</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 21)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 23)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 246)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.customentrytypes;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.BorderLayout;
+<i>4</i>&nbsp;import java.awt.Container;
+<i>5</i>&nbsp;import java.awt.GridBagConstraints;
+<i>6</i>&nbsp;import java.awt.GridBagLayout;
+<i>7</i>&nbsp;import java.awt.GridLayout;
+<i>8</i>&nbsp;import java.awt.event.ActionEvent;
+<i>9</i>&nbsp;import java.awt.event.ActionListener;
+<i>10</i>&nbsp;import java.util.ArrayList;
+<i>11</i>&nbsp;import java.util.Arrays;
+<i>12</i>&nbsp;import java.util.HashMap;
+<i>13</i>&nbsp;import java.util.HashSet;
+<i>14</i>&nbsp;import java.util.List;
+<i>15</i>&nbsp;import java.util.Locale;
+<i>16</i>&nbsp;import java.util.Map;
+<i>17</i>&nbsp;import java.util.Optional;
+<i>18</i>&nbsp;import java.util.Set;
+<i>19</i>&nbsp;import java.util.stream.Collectors;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;import javax.swing.AbstractAction;
+<i>22</i>&nbsp;import javax.swing.ActionMap;
+<i>23</i>&nbsp;import javax.swing.BorderFactory;
+<i>24</i>&nbsp;import javax.swing.InputMap;
+<i>25</i>&nbsp;import javax.swing.JButton;
+<i>26</i>&nbsp;import javax.swing.JComponent;
+<i>27</i>&nbsp;import javax.swing.JDialog;
+<i>28</i>&nbsp;import javax.swing.JList;
+<i>29</i>&nbsp;import javax.swing.JOptionPane;
+<i>30</i>&nbsp;import javax.swing.JPanel;
+<i>31</i>&nbsp;import javax.swing.ListSelectionModel;
+<i>32</i>&nbsp;import javax.swing.event.ListDataEvent;
+<i>33</i>&nbsp;import javax.swing.event.ListDataListener;
+<i>34</i>&nbsp;import javax.swing.event.ListSelectionEvent;
+<i>35</i>&nbsp;import javax.swing.event.ListSelectionListener;
+<i>36</i>&nbsp;import javax.swing.table.AbstractTableModel;
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;import net.sf.jabref.Globals;
+<i>39</i>&nbsp;import net.sf.jabref.gui.BasePanel;
+<i>40</i>&nbsp;import net.sf.jabref.gui.JabRefFrame;
+<i>41</i>&nbsp;import net.sf.jabref.gui.keyboard.KeyBinding;
+<i>42</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>43</i>&nbsp;import net.sf.jabref.model.EntryTypes;
+<i>44</i>&nbsp;import net.sf.jabref.model.database.BibDatabaseMode;
+<i>45</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>46</i>&nbsp;import net.sf.jabref.model.entry.CustomEntryType;
+<i>47</i>&nbsp;import net.sf.jabref.model.entry.EntryType;
+<i>48</i>&nbsp;import net.sf.jabref.model.entry.InternalBibtexFields;
+<i>49</i>&nbsp;import net.sf.jabref.model.strings.StringUtil;
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;import com.jgoodies.forms.builder.ButtonBarBuilder;
+<i>52</i>&nbsp;
+<i>53</i>&nbsp;public class EntryCustomizationDialog extends JDialog implements ListSelectionListener {
+<i>54</i>&nbsp;
+<i>55</i>&nbsp;    private final JabRefFrame frame;
+<b class="nc"><i>56</i>&nbsp;    protected GridBagLayout gbl = new GridBagLayout();</b>
+<b class="nc"><i>57</i>&nbsp;    protected GridBagConstraints con = new GridBagConstraints();</b>
+<i>58</i>&nbsp;    private FieldSetComponent reqComp;
+<i>59</i>&nbsp;    private FieldSetComponent optComp;
+<i>60</i>&nbsp;    private FieldSetComponent optComp2;
+<i>61</i>&nbsp;    private EntryTypeList typeComp;
+<i>62</i>&nbsp;    private JButton ok;
+<i>63</i>&nbsp;    private JButton cancel;
+<i>64</i>&nbsp;    private JButton apply;
+<i>65</i>&nbsp;    protected JButton helpButton;
+<i>66</i>&nbsp;    protected JButton delete;
+<b class="nc"><i>67</i>&nbsp;    private final List&lt;String&gt; preset = InternalBibtexFields.getAllPublicFieldNames();</b>
+<i>68</i>&nbsp;    private String lastSelected;
+<b class="nc"><i>69</i>&nbsp;    private final Map&lt;String, List&lt;String&gt;&gt; reqLists = new HashMap&lt;&gt;();</b>
+<b class="nc"><i>70</i>&nbsp;    private final Map&lt;String, List&lt;String&gt;&gt; optLists = new HashMap&lt;&gt;();</b>
+<b class="nc"><i>71</i>&nbsp;    private final Map&lt;String, List&lt;String&gt;&gt; opt2Lists = new HashMap&lt;&gt;();</b>
+<b class="nc"><i>72</i>&nbsp;    private final Set&lt;String&gt; defaulted = new HashSet&lt;&gt;();</b>
+<b class="nc"><i>73</i>&nbsp;    private final Set&lt;String&gt; changed = new HashSet&lt;&gt;();</b>
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;    private boolean biblatexMode;
+<i>76</i>&nbsp;    private BibDatabaseMode bibDatabaseMode;
+<i>77</i>&nbsp;
+<i>78</i>&nbsp;    /**
+<i>79</i>&nbsp;     * Creates a new instance of EntryCustomizationDialog
+<i>80</i>&nbsp;     */
+<i>81</i>&nbsp;    public EntryCustomizationDialog(JabRefFrame frame) {
+<b class="nc"><i>82</i>&nbsp;        super(frame, Localization.lang(&quot;Customize entry types&quot;), false);</b>
+<i>83</i>&nbsp;
+<b class="nc"><i>84</i>&nbsp;        this.frame = frame;</b>
+<b class="nc"><i>85</i>&nbsp;        initGui();</b>
+<b class="nc"><i>86</i>&nbsp;    }</b>
+<i>87</i>&nbsp;
+<i>88</i>&nbsp;    private void initGui() {
+<b class="nc"><i>89</i>&nbsp;        Container pane = getContentPane();</b>
+<b class="nc"><i>90</i>&nbsp;        pane.setLayout(new BorderLayout());</b>
+<i>91</i>&nbsp;
+<b class="nc"><i>92</i>&nbsp;        if (frame.getCurrentBasePanel() == null) {</b>
+<b class="nc"><i>93</i>&nbsp;            bibDatabaseMode = Globals.prefs.getDefaultBibDatabaseMode();</b>
+<i>94</i>&nbsp;        } else {
+<b class="nc"><i>95</i>&nbsp;            bibDatabaseMode = frame.getCurrentBasePanel().getBibDatabaseContext().getMode();</b>
+<i>96</i>&nbsp;        }
+<b class="nc"><i>97</i>&nbsp;        biblatexMode = BibDatabaseMode.BIBLATEX.equals(bibDatabaseMode);</b>
+<i>98</i>&nbsp;
+<b class="nc"><i>99</i>&nbsp;        JPanel main = new JPanel();</b>
+<b class="nc"><i>100</i>&nbsp;        JPanel buttons = new JPanel();</b>
+<b class="nc"><i>101</i>&nbsp;        JPanel right = new JPanel();</b>
+<b class="nc"><i>102</i>&nbsp;        main.setLayout(new BorderLayout());</b>
+<b class="nc"><i>103</i>&nbsp;        right.setLayout(new GridLayout(biblatexMode ? 2 : 1, 2));</b>
+<i>104</i>&nbsp;
+<b class="nc"><i>105</i>&nbsp;        List&lt;String&gt; entryTypes = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>106</i>&nbsp;        for (String s : EntryTypes.getAllTypes(bibDatabaseMode)) {</b>
+<b class="nc"><i>107</i>&nbsp;            entryTypes.add(s);</b>
+<b class="nc"><i>108</i>&nbsp;        }</b>
+<i>109</i>&nbsp;
+<b class="nc"><i>110</i>&nbsp;        typeComp = new EntryTypeList(entryTypes, bibDatabaseMode);</b>
+<b class="nc"><i>111</i>&nbsp;        typeComp.addListSelectionListener(this);</b>
+<b class="nc"><i>112</i>&nbsp;        typeComp.addAdditionActionListener(e -&gt; typeComp.selectField(e.getActionCommand()));</b>
+<b class="nc"><i>113</i>&nbsp;        typeComp.addDefaultActionListener(new DefaultListener());</b>
+<b class="nc"><i>114</i>&nbsp;        typeComp.setListSelectionMode(ListSelectionModel.SINGLE_SELECTION);</b>
+<i>115</i>&nbsp;
+<i>116</i>&nbsp;        //typeComp.setEnabled(false);
+<b class="nc"><i>117</i>&nbsp;        reqComp = new FieldSetComponent(Localization.lang(&quot;Required fields&quot;), new ArrayList&lt;&gt;(), preset, true, true);</b>
+<b class="nc"><i>118</i>&nbsp;        reqComp.setEnabled(false);</b>
+<b class="nc"><i>119</i>&nbsp;        reqComp.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));</b>
+<b class="nc"><i>120</i>&nbsp;        ListDataListener dataListener = new DataListener();</b>
+<b class="nc"><i>121</i>&nbsp;        reqComp.addListDataListener(dataListener);</b>
+<b class="nc"><i>122</i>&nbsp;        optComp = new FieldSetComponent(Localization.lang(&quot;Optional fields&quot;), new ArrayList&lt;&gt;(), preset, true, true);</b>
+<b class="nc"><i>123</i>&nbsp;        optComp.setEnabled(false);</b>
+<b class="nc"><i>124</i>&nbsp;        optComp.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));</b>
+<b class="nc"><i>125</i>&nbsp;        optComp.addListDataListener(dataListener);</b>
+<b class="nc"><i>126</i>&nbsp;        right.add(reqComp);</b>
+<b class="nc"><i>127</i>&nbsp;        right.add(optComp);</b>
+<i>128</i>&nbsp;
+<b class="nc"><i>129</i>&nbsp;        if (biblatexMode) {</b>
+<b class="nc"><i>130</i>&nbsp;            optComp2 = new FieldSetComponent(Localization.lang(&quot;Optional fields&quot;) + &quot; 2&quot;, new ArrayList&lt;&gt;(), preset, true, true);</b>
+<b class="nc"><i>131</i>&nbsp;            optComp2.setEnabled(false);</b>
+<b class="nc"><i>132</i>&nbsp;            optComp2.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));</b>
+<b class="nc"><i>133</i>&nbsp;            optComp2.addListDataListener(dataListener);</b>
+<b class="nc"><i>134</i>&nbsp;            right.add(new JPanel());</b>
+<b class="nc"><i>135</i>&nbsp;            right.add(optComp2);</b>
+<i>136</i>&nbsp;        }
+<i>137</i>&nbsp;
+<i>138</i>&nbsp;        //right.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), Globals.lang(&quot;Fields&quot;)));
+<b class="nc"><i>139</i>&nbsp;        right.setBorder(BorderFactory.createEtchedBorder());</b>
+<b class="nc"><i>140</i>&nbsp;        ok = new JButton(Localization.lang(&quot;OK&quot;));</b>
+<b class="nc"><i>141</i>&nbsp;        cancel = new JButton(Localization.lang(&quot;Cancel&quot;));</b>
+<b class="nc"><i>142</i>&nbsp;        apply = new JButton(Localization.lang(&quot;Apply&quot;));</b>
+<b class="nc"><i>143</i>&nbsp;        ok.addActionListener(e -&gt; {</b>
+<b class="nc"><i>144</i>&nbsp;            applyChanges();</b>
+<b class="nc"><i>145</i>&nbsp;            dispose();</b>
+<b class="nc"><i>146</i>&nbsp;        });</b>
+<b class="nc"><i>147</i>&nbsp;        apply.addActionListener(e -&gt; applyChanges());</b>
+<b class="nc"><i>148</i>&nbsp;        cancel.addActionListener(e -&gt; dispose());</b>
+<b class="nc"><i>149</i>&nbsp;        ButtonBarBuilder bb = new ButtonBarBuilder(buttons);</b>
+<b class="nc"><i>150</i>&nbsp;        buttons.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));</b>
+<b class="nc"><i>151</i>&nbsp;        bb.addGlue();</b>
+<b class="nc"><i>152</i>&nbsp;        bb.addButton(ok);</b>
+<b class="nc"><i>153</i>&nbsp;        bb.addButton(apply);</b>
+<b class="nc"><i>154</i>&nbsp;        bb.addButton(cancel);</b>
+<b class="nc"><i>155</i>&nbsp;        bb.addGlue();</b>
+<i>156</i>&nbsp;
+<b class="nc"><i>157</i>&nbsp;        AbstractAction closeAction = new AbstractAction() {</b>
+<i>158</i>&nbsp;
+<i>159</i>&nbsp;            @Override
+<i>160</i>&nbsp;            public void actionPerformed(ActionEvent e) {
+<b class="nc"><i>161</i>&nbsp;                dispose();</b>
+<b class="nc"><i>162</i>&nbsp;            }</b>
+<i>163</i>&nbsp;        };
+<b class="nc"><i>164</i>&nbsp;        ActionMap am = main.getActionMap();</b>
+<b class="nc"><i>165</i>&nbsp;        InputMap im = main.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);</b>
+<b class="nc"><i>166</i>&nbsp;        im.put(Globals.getKeyPrefs().getKey(KeyBinding.CLOSE_DIALOG), &quot;close&quot;);</b>
+<b class="nc"><i>167</i>&nbsp;        am.put(&quot;close&quot;, closeAction);</b>
+<i>168</i>&nbsp;
+<i>169</i>&nbsp;        //con.fill = GridBagConstraints.BOTH;
+<i>170</i>&nbsp;        //con.weightx = 0.3;
+<i>171</i>&nbsp;        //con.weighty = 1;
+<i>172</i>&nbsp;        //gbl.setConstraints(typeComp, con);
+<b class="nc"><i>173</i>&nbsp;        main.add(typeComp, BorderLayout.WEST);</b>
+<b class="nc"><i>174</i>&nbsp;        main.add(right, BorderLayout.CENTER);</b>
+<b class="nc"><i>175</i>&nbsp;        main.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));</b>
+<b class="nc"><i>176</i>&nbsp;        pane.add(main, BorderLayout.CENTER);</b>
+<b class="nc"><i>177</i>&nbsp;        pane.add(buttons, BorderLayout.SOUTH);</b>
+<b class="nc"><i>178</i>&nbsp;        pack();</b>
+<b class="nc"><i>179</i>&nbsp;    }</b>
+<i>180</i>&nbsp;
+<i>181</i>&nbsp;    @Override
+<i>182</i>&nbsp;    public void valueChanged(ListSelectionEvent e) {
+<b class="nc"><i>183</i>&nbsp;        if (e.getValueIsAdjusting()) {</b>
+<b class="nc"><i>184</i>&nbsp;            return;</b>
+<i>185</i>&nbsp;        }
+<i>186</i>&nbsp;
+<b class="nc"><i>187</i>&nbsp;        if (lastSelected != null) {</b>
+<i>188</i>&nbsp;            // The entry type lastSelected is now unselected, so we store the current settings
+<i>189</i>&nbsp;            // for that type in our two maps.
+<b class="nc"><i>190</i>&nbsp;            reqLists.put(lastSelected, reqComp.getFields());</b>
+<b class="nc"><i>191</i>&nbsp;            optLists.put(lastSelected, optComp.getFields());</b>
+<b class="nc"><i>192</i>&nbsp;            if (biblatexMode) {</b>
+<b class="nc"><i>193</i>&nbsp;                opt2Lists.put(lastSelected, optComp2.getFields());</b>
+<i>194</i>&nbsp;            }
+<i>195</i>&nbsp;        }
+<i>196</i>&nbsp;
+<b class="nc"><i>197</i>&nbsp;        String selectedTypeName = typeComp.getFirstSelected();</b>
+<b class="nc"><i>198</i>&nbsp;        if (selectedTypeName == null) {</b>
+<b class="nc"><i>199</i>&nbsp;            return;</b>
+<i>200</i>&nbsp;        }
+<b class="nc"><i>201</i>&nbsp;        List&lt;String&gt; requiredFieldsSelectedType = reqLists.get(selectedTypeName);</b>
+<b class="nc"><i>202</i>&nbsp;        if (requiredFieldsSelectedType == null) {</b>
+<b class="nc"><i>203</i>&nbsp;            Optional&lt;EntryType&gt; type = EntryTypes.getType(selectedTypeName, bibDatabaseMode);</b>
+<b class="nc"><i>204</i>&nbsp;            if (type.isPresent()) {</b>
+<b class="nc"><i>205</i>&nbsp;                List&lt;String&gt; req = type.get().getRequiredFields();</b>
+<i>206</i>&nbsp;
+<i>207</i>&nbsp;                List&lt;String&gt; opt;
+<b class="nc"><i>208</i>&nbsp;                if (biblatexMode) {</b>
+<b class="nc"><i>209</i>&nbsp;                    opt = type.get().getPrimaryOptionalFields();</b>
+<i>210</i>&nbsp;
+<b class="nc"><i>211</i>&nbsp;                    List&lt;String&gt; opt2 = type.get().getSecondaryOptionalFields();</b>
+<i>212</i>&nbsp;
+<b class="nc"><i>213</i>&nbsp;                    optComp2.setFields(opt2);</b>
+<b class="nc"><i>214</i>&nbsp;                    optComp2.setEnabled(true);</b>
+<b class="nc"><i>215</i>&nbsp;                } else {</b>
+<b class="nc"><i>216</i>&nbsp;                    opt = type.get().getOptionalFields();</b>
+<i>217</i>&nbsp;                }
+<b class="nc"><i>218</i>&nbsp;                reqComp.setFields(req);</b>
+<b class="nc"><i>219</i>&nbsp;                reqComp.setEnabled(true);</b>
+<b class="nc"><i>220</i>&nbsp;                optComp.setFields(opt);</b>
+<b class="nc"><i>221</i>&nbsp;                optComp.setEnabled(true);</b>
+<b class="nc"><i>222</i>&nbsp;            } else {</b>
+<i>223</i>&nbsp;                // New entry
+<b class="nc"><i>224</i>&nbsp;                reqComp.setFields(new ArrayList&lt;&gt;());</b>
+<b class="nc"><i>225</i>&nbsp;                reqComp.setEnabled(true);</b>
+<b class="nc"><i>226</i>&nbsp;                optComp.setFields(new ArrayList&lt;&gt;());</b>
+<b class="nc"><i>227</i>&nbsp;                optComp.setEnabled(true);</b>
+<b class="nc"><i>228</i>&nbsp;                if (biblatexMode) {</b>
+<b class="nc"><i>229</i>&nbsp;                    optComp2.setFields(new ArrayList&lt;&gt;());</b>
+<b class="nc"><i>230</i>&nbsp;                    optComp2.setEnabled(true);</b>
+<i>231</i>&nbsp;                }
+<b class="nc"><i>232</i>&nbsp;                reqComp.requestFocus();</b>
+<i>233</i>&nbsp;            }
+<b class="nc"><i>234</i>&nbsp;        } else {</b>
+<b class="nc"><i>235</i>&nbsp;            reqComp.setFields(requiredFieldsSelectedType);</b>
+<b class="nc"><i>236</i>&nbsp;            optComp.setFields(optLists.get(selectedTypeName));</b>
+<b class="nc"><i>237</i>&nbsp;            if (biblatexMode) {</b>
+<b class="nc"><i>238</i>&nbsp;                optComp2.setFields(opt2Lists.get(selectedTypeName));</b>
+<i>239</i>&nbsp;            }
+<i>240</i>&nbsp;        }
+<i>241</i>&nbsp;
+<b class="nc"><i>242</i>&nbsp;        lastSelected = selectedTypeName;</b>
+<b class="nc"><i>243</i>&nbsp;        typeComp.enable(selectedTypeName, changed.contains(lastSelected) &amp;&amp; !defaulted.contains(lastSelected));</b>
+<b class="nc"><i>244</i>&nbsp;    }</b>
+<i>245</i>&nbsp;
+<i>246</i>&nbsp;    private void applyChanges() {
+<b class="nc"><i>247</i>&nbsp;        valueChanged(new ListSelectionEvent(new JList&lt;&gt;(), 0, 0, false));</b>
+<i>248</i>&nbsp;
+<b class="nc"><i>249</i>&nbsp;        List&lt;String&gt; actuallyChangedTypes = new ArrayList&lt;&gt;();</b>
+<i>250</i>&nbsp;
+<i>251</i>&nbsp;        // Iterate over our map of required fields, and list those types if necessary:
+<b class="nc"><i>252</i>&nbsp;        List&lt;String&gt; types = typeComp.getFields();</b>
+<b class="nc"><i>253</i>&nbsp;        for (Map.Entry&lt;String, List&lt;String&gt;&gt; stringListEntry : reqLists.entrySet()) {</b>
+<b class="nc"><i>254</i>&nbsp;            if (!types.contains(stringListEntry.getKey())) {</b>
+<b class="nc"><i>255</i>&nbsp;                continue;</b>
+<i>256</i>&nbsp;            }
+<i>257</i>&nbsp;
+<b class="nc"><i>258</i>&nbsp;            List&lt;String&gt; requiredFieldsList = stringListEntry.getValue();</b>
+<b class="nc"><i>259</i>&nbsp;            List&lt;String&gt; optionalFieldsList = optLists.get(stringListEntry.getKey());</b>
+<b class="nc"><i>260</i>&nbsp;            List&lt;String&gt; secondaryOptionalFieldsLists = opt2Lists.get(stringListEntry.getKey());</b>
+<i>261</i>&nbsp;
+<b class="nc"><i>262</i>&nbsp;            if (secondaryOptionalFieldsLists == null) {</b>
+<b class="nc"><i>263</i>&nbsp;                secondaryOptionalFieldsLists = new ArrayList&lt;&gt;(0);</b>
+<i>264</i>&nbsp;            }
+<i>265</i>&nbsp;
+<i>266</i>&nbsp;            // If this type is already existing, check if any changes have
+<i>267</i>&nbsp;            // been made
+<b class="nc"><i>268</i>&nbsp;            boolean changesMade = true;</b>
+<i>269</i>&nbsp;
+<b class="nc"><i>270</i>&nbsp;            if (defaulted.contains(stringListEntry.getKey())) {</b>
+<i>271</i>&nbsp;                // This type should be reverted to its default setup.
+<b class="nc"><i>272</i>&nbsp;                EntryTypes.removeType(stringListEntry.getKey(), bibDatabaseMode);</b>
+<i>273</i>&nbsp;
+<b class="nc"><i>274</i>&nbsp;                actuallyChangedTypes.add(stringListEntry.getKey().toLowerCase(Locale.ENGLISH));</b>
+<b class="nc"><i>275</i>&nbsp;                defaulted.remove(stringListEntry.getKey());</b>
+<b class="nc"><i>276</i>&nbsp;                continue;</b>
+<i>277</i>&nbsp;            }
+<i>278</i>&nbsp;
+<b class="nc"><i>279</i>&nbsp;            Optional&lt;EntryType&gt; oldType = EntryTypes.getType(stringListEntry.getKey(), bibDatabaseMode);</b>
+<b class="nc"><i>280</i>&nbsp;            if (oldType.isPresent()) {</b>
+<b class="nc"><i>281</i>&nbsp;                List&lt;String&gt; oldRequiredFieldsList = oldType.get().getRequiredFieldsFlat();</b>
+<b class="nc"><i>282</i>&nbsp;                List&lt;String&gt; oldOptionalFieldsList = oldType.get().getOptionalFields();</b>
+<b class="nc"><i>283</i>&nbsp;                if (biblatexMode) {</b>
+<b class="nc"><i>284</i>&nbsp;                    List&lt;String&gt; oldPrimaryOptionalFieldsLists = oldType.get().getPrimaryOptionalFields();</b>
+<b class="nc"><i>285</i>&nbsp;                    List&lt;String&gt; oldSecondaryOptionalFieldsList = oldType.get().getSecondaryOptionalFields();</b>
+<b class="nc"><i>286</i>&nbsp;                    if (equalLists(oldRequiredFieldsList, requiredFieldsList) &amp;&amp; equalLists(oldPrimaryOptionalFieldsLists, optionalFieldsList) &amp;&amp;</b>
+<b class="nc"><i>287</i>&nbsp;                            equalLists(oldSecondaryOptionalFieldsList, secondaryOptionalFieldsLists)) {</b>
+<b class="nc"><i>288</i>&nbsp;                        changesMade = false;</b>
+<i>289</i>&nbsp;                    }
+<b class="nc"><i>290</i>&nbsp;                } else if (equalLists(oldRequiredFieldsList, requiredFieldsList) &amp;&amp; equalLists(oldOptionalFieldsList, optionalFieldsList)) {</b>
+<b class="nc"><i>291</i>&nbsp;                    changesMade = false;</b>
+<i>292</i>&nbsp;                }
+<i>293</i>&nbsp;            }
+<i>294</i>&nbsp;
+<b class="nc"><i>295</i>&nbsp;            if (changesMade) {</b>
+<b class="nc"><i>296</i>&nbsp;                CustomEntryType customType = biblatexMode ?</b>
+<b class="nc"><i>297</i>&nbsp;                        new CustomEntryType(StringUtil.capitalizeFirst(stringListEntry.getKey()), requiredFieldsList, optionalFieldsList, secondaryOptionalFieldsLists) :</b>
+<b class="nc"><i>298</i>&nbsp;                        new CustomEntryType(StringUtil.capitalizeFirst(stringListEntry.getKey()), requiredFieldsList, optionalFieldsList);</b>
+<i>299</i>&nbsp;
+<b class="nc"><i>300</i>&nbsp;                EntryTypes.addOrModifyCustomEntryType(customType, bibDatabaseMode);</b>
+<b class="nc"><i>301</i>&nbsp;                actuallyChangedTypes.add(customType.getName().toLowerCase(Locale.ENGLISH));</b>
+<i>302</i>&nbsp;            }
+<b class="nc"><i>303</i>&nbsp;        }</b>
+<i>304</i>&nbsp;
+<i>305</i>&nbsp;        // update all affected entries if something has been changed
+<b class="nc"><i>306</i>&nbsp;        if(!actuallyChangedTypes.isEmpty()) {</b>
+<b class="nc"><i>307</i>&nbsp;            updateEntriesForChangedTypes(actuallyChangedTypes);</b>
+<i>308</i>&nbsp;        }
+<i>309</i>&nbsp;
+<b class="nc"><i>310</i>&nbsp;        Set&lt;String&gt; typesToRemove = new HashSet&lt;&gt;();</b>
+<b class="nc"><i>311</i>&nbsp;        for (String existingType : EntryTypes.getAllTypes(bibDatabaseMode)) {</b>
+<b class="nc"><i>312</i>&nbsp;            if (!types.contains(existingType)) {</b>
+<b class="nc"><i>313</i>&nbsp;                typesToRemove.add(existingType);</b>
+<i>314</i>&nbsp;            }
+<b class="nc"><i>315</i>&nbsp;        }</b>
+<i>316</i>&nbsp;
+<i>317</i>&nbsp;        // Remove those that should be removed:
+<b class="nc"><i>318</i>&nbsp;        if (!typesToRemove.isEmpty()) {</b>
+<b class="nc"><i>319</i>&nbsp;            for (String typeToRemove : typesToRemove) {</b>
+<b class="nc"><i>320</i>&nbsp;                deleteType(typeToRemove);</b>
+<b class="nc"><i>321</i>&nbsp;            }</b>
+<i>322</i>&nbsp;        }
+<i>323</i>&nbsp;
+<b class="nc"><i>324</i>&nbsp;        updateTables();</b>
+<b class="nc"><i>325</i>&nbsp;        CustomEntryTypesManager.saveCustomEntryTypes(Globals.prefs);</b>
+<b class="nc"><i>326</i>&nbsp;    }</b>
+<i>327</i>&nbsp;
+<i>328</i>&nbsp;    private void deleteType(String name) {
+<b class="nc"><i>329</i>&nbsp;        Optional&lt;EntryType&gt; type = EntryTypes.getType(name, bibDatabaseMode);</b>
+<i>330</i>&nbsp;
+<b class="nc"><i>331</i>&nbsp;        if (type.isPresent() &amp;&amp; (type.get() instanceof CustomEntryType)) {</b>
+<b class="nc"><i>332</i>&nbsp;            if (!EntryTypes.getStandardType(name, bibDatabaseMode).isPresent()) {</b>
+<b class="nc"><i>333</i>&nbsp;                int reply = JOptionPane.showConfirmDialog</b>
+<b class="nc"><i>334</i>&nbsp;                        (frame, Localization.lang(&quot;All entries of this &quot;</b>
+<i>335</i>&nbsp;                                        + &quot;type will be declared &quot;
+<i>336</i>&nbsp;                                        + &quot;typeless. Continue?&quot;),
+<b class="nc"><i>337</i>&nbsp;                                Localization.lang(&quot;Delete custom format&quot;) +</b>
+<b class="nc"><i>338</i>&nbsp;                                        &quot; &#39;&quot; + StringUtil.capitalizeFirst(name) + &#39;\&#39;&#39;, JOptionPane.YES_NO_OPTION,</b>
+<i>339</i>&nbsp;                                JOptionPane.WARNING_MESSAGE);
+<b class="nc"><i>340</i>&nbsp;                if (reply != JOptionPane.YES_OPTION) {</b>
+<b class="nc"><i>341</i>&nbsp;                    return;</b>
+<i>342</i>&nbsp;                }
+<i>343</i>&nbsp;            }
+<b class="nc"><i>344</i>&nbsp;            EntryTypes.removeType(name, bibDatabaseMode);</b>
+<b class="nc"><i>345</i>&nbsp;            updateEntriesForChangedTypes(Arrays.asList(name.toLowerCase(Locale.ENGLISH)));</b>
+<b class="nc"><i>346</i>&nbsp;            changed.remove(name);</b>
+<b class="nc"><i>347</i>&nbsp;            reqLists.remove(name);</b>
+<b class="nc"><i>348</i>&nbsp;            optLists.remove(name);</b>
+<b class="nc"><i>349</i>&nbsp;            if (biblatexMode) {</b>
+<b class="nc"><i>350</i>&nbsp;                opt2Lists.remove(name);</b>
+<i>351</i>&nbsp;            }
+<i>352</i>&nbsp;        }
+<b class="nc"><i>353</i>&nbsp;    }</b>
+<i>354</i>&nbsp;
+<i>355</i>&nbsp;    private static boolean equalLists(List&lt;String&gt; one, List&lt;String&gt; two) {
+<b class="nc"><i>356</i>&nbsp;        if ((one == null) &amp;&amp; (two == null)) {</b>
+<b class="nc"><i>357</i>&nbsp;            return true; // Both null.</b>
+<i>358</i>&nbsp;        }
+<b class="nc"><i>359</i>&nbsp;        if ((one == null) || (two == null)) {</b>
+<b class="nc"><i>360</i>&nbsp;            return false; // One of them null, the other not.</b>
+<i>361</i>&nbsp;        }
+<b class="nc"><i>362</i>&nbsp;        if (one.size() != two.size()) {</b>
+<b class="nc"><i>363</i>&nbsp;            return false; // Different length.</b>
+<i>364</i>&nbsp;        }
+<i>365</i>&nbsp;        // If we get here, we know that both are non-null, and that they have the same length.
+<b class="nc"><i>366</i>&nbsp;        for (int i = 0; i &lt; one.size(); i++) {</b>
+<b class="nc"><i>367</i>&nbsp;            if (!one.get(i).equals(two.get(i))) {</b>
+<b class="nc"><i>368</i>&nbsp;                return false;</b>
+<i>369</i>&nbsp;            }
+<i>370</i>&nbsp;        }
+<i>371</i>&nbsp;        // If we get here, all entries have matched.
+<b class="nc"><i>372</i>&nbsp;        return true;</b>
+<i>373</i>&nbsp;    }
+<i>374</i>&nbsp;
+<i>375</i>&nbsp;    private void updateEntriesForChangedTypes(List&lt;String&gt; actuallyChangedTypes) {
+<b class="nc"><i>376</i>&nbsp;        for (BasePanel bp : frame.getBasePanelList()) {</b>
+<i>377</i>&nbsp;            // get all affected entries
+<b class="nc"><i>378</i>&nbsp;            List&lt;BibEntry&gt; filtered = bp.getDatabase().getEntries().stream()</b>
+<b class="nc"><i>379</i>&nbsp;                    .filter(entry -&gt; actuallyChangedTypes.contains(entry.getType().toLowerCase(Locale.ENGLISH))).collect(Collectors.toList());</b>
+<i>380</i>&nbsp;
+<i>381</i>&nbsp;            // update all affected entries with new type
+<b class="nc"><i>382</i>&nbsp;            filtered.forEach(entry -&gt; EntryTypes.getType(entry.getType(), bibDatabaseMode).ifPresent(entry::setType));</b>
+<b class="nc"><i>383</i>&nbsp;        }</b>
+<b class="nc"><i>384</i>&nbsp;    }</b>
+<i>385</i>&nbsp;
+<i>386</i>&nbsp;    private void updateTables() {
+<b class="nc"><i>387</i>&nbsp;        for (BasePanel basePanel : frame.getBasePanelList()) {</b>
+<b class="nc"><i>388</i>&nbsp;            ((AbstractTableModel) basePanel.getMainTable().getModel()).fireTableDataChanged();</b>
+<b class="nc"><i>389</i>&nbsp;        }</b>
+<b class="nc"><i>390</i>&nbsp;    }</b>
+<i>391</i>&nbsp;
+<i>392</i>&nbsp;
+<i>393</i>&nbsp;    // DEFAULT button pressed. Remember that this entry should be reset to default,
+<i>394</i>&nbsp;    // unless changes are made later.
+<b class="nc"><i>395</i>&nbsp;    private class DefaultListener implements ActionListener {</b>
+<i>396</i>&nbsp;
+<i>397</i>&nbsp;        @Override
+<i>398</i>&nbsp;        public void actionPerformed(ActionEvent e) {
+<b class="nc"><i>399</i>&nbsp;            if (lastSelected == null) {</b>
+<b class="nc"><i>400</i>&nbsp;                return;</b>
+<i>401</i>&nbsp;            }
+<b class="nc"><i>402</i>&nbsp;            defaulted.add(lastSelected);</b>
+<i>403</i>&nbsp;
+<b class="nc"><i>404</i>&nbsp;            Optional&lt;EntryType&gt; type = EntryTypes.getStandardType(lastSelected, bibDatabaseMode);</b>
+<b class="nc"><i>405</i>&nbsp;            if (type.isPresent()) {</b>
+<b class="nc"><i>406</i>&nbsp;                List&lt;String&gt; of = type.get().getOptionalFields();</b>
+<b class="nc"><i>407</i>&nbsp;                List&lt;String&gt; req = type.get().getRequiredFields();</b>
+<b class="nc"><i>408</i>&nbsp;                List&lt;String&gt; opt1 = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>409</i>&nbsp;                List&lt;String&gt; opt2 = new ArrayList&lt;&gt;();</b>
+<i>410</i>&nbsp;
+<b class="nc"><i>411</i>&nbsp;                if (!(of.isEmpty())) {</b>
+<b class="nc"><i>412</i>&nbsp;                    if (biblatexMode) {</b>
+<b class="nc"><i>413</i>&nbsp;                        opt1 = type.get().getPrimaryOptionalFields();</b>
+<b class="nc"><i>414</i>&nbsp;                        opt2 = type.get().getSecondaryOptionalFields();</b>
+<i>415</i>&nbsp;                    } else {
+<b class="nc"><i>416</i>&nbsp;                        opt1 = of;</b>
+<i>417</i>&nbsp;                    }
+<i>418</i>&nbsp;                }
+<i>419</i>&nbsp;
+<b class="nc"><i>420</i>&nbsp;                reqComp.setFields(req);</b>
+<b class="nc"><i>421</i>&nbsp;                reqComp.setEnabled(true);</b>
+<b class="nc"><i>422</i>&nbsp;                optComp.setFields(opt1);</b>
+<b class="nc"><i>423</i>&nbsp;                if (biblatexMode) {</b>
+<b class="nc"><i>424</i>&nbsp;                    optComp2.setFields(opt2);</b>
+<i>425</i>&nbsp;                }
+<i>426</i>&nbsp;            }
+<b class="nc"><i>427</i>&nbsp;        }</b>
+<i>428</i>&nbsp;    }
+<i>429</i>&nbsp;
+<b class="nc"><i>430</i>&nbsp;    class DataListener implements ListDataListener {</b>
+<i>431</i>&nbsp;
+<i>432</i>&nbsp;        @Override
+<i>433</i>&nbsp;        public void intervalAdded(ListDataEvent e) {
+<b class="nc"><i>434</i>&nbsp;            record();</b>
+<b class="nc"><i>435</i>&nbsp;        }</b>
+<i>436</i>&nbsp;
+<i>437</i>&nbsp;        @Override
+<i>438</i>&nbsp;        public void intervalRemoved(ListDataEvent e) {
+<b class="nc"><i>439</i>&nbsp;            record();</b>
+<b class="nc"><i>440</i>&nbsp;        }</b>
+<i>441</i>&nbsp;
+<i>442</i>&nbsp;        @Override
+<i>443</i>&nbsp;        public void contentsChanged(ListDataEvent e) {
+<b class="nc"><i>444</i>&nbsp;            record();</b>
+<b class="nc"><i>445</i>&nbsp;        }</b>
+<i>446</i>&nbsp;
+<i>447</i>&nbsp;        private void record() {
+<b class="nc"><i>448</i>&nbsp;            if (lastSelected == null) {</b>
+<b class="nc"><i>449</i>&nbsp;                return;</b>
+<i>450</i>&nbsp;            }
+<b class="nc"><i>451</i>&nbsp;            defaulted.remove(lastSelected);</b>
+<b class="nc"><i>452</i>&nbsp;            changed.add(lastSelected);</b>
+<b class="nc"><i>453</i>&nbsp;            typeComp.enable(lastSelected, true);</b>
+<b class="nc"><i>454</i>&nbsp;        }</b>
+<i>455</i>&nbsp;
+<i>456</i>&nbsp;    }
+<i>457</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

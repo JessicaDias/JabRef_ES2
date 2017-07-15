@@ -1,0 +1,111 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: LocalizationKey</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.l10n</a> ]
+</div>
+
+<h1>Coverage Summary for Class: LocalizationKey (net.sf.jabref.logic.l10n)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">LocalizationKey</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    75%
+  </span>
+  <span class="absValue">
+    (3/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    71.4%
+  </span>
+  <span class="absValue">
+    (5/ 7)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.l10n;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.Objects;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;public class LocalizationKey {
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;    private final String key;
+<i>8</i>&nbsp;
+<b class="fc"><i>9</i>&nbsp;    public LocalizationKey(String key) {</b>
+<b class="fc"><i>10</i>&nbsp;        this.key = Objects.requireNonNull(key);</b>
+<b class="fc"><i>11</i>&nbsp;    }</b>
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;    public String getPropertiesKeyUnescaped() {
+<i>14</i>&nbsp;        // space, #, !, = and : are not allowed in properties file keys
+<b class="fc"><i>15</i>&nbsp;        return this.key.replace(&quot; &quot;, &quot;_&quot;);</b>
+<i>16</i>&nbsp;    }
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;    public String getPropertiesKey() {
+<i>19</i>&nbsp;        // space, #, !, = and : are not allowed in properties file keys (# and ! only at the beginning of the key but easier to escape every instance
+<b class="nc"><i>20</i>&nbsp;        return this.key.replace(&quot; &quot;, &quot;_&quot;).replace(&quot;#&quot;, &quot;\\#&quot;).replace(&quot;!&quot;, &quot;\\!&quot;).replace(&quot;=&quot;, &quot;\\=&quot;)</b>
+<b class="nc"><i>21</i>&nbsp;                .replace(&quot;:&quot;, &quot;\\:&quot;).replace(&quot;\\\\&quot;, &quot;\\&quot;);</b>
+<i>22</i>&nbsp;    }
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;    public String getTranslationValue() {
+<b class="fc"><i>25</i>&nbsp;        return this.key.replace(&quot;_&quot;, &quot; &quot;).replace(&quot;\\#&quot;, &quot;#&quot;).replace(&quot;\\!&quot;, &quot;!&quot;).replace(&quot;\\=&quot;, &quot;=&quot;).replace(&quot;\\:&quot;,</b>
+<i>26</i>&nbsp;                &quot;:&quot;);
+<i>27</i>&nbsp;    }
+<i>28</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,157 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Formatter</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.model.cleanup</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Formatter (net.sf.jabref.model.cleanup)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Formatter</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.model.cleanup;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;/**
+<i>4</i>&nbsp; * The Formatter is used for a Filter design-pattern. Implementing classes have to accept a String and returned a
+<i>5</i>&nbsp; * formatted version of it.
+<i>6</i>&nbsp; *
+<i>7</i>&nbsp; * Example:
+<i>8</i>&nbsp; *
+<i>9</i>&nbsp; * &quot;John von Neumann&quot; =&gt; &quot;von Neumann, John&quot;
+<i>10</i>&nbsp; *
+<i>11</i>&nbsp; */
+<i>12</i>&nbsp;public interface Formatter {
+<i>13</i>&nbsp;    /**
+<i>14</i>&nbsp;     * Returns a human readable name of the formatter usable for e.g. in the GUI
+<i>15</i>&nbsp;     *
+<i>16</i>&nbsp;     * @return the name of the formatter, always not null
+<i>17</i>&nbsp;     */
+<i>18</i>&nbsp;    String getName();
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;    /**
+<i>22</i>&nbsp;     * Returns a unique key for the formatter that can be used for its identification
+<i>23</i>&nbsp;     * @return the key of the formatter, always not null
+<i>24</i>&nbsp;     */
+<i>25</i>&nbsp;    String getKey();
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    /**
+<i>28</i>&nbsp;     * Formats a field value by with a particular formatter transformation.
+<i>29</i>&nbsp;     *
+<i>30</i>&nbsp;     * Calling this method with a null argument results in a NullPointerException.
+<i>31</i>&nbsp;     *
+<i>32</i>&nbsp;     * @param value the input String
+<i>33</i>&nbsp;     * @return the formatted output String
+<i>34</i>&nbsp;     */
+<i>35</i>&nbsp;    String format(String value);
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    /**
+<i>38</i>&nbsp;     * Returns a description of the formatter.
+<i>39</i>&nbsp;     *
+<i>40</i>&nbsp;     * @return the description string, always non empty
+<i>41</i>&nbsp;     */
+<i>42</i>&nbsp;    String getDescription();
+<i>43</i>&nbsp;
+<i>44</i>&nbsp;    /**
+<i>45</i>&nbsp;     * Returns an example input string of the formatter.
+<i>46</i>&nbsp;     * This example is used as input to the formatter to demonstrate its functionality
+<i>47</i>&nbsp;     *
+<i>48</i>&nbsp;     * @return the example input string, always non empty
+<i>49</i>&nbsp;     */
+<i>50</i>&nbsp;    String getExampleInput();
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;    /**
+<i>53</i>&nbsp;     * Returns a default hashcode of the formatter based on its key.
+<i>54</i>&nbsp;     *
+<i>55</i>&nbsp;     * @return the hash of the key of the formatter
+<i>56</i>&nbsp;     */
+<i>57</i>&nbsp;    default int defaultHashCode() {
+<b class="nc"><i>58</i>&nbsp;        return getKey().hashCode();</b>
+<i>59</i>&nbsp;    }
+<i>60</i>&nbsp;
+<i>61</i>&nbsp;    /**
+<i>62</i>&nbsp;     * Indicates whether some other object is the same formatter as this one based on the key.
+<i>63</i>&nbsp;     *
+<i>64</i>&nbsp;     * @param obj the object to compare the formatter to
+<i>65</i>&nbsp;     * @return true if the object is a formatter with the same key
+<i>66</i>&nbsp;     */
+<i>67</i>&nbsp;    default boolean defaultEquals(Object obj) {
+<b class="nc"><i>68</i>&nbsp;        if(obj instanceof Formatter) {</b>
+<b class="nc"><i>69</i>&nbsp;            return getKey().equals(((Formatter)obj).getKey());</b>
+<i>70</i>&nbsp;        } else {
+<b class="nc"><i>71</i>&nbsp;            return false;</b>
+<i>72</i>&nbsp;        }
+<i>73</i>&nbsp;    }
+<i>74</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

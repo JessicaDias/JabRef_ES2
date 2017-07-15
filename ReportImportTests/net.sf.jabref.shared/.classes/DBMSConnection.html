@@ -1,0 +1,156 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: DBMSConnection</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.shared</a> ]
+</div>
+
+<h1>Coverage Summary for Class: DBMSConnection (net.sf.jabref.shared)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DBMSConnection</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 25)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.shared;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.sql.Connection;
+<i>4</i>&nbsp;import java.sql.DriverManager;
+<i>5</i>&nbsp;import java.sql.SQLException;
+<i>6</i>&nbsp;import java.util.HashSet;
+<i>7</i>&nbsp;import java.util.Set;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>10</i>&nbsp;import net.sf.jabref.shared.exception.InvalidDBMSConnectionPropertiesException;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;import org.apache.commons.logging.Log;
+<i>13</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;public class DBMSConnection {
+<i>16</i>&nbsp;
+<b class="nc"><i>17</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(DBMSConnection.class);</b>
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;    private final Connection connection;
+<i>20</i>&nbsp;    private final DBMSConnectionProperties properties;
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;
+<b class="nc"><i>23</i>&nbsp;    public DBMSConnection(DBMSConnectionProperties properties) throws SQLException, InvalidDBMSConnectionPropertiesException {</b>
+<i>24</i>&nbsp;
+<b class="nc"><i>25</i>&nbsp;        if (!properties.isValid()) {</b>
+<b class="nc"><i>26</i>&nbsp;            throw new InvalidDBMSConnectionPropertiesException();</b>
+<i>27</i>&nbsp;        }
+<b class="nc"><i>28</i>&nbsp;        this.properties = properties;</b>
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;        try {
+<b class="nc"><i>31</i>&nbsp;            DriverManager.setLoginTimeout(3);</b>
+<i>32</i>&nbsp;            // ensure that all SQL drivers are loaded - source: http://stackoverflow.com/a/22384826/873282
+<i>33</i>&nbsp;            // we use the side effect of getAvailableDBMSTypes() - it loads all available drivers
+<b class="nc"><i>34</i>&nbsp;            DBMSConnection.getAvailableDBMSTypes();</b>
+<i>35</i>&nbsp;
+<b class="nc"><i>36</i>&nbsp;            this.connection = DriverManager.getConnection(</b>
+<b class="nc"><i>37</i>&nbsp;                    properties.getType().getUrl(properties.getHost(), properties.getPort(), properties.getDatabase()),</b>
+<b class="nc"><i>38</i>&nbsp;                    properties.getUser(), properties.getPassword());</b>
+<b class="nc"><i>39</i>&nbsp;        } catch (SQLException e) {</b>
+<i>40</i>&nbsp;            // Some systems like PostgreSQL retrieves 0 to every exception.
+<i>41</i>&nbsp;            // Therefore a stable error determination is not possible.
+<b class="nc"><i>42</i>&nbsp;            LOGGER.error(&quot;Could not connect to database: &quot; + e.getMessage() + &quot; - Error code: &quot; + e.getErrorCode());</b>
+<i>43</i>&nbsp;
+<b class="nc"><i>44</i>&nbsp;            throw e;</b>
+<b class="nc"><i>45</i>&nbsp;        }</b>
+<b class="nc"><i>46</i>&nbsp;    }</b>
+<i>47</i>&nbsp;
+<i>48</i>&nbsp;    public Connection getConnection() {
+<b class="nc"><i>49</i>&nbsp;        return this.connection;</b>
+<i>50</i>&nbsp;    }
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;    public DBMSConnectionProperties getProperties() {
+<b class="nc"><i>53</i>&nbsp;        return this.properties;</b>
+<i>54</i>&nbsp;    }
+<i>55</i>&nbsp;
+<i>56</i>&nbsp;    /**
+<i>57</i>&nbsp;     * Returns a Set of {@link DBMSType} which is supported by available drivers.
+<i>58</i>&nbsp;     */
+<i>59</i>&nbsp;    public static Set&lt;DBMSType&gt; getAvailableDBMSTypes() {
+<b class="nc"><i>60</i>&nbsp;        Set&lt;DBMSType&gt; dbmsTypes = new HashSet&lt;&gt;();</b>
+<i>61</i>&nbsp;
+<b class="nc"><i>62</i>&nbsp;        for (DBMSType dbms : DBMSType.values()) {</b>
+<i>63</i>&nbsp;            try {
+<b class="nc"><i>64</i>&nbsp;                Class.forName(dbms.getDriverClassPath());</b>
+<b class="nc"><i>65</i>&nbsp;                dbmsTypes.add(dbms);</b>
+<b class="nc"><i>66</i>&nbsp;            } catch (ClassNotFoundException e) {</b>
+<i>67</i>&nbsp;                // In case that the driver is not available do not perform tests for this system.
+<b class="nc"><i>68</i>&nbsp;                LOGGER.info(Localization.lang(&quot;%0 driver not available.&quot;, dbms.toString()));</b>
+<b class="nc"><i>69</i>&nbsp;            }</b>
+<i>70</i>&nbsp;        }
+<b class="nc"><i>71</i>&nbsp;        return dbmsTypes;</b>
+<i>72</i>&nbsp;    }
+<i>73</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

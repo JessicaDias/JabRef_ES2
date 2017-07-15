@@ -1,0 +1,283 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ExternalTab</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.preftabs</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ExternalTab (net.sf.jabref.gui.preftabs)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ExternalTab</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 104)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.preftabs;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.BorderLayout;
+<i>4</i>&nbsp;import java.awt.GridBagConstraints;
+<i>5</i>&nbsp;import java.awt.GridBagLayout;
+<i>6</i>&nbsp;import java.awt.GridLayout;
+<i>7</i>&nbsp;import java.awt.Insets;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;import javax.swing.BorderFactory;
+<i>10</i>&nbsp;import javax.swing.ButtonGroup;
+<i>11</i>&nbsp;import javax.swing.JButton;
+<i>12</i>&nbsp;import javax.swing.JCheckBox;
+<i>13</i>&nbsp;import javax.swing.JFileChooser;
+<i>14</i>&nbsp;import javax.swing.JLabel;
+<i>15</i>&nbsp;import javax.swing.JPanel;
+<i>16</i>&nbsp;import javax.swing.JRadioButton;
+<i>17</i>&nbsp;import javax.swing.JTextField;
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;import net.sf.jabref.Globals;
+<i>20</i>&nbsp;import net.sf.jabref.gui.JabRefFrame;
+<i>21</i>&nbsp;import net.sf.jabref.gui.externalfiletype.ExternalFileTypeEditor;
+<i>22</i>&nbsp;import net.sf.jabref.gui.push.PushToApplication;
+<i>23</i>&nbsp;import net.sf.jabref.gui.push.PushToApplicationButton;
+<i>24</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>25</i>&nbsp;import net.sf.jabref.preferences.JabRefPreferences;
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;import com.jgoodies.forms.builder.DefaultFormBuilder;
+<i>28</i>&nbsp;import com.jgoodies.forms.layout.FormLayout;
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;class ExternalTab extends JPanel implements PrefsTab {
+<i>31</i>&nbsp;    private final JabRefPreferences prefs;
+<i>32</i>&nbsp;
+<i>33</i>&nbsp;    private final JabRefFrame frame;
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    private final JTextField emailSubject;
+<i>36</i>&nbsp;    private final JTextField citeCommand;
+<i>37</i>&nbsp;    private final JCheckBox openFoldersOfAttachedFiles;
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;    private final JRadioButton defaultConsole;
+<i>40</i>&nbsp;    private final JRadioButton executeConsole;
+<i>41</i>&nbsp;    private final JTextField consoleCommand;
+<i>42</i>&nbsp;    private final JButton browseButton;
+<i>43</i>&nbsp;
+<i>44</i>&nbsp;
+<b class="nc"><i>45</i>&nbsp;    public ExternalTab(JabRefFrame frame, PreferencesDialog prefsDiag, JabRefPreferences prefs) {</b>
+<b class="nc"><i>46</i>&nbsp;        this.prefs = prefs;</b>
+<b class="nc"><i>47</i>&nbsp;        this.frame = frame;</b>
+<b class="nc"><i>48</i>&nbsp;        setLayout(new BorderLayout());</b>
+<i>49</i>&nbsp;
+<b class="nc"><i>50</i>&nbsp;        JButton editFileTypes = new JButton(Localization.lang(&quot;Manage external file types&quot;));</b>
+<b class="nc"><i>51</i>&nbsp;        citeCommand = new JTextField(25);</b>
+<b class="nc"><i>52</i>&nbsp;        editFileTypes.addActionListener(ExternalFileTypeEditor.getAction(prefsDiag));</b>
+<i>53</i>&nbsp;
+<i>54</i>&nbsp;
+<b class="nc"><i>55</i>&nbsp;        defaultConsole = new JRadioButton(Localization.lang(&quot;Use default terminal emulator&quot;));</b>
+<b class="nc"><i>56</i>&nbsp;        executeConsole = new JRadioButton(Localization.lang(&quot;Execute command&quot;) + &quot;:&quot;);</b>
+<b class="nc"><i>57</i>&nbsp;        consoleCommand = new JTextField();</b>
+<b class="nc"><i>58</i>&nbsp;        browseButton = new JButton(Localization.lang(&quot;Browse&quot;));</b>
+<i>59</i>&nbsp;
+<b class="nc"><i>60</i>&nbsp;        JLabel commandDescription = new JLabel(Localization.lang(</b>
+<i>61</i>&nbsp;                &quot;Note: Use the placeholder %0 for the location of the opened database file.&quot;, &quot;%DIR&quot;));
+<i>62</i>&nbsp;
+<b class="nc"><i>63</i>&nbsp;        ButtonGroup consoleOptions = new ButtonGroup();</b>
+<b class="nc"><i>64</i>&nbsp;        consoleOptions.add(defaultConsole);</b>
+<b class="nc"><i>65</i>&nbsp;        consoleOptions.add(executeConsole);</b>
+<i>66</i>&nbsp;
+<b class="nc"><i>67</i>&nbsp;        JPanel consoleOptionPanel = new JPanel(new GridBagLayout());</b>
+<b class="nc"><i>68</i>&nbsp;        GridBagConstraints layoutConstraints = new GridBagConstraints();</b>
+<i>69</i>&nbsp;
+<b class="nc"><i>70</i>&nbsp;        defaultConsole.addActionListener(e -&gt; updateExecuteConsoleButtonAndFieldEnabledState());</b>
+<b class="nc"><i>71</i>&nbsp;        executeConsole.addActionListener(e -&gt; updateExecuteConsoleButtonAndFieldEnabledState());</b>
+<b class="nc"><i>72</i>&nbsp;        browseButton.addActionListener(e -&gt; showConsoleChooser());</b>
+<i>73</i>&nbsp;
+<b class="nc"><i>74</i>&nbsp;        layoutConstraints.fill = GridBagConstraints.HORIZONTAL;</b>
+<i>75</i>&nbsp;
+<b class="nc"><i>76</i>&nbsp;        layoutConstraints.gridx = 0;</b>
+<b class="nc"><i>77</i>&nbsp;        layoutConstraints.gridy = 0;</b>
+<b class="nc"><i>78</i>&nbsp;        layoutConstraints.insets = new Insets(0, 0, 6, 0);</b>
+<b class="nc"><i>79</i>&nbsp;        consoleOptionPanel.add(defaultConsole, layoutConstraints);</b>
+<i>80</i>&nbsp;
+<b class="nc"><i>81</i>&nbsp;        layoutConstraints.gridy = 1;</b>
+<b class="nc"><i>82</i>&nbsp;        consoleOptionPanel.add(executeConsole, layoutConstraints);</b>
+<i>83</i>&nbsp;
+<b class="nc"><i>84</i>&nbsp;        layoutConstraints.gridx = 1;</b>
+<b class="nc"><i>85</i>&nbsp;        consoleOptionPanel.add(consoleCommand, layoutConstraints);</b>
+<i>86</i>&nbsp;
+<b class="nc"><i>87</i>&nbsp;        layoutConstraints.gridx = 2;</b>
+<b class="nc"><i>88</i>&nbsp;        layoutConstraints.insets = new Insets(0, 4, 6, 0);</b>
+<b class="nc"><i>89</i>&nbsp;        consoleOptionPanel.add(browseButton, layoutConstraints);</b>
+<i>90</i>&nbsp;
+<b class="nc"><i>91</i>&nbsp;        layoutConstraints.gridx = 1;</b>
+<b class="nc"><i>92</i>&nbsp;        layoutConstraints.gridy = 2;</b>
+<b class="nc"><i>93</i>&nbsp;        consoleOptionPanel.add(commandDescription, layoutConstraints);</b>
+<i>94</i>&nbsp;
+<b class="nc"><i>95</i>&nbsp;        FormLayout layout = new FormLayout(</b>
+<i>96</i>&nbsp;                &quot;1dlu, 8dlu, left:pref, 4dlu, fill:150dlu, 4dlu, fill:pref&quot;, &quot;&quot;);
+<i>97</i>&nbsp;
+<b class="nc"><i>98</i>&nbsp;        DefaultFormBuilder builder = new DefaultFormBuilder(layout);</b>
+<i>99</i>&nbsp;
+<b class="nc"><i>100</i>&nbsp;        builder.appendSeparator(Localization.lang(&quot;Sending of emails&quot;));</b>
+<b class="nc"><i>101</i>&nbsp;        builder.append(new JPanel());</b>
+<b class="nc"><i>102</i>&nbsp;        JLabel lab = new JLabel(Localization.lang(&quot;Subject for sending an email with references&quot;).concat(&quot;:&quot;));</b>
+<b class="nc"><i>103</i>&nbsp;        builder.append(lab);</b>
+<b class="nc"><i>104</i>&nbsp;        emailSubject = new JTextField(25);</b>
+<b class="nc"><i>105</i>&nbsp;        builder.append(emailSubject);</b>
+<b class="nc"><i>106</i>&nbsp;        builder.nextLine();</b>
+<b class="nc"><i>107</i>&nbsp;        builder.append(new JPanel());</b>
+<b class="nc"><i>108</i>&nbsp;        openFoldersOfAttachedFiles = new JCheckBox(Localization.lang(&quot;Automatically open folders of attached files&quot;));</b>
+<b class="nc"><i>109</i>&nbsp;        builder.append(openFoldersOfAttachedFiles);</b>
+<b class="nc"><i>110</i>&nbsp;        builder.nextLine();</b>
+<i>111</i>&nbsp;
+<b class="nc"><i>112</i>&nbsp;        builder.appendSeparator(Localization.lang(&quot;External programs&quot;));</b>
+<b class="nc"><i>113</i>&nbsp;        builder.nextLine();</b>
+<i>114</i>&nbsp;
+<b class="nc"><i>115</i>&nbsp;        JPanel butpan = new JPanel();</b>
+<b class="nc"><i>116</i>&nbsp;        butpan.setLayout(new GridLayout(3, 3));</b>
+<b class="nc"><i>117</i>&nbsp;        for (PushToApplication pushToApplication : frame.getPushApplications().getApplications()) {</b>
+<b class="nc"><i>118</i>&nbsp;            addSettingsButton(pushToApplication, butpan);</b>
+<b class="nc"><i>119</i>&nbsp;        }</b>
+<b class="nc"><i>120</i>&nbsp;        builder.append(new JPanel());</b>
+<b class="nc"><i>121</i>&nbsp;        builder.append(butpan, 3);</b>
+<i>122</i>&nbsp;
+<b class="nc"><i>123</i>&nbsp;        builder.nextLine();</b>
+<b class="nc"><i>124</i>&nbsp;        lab = new JLabel(Localization.lang(&quot;Cite command&quot;) + &#39;:&#39;);</b>
+<b class="nc"><i>125</i>&nbsp;        JPanel pan = new JPanel();</b>
+<b class="nc"><i>126</i>&nbsp;        builder.append(pan);</b>
+<b class="nc"><i>127</i>&nbsp;        builder.append(lab);</b>
+<b class="nc"><i>128</i>&nbsp;        builder.append(citeCommand);</b>
+<i>129</i>&nbsp;
+<b class="nc"><i>130</i>&nbsp;        builder.nextLine();</b>
+<b class="nc"><i>131</i>&nbsp;        builder.append(pan);</b>
+<b class="nc"><i>132</i>&nbsp;        builder.append(editFileTypes);</b>
+<b class="nc"><i>133</i>&nbsp;        builder.nextLine();</b>
+<i>134</i>&nbsp;
+<b class="nc"><i>135</i>&nbsp;        builder.appendSeparator(Localization.lang(&quot;Open console&quot;));</b>
+<b class="nc"><i>136</i>&nbsp;        builder.nextLine();</b>
+<b class="nc"><i>137</i>&nbsp;        builder.append(new JPanel());</b>
+<b class="nc"><i>138</i>&nbsp;        builder.append(consoleOptionPanel);</b>
+<i>139</i>&nbsp;
+<b class="nc"><i>140</i>&nbsp;        pan = builder.getPanel();</b>
+<b class="nc"><i>141</i>&nbsp;        pan.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));</b>
+<b class="nc"><i>142</i>&nbsp;        add(pan, BorderLayout.CENTER);</b>
+<i>143</i>&nbsp;
+<b class="nc"><i>144</i>&nbsp;    }</b>
+<i>145</i>&nbsp;
+<i>146</i>&nbsp;    private void addSettingsButton(final PushToApplication pt, JPanel p) {
+<b class="nc"><i>147</i>&nbsp;        JButton button = new JButton(Localization.lang(&quot;Settings for %0&quot;, pt.getApplicationName()),</b>
+<b class="nc"><i>148</i>&nbsp;                pt.getIcon());</b>
+<b class="nc"><i>149</i>&nbsp;        button.addActionListener(e -&gt; PushToApplicationButton.showSettingsDialog(frame, pt, pt.getSettingsPanel()));</b>
+<b class="nc"><i>150</i>&nbsp;        p.add(button);</b>
+<b class="nc"><i>151</i>&nbsp;    }</b>
+<i>152</i>&nbsp;
+<i>153</i>&nbsp;    @Override
+<i>154</i>&nbsp;    public void setValues() {
+<i>155</i>&nbsp;
+<b class="nc"><i>156</i>&nbsp;        emailSubject.setText(prefs.get(JabRefPreferences.EMAIL_SUBJECT));</b>
+<b class="nc"><i>157</i>&nbsp;        openFoldersOfAttachedFiles.setSelected(prefs.getBoolean(JabRefPreferences.OPEN_FOLDERS_OF_ATTACHED_FILES));</b>
+<i>158</i>&nbsp;
+<b class="nc"><i>159</i>&nbsp;        citeCommand.setText(prefs.get(JabRefPreferences.CITE_COMMAND));</b>
+<i>160</i>&nbsp;
+<b class="nc"><i>161</i>&nbsp;        defaultConsole.setSelected(Globals.prefs.getBoolean(JabRefPreferences.USE_DEFAULT_CONSOLE_APPLICATION));</b>
+<b class="nc"><i>162</i>&nbsp;        executeConsole.setSelected(!Globals.prefs.getBoolean(JabRefPreferences.USE_DEFAULT_CONSOLE_APPLICATION));</b>
+<i>163</i>&nbsp;
+<b class="nc"><i>164</i>&nbsp;        consoleCommand.setText(Globals.prefs.get(JabRefPreferences.CONSOLE_COMMAND));</b>
+<i>165</i>&nbsp;
+<b class="nc"><i>166</i>&nbsp;        updateExecuteConsoleButtonAndFieldEnabledState();</b>
+<b class="nc"><i>167</i>&nbsp;    }</b>
+<i>168</i>&nbsp;
+<i>169</i>&nbsp;    @Override
+<i>170</i>&nbsp;    public void storeSettings() {
+<b class="nc"><i>171</i>&nbsp;        prefs.put(JabRefPreferences.EMAIL_SUBJECT, emailSubject.getText());</b>
+<b class="nc"><i>172</i>&nbsp;        prefs.putBoolean(JabRefPreferences.OPEN_FOLDERS_OF_ATTACHED_FILES, openFoldersOfAttachedFiles.isSelected());</b>
+<b class="nc"><i>173</i>&nbsp;        prefs.put(JabRefPreferences.CITE_COMMAND, citeCommand.getText());</b>
+<b class="nc"><i>174</i>&nbsp;        prefs.putBoolean(JabRefPreferences.USE_DEFAULT_CONSOLE_APPLICATION, defaultConsole.isSelected());</b>
+<b class="nc"><i>175</i>&nbsp;        prefs.put(JabRefPreferences.CONSOLE_COMMAND, consoleCommand.getText());</b>
+<b class="nc"><i>176</i>&nbsp;    }</b>
+<i>177</i>&nbsp;
+<i>178</i>&nbsp;    @Override
+<i>179</i>&nbsp;    public boolean validateSettings() {
+<b class="nc"><i>180</i>&nbsp;        return true;</b>
+<i>181</i>&nbsp;    }
+<i>182</i>&nbsp;
+<i>183</i>&nbsp;    @Override
+<i>184</i>&nbsp;    public String getTabName() {
+<b class="nc"><i>185</i>&nbsp;        return Localization.lang(&quot;External programs&quot;);</b>
+<i>186</i>&nbsp;    }
+<i>187</i>&nbsp;
+<i>188</i>&nbsp;    private void updateExecuteConsoleButtonAndFieldEnabledState() {
+<b class="nc"><i>189</i>&nbsp;        browseButton.setEnabled(executeConsole.isSelected());</b>
+<b class="nc"><i>190</i>&nbsp;        consoleCommand.setEnabled(executeConsole.isSelected());</b>
+<b class="nc"><i>191</i>&nbsp;    }</b>
+<i>192</i>&nbsp;
+<i>193</i>&nbsp;    private void showConsoleChooser() {
+<b class="nc"><i>194</i>&nbsp;        JFileChooser consoleChooser = new JFileChooser();</b>
+<b class="nc"><i>195</i>&nbsp;        int answer = consoleChooser.showOpenDialog(ExternalTab.this);</b>
+<b class="nc"><i>196</i>&nbsp;        if (answer == JFileChooser.APPROVE_OPTION) {</b>
+<b class="nc"><i>197</i>&nbsp;            consoleCommand.setText(consoleChooser.getSelectedFile().getAbsolutePath());</b>
+<i>198</i>&nbsp;        }
+<b class="nc"><i>199</i>&nbsp;    }</b>
+<i>200</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,171 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Linux</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.desktop.os</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Linux (net.sf.jabref.gui.desktop.os)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Linux</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    33.3%
+  </span>
+  <span class="absValue">
+    (2/ 6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    5.1%
+  </span>
+  <span class="absValue">
+    (2/ 39)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.desktop.os;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.BufferedReader;
+<i>4</i>&nbsp;import java.io.File;
+<i>5</i>&nbsp;import java.io.IOException;
+<i>6</i>&nbsp;import java.io.InputStreamReader;
+<i>7</i>&nbsp;import java.nio.file.Paths;
+<i>8</i>&nbsp;import java.util.Optional;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;import net.sf.jabref.gui.externalfiletype.ExternalFileType;
+<i>11</i>&nbsp;import net.sf.jabref.gui.externalfiletype.ExternalFileTypes;
+<i>12</i>&nbsp;
+<b class="fc"><i>13</i>&nbsp;public class Linux implements NativeDesktop {</b>
+<i>14</i>&nbsp;    @Override
+<i>15</i>&nbsp;    public void openFile(String filePath, String fileType) throws IOException {
+<b class="nc"><i>16</i>&nbsp;        Optional&lt;ExternalFileType&gt; type = ExternalFileTypes.getInstance().getExternalFileTypeByExt(fileType);</b>
+<i>17</i>&nbsp;        String viewer;
+<i>18</i>&nbsp;
+<b class="nc"><i>19</i>&nbsp;        if (type.isPresent() &amp;&amp; !type.get().getOpenWithApplication().isEmpty()) {</b>
+<b class="nc"><i>20</i>&nbsp;            viewer = type.get().getOpenWithApplication();</b>
+<i>21</i>&nbsp;        } else {
+<b class="nc"><i>22</i>&nbsp;            viewer = &quot;xdg-open&quot;;</b>
+<i>23</i>&nbsp;        }
+<b class="nc"><i>24</i>&nbsp;        String[] cmdArray = { viewer, filePath };</b>
+<b class="nc"><i>25</i>&nbsp;        Runtime.getRuntime().exec(cmdArray);</b>
+<b class="nc"><i>26</i>&nbsp;    }</b>
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;    @Override
+<i>29</i>&nbsp;    public void openFileWithApplication(String filePath, String application) throws IOException {
+<i>30</i>&nbsp;        // Use the given app if specified, and the universal &quot;xdg-open&quot; otherwise:
+<i>31</i>&nbsp;        String[] openWith;
+<b class="nc"><i>32</i>&nbsp;        if ((application != null) &amp;&amp; !application.isEmpty()) {</b>
+<b class="nc"><i>33</i>&nbsp;            openWith = application.split(&quot; &quot;);</b>
+<i>34</i>&nbsp;        } else {
+<b class="nc"><i>35</i>&nbsp;            openWith = new String[] {&quot;xdg-open&quot;};</b>
+<i>36</i>&nbsp;        }
+<i>37</i>&nbsp;
+<b class="nc"><i>38</i>&nbsp;        String[] cmdArray = new String[openWith.length + 1];</b>
+<b class="nc"><i>39</i>&nbsp;        System.arraycopy(openWith, 0, cmdArray, 0, openWith.length);</b>
+<b class="nc"><i>40</i>&nbsp;        cmdArray[cmdArray.length - 1] = filePath;</b>
+<b class="nc"><i>41</i>&nbsp;        Runtime.getRuntime().exec(cmdArray);</b>
+<b class="nc"><i>42</i>&nbsp;    }</b>
+<i>43</i>&nbsp;
+<i>44</i>&nbsp;    @Override
+<i>45</i>&nbsp;    public void openFolderAndSelectFile(String filePath) throws IOException {
+<b class="nc"><i>46</i>&nbsp;        String desktopSession = System.getenv(&quot;DESKTOP_SESSION&quot;).toLowerCase();</b>
+<i>47</i>&nbsp;
+<i>48</i>&nbsp;        String cmd;
+<i>49</i>&nbsp;
+<b class="nc"><i>50</i>&nbsp;        if (desktopSession.contains(&quot;gnome&quot;)) {</b>
+<b class="nc"><i>51</i>&nbsp;            cmd = &quot;nautilus &quot; + filePath;</b>
+<b class="nc"><i>52</i>&nbsp;        } else if (desktopSession.contains(&quot;kde&quot;)) {</b>
+<b class="nc"><i>53</i>&nbsp;            cmd = &quot;dolphin --select &quot; + filePath;</b>
+<i>54</i>&nbsp;        } else {
+<b class="nc"><i>55</i>&nbsp;            cmd = &quot;xdg-open &quot; + Paths.get(filePath).toAbsolutePath().getParent().toString();</b>
+<i>56</i>&nbsp;        }
+<i>57</i>&nbsp;
+<b class="nc"><i>58</i>&nbsp;        Runtime.getRuntime().exec(cmd);</b>
+<b class="nc"><i>59</i>&nbsp;    }</b>
+<i>60</i>&nbsp;
+<i>61</i>&nbsp;    @Override
+<i>62</i>&nbsp;    public void openConsole(String absolutePath) throws IOException {
+<b class="nc"><i>63</i>&nbsp;        Runtime runtime = Runtime.getRuntime();</b>
+<b class="nc"><i>64</i>&nbsp;        Process p = runtime.exec(&quot;readlink /etc/alternatives/x-terminal-emulator&quot;);</b>
+<b class="nc"><i>65</i>&nbsp;        BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));</b>
+<i>66</i>&nbsp;
+<b class="nc"><i>67</i>&nbsp;        String emulatorName = reader.readLine();</b>
+<i>68</i>&nbsp;
+<b class="nc"><i>69</i>&nbsp;        if (emulatorName != null) {</b>
+<b class="nc"><i>70</i>&nbsp;            emulatorName = emulatorName.substring(emulatorName.lastIndexOf(File.separator) + 1);</b>
+<i>71</i>&nbsp;
+<b class="nc"><i>72</i>&nbsp;            if (emulatorName.contains(&quot;gnome&quot;)) {</b>
+<b class="nc"><i>73</i>&nbsp;                runtime.exec(&quot;gnome-terminal --working-directory=&quot; + absolutePath);</b>
+<b class="nc"><i>74</i>&nbsp;            } else if (emulatorName.contains(&quot;xfce4&quot;)) {</b>
+<b class="nc"><i>75</i>&nbsp;                runtime.exec(&quot;xfce4-terminal --working-directory=&quot; + absolutePath);</b>
+<b class="nc"><i>76</i>&nbsp;            } else if (emulatorName.contains(&quot;konsole&quot;)) {</b>
+<b class="nc"><i>77</i>&nbsp;                runtime.exec(&quot;konsole --workdir=&quot; + absolutePath);</b>
+<i>78</i>&nbsp;            } else {
+<b class="nc"><i>79</i>&nbsp;                runtime.exec(emulatorName, null, new File(absolutePath));</b>
+<i>80</i>&nbsp;            }
+<i>81</i>&nbsp;        }
+<b class="nc"><i>82</i>&nbsp;    }</b>
+<i>83</i>&nbsp;
+<i>84</i>&nbsp;    @Override
+<i>85</i>&nbsp;    public String detectProgramPath(String programName, String directoryName) {
+<b class="fc"><i>86</i>&nbsp;        return programName;</b>
+<i>87</i>&nbsp;    }
+<i>88</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

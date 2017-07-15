@@ -1,0 +1,336 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: FileLinksUpgradeWarning</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.migrations</a> ]
+</div>
+
+<h1>Coverage Summary for Class: FileLinksUpgradeWarning (net.sf.jabref.migrations)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">FileLinksUpgradeWarning</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 100)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.migrations;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.List;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;import javax.swing.JButton;
+<i>6</i>&nbsp;import javax.swing.JCheckBox;
+<i>7</i>&nbsp;import javax.swing.JLabel;
+<i>8</i>&nbsp;import javax.swing.JOptionPane;
+<i>9</i>&nbsp;import javax.swing.JPanel;
+<i>10</i>&nbsp;import javax.swing.JTextField;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;import net.sf.jabref.Globals;
+<i>13</i>&nbsp;import net.sf.jabref.gui.BasePanel;
+<i>14</i>&nbsp;import net.sf.jabref.gui.FileDialog;
+<i>15</i>&nbsp;import net.sf.jabref.gui.entryeditor.EntryEditorTabList;
+<i>16</i>&nbsp;import net.sf.jabref.gui.importer.actions.PostOpenAction;
+<i>17</i>&nbsp;import net.sf.jabref.gui.undo.NamedCompound;
+<i>18</i>&nbsp;import net.sf.jabref.gui.undo.UndoableFieldChange;
+<i>19</i>&nbsp;import net.sf.jabref.logic.cleanup.UpgradePdfPsToFileCleanup;
+<i>20</i>&nbsp;import net.sf.jabref.logic.importer.ParserResult;
+<i>21</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>22</i>&nbsp;import net.sf.jabref.model.FieldChange;
+<i>23</i>&nbsp;import net.sf.jabref.model.database.BibDatabase;
+<i>24</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>25</i>&nbsp;import net.sf.jabref.model.entry.FieldName;
+<i>26</i>&nbsp;import net.sf.jabref.model.metadata.FileDirectoryPreferences;
+<i>27</i>&nbsp;import net.sf.jabref.preferences.JabRefPreferences;
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;import com.jgoodies.forms.builder.FormBuilder;
+<i>30</i>&nbsp;import com.jgoodies.forms.layout.FormLayout;
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;/**
+<i>33</i>&nbsp; * This class defines the warning that can be offered when opening a pre-2.3
+<i>34</i>&nbsp; * JabRef file into a later version. This warning mentions the new external file
+<i>35</i>&nbsp; * link system in this version of JabRef, and offers to:
+<i>36</i>&nbsp; *
+<i>37</i>&nbsp; * * upgrade old-style PDF/PS links into the &quot;file&quot; field
+<i>38</i>&nbsp; * * modify General fields to show &quot;file&quot; instead of &quot;pdf&quot; / &quot;ps&quot;
+<i>39</i>&nbsp; * * modify table column settings to show &quot;file&quot; instead of &quot;pdf&quot; / &quot;ps&quot;
+<i>40</i>&nbsp; */
+<b class="nc"><i>41</i>&nbsp;public class FileLinksUpgradeWarning implements PostOpenAction {</b>
+<i>42</i>&nbsp;
+<b class="nc"><i>43</i>&nbsp;    private static final String[] FIELDS_TO_LOOK_FOR = new String[] {FieldName.PDF, FieldName.PS};</b>
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;    private boolean offerChangeSettings;
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;    private boolean offerChangeDatabase;
+<i>48</i>&nbsp;
+<i>49</i>&nbsp;    private boolean offerSetFileDir;
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;    /**
+<i>53</i>&nbsp;     * This method should be performed if the major/minor versions recorded in the ParserResult
+<i>54</i>&nbsp;     * are less than or equal to 2.2.
+<i>55</i>&nbsp;     * @param pr
+<i>56</i>&nbsp;     * @return true if the file was written by a jabref version &lt;=2.2
+<i>57</i>&nbsp;     */
+<i>58</i>&nbsp;    @Override
+<i>59</i>&nbsp;    public boolean isActionNecessary(ParserResult pr) {
+<i>60</i>&nbsp;        // Find out which actions should be offered:
+<i>61</i>&nbsp;        // Only offer to change Preferences if file column is not already visible:
+<b class="nc"><i>62</i>&nbsp;        offerChangeSettings = !Globals.prefs.getBoolean(JabRefPreferences.FILE_COLUMN) || !showsFileInGenFields();</b>
+<i>63</i>&nbsp;        // Only offer to upgrade links if the pdf/ps fields are used:
+<b class="nc"><i>64</i>&nbsp;        offerChangeDatabase = linksFound(pr.getDatabase(), FileLinksUpgradeWarning.FIELDS_TO_LOOK_FOR);</b>
+<i>65</i>&nbsp;        // If the &quot;file&quot; directory is not set, offer to migrate pdf/ps dir:
+<b class="nc"><i>66</i>&nbsp;        offerSetFileDir = !Globals.prefs.hasKey(FieldName.FILE + FileDirectoryPreferences.DIR_SUFFIX)</b>
+<b class="nc"><i>67</i>&nbsp;                &amp;&amp; (Globals.prefs.hasKey(FieldName.PDF + FileDirectoryPreferences.DIR_SUFFIX)</b>
+<b class="nc"><i>68</i>&nbsp;                        || Globals.prefs.hasKey(FieldName.PS + FileDirectoryPreferences.DIR_SUFFIX));</b>
+<i>69</i>&nbsp;
+<i>70</i>&nbsp;        // First check if this warning is disabled:
+<b class="nc"><i>71</i>&nbsp;        return Globals.prefs.getBoolean(JabRefPreferences.SHOW_FILE_LINKS_UPGRADE_WARNING) &amp;&amp; isThereSomethingToBeDone();</b>
+<i>72</i>&nbsp;    }
+<i>73</i>&nbsp;
+<i>74</i>&nbsp;    /**
+<i>75</i>&nbsp;     * This method presents a dialog box explaining and offering to make the
+<i>76</i>&nbsp;     * changes. If the user confirms, the changes are performed.
+<i>77</i>&nbsp;     * @param panel
+<i>78</i>&nbsp;     * @param parserResult
+<i>79</i>&nbsp;     */
+<i>80</i>&nbsp;    @Override
+<i>81</i>&nbsp;    public void performAction(BasePanel panel, ParserResult parserResult) {
+<i>82</i>&nbsp;
+<i>83</i>&nbsp;
+<b class="nc"><i>84</i>&nbsp;        if (!isThereSomethingToBeDone())         {</b>
+<b class="nc"><i>85</i>&nbsp;            return; // Nothing to do, just return.</b>
+<i>86</i>&nbsp;        }
+<i>87</i>&nbsp;
+<b class="nc"><i>88</i>&nbsp;        JCheckBox changeSettings = new JCheckBox(Localization.lang(&quot;Change table column and General fields settings to use the new feature&quot;),</b>
+<i>89</i>&nbsp;                offerChangeSettings);
+<b class="nc"><i>90</i>&nbsp;        JCheckBox changeDatabase = new JCheckBox(Localization.lang(&quot;Upgrade old external file links to use the new feature&quot;),</b>
+<i>91</i>&nbsp;                offerChangeDatabase);
+<b class="nc"><i>92</i>&nbsp;        JCheckBox setFileDir = new JCheckBox(Localization.lang(&quot;Set main external file directory&quot;) + &quot;:&quot;, offerSetFileDir);</b>
+<b class="nc"><i>93</i>&nbsp;        JTextField fileDir = new JTextField(30);</b>
+<b class="nc"><i>94</i>&nbsp;        JCheckBox doNotShowDialog = new JCheckBox(Localization.lang(&quot;Do not show these options in the future&quot;),</b>
+<i>95</i>&nbsp;                false);
+<i>96</i>&nbsp;
+<b class="nc"><i>97</i>&nbsp;        JPanel message = new JPanel();</b>
+<b class="nc"><i>98</i>&nbsp;        FormBuilder formBuilder = FormBuilder.create().layout(new FormLayout(&quot;left:pref&quot;, &quot;p&quot;));</b>
+<i>99</i>&nbsp;        // Keep the formatting of these lines. Otherwise, strings have to be translated again.
+<i>100</i>&nbsp;        // See updated JabRef_en.properties modifications by python syncLang.py -s -u
+<b class="nc"><i>101</i>&nbsp;        int row = 1;</b>
+<b class="nc"><i>102</i>&nbsp;        formBuilder.add(new JLabel(&quot;&lt;html&gt;&quot; + Localization.lang(&quot;This database uses outdated file links.&quot;) + &quot;&lt;br&gt;&lt;br&gt;&quot;</b>
+<b class="nc"><i>103</i>&nbsp;                + Localization.lang(&quot;JabRef no longer supports &#39;ps&#39; or &#39;pdf&#39; fields.&lt;br&gt;File links are now stored in the &#39;file&#39; field and files are stored in an external file directory.&lt;br&gt;To make use of this feature, JabRef needs to upgrade file links.&lt;br&gt;&lt;br&gt;&quot;) + &quot;&lt;p&gt;&quot;</b>
+<b class="nc"><i>104</i>&nbsp;                + Localization.lang(&quot;Do you want JabRef to do the following operations?&quot;) + &quot;&lt;/html&gt;&quot;)).xy(1, row);</b>
+<i>105</i>&nbsp;
+<b class="nc"><i>106</i>&nbsp;        if (offerChangeSettings) {</b>
+<b class="nc"><i>107</i>&nbsp;            formBuilder.appendRows(&quot;2dlu, p&quot;);</b>
+<b class="nc"><i>108</i>&nbsp;            row += 2;</b>
+<b class="nc"><i>109</i>&nbsp;            formBuilder.add(changeSettings).xy(1, row);</b>
+<i>110</i>&nbsp;        }
+<b class="nc"><i>111</i>&nbsp;        if (offerChangeDatabase) {</b>
+<b class="nc"><i>112</i>&nbsp;            formBuilder.appendRows(&quot;2dlu, p&quot;);</b>
+<b class="nc"><i>113</i>&nbsp;            row += 2;</b>
+<b class="nc"><i>114</i>&nbsp;            formBuilder.add(changeDatabase).xy(1, row);</b>
+<i>115</i>&nbsp;        }
+<b class="nc"><i>116</i>&nbsp;        if (offerSetFileDir) {</b>
+<b class="nc"><i>117</i>&nbsp;            if (Globals.prefs.hasKey(FieldName.PDF + FileDirectoryPreferences.DIR_SUFFIX)) {</b>
+<b class="nc"><i>118</i>&nbsp;                fileDir.setText(Globals.prefs.get(FieldName.PDF + FileDirectoryPreferences.DIR_SUFFIX));</b>
+<i>119</i>&nbsp;            } else {
+<b class="nc"><i>120</i>&nbsp;                fileDir.setText(Globals.prefs.get(FieldName.PS + FileDirectoryPreferences.DIR_SUFFIX));</b>
+<i>121</i>&nbsp;            }
+<b class="nc"><i>122</i>&nbsp;            JPanel builderPanel = new JPanel();</b>
+<b class="nc"><i>123</i>&nbsp;            builderPanel.add(setFileDir);</b>
+<b class="nc"><i>124</i>&nbsp;            builderPanel.add(fileDir);</b>
+<b class="nc"><i>125</i>&nbsp;            JButton browse = new JButton(Localization.lang(&quot;Browse&quot;));</b>
+<b class="nc"><i>126</i>&nbsp;            browse.addActionListener(e -&gt;</b>
+<b class="nc"><i>127</i>&nbsp;                    new FileDialog(null).showDialogAndGetSelectedFile()</b>
+<b class="nc"><i>128</i>&nbsp;                            .ifPresent(f -&gt; fileDir.setText(f.toAbsolutePath().toString()))</b>
+<i>129</i>&nbsp;            );
+<b class="nc"><i>130</i>&nbsp;            builderPanel.add(browse);</b>
+<b class="nc"><i>131</i>&nbsp;            formBuilder.appendRows(&quot;2dlu, p&quot;);</b>
+<b class="nc"><i>132</i>&nbsp;            row += 2;</b>
+<b class="nc"><i>133</i>&nbsp;            formBuilder.add(builderPanel).xy(1, row);</b>
+<i>134</i>&nbsp;        }
+<b class="nc"><i>135</i>&nbsp;        formBuilder.appendRows(&quot;6dlu, p&quot;);</b>
+<b class="nc"><i>136</i>&nbsp;        formBuilder.add(doNotShowDialog).xy(1, row+2);</b>
+<i>137</i>&nbsp;
+<b class="nc"><i>138</i>&nbsp;        message.add(formBuilder.build());</b>
+<i>139</i>&nbsp;
+<b class="nc"><i>140</i>&nbsp;        int answer = JOptionPane.showConfirmDialog(panel.frame(),</b>
+<b class="nc"><i>141</i>&nbsp;                message, Localization.lang(&quot;Upgrade file&quot;), JOptionPane.YES_NO_OPTION);</b>
+<b class="nc"><i>142</i>&nbsp;        if (doNotShowDialog.isSelected()) {</b>
+<b class="nc"><i>143</i>&nbsp;            Globals.prefs.putBoolean(JabRefPreferences.SHOW_FILE_LINKS_UPGRADE_WARNING, false);</b>
+<i>144</i>&nbsp;        }
+<i>145</i>&nbsp;
+<b class="nc"><i>146</i>&nbsp;        if (answer == JOptionPane.YES_OPTION) {</b>
+<b class="nc"><i>147</i>&nbsp;            makeChanges(panel, parserResult, changeSettings.isSelected(), changeDatabase.isSelected(),</b>
+<b class="nc"><i>148</i>&nbsp;                    setFileDir.isSelected() ? fileDir.getText() : null);</b>
+<i>149</i>&nbsp;        }
+<b class="nc"><i>150</i>&nbsp;    }</b>
+<i>151</i>&nbsp;
+<i>152</i>&nbsp;    private boolean isThereSomethingToBeDone() {
+<b class="nc"><i>153</i>&nbsp;        return  offerChangeSettings || offerChangeDatabase || offerSetFileDir;</b>
+<i>154</i>&nbsp;    }
+<i>155</i>&nbsp;
+<i>156</i>&nbsp;    /**
+<i>157</i>&nbsp;     * Check the database to find out whether any of a set of fields are used
+<i>158</i>&nbsp;     * for any of the entries.
+<i>159</i>&nbsp;     * @param database The BIB database.
+<i>160</i>&nbsp;     * @param fields The set of fields to look for.
+<i>161</i>&nbsp;     * @return true if at least one of the given fields is set in at least one entry,
+<i>162</i>&nbsp;     *  false otherwise.
+<i>163</i>&nbsp;     */
+<i>164</i>&nbsp;    private boolean linksFound(BibDatabase database, String[] fields) {
+<b class="nc"><i>165</i>&nbsp;        for (BibEntry entry : database.getEntries()) {</b>
+<b class="nc"><i>166</i>&nbsp;            for (String field : fields) {</b>
+<b class="nc"><i>167</i>&nbsp;                if (entry.hasField(field)) {</b>
+<b class="nc"><i>168</i>&nbsp;                    return true;</b>
+<i>169</i>&nbsp;                }
+<i>170</i>&nbsp;            }
+<b class="nc"><i>171</i>&nbsp;        }</b>
+<b class="nc"><i>172</i>&nbsp;        return false;</b>
+<i>173</i>&nbsp;    }
+<i>174</i>&nbsp;
+<i>175</i>&nbsp;    /**
+<i>176</i>&nbsp;     * This method performs the actual changes.
+<i>177</i>&nbsp;     * @param panel
+<i>178</i>&nbsp;     * @param pr
+<i>179</i>&nbsp;     * @param fileDir The path to the file directory to set, or null if it should not be set.
+<i>180</i>&nbsp;     */
+<i>181</i>&nbsp;    private void makeChanges(BasePanel panel, ParserResult pr, boolean upgradePrefs,
+<i>182</i>&nbsp;                             boolean upgradeDatabase, String fileDir) {
+<i>183</i>&nbsp;
+<b class="nc"><i>184</i>&nbsp;        if (upgradeDatabase) {</b>
+<i>185</i>&nbsp;            // Update file links links in the database:
+<b class="nc"><i>186</i>&nbsp;            NamedCompound ce = upgradePdfPsToFile(pr.getDatabase());</b>
+<b class="nc"><i>187</i>&nbsp;            panel.getUndoManager().addEdit(ce);</b>
+<b class="nc"><i>188</i>&nbsp;            panel.markBaseChanged();</b>
+<i>189</i>&nbsp;        }
+<i>190</i>&nbsp;
+<b class="nc"><i>191</i>&nbsp;        if (fileDir != null) {</b>
+<b class="nc"><i>192</i>&nbsp;            Globals.prefs.put(FieldName.FILE + FileDirectoryPreferences.DIR_SUFFIX, fileDir);</b>
+<i>193</i>&nbsp;        }
+<i>194</i>&nbsp;
+<b class="nc"><i>195</i>&nbsp;        if (upgradePrefs) {</b>
+<i>196</i>&nbsp;            // Exchange table columns:
+<b class="nc"><i>197</i>&nbsp;            Globals.prefs.putBoolean(JabRefPreferences.FILE_COLUMN, Boolean.TRUE);</b>
+<i>198</i>&nbsp;
+<i>199</i>&nbsp;            // Modify General fields if necessary:
+<i>200</i>&nbsp;            // If we don&#39;t find the file field, insert it at the bottom of the first tab:
+<b class="nc"><i>201</i>&nbsp;            if (!showsFileInGenFields()) {</b>
+<b class="nc"><i>202</i>&nbsp;                String gfs = Globals.prefs.get(JabRefPreferences.CUSTOM_TAB_FIELDS + &quot;0&quot;);</b>
+<b class="nc"><i>203</i>&nbsp;                StringBuilder sb = new StringBuilder(gfs);</b>
+<b class="nc"><i>204</i>&nbsp;                if (!gfs.isEmpty()) {</b>
+<b class="nc"><i>205</i>&nbsp;                    sb.append(&#39;;&#39;);</b>
+<i>206</i>&nbsp;                }
+<b class="nc"><i>207</i>&nbsp;                sb.append(FieldName.FILE);</b>
+<b class="nc"><i>208</i>&nbsp;                Globals.prefs.put(JabRefPreferences.CUSTOM_TAB_FIELDS + &quot;0&quot;, sb.toString());</b>
+<b class="nc"><i>209</i>&nbsp;                Globals.prefs.updateEntryEditorTabList();</b>
+<i>210</i>&nbsp;            }
+<b class="nc"><i>211</i>&nbsp;            panel.frame().setupAllTables();</b>
+<i>212</i>&nbsp;        }
+<b class="nc"><i>213</i>&nbsp;    }</b>
+<i>214</i>&nbsp;
+<i>215</i>&nbsp;    private boolean showsFileInGenFields() {
+<b class="nc"><i>216</i>&nbsp;        boolean found = false;</b>
+<b class="nc"><i>217</i>&nbsp;        EntryEditorTabList tabList = Globals.prefs.getEntryEditorTabList();</b>
+<b class="nc"><i>218</i>&nbsp;        outer: for (int i = 0; i &lt; tabList.getTabCount(); i++) {</b>
+<b class="nc"><i>219</i>&nbsp;            List&lt;String&gt; fields = tabList.getTabFields(i);</b>
+<b class="nc"><i>220</i>&nbsp;            for (String field : fields) {</b>
+<b class="nc"><i>221</i>&nbsp;                if (field.equals(FieldName.FILE)) {</b>
+<b class="nc"><i>222</i>&nbsp;                    found = true;</b>
+<b class="nc"><i>223</i>&nbsp;                    break outer;</b>
+<i>224</i>&nbsp;                }
+<b class="nc"><i>225</i>&nbsp;            }</b>
+<i>226</i>&nbsp;        }
+<b class="nc"><i>227</i>&nbsp;        return found;</b>
+<i>228</i>&nbsp;    }
+<i>229</i>&nbsp;
+<i>230</i>&nbsp;    /**
+<i>231</i>&nbsp;     * Collect file links from the given set of fields, and add them to the list contained in the field
+<i>232</i>&nbsp;     * GUIGlobals.FILE_FIELD.
+<i>233</i>&nbsp;     *
+<i>234</i>&nbsp;     * @param database The database to modify.
+<i>235</i>&nbsp;     * @param fields   The fields to find links in.
+<i>236</i>&nbsp;     * @return A CompoundEdit specifying the undo operation for the whole operation.
+<i>237</i>&nbsp;     */
+<i>238</i>&nbsp;    private static NamedCompound upgradePdfPsToFile(BibDatabase database) {
+<b class="nc"><i>239</i>&nbsp;        NamedCompound ce = new NamedCompound(Localization.lang(&quot;Move external links to &#39;file&#39; field&quot;));</b>
+<i>240</i>&nbsp;
+<b class="nc"><i>241</i>&nbsp;        UpgradePdfPsToFileCleanup cleanupJob = new UpgradePdfPsToFileCleanup();</b>
+<b class="nc"><i>242</i>&nbsp;        for (BibEntry entry : database.getEntries()) {</b>
+<b class="nc"><i>243</i>&nbsp;            List&lt;FieldChange&gt; changes = cleanupJob.cleanup(entry);</b>
+<i>244</i>&nbsp;
+<b class="nc"><i>245</i>&nbsp;            for (FieldChange change : changes) {</b>
+<b class="nc"><i>246</i>&nbsp;                ce.addEdit(new UndoableFieldChange(change));</b>
+<b class="nc"><i>247</i>&nbsp;            }</b>
+<b class="nc"><i>248</i>&nbsp;        }</b>
+<i>249</i>&nbsp;
+<b class="nc"><i>250</i>&nbsp;        ce.end();</b>
+<b class="nc"><i>251</i>&nbsp;        return ce;</b>
+<i>252</i>&nbsp;    }
+<i>253</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

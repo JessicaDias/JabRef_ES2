@@ -1,0 +1,181 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: MarkEntriesAction</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.worker</a> ]
+</div>
+
+<h1>Coverage Summary for Class: MarkEntriesAction (net.sf.jabref.gui.worker)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MarkEntriesAction</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 40)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.worker;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.event.ActionEvent;
+<i>4</i>&nbsp;import java.awt.event.ActionListener;
+<i>5</i>&nbsp;import java.util.List;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import javax.swing.JMenuItem;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;import net.sf.jabref.Globals;
+<i>10</i>&nbsp;import net.sf.jabref.gui.BasePanel;
+<i>11</i>&nbsp;import net.sf.jabref.gui.EntryMarker;
+<i>12</i>&nbsp;import net.sf.jabref.gui.JabRefFrame;
+<i>13</i>&nbsp;import net.sf.jabref.gui.undo.NamedCompound;
+<i>14</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>15</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>16</i>&nbsp;import net.sf.jabref.preferences.JabRefPreferences;
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;import org.apache.commons.logging.Log;
+<i>19</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;/**
+<i>22</i>&nbsp; *
+<i>23</i>&nbsp; */
+<i>24</i>&nbsp;public class MarkEntriesAction extends AbstractWorker implements ActionListener {
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    private final JabRefFrame frame;
+<i>27</i>&nbsp;    private final int level;
+<i>28</i>&nbsp;    private final JMenuItem menuItem;
+<i>29</i>&nbsp;    private int besLength;
+<i>30</i>&nbsp;
+<b class="nc"><i>31</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(MarkEntriesAction.class);</b>
+<i>32</i>&nbsp;
+<b class="nc"><i>33</i>&nbsp;    public MarkEntriesAction(JabRefFrame frame, int level) {</b>
+<b class="nc"><i>34</i>&nbsp;        this.frame = frame;</b>
+<b class="nc"><i>35</i>&nbsp;        this.level = level;</b>
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;        //menuItem = new JMenuItem(Globals.menuTitle(&quot;Mark entries&quot;).replace(&quot;&amp;&quot;,&quot;&quot;));
+<b class="nc"><i>38</i>&nbsp;        menuItem = new JMenuItem(Localization.lang(&quot;Level&quot;) + &quot; &quot; + level + &quot;   &quot;);</b>
+<b class="nc"><i>39</i>&nbsp;        menuItem.setMnemonic(String.valueOf(level + 1).charAt(0));</b>
+<b class="nc"><i>40</i>&nbsp;        menuItem.setBackground(Globals.prefs.getColor(JabRefPreferences.MARKED_ENTRY_BACKGROUND + this.level));</b>
+<b class="nc"><i>41</i>&nbsp;        menuItem.setOpaque(true);</b>
+<b class="nc"><i>42</i>&nbsp;        menuItem.addActionListener(this);</b>
+<b class="nc"><i>43</i>&nbsp;    }</b>
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;    public JMenuItem getMenuItem() {
+<b class="nc"><i>46</i>&nbsp;        return menuItem;</b>
+<i>47</i>&nbsp;    }
+<i>48</i>&nbsp;
+<i>49</i>&nbsp;    @Override
+<i>50</i>&nbsp;    public void actionPerformed(ActionEvent actionEvent) {
+<i>51</i>&nbsp;        try {
+<b class="nc"><i>52</i>&nbsp;            this.init();</b>
+<b class="nc"><i>53</i>&nbsp;            getWorker().run();</b>
+<b class="nc"><i>54</i>&nbsp;            getCallBack().update();</b>
+<b class="nc"><i>55</i>&nbsp;        } catch (Throwable t) {</b>
+<b class="nc"><i>56</i>&nbsp;            LOGGER.warn(&quot;Problem marking entries&quot;, t);</b>
+<b class="nc"><i>57</i>&nbsp;        }</b>
+<b class="nc"><i>58</i>&nbsp;    }</b>
+<i>59</i>&nbsp;
+<i>60</i>&nbsp;    @Override
+<i>61</i>&nbsp;    public void run() {
+<b class="nc"><i>62</i>&nbsp;        BasePanel panel = frame.getCurrentBasePanel();</b>
+<b class="nc"><i>63</i>&nbsp;        if (panel != null) {</b>
+<b class="nc"><i>64</i>&nbsp;            List&lt;BibEntry&gt; bes = panel.getSelectedEntries();</b>
+<i>65</i>&nbsp;
+<i>66</i>&nbsp;            // used at update() to determine output string
+<b class="nc"><i>67</i>&nbsp;            besLength = bes.size();</b>
+<i>68</i>&nbsp;
+<b class="nc"><i>69</i>&nbsp;            if (!bes.isEmpty()) {</b>
+<b class="nc"><i>70</i>&nbsp;                NamedCompound ce = new NamedCompound(Localization.lang(&quot;Mark entries&quot;));</b>
+<b class="nc"><i>71</i>&nbsp;                for (BibEntry be : bes) {</b>
+<b class="nc"><i>72</i>&nbsp;                    EntryMarker.markEntry(be, level + 1, false, ce);</b>
+<b class="nc"><i>73</i>&nbsp;                }</b>
+<b class="nc"><i>74</i>&nbsp;                ce.end();</b>
+<b class="nc"><i>75</i>&nbsp;                panel.getUndoManager().addEdit(ce);</b>
+<i>76</i>&nbsp;            }
+<i>77</i>&nbsp;        }
+<b class="nc"><i>78</i>&nbsp;    }</b>
+<i>79</i>&nbsp;
+<i>80</i>&nbsp;    @Override
+<i>81</i>&nbsp;    public void update() {
+<i>82</i>&nbsp;        String outputStr;
+<b class="nc"><i>83</i>&nbsp;        switch (besLength) {</b>
+<i>84</i>&nbsp;        case 0:
+<b class="nc"><i>85</i>&nbsp;            outputStr = Localization.lang(&quot;This operation requires one or more entries to be selected.&quot;);</b>
+<b class="nc"><i>86</i>&nbsp;            break;</b>
+<i>87</i>&nbsp;        case 1:
+<b class="nc"><i>88</i>&nbsp;            frame.getCurrentBasePanel().markBaseChanged();</b>
+<b class="nc"><i>89</i>&nbsp;            outputStr = Localization.lang(&quot;Marked selected entry&quot;);</b>
+<b class="nc"><i>90</i>&nbsp;            break;</b>
+<i>91</i>&nbsp;        default:
+<b class="nc"><i>92</i>&nbsp;            frame.getCurrentBasePanel().markBaseChanged();</b>
+<b class="nc"><i>93</i>&nbsp;            outputStr = Localization.lang(&quot;Marked all %0 selected entries&quot;, Integer.toString(besLength));</b>
+<i>94</i>&nbsp;            break;
+<i>95</i>&nbsp;        }
+<b class="nc"><i>96</i>&nbsp;        frame.output(outputStr);</b>
+<b class="nc"><i>97</i>&nbsp;    }</b>
+<i>98</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

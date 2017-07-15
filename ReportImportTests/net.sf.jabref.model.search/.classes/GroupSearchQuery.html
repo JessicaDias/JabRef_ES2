@@ -1,0 +1,152 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: GroupSearchQuery</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.model.search</a> ]
+</div>
+
+<h1>Coverage Summary for Class: GroupSearchQuery (net.sf.jabref.model.search)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GroupSearchQuery</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 20)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.model.search;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.Objects;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>6</i>&nbsp;import net.sf.jabref.model.search.rules.SearchRule;
+<i>7</i>&nbsp;import net.sf.jabref.model.search.rules.SearchRules;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;public class GroupSearchQuery implements SearchMatcher {
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;    private final String query;
+<i>12</i>&nbsp;    private final boolean caseSensitive;
+<i>13</i>&nbsp;    private final boolean regularExpression;
+<i>14</i>&nbsp;    private final SearchRule rule;
+<i>15</i>&nbsp;
+<b class="nc"><i>16</i>&nbsp;    public GroupSearchQuery(String query, boolean caseSensitive, boolean regularExpression) {</b>
+<b class="nc"><i>17</i>&nbsp;        this.query = Objects.requireNonNull(query);</b>
+<b class="nc"><i>18</i>&nbsp;        this.caseSensitive = caseSensitive;</b>
+<b class="nc"><i>19</i>&nbsp;        this.regularExpression = regularExpression;</b>
+<b class="nc"><i>20</i>&nbsp;        this.rule = Objects.requireNonNull(getSearchRule());</b>
+<b class="nc"><i>21</i>&nbsp;    }</b>
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;    @Override
+<i>24</i>&nbsp;    public String toString() {
+<b class="nc"><i>25</i>&nbsp;        return String.format(&quot;\&quot;%s\&quot; (%s, %s)&quot;, query, getCaseSensitiveDescription(),</b>
+<b class="nc"><i>26</i>&nbsp;                getRegularExpressionDescription());</b>
+<i>27</i>&nbsp;    }
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;    @Override
+<i>30</i>&nbsp;    public boolean isMatch(BibEntry entry) {
+<b class="nc"><i>31</i>&nbsp;        return this.getRule().applyRule(query, entry);</b>
+<i>32</i>&nbsp;    }
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;    private SearchRule getSearchRule() {
+<b class="nc"><i>35</i>&nbsp;        return SearchRules.getSearchRuleByQuery(query, caseSensitive, regularExpression);</b>
+<i>36</i>&nbsp;    }
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;    private String getCaseSensitiveDescription() {
+<b class="nc"><i>39</i>&nbsp;        if (caseSensitive) {</b>
+<b class="nc"><i>40</i>&nbsp;            return &quot;case sensitive&quot;;</b>
+<i>41</i>&nbsp;        } else {
+<b class="nc"><i>42</i>&nbsp;            return &quot;case insensitive&quot;;</b>
+<i>43</i>&nbsp;        }
+<i>44</i>&nbsp;    }
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;    private String getRegularExpressionDescription() {
+<b class="nc"><i>47</i>&nbsp;        if (regularExpression) {</b>
+<b class="nc"><i>48</i>&nbsp;            return &quot;regular expression&quot;;</b>
+<i>49</i>&nbsp;        } else {
+<b class="nc"><i>50</i>&nbsp;            return &quot;plain text&quot;;</b>
+<i>51</i>&nbsp;        }
+<i>52</i>&nbsp;    }
+<i>53</i>&nbsp;
+<i>54</i>&nbsp;    public SearchRule getRule() {
+<b class="nc"><i>55</i>&nbsp;        return rule;</b>
+<i>56</i>&nbsp;    }
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;    public String getSearchExpression() {
+<b class="nc"><i>59</i>&nbsp;        return query;</b>
+<i>60</i>&nbsp;    }
+<i>61</i>&nbsp;
+<i>62</i>&nbsp;    public boolean isCaseSensitive() {
+<b class="nc"><i>63</i>&nbsp;        return caseSensitive;</b>
+<i>64</i>&nbsp;    }
+<i>65</i>&nbsp;
+<i>66</i>&nbsp;    public boolean isRegularExpression() {
+<b class="nc"><i>67</i>&nbsp;        return regularExpression;</b>
+<i>68</i>&nbsp;    }
+<i>69</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

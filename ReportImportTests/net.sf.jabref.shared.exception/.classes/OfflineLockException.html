@@ -1,0 +1,111 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: OfflineLockException</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.shared.exception</a> ]
+</div>
+
+<h1>Coverage Summary for Class: OfflineLockException (net.sf.jabref.shared.exception)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">OfflineLockException</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 6)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.shared.exception;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;/**
+<i>6</i>&nbsp; * This exception is thrown if a BibEntry with smaller version number is going to be used for an update on the shared side.
+<i>7</i>&nbsp; * The principle of optimistic offline lock forbids updating with obsolete objects.
+<i>8</i>&nbsp; */
+<i>9</i>&nbsp;public class OfflineLockException extends Exception {
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;    private final BibEntry localBibEntry;
+<i>12</i>&nbsp;    private final BibEntry sharedBibEntry;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;    public OfflineLockException(BibEntry localBibEntry, BibEntry sharedBibEntry) {
+<b class="nc"><i>16</i>&nbsp;        super(&quot;Local BibEntry data is not up-to-date.&quot;);</b>
+<b class="nc"><i>17</i>&nbsp;        this.localBibEntry = localBibEntry;</b>
+<b class="nc"><i>18</i>&nbsp;        this.sharedBibEntry = sharedBibEntry;</b>
+<b class="nc"><i>19</i>&nbsp;    }</b>
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;    public BibEntry getLocalBibEntry() {
+<b class="nc"><i>22</i>&nbsp;        return localBibEntry;</b>
+<i>23</i>&nbsp;    }
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;    public BibEntry getSharedBibEntry() {
+<b class="nc"><i>26</i>&nbsp;        return sharedBibEntry;</b>
+<i>27</i>&nbsp;    }
+<i>28</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

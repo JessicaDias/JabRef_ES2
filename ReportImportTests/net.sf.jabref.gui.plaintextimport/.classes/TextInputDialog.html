@@ -1,0 +1,982 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: TextInputDialog</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.plaintextimport</a> ]
+</div>
+
+<h1>Coverage Summary for Class: TextInputDialog (net.sf.jabref.gui.plaintextimport)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TextInputDialog</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 249)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">TextInputDialog$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">TextInputDialog$ClearAction</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">TextInputDialog$FieldListMouseListener</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">TextInputDialog$FieldListSelectionHandler</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 14)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">TextInputDialog$LoadAction</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 19)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">TextInputDialog$MenuTextForTagAction</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 8)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">TextInputDialog$PasteAction</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 15)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">TextInputDialog$SimpleCellRenderer</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 22)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 34)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 339)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.plaintextimport;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.BorderLayout;
+<i>4</i>&nbsp;import java.awt.Color;
+<i>5</i>&nbsp;import java.awt.Component;
+<i>6</i>&nbsp;import java.awt.Dimension;
+<i>7</i>&nbsp;import java.awt.Font;
+<i>8</i>&nbsp;import java.awt.GridBagConstraints;
+<i>9</i>&nbsp;import java.awt.GridBagLayout;
+<i>10</i>&nbsp;import java.awt.GridLayout;
+<i>11</i>&nbsp;import java.awt.Insets;
+<i>12</i>&nbsp;import java.awt.event.ActionEvent;
+<i>13</i>&nbsp;import java.awt.event.KeyEvent;
+<i>14</i>&nbsp;import java.awt.event.MouseAdapter;
+<i>15</i>&nbsp;import java.awt.event.MouseEvent;
+<i>16</i>&nbsp;import java.awt.event.MouseListener;
+<i>17</i>&nbsp;import java.io.File;
+<i>18</i>&nbsp;import java.io.FileInputStream;
+<i>19</i>&nbsp;import java.io.IOException;
+<i>20</i>&nbsp;import java.io.StringWriter;
+<i>21</i>&nbsp;import java.nio.file.Path;
+<i>22</i>&nbsp;import java.util.ArrayList;
+<i>23</i>&nbsp;import java.util.List;
+<i>24</i>&nbsp;import java.util.Objects;
+<i>25</i>&nbsp;import java.util.Optional;
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;import javax.swing.AbstractAction;
+<i>28</i>&nbsp;import javax.swing.Action;
+<i>29</i>&nbsp;import javax.swing.ActionMap;
+<i>30</i>&nbsp;import javax.swing.BorderFactory;
+<i>31</i>&nbsp;import javax.swing.ButtonGroup;
+<i>32</i>&nbsp;import javax.swing.DefaultListCellRenderer;
+<i>33</i>&nbsp;import javax.swing.Icon;
+<i>34</i>&nbsp;import javax.swing.InputMap;
+<i>35</i>&nbsp;import javax.swing.JButton;
+<i>36</i>&nbsp;import javax.swing.JComponent;
+<i>37</i>&nbsp;import javax.swing.JDialog;
+<i>38</i>&nbsp;import javax.swing.JLabel;
+<i>39</i>&nbsp;import javax.swing.JList;
+<i>40</i>&nbsp;import javax.swing.JMenu;
+<i>41</i>&nbsp;import javax.swing.JMenuItem;
+<i>42</i>&nbsp;import javax.swing.JPanel;
+<i>43</i>&nbsp;import javax.swing.JPopupMenu;
+<i>44</i>&nbsp;import javax.swing.JRadioButton;
+<i>45</i>&nbsp;import javax.swing.JScrollPane;
+<i>46</i>&nbsp;import javax.swing.JTabbedPane;
+<i>47</i>&nbsp;import javax.swing.JTextArea;
+<i>48</i>&nbsp;import javax.swing.JTextPane;
+<i>49</i>&nbsp;import javax.swing.JToolBar;
+<i>50</i>&nbsp;import javax.swing.ListSelectionModel;
+<i>51</i>&nbsp;import javax.swing.ScrollPaneConstants;
+<i>52</i>&nbsp;import javax.swing.border.TitledBorder;
+<i>53</i>&nbsp;import javax.swing.event.ListSelectionEvent;
+<i>54</i>&nbsp;import javax.swing.event.ListSelectionListener;
+<i>55</i>&nbsp;import javax.swing.text.BadLocationException;
+<i>56</i>&nbsp;import javax.swing.text.EditorKit;
+<i>57</i>&nbsp;import javax.swing.text.Style;
+<i>58</i>&nbsp;import javax.swing.text.StyleConstants;
+<i>59</i>&nbsp;import javax.swing.text.StyleContext;
+<i>60</i>&nbsp;import javax.swing.text.StyledDocument;
+<i>61</i>&nbsp;
+<i>62</i>&nbsp;import net.sf.jabref.Globals;
+<i>63</i>&nbsp;import net.sf.jabref.gui.ClipBoardManager;
+<i>64</i>&nbsp;import net.sf.jabref.gui.EntryMarker;
+<i>65</i>&nbsp;import net.sf.jabref.gui.FileDialog;
+<i>66</i>&nbsp;import net.sf.jabref.gui.IconTheme;
+<i>67</i>&nbsp;import net.sf.jabref.gui.JabRefFrame;
+<i>68</i>&nbsp;import net.sf.jabref.gui.OSXCompatibleToolbar;
+<i>69</i>&nbsp;import net.sf.jabref.gui.keyboard.KeyBinding;
+<i>70</i>&nbsp;import net.sf.jabref.gui.undo.NamedCompound;
+<i>71</i>&nbsp;import net.sf.jabref.gui.util.component.OverlayPanel;
+<i>72</i>&nbsp;import net.sf.jabref.logic.bibtex.BibEntryWriter;
+<i>73</i>&nbsp;import net.sf.jabref.logic.bibtex.LatexFieldFormatter;
+<i>74</i>&nbsp;import net.sf.jabref.logic.importer.ParserResult;
+<i>75</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.FreeCiteImporter;
+<i>76</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>77</i>&nbsp;import net.sf.jabref.logic.util.FileExtensions;
+<i>78</i>&nbsp;import net.sf.jabref.logic.util.OS;
+<i>79</i>&nbsp;import net.sf.jabref.logic.util.UpdateField;
+<i>80</i>&nbsp;import net.sf.jabref.model.EntryTypes;
+<i>81</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>82</i>&nbsp;import net.sf.jabref.model.entry.EntryType;
+<i>83</i>&nbsp;import net.sf.jabref.model.entry.FieldName;
+<i>84</i>&nbsp;import net.sf.jabref.model.entry.FieldProperty;
+<i>85</i>&nbsp;import net.sf.jabref.model.entry.InternalBibtexFields;
+<i>86</i>&nbsp;import net.sf.jabref.preferences.JabRefPreferences;
+<i>87</i>&nbsp;
+<i>88</i>&nbsp;import com.jgoodies.forms.builder.ButtonBarBuilder;
+<i>89</i>&nbsp;import org.apache.commons.logging.Log;
+<i>90</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>91</i>&nbsp;
+<i>92</i>&nbsp;/**
+<i>93</i>&nbsp; * import from plain text =&gt; simple mark/copy/paste into bibtex entry
+<i>94</i>&nbsp; * &lt;p&gt;
+<i>95</i>&nbsp; * TODO
+<i>96</i>&nbsp; * - change colors and fonts
+<i>97</i>&nbsp; * - delete selected text
+<i>98</i>&nbsp; * - make textarea editable
+<i>99</i>&nbsp; * - create several bibtex entries in dialog
+<i>100</i>&nbsp; * - if the dialog works with an existing entry (right click menu item), the cancel option doesn&#39;t work well
+<i>101</i>&nbsp; */
+<i>102</i>&nbsp;public class TextInputDialog extends JDialog {
+<i>103</i>&nbsp;
+<b class="nc"><i>104</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(TextInputDialog.class);</b>
+<i>105</i>&nbsp;
+<b class="nc"><i>106</i>&nbsp;    private final JButton okButton = new JButton(Localization.lang(&quot;Accept&quot;));</b>
+<b class="nc"><i>107</i>&nbsp;    private final JButton cancelButton = new JButton(Localization.lang(&quot;Cancel&quot;));</b>
+<b class="nc"><i>108</i>&nbsp;    private final JButton insertButton = new JButton(Localization.lang(&quot;Insert&quot;));</b>
+<b class="nc"><i>109</i>&nbsp;    private final JButton parseWithFreeCiteButton = new JButton(Localization.lang(&quot;Parse with FreeCite&quot;));</b>
+<b class="nc"><i>110</i>&nbsp;    private final JPanel panel1 = new JPanel();</b>
+<b class="nc"><i>111</i>&nbsp;    private final JPanel buttons = new JPanel();</b>
+<b class="nc"><i>112</i>&nbsp;    private final JPanel rawPanel = new JPanel();</b>
+<b class="nc"><i>113</i>&nbsp;    private final JPanel sourcePanel = new JPanel();</b>
+<i>114</i>&nbsp;    private JList&lt;String&gt; fieldList;
+<b class="nc"><i>115</i>&nbsp;    private final JRadioButton override = new JRadioButton(Localization.lang(&quot;Override&quot;));</b>
+<b class="nc"><i>116</i>&nbsp;    private final JRadioButton append = new JRadioButton(Localization.lang(&quot;Append&quot;));</b>
+<b class="nc"><i>117</i>&nbsp;    private final JToolBar toolBar = new OSXCompatibleToolbar();</b>
+<i>118</i>&nbsp;
+<b class="nc"><i>119</i>&nbsp;    private final List&lt;String&gt; allFields = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>120</i>&nbsp;    private final List&lt;String&gt; requiredFields = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>121</i>&nbsp;    private final List&lt;String&gt; optionalFields = new ArrayList&lt;&gt;();</b>
+<i>122</i>&nbsp;
+<i>123</i>&nbsp;    private final BibEntry entry;
+<i>124</i>&nbsp;
+<b class="nc"><i>125</i>&nbsp;    private final JPopupMenu inputMenu = new JPopupMenu();</b>
+<i>126</i>&nbsp;    private StyledDocument document; // content from inputPane
+<b class="nc"><i>127</i>&nbsp;    private final JTextPane textPane = new JTextPane();</b>
+<b class="nc"><i>128</i>&nbsp;    private final JTextArea sourcePreview = new JTextArea();</b>
+<i>129</i>&nbsp;
+<i>130</i>&nbsp;    private final TagToMarkedTextStore markedTextStore;
+<i>131</i>&nbsp;
+<i>132</i>&nbsp;    private final JabRefFrame frame;
+<i>133</i>&nbsp;
+<i>134</i>&nbsp;    private boolean okPressed;
+<i>135</i>&nbsp;
+<i>136</i>&nbsp;
+<i>137</i>&nbsp;    public TextInputDialog(JabRefFrame frame, BibEntry bibEntry) {
+<b class="nc"><i>138</i>&nbsp;        super(frame, true);</b>
+<i>139</i>&nbsp;
+<b class="nc"><i>140</i>&nbsp;        this.frame = Objects.requireNonNull(frame);</b>
+<i>141</i>&nbsp;
+<b class="nc"><i>142</i>&nbsp;        entry = Objects.requireNonNull(bibEntry);</b>
+<b class="nc"><i>143</i>&nbsp;        markedTextStore = new TagToMarkedTextStore();</b>
+<i>144</i>&nbsp;
+<b class="nc"><i>145</i>&nbsp;        jbInit();</b>
+<b class="nc"><i>146</i>&nbsp;        pack();</b>
+<b class="nc"><i>147</i>&nbsp;        updateSourceView();</b>
+<b class="nc"><i>148</i>&nbsp;    }</b>
+<i>149</i>&nbsp;
+<i>150</i>&nbsp;    private void jbInit() {
+<b class="nc"><i>151</i>&nbsp;        getContentPane().setLayout(new BorderLayout());</b>
+<b class="nc"><i>152</i>&nbsp;        StringBuilder typeStr = new StringBuilder(&quot;Plain text import&quot;);</b>
+<b class="nc"><i>153</i>&nbsp;        if (entry.getType() != null) {</b>
+<b class="nc"><i>154</i>&nbsp;            typeStr.append(&#39; &#39;).append(Localization.lang(&quot;for&quot;)).append(&#39; &#39;).append(entry.getType());</b>
+<i>155</i>&nbsp;        }
+<i>156</i>&nbsp;
+<b class="nc"><i>157</i>&nbsp;        this.setTitle(typeStr.toString());</b>
+<b class="nc"><i>158</i>&nbsp;        getContentPane().add(panel1, BorderLayout.CENTER);</b>
+<i>159</i>&nbsp;
+<b class="nc"><i>160</i>&nbsp;        initRawPanel();</b>
+<b class="nc"><i>161</i>&nbsp;        initButtonPanel();</b>
+<b class="nc"><i>162</i>&nbsp;        initSourcePanel();</b>
+<i>163</i>&nbsp;
+<b class="nc"><i>164</i>&nbsp;        JTabbedPane tabbed = new JTabbedPane();</b>
+<i>165</i>&nbsp;
+<b class="nc"><i>166</i>&nbsp;        tabbed.add(rawPanel, Localization.lang(&quot;Raw source&quot;));</b>
+<b class="nc"><i>167</i>&nbsp;        tabbed.add(sourcePanel, Localization.lang(&quot;%0 source&quot;, frame.getCurrentBasePanel().getBibDatabaseContext().getMode().getFormattedName()));</b>
+<i>168</i>&nbsp;
+<i>169</i>&nbsp;        // Panel Layout
+<b class="nc"><i>170</i>&nbsp;        panel1.setLayout(new BorderLayout());</b>
+<b class="nc"><i>171</i>&nbsp;        panel1.add(tabbed, BorderLayout.CENTER);</b>
+<b class="nc"><i>172</i>&nbsp;        panel1.add(buttons, BorderLayout.SOUTH);</b>
+<i>173</i>&nbsp;
+<i>174</i>&nbsp;        // Key bindings:
+<b class="nc"><i>175</i>&nbsp;        ActionMap am = buttons.getActionMap();</b>
+<b class="nc"><i>176</i>&nbsp;        InputMap im = buttons.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);</b>
+<b class="nc"><i>177</i>&nbsp;        im.put(Globals.getKeyPrefs().getKey(KeyBinding.CLOSE_DIALOG), &quot;close&quot;);</b>
+<b class="nc"><i>178</i>&nbsp;        am.put(&quot;close&quot;, new AbstractAction() {</b>
+<i>179</i>&nbsp;
+<i>180</i>&nbsp;            @Override
+<i>181</i>&nbsp;            public void actionPerformed(ActionEvent e) {
+<b class="nc"><i>182</i>&nbsp;                dispose();</b>
+<b class="nc"><i>183</i>&nbsp;            }</b>
+<i>184</i>&nbsp;        });
+<b class="nc"><i>185</i>&nbsp;    }</b>
+<i>186</i>&nbsp;
+<i>187</i>&nbsp;    // Panel with text import functionality
+<i>188</i>&nbsp;    private void initRawPanel() {
+<b class="nc"><i>189</i>&nbsp;        rawPanel.setLayout(new BorderLayout());</b>
+<i>190</i>&nbsp;
+<i>191</i>&nbsp;        // Textarea
+<b class="nc"><i>192</i>&nbsp;        textPane.setEditable(false);</b>
+<i>193</i>&nbsp;
+<b class="nc"><i>194</i>&nbsp;        document = textPane.getStyledDocument();</b>
+<b class="nc"><i>195</i>&nbsp;        addStylesToDocument();</b>
+<i>196</i>&nbsp;
+<i>197</i>&nbsp;        try {
+<b class="nc"><i>198</i>&nbsp;            document.insertString(0, &quot;&quot;, document.getStyle(&quot;regular&quot;));</b>
+<b class="nc"><i>199</i>&nbsp;        } catch (BadLocationException ex) {</b>
+<b class="nc"><i>200</i>&nbsp;            LOGGER.warn(&quot;Problem setting style&quot;, ex);</b>
+<i>201</i>&nbsp;
+<b class="nc"><i>202</i>&nbsp;        }</b>
+<i>203</i>&nbsp;
+<b class="nc"><i>204</i>&nbsp;        OverlayPanel testPanel = new OverlayPanel(textPane, Localization.lang(&quot;paste text here&quot;));</b>
+<i>205</i>&nbsp;
+<b class="nc"><i>206</i>&nbsp;        testPanel.setPreferredSize(new Dimension(450, 255));</b>
+<b class="nc"><i>207</i>&nbsp;        testPanel.setMaximumSize(new Dimension(450, Integer.MAX_VALUE));</b>
+<i>208</i>&nbsp;
+<i>209</i>&nbsp;        // Setup fields (required to be done before setting up popup menu)
+<b class="nc"><i>210</i>&nbsp;        fieldList = new JList&lt;&gt;(getAllFields());</b>
+<b class="nc"><i>211</i>&nbsp;        fieldList.setCellRenderer(new SimpleCellRenderer(fieldList.getFont()));</b>
+<b class="nc"><i>212</i>&nbsp;        ListSelectionModel listSelectionModel = fieldList.getSelectionModel();</b>
+<b class="nc"><i>213</i>&nbsp;        listSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);</b>
+<b class="nc"><i>214</i>&nbsp;        listSelectionModel.addListSelectionListener(new FieldListSelectionHandler());</b>
+<b class="nc"><i>215</i>&nbsp;        fieldList.addMouseListener(new FieldListMouseListener());</b>
+<i>216</i>&nbsp;
+<i>217</i>&nbsp;        // After the call to getAllFields
+<b class="nc"><i>218</i>&nbsp;        initPopupMenuAndToolbar();</b>
+<i>219</i>&nbsp;
+<i>220</i>&nbsp;        //Add listener to components that can bring up popup menus.
+<b class="nc"><i>221</i>&nbsp;        MouseListener popupListener = new PopupListener(inputMenu);</b>
+<b class="nc"><i>222</i>&nbsp;        textPane.addMouseListener(popupListener);</b>
+<b class="nc"><i>223</i>&nbsp;        testPanel.addMouseListener(popupListener);</b>
+<i>224</i>&nbsp;
+<b class="nc"><i>225</i>&nbsp;        JPanel leftPanel = new JPanel(new BorderLayout());</b>
+<i>226</i>&nbsp;
+<b class="nc"><i>227</i>&nbsp;        leftPanel.add(toolBar, BorderLayout.NORTH);</b>
+<b class="nc"><i>228</i>&nbsp;        leftPanel.add(testPanel, BorderLayout.CENTER);</b>
+<i>229</i>&nbsp;
+<b class="nc"><i>230</i>&nbsp;        JPanel inputPanel = setUpFieldListPanel();</b>
+<i>231</i>&nbsp;
+<i>232</i>&nbsp;        // parse with FreeCite button
+<b class="nc"><i>233</i>&nbsp;        parseWithFreeCiteButton.addActionListener(event -&gt; {</b>
+<b class="nc"><i>234</i>&nbsp;            if (parseWithFreeCiteAndAddEntries()) {</b>
+<b class="nc"><i>235</i>&nbsp;                okPressed = false; // we do not want to have the super method to handle our entries, we do it on our own</b>
+<b class="nc"><i>236</i>&nbsp;                dispose();</b>
+<i>237</i>&nbsp;            }
+<b class="nc"><i>238</i>&nbsp;        });</b>
+<i>239</i>&nbsp;
+<b class="nc"><i>240</i>&nbsp;        rawPanel.add(leftPanel, BorderLayout.CENTER);</b>
+<b class="nc"><i>241</i>&nbsp;        rawPanel.add(inputPanel, BorderLayout.EAST);</b>
+<i>242</i>&nbsp;
+<b class="nc"><i>243</i>&nbsp;        JLabel desc = new JLabel(&quot;&lt;html&gt;&lt;h3&gt;&quot; + Localization.lang(&quot;Plain text import&quot;) + &quot;&lt;/h3&gt;&lt;p&gt;&quot;</b>
+<b class="nc"><i>244</i>&nbsp;                + Localization.lang(&quot;This is a simple copy and paste dialog. First load or paste some text into &quot;</b>
+<i>245</i>&nbsp;                + &quot;the text input area.&lt;br&gt;After that, you can mark text and assign it to a BibTeX field.&quot;)
+<i>246</i>&nbsp;                + &quot;&lt;/p&gt;&lt;/html&gt;&quot;);
+<b class="nc"><i>247</i>&nbsp;        desc.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));</b>
+<i>248</i>&nbsp;
+<b class="nc"><i>249</i>&nbsp;        rawPanel.add(desc, BorderLayout.SOUTH);</b>
+<b class="nc"><i>250</i>&nbsp;    }</b>
+<i>251</i>&nbsp;
+<i>252</i>&nbsp;    private JPanel setUpFieldListPanel() {
+<b class="nc"><i>253</i>&nbsp;        JPanel inputPanel = new JPanel();</b>
+<i>254</i>&nbsp;
+<i>255</i>&nbsp;        // Panel Layout
+<b class="nc"><i>256</i>&nbsp;        GridBagLayout gbl = new GridBagLayout();</b>
+<b class="nc"><i>257</i>&nbsp;        GridBagConstraints con = new GridBagConstraints();</b>
+<b class="nc"><i>258</i>&nbsp;        con.weightx = 0;</b>
+<b class="nc"><i>259</i>&nbsp;        con.insets = new Insets(5, 5, 0, 5);</b>
+<b class="nc"><i>260</i>&nbsp;        con.fill = GridBagConstraints.HORIZONTAL;</b>
+<i>261</i>&nbsp;
+<b class="nc"><i>262</i>&nbsp;        inputPanel.setLayout(gbl);</b>
+<i>263</i>&nbsp;
+<i>264</i>&nbsp;        // Border
+<b class="nc"><i>265</i>&nbsp;        TitledBorder titledBorder1 = new TitledBorder(BorderFactory.createLineBorder(new Color(153, 153, 153), 2),</b>
+<b class="nc"><i>266</i>&nbsp;                Localization.lang(&quot;Work options&quot;));</b>
+<b class="nc"><i>267</i>&nbsp;        inputPanel.setBorder(titledBorder1);</b>
+<b class="nc"><i>268</i>&nbsp;        inputPanel.setMinimumSize(new Dimension(10, 10));</b>
+<i>269</i>&nbsp;
+<b class="nc"><i>270</i>&nbsp;        JScrollPane fieldScroller = new JScrollPane(fieldList);</b>
+<b class="nc"><i>271</i>&nbsp;        fieldScroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);</b>
+<i>272</i>&nbsp;
+<i>273</i>&nbsp;        // insert buttons
+<b class="nc"><i>274</i>&nbsp;        insertButton.addActionListener(event -&gt; insertTextForTag(override.isSelected()));</b>
+<i>275</i>&nbsp;
+<i>276</i>&nbsp;        // Radio buttons
+<b class="nc"><i>277</i>&nbsp;        append.setToolTipText(Localization.lang(&quot;Append the selected text to BibTeX field&quot;));</b>
+<b class="nc"><i>278</i>&nbsp;        append.setMnemonic(KeyEvent.VK_A);</b>
+<b class="nc"><i>279</i>&nbsp;        append.setSelected(true);</b>
+<i>280</i>&nbsp;
+<b class="nc"><i>281</i>&nbsp;        override.setToolTipText(Localization.lang(&quot;Override the BibTeX field by the selected text&quot;));</b>
+<b class="nc"><i>282</i>&nbsp;        override.setMnemonic(KeyEvent.VK_O);</b>
+<b class="nc"><i>283</i>&nbsp;        override.setSelected(false);</b>
+<i>284</i>&nbsp;
+<i>285</i>&nbsp;        //Group the radio buttons.
+<b class="nc"><i>286</i>&nbsp;        ButtonGroup group = new ButtonGroup();</b>
+<b class="nc"><i>287</i>&nbsp;        group.add(append);</b>
+<b class="nc"><i>288</i>&nbsp;        group.add(override);</b>
+<i>289</i>&nbsp;
+<b class="nc"><i>290</i>&nbsp;        JPanel radioPanel = new JPanel(new GridLayout(0, 1));</b>
+<b class="nc"><i>291</i>&nbsp;        radioPanel.add(append);</b>
+<b class="nc"><i>292</i>&nbsp;        radioPanel.add(override);</b>
+<i>293</i>&nbsp;
+<i>294</i>&nbsp;        // insert sub components
+<b class="nc"><i>295</i>&nbsp;        JLabel label1 = new JLabel(Localization.lang(&quot;Available BibTeX fields&quot;));</b>
+<b class="nc"><i>296</i>&nbsp;        con.gridwidth = GridBagConstraints.REMAINDER;</b>
+<b class="nc"><i>297</i>&nbsp;        gbl.setConstraints(label1, con);</b>
+<b class="nc"><i>298</i>&nbsp;        inputPanel.add(label1);</b>
+<i>299</i>&nbsp;
+<b class="nc"><i>300</i>&nbsp;        con.gridwidth = GridBagConstraints.REMAINDER;</b>
+<b class="nc"><i>301</i>&nbsp;        con.gridheight = 8;</b>
+<b class="nc"><i>302</i>&nbsp;        con.weighty = 1;</b>
+<b class="nc"><i>303</i>&nbsp;        con.fill = GridBagConstraints.BOTH;</b>
+<b class="nc"><i>304</i>&nbsp;        gbl.setConstraints(fieldScroller, con);</b>
+<b class="nc"><i>305</i>&nbsp;        inputPanel.add(fieldScroller);</b>
+<i>306</i>&nbsp;
+<b class="nc"><i>307</i>&nbsp;        con.fill = GridBagConstraints.HORIZONTAL;</b>
+<b class="nc"><i>308</i>&nbsp;        con.weighty = 0;</b>
+<b class="nc"><i>309</i>&nbsp;        con.gridwidth = 2;</b>
+<b class="nc"><i>310</i>&nbsp;        gbl.setConstraints(radioPanel, con);</b>
+<b class="nc"><i>311</i>&nbsp;        inputPanel.add(radioPanel);</b>
+<i>312</i>&nbsp;
+<b class="nc"><i>313</i>&nbsp;        con.gridwidth = GridBagConstraints.REMAINDER;</b>
+<b class="nc"><i>314</i>&nbsp;        gbl.setConstraints(insertButton, con);</b>
+<b class="nc"><i>315</i>&nbsp;        inputPanel.add(insertButton);</b>
+<b class="nc"><i>316</i>&nbsp;        return inputPanel;</b>
+<i>317</i>&nbsp;    }
+<i>318</i>&nbsp;
+<i>319</i>&nbsp;    private void initPopupMenuAndToolbar() {
+<i>320</i>&nbsp;        // copy/paste Menu
+<b class="nc"><i>321</i>&nbsp;        PasteAction pasteAction = new PasteAction();</b>
+<b class="nc"><i>322</i>&nbsp;        ClearAction clearAction = new ClearAction();</b>
+<b class="nc"><i>323</i>&nbsp;        JMenuItem pasteMI = new JMenuItem(pasteAction);</b>
+<i>324</i>&nbsp;
+<b class="nc"><i>325</i>&nbsp;        inputMenu.add(clearAction);</b>
+<b class="nc"><i>326</i>&nbsp;        inputMenu.addSeparator();</b>
+<b class="nc"><i>327</i>&nbsp;        inputMenu.add(pasteMI);</b>
+<b class="nc"><i>328</i>&nbsp;        inputMenu.addSeparator();</b>
+<i>329</i>&nbsp;
+<i>330</i>&nbsp;        // Right-click append/override
+<b class="nc"><i>331</i>&nbsp;        JMenu appendMenu = new JMenu(Localization.lang(&quot;Append&quot;));</b>
+<b class="nc"><i>332</i>&nbsp;        appendMenu.setToolTipText(Localization.lang(&quot;Append the selected text to BibTeX field&quot;));</b>
+<b class="nc"><i>333</i>&nbsp;        JMenu overrideMenu = new JMenu(Localization.lang(&quot;Override&quot;));</b>
+<b class="nc"><i>334</i>&nbsp;        overrideMenu.setToolTipText(Localization.lang(&quot;Override the BibTeX field by the selected text&quot;));</b>
+<b class="nc"><i>335</i>&nbsp;        for (String field : allFields) {</b>
+<b class="nc"><i>336</i>&nbsp;            appendMenu.add(new JMenuItem(new MenuTextForTagAction(field, false)));</b>
+<b class="nc"><i>337</i>&nbsp;            overrideMenu.add(new JMenuItem(new MenuTextForTagAction(field, true)));</b>
+<b class="nc"><i>338</i>&nbsp;        }</b>
+<i>339</i>&nbsp;
+<b class="nc"><i>340</i>&nbsp;        inputMenu.add(appendMenu);</b>
+<b class="nc"><i>341</i>&nbsp;        inputMenu.add(overrideMenu);</b>
+<i>342</i>&nbsp;
+<i>343</i>&nbsp;        // Toolbar
+<i>344</i>&nbsp;
+<b class="nc"><i>345</i>&nbsp;        toolBar.add(clearAction);</b>
+<b class="nc"><i>346</i>&nbsp;        toolBar.setBorderPainted(false);</b>
+<b class="nc"><i>347</i>&nbsp;        toolBar.addSeparator();</b>
+<b class="nc"><i>348</i>&nbsp;        toolBar.add(pasteAction);</b>
+<b class="nc"><i>349</i>&nbsp;        toolBar.add(new LoadAction());</b>
+<b class="nc"><i>350</i>&nbsp;    }</b>
+<i>351</i>&nbsp;
+<i>352</i>&nbsp;    private void initButtonPanel() {
+<b class="nc"><i>353</i>&nbsp;        okButton.addActionListener(event -&gt; {</b>
+<b class="nc"><i>354</i>&nbsp;            okPressed = true;</b>
+<b class="nc"><i>355</i>&nbsp;            dispose();</b>
+<b class="nc"><i>356</i>&nbsp;        });</b>
+<b class="nc"><i>357</i>&nbsp;        cancelButton.addActionListener(event -&gt; dispose());</b>
+<i>358</i>&nbsp;
+<b class="nc"><i>359</i>&nbsp;        ButtonBarBuilder bb = new ButtonBarBuilder(buttons);</b>
+<b class="nc"><i>360</i>&nbsp;        buttons.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));</b>
+<b class="nc"><i>361</i>&nbsp;        bb.addGlue();</b>
+<b class="nc"><i>362</i>&nbsp;        bb.addButton(okButton);</b>
+<b class="nc"><i>363</i>&nbsp;        bb.addButton(parseWithFreeCiteButton);</b>
+<b class="nc"><i>364</i>&nbsp;        bb.addButton(cancelButton);</b>
+<b class="nc"><i>365</i>&nbsp;        bb.addGlue();</b>
+<b class="nc"><i>366</i>&nbsp;    }</b>
+<i>367</i>&nbsp;
+<i>368</i>&nbsp;    // Panel with BibTeX source code
+<i>369</i>&nbsp;    private void initSourcePanel() {
+<b class="nc"><i>370</i>&nbsp;        sourcePreview.setEditable(false);</b>
+<b class="nc"><i>371</i>&nbsp;        sourcePreview.setFont(new Font(&quot;Monospaced&quot;, Font.PLAIN, Globals.prefs.getInt(JabRefPreferences.FONT_SIZE)));</b>
+<b class="nc"><i>372</i>&nbsp;        JScrollPane paneScrollPane = new JScrollPane(sourcePreview);</b>
+<b class="nc"><i>373</i>&nbsp;        paneScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);</b>
+<b class="nc"><i>374</i>&nbsp;        paneScrollPane.setPreferredSize(new Dimension(500, 255));</b>
+<b class="nc"><i>375</i>&nbsp;        paneScrollPane.setMinimumSize(new Dimension(10, 10));</b>
+<i>376</i>&nbsp;
+<b class="nc"><i>377</i>&nbsp;        sourcePanel.setLayout(new BorderLayout());</b>
+<b class="nc"><i>378</i>&nbsp;        sourcePanel.add(paneScrollPane, BorderLayout.CENTER);</b>
+<b class="nc"><i>379</i>&nbsp;    }</b>
+<i>380</i>&nbsp;
+<i>381</i>&nbsp;    private void addStylesToDocument() {
+<i>382</i>&nbsp;        //Initialize some styles.
+<b class="nc"><i>383</i>&nbsp;        Style defaultStyle = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);</b>
+<i>384</i>&nbsp;
+<b class="nc"><i>385</i>&nbsp;        Style regularStyle = document.addStyle(&quot;regular&quot;, defaultStyle);</b>
+<b class="nc"><i>386</i>&nbsp;        StyleConstants.setFontFamily(defaultStyle, &quot;SansSerif&quot;);</b>
+<b class="nc"><i>387</i>&nbsp;        StyleConstants.setFontSize(defaultStyle, Globals.prefs.getInt(JabRefPreferences.FONT_SIZE));</b>
+<i>388</i>&nbsp;
+<b class="nc"><i>389</i>&nbsp;        Style s = document.addStyle(&quot;used&quot;, regularStyle);</b>
+<b class="nc"><i>390</i>&nbsp;        StyleConstants.setBold(s, true);</b>
+<b class="nc"><i>391</i>&nbsp;        StyleConstants.setForeground(s, Color.blue);</b>
+<i>392</i>&nbsp;
+<b class="nc"><i>393</i>&nbsp;        s = document.addStyle(&quot;marked&quot;, regularStyle);</b>
+<b class="nc"><i>394</i>&nbsp;        StyleConstants.setBold(s, true);</b>
+<b class="nc"><i>395</i>&nbsp;        StyleConstants.setForeground(s, Color.red);</b>
+<b class="nc"><i>396</i>&nbsp;    }</b>
+<i>397</i>&nbsp;
+<i>398</i>&nbsp;    private void insertTextForTag(boolean overrideField) {
+<b class="nc"><i>399</i>&nbsp;        String fieldName = fieldList.getSelectedValue();</b>
+<b class="nc"><i>400</i>&nbsp;        if (fieldName != null) {</b>
+<b class="nc"><i>401</i>&nbsp;            String txt = textPane.getSelectedText();</b>
+<i>402</i>&nbsp;
+<b class="nc"><i>403</i>&nbsp;            if (txt != null) {</b>
+<b class="nc"><i>404</i>&nbsp;                int selectionStart = textPane.getSelectionStart();</b>
+<b class="nc"><i>405</i>&nbsp;                int selectionEnd = textPane.getSelectionEnd();</b>
+<i>406</i>&nbsp;
+<i>407</i>&nbsp;                // unselect text
+<b class="nc"><i>408</i>&nbsp;                textPane.setSelectionEnd(selectionStart);</b>
+<i>409</i>&nbsp;
+<i>410</i>&nbsp;                // mark the selected text as &quot;used&quot;
+<b class="nc"><i>411</i>&nbsp;                document.setCharacterAttributes(selectionStart, selectionEnd - selectionStart,</b>
+<b class="nc"><i>412</i>&nbsp;                        document.getStyle(&quot;marked&quot;), true);</b>
+<i>413</i>&nbsp;
+<i>414</i>&nbsp;                // override an existing entry
+<b class="nc"><i>415</i>&nbsp;                if (overrideField) {</b>
+<b class="nc"><i>416</i>&nbsp;                    entry.setField(fieldName, txt);</b>
+<i>417</i>&nbsp;                    // erase old text selection
+<b class="nc"><i>418</i>&nbsp;                    markedTextStore.setStyleForTag(fieldName, &quot;regular&quot;, document); // delete all previous styles</b>
+<b class="nc"><i>419</i>&nbsp;                    markedTextStore.insertPosition(fieldName, selectionStart, selectionEnd); // insert new selection style</b>
+<i>420</i>&nbsp;                } else {
+<i>421</i>&nbsp;                    // memorize the selection for text highlighting
+<b class="nc"><i>422</i>&nbsp;                    markedTextStore.appendPosition(fieldName, selectionStart, selectionEnd);</b>
+<i>423</i>&nbsp;
+<i>424</i>&nbsp;                    // get old text from BibTeX tag
+<b class="nc"><i>425</i>&nbsp;                    Optional&lt;String&gt; old = entry.getField(fieldName);</b>
+<i>426</i>&nbsp;
+<i>427</i>&nbsp;                    // merge old and selected text
+<b class="nc"><i>428</i>&nbsp;                    if (old.isPresent()) {</b>
+<i>429</i>&nbsp;                        // insert a new name with an additional &quot;and&quot;
+<b class="nc"><i>430</i>&nbsp;                        if (InternalBibtexFields.getFieldProperties(fieldName).contains(FieldProperty.PERSON_NAMES)) {</b>
+<b class="nc"><i>431</i>&nbsp;                            entry.setField(fieldName, old.get() + &quot; and &quot; + txt);</b>
+<b class="nc"><i>432</i>&nbsp;                        } else if (FieldName.KEYWORDS.equals(fieldName)) {</b>
+<i>433</i>&nbsp;                            // Add keyword
+<b class="nc"><i>434</i>&nbsp;                            entry.addKeyword(txt, Globals.prefs.getKeywordDelimiter());</b>
+<i>435</i>&nbsp;                        } else {
+<b class="nc"><i>436</i>&nbsp;                            entry.setField(fieldName, old.get() + txt);</b>
+<i>437</i>&nbsp;                        }
+<i>438</i>&nbsp;                    } else {
+<i>439</i>&nbsp;                        // &quot;null&quot;+&quot;txt&quot; Strings forbidden
+<b class="nc"><i>440</i>&nbsp;                        entry.setField(fieldName, txt);</b>
+<i>441</i>&nbsp;                    }
+<i>442</i>&nbsp;                }
+<i>443</i>&nbsp;                // make the new data in BibTeX source code visible
+<b class="nc"><i>444</i>&nbsp;                updateSourceView();</b>
+<i>445</i>&nbsp;            }
+<i>446</i>&nbsp;        }
+<b class="nc"><i>447</i>&nbsp;    }</b>
+<i>448</i>&nbsp;
+<i>449</i>&nbsp;    public boolean okPressed() {
+<b class="nc"><i>450</i>&nbsp;        return okPressed;</b>
+<i>451</i>&nbsp;    }
+<i>452</i>&nbsp;
+<i>453</i>&nbsp;    /**
+<i>454</i>&nbsp;     * tries to parse the pasted reference with freecite
+<i>455</i>&nbsp;     *
+<i>456</i>&nbsp;     * @return true if successful, false otherwise
+<i>457</i>&nbsp;     */
+<i>458</i>&nbsp;    private boolean parseWithFreeCiteAndAddEntries() {
+<b class="nc"><i>459</i>&nbsp;        FreeCiteImporter fimp = new FreeCiteImporter(Globals.prefs.getImportFormatPreferences());</b>
+<b class="nc"><i>460</i>&nbsp;        String text = textPane.getText();</b>
+<i>461</i>&nbsp;
+<i>462</i>&nbsp;        // we have to remove line breaks (but keep empty lines)
+<i>463</i>&nbsp;        // otherwise, the result is broken
+<b class="nc"><i>464</i>&nbsp;        text = text.replace(OS.NEWLINE.concat(OS.NEWLINE), &quot;##NEWLINE##&quot;);</b>
+<i>465</i>&nbsp;        // possible URL line breaks are removed completely.
+<b class="nc"><i>466</i>&nbsp;        text = text.replace(&quot;/&quot;.concat(OS.NEWLINE), &quot;/&quot;);</b>
+<b class="nc"><i>467</i>&nbsp;        text = text.replace(OS.NEWLINE, &quot; &quot;);</b>
+<b class="nc"><i>468</i>&nbsp;        text = text.replace(&quot;##NEWLINE##&quot;, OS.NEWLINE);</b>
+<i>469</i>&nbsp;
+<b class="nc"><i>470</i>&nbsp;        ParserResult importerResult = fimp.importEntries(text);</b>
+<b class="nc"><i>471</i>&nbsp;        if (importerResult.hasWarnings()) {</b>
+<b class="nc"><i>472</i>&nbsp;            frame.showMessage(importerResult.getErrorMessage());</b>
+<i>473</i>&nbsp;        }
+<b class="nc"><i>474</i>&nbsp;        List&lt;BibEntry&gt; importedEntries = importerResult.getDatabase().getEntries();</b>
+<b class="nc"><i>475</i>&nbsp;        if (importedEntries.isEmpty()) {</b>
+<b class="nc"><i>476</i>&nbsp;            return false;</b>
+<i>477</i>&nbsp;        } else {
+<b class="nc"><i>478</i>&nbsp;            UpdateField.setAutomaticFields(importedEntries, false, false, Globals.prefs.getUpdateFieldPreferences());</b>
+<b class="nc"><i>479</i>&nbsp;            boolean markEntries = EntryMarker.shouldMarkEntries();</b>
+<i>480</i>&nbsp;
+<b class="nc"><i>481</i>&nbsp;            for (BibEntry e : importedEntries) {</b>
+<b class="nc"><i>482</i>&nbsp;                if (markEntries) {</b>
+<b class="nc"><i>483</i>&nbsp;                    EntryMarker.markEntry(entry, EntryMarker.IMPORT_MARK_LEVEL, false, new NamedCompound(&quot;&quot;));</b>
+<i>484</i>&nbsp;                }
+<i>485</i>&nbsp;
+<b class="nc"><i>486</i>&nbsp;                frame.getCurrentBasePanel().insertEntry(e);</b>
+<b class="nc"><i>487</i>&nbsp;            }</b>
+<b class="nc"><i>488</i>&nbsp;            return true;</b>
+<i>489</i>&nbsp;        }
+<i>490</i>&nbsp;    }
+<i>491</i>&nbsp;
+<i>492</i>&nbsp;    // update the bibtex source view and available List
+<i>493</i>&nbsp;    private void updateSourceView() {
+<b class="nc"><i>494</i>&nbsp;        StringWriter sw = new StringWriter(200);</b>
+<i>495</i>&nbsp;        try {
+<b class="nc"><i>496</i>&nbsp;            new BibEntryWriter(new LatexFieldFormatter(Globals.prefs.getLatexFieldFormatterPreferences()),</b>
+<b class="nc"><i>497</i>&nbsp;                    false).write(entry, sw, frame.getCurrentBasePanel().getBibDatabaseContext().getMode());</b>
+<b class="nc"><i>498</i>&nbsp;            sourcePreview.setText(sw.getBuffer().toString());</b>
+<b class="nc"><i>499</i>&nbsp;        } catch (IOException ex) {</b>
+<b class="nc"><i>500</i>&nbsp;            LOGGER.error(&quot;Error in entry&quot; + &quot;: &quot; + ex.getMessage(), ex);</b>
+<b class="nc"><i>501</i>&nbsp;        }</b>
+<i>502</i>&nbsp;
+<b class="nc"><i>503</i>&nbsp;        fieldList.clearSelection();</b>
+<b class="nc"><i>504</i>&nbsp;    }</b>
+<i>505</i>&nbsp;
+<i>506</i>&nbsp;    private String[] getAllFields() {
+<b class="nc"><i>507</i>&nbsp;        Optional&lt;EntryType&gt; type = EntryTypes.getType(entry.getType(),</b>
+<b class="nc"><i>508</i>&nbsp;                frame.getCurrentBasePanel().getBibDatabaseContext().getMode());</b>
+<b class="nc"><i>509</i>&nbsp;        if (type.isPresent()) {</b>
+<b class="nc"><i>510</i>&nbsp;            allFields.addAll(type.get().getAllFields());</b>
+<b class="nc"><i>511</i>&nbsp;            requiredFields.addAll(type.get().getRequiredFieldsFlat());</b>
+<b class="nc"><i>512</i>&nbsp;            optionalFields.addAll(type.get().getPrimaryOptionalFields());</b>
+<i>513</i>&nbsp;        }
+<b class="nc"><i>514</i>&nbsp;        for (String field : InternalBibtexFields.getAllPublicFieldNames()) {</b>
+<b class="nc"><i>515</i>&nbsp;            if (!allFields.contains(field)) {</b>
+<b class="nc"><i>516</i>&nbsp;                allFields.add(field);</b>
+<i>517</i>&nbsp;            }
+<b class="nc"><i>518</i>&nbsp;        }</b>
+<b class="nc"><i>519</i>&nbsp;        return allFields.toArray(new String[allFields.size()]);</b>
+<i>520</i>&nbsp;    }
+<i>521</i>&nbsp;
+<i>522</i>&nbsp;
+<i>523</i>&nbsp;    private class PasteAction extends BasicAction {
+<i>524</i>&nbsp;
+<b class="nc"><i>525</i>&nbsp;        public PasteAction() {</b>
+<b class="nc"><i>526</i>&nbsp;            super(Localization.lang(&quot;Paste&quot;), Localization.lang(&quot;Paste from clipboard&quot;),</b>
+<b class="nc"><i>527</i>&nbsp;                    IconTheme.JabRefIcon.PASTE.getIcon());</b>
+<b class="nc"><i>528</i>&nbsp;        }</b>
+<i>529</i>&nbsp;
+<i>530</i>&nbsp;        @Override
+<i>531</i>&nbsp;        public void actionPerformed(ActionEvent e) {
+<b class="nc"><i>532</i>&nbsp;            String data = new ClipBoardManager().getClipboardContents();</b>
+<b class="nc"><i>533</i>&nbsp;            int selStart = textPane.getSelectionStart();</b>
+<b class="nc"><i>534</i>&nbsp;            int selEnd = textPane.getSelectionEnd();</b>
+<b class="nc"><i>535</i>&nbsp;            if ((selEnd - selStart) &gt; 0) {</b>
+<b class="nc"><i>536</i>&nbsp;                textPane.replaceSelection(&quot;&quot;);</b>
+<i>537</i>&nbsp;            }
+<b class="nc"><i>538</i>&nbsp;            int cPos = textPane.getCaretPosition();</b>
+<i>539</i>&nbsp;            try {
+<b class="nc"><i>540</i>&nbsp;                document.insertString(cPos, data, document.getStyle(&quot;regular&quot;));</b>
+<b class="nc"><i>541</i>&nbsp;            } catch (BadLocationException ex) {</b>
+<b class="nc"><i>542</i>&nbsp;                LOGGER.warn(&quot;Could not paste text&quot;, ex);</b>
+<b class="nc"><i>543</i>&nbsp;            }</b>
+<b class="nc"><i>544</i>&nbsp;        }</b>
+<i>545</i>&nbsp;    }
+<i>546</i>&nbsp;
+<i>547</i>&nbsp;    private class LoadAction extends BasicAction {
+<i>548</i>&nbsp;
+<b class="nc"><i>549</i>&nbsp;        public LoadAction() {</b>
+<b class="nc"><i>550</i>&nbsp;            super(Localization.lang(&quot;Open&quot;), Localization.lang(&quot;Open file&quot;), IconTheme.JabRefIcon.OPEN.getIcon());</b>
+<b class="nc"><i>551</i>&nbsp;        }</b>
+<i>552</i>&nbsp;
+<i>553</i>&nbsp;        @Override
+<i>554</i>&nbsp;        public void actionPerformed(ActionEvent e) {
+<i>555</i>&nbsp;            try {
+<b class="nc"><i>556</i>&nbsp;                FileDialog dialog = new FileDialog(frame).withExtension(FileExtensions.TXT);</b>
+<b class="nc"><i>557</i>&nbsp;                dialog.setDefaultExtension(FileExtensions.TXT);</b>
+<b class="nc"><i>558</i>&nbsp;                Optional&lt;Path&gt; path = dialog.showDialogAndGetSelectedFile();</b>
+<i>559</i>&nbsp;
+<b class="nc"><i>560</i>&nbsp;                if (path.isPresent()) {</b>
+<b class="nc"><i>561</i>&nbsp;                    File newFile = path.get().toFile();</b>
+<b class="nc"><i>562</i>&nbsp;                    document.remove(0, document.getLength());</b>
+<b class="nc"><i>563</i>&nbsp;                    EditorKit eKit = textPane.getEditorKit();</b>
+<b class="nc"><i>564</i>&nbsp;                    if (eKit != null) {</b>
+<b class="nc"><i>565</i>&nbsp;                        try (FileInputStream fis = new FileInputStream(newFile)) {</b>
+<b class="nc"><i>566</i>&nbsp;                            eKit.read(fis, document, 0);</b>
+<b class="nc"><i>567</i>&nbsp;                            document.setLogicalStyle(0, document.getStyle(&quot;regular&quot;));</b>
+<b class="nc"><i>568</i>&nbsp;                        }</b>
+<i>569</i>&nbsp;                    }
+<i>570</i>&nbsp;                }
+<b class="nc"><i>571</i>&nbsp;            } catch (BadLocationException | IOException ex) {</b>
+<b class="nc"><i>572</i>&nbsp;                LOGGER.warn(&quot;Problem reading or inserting file&quot;, ex);</b>
+<b class="nc"><i>573</i>&nbsp;            }</b>
+<b class="nc"><i>574</i>&nbsp;        }</b>
+<i>575</i>&nbsp;    }
+<i>576</i>&nbsp;
+<i>577</i>&nbsp;    private class ClearAction extends BasicAction {
+<i>578</i>&nbsp;
+<b class="nc"><i>579</i>&nbsp;        public ClearAction() {</b>
+<b class="nc"><i>580</i>&nbsp;            super(Localization.lang(&quot;Clear&quot;), Localization.lang(&quot;Clear inputarea&quot;), IconTheme.JabRefIcon.NEW.getIcon());</b>
+<b class="nc"><i>581</i>&nbsp;        }</b>
+<i>582</i>&nbsp;
+<i>583</i>&nbsp;        @Override
+<i>584</i>&nbsp;        public void actionPerformed(ActionEvent e) {
+<b class="nc"><i>585</i>&nbsp;            textPane.setText(&quot;&quot;);</b>
+<b class="nc"><i>586</i>&nbsp;        }</b>
+<i>587</i>&nbsp;    }
+<i>588</i>&nbsp;
+<b class="nc"><i>589</i>&nbsp;    class FieldListSelectionHandler implements ListSelectionListener {</b>
+<i>590</i>&nbsp;
+<b class="nc"><i>591</i>&nbsp;        private int lastIndex = -1;</b>
+<i>592</i>&nbsp;
+<i>593</i>&nbsp;
+<i>594</i>&nbsp;        @Override
+<i>595</i>&nbsp;        public void valueChanged(ListSelectionEvent e) {
+<b class="nc"><i>596</i>&nbsp;            ListSelectionModel lsm = (ListSelectionModel) e.getSource();</b>
+<i>597</i>&nbsp;
+<b class="nc"><i>598</i>&nbsp;            int index = lsm.getAnchorSelectionIndex();</b>
+<b class="nc"><i>599</i>&nbsp;            if (index != lastIndex) {</b>
+<b class="nc"><i>600</i>&nbsp;                boolean isAdjusting = e.getValueIsAdjusting();</b>
+<i>601</i>&nbsp;
+<b class="nc"><i>602</i>&nbsp;                if (!isAdjusting) {</b>
+<b class="nc"><i>603</i>&nbsp;                    if (lastIndex &gt; -1) {</b>
+<b class="nc"><i>604</i>&nbsp;                        String tag1 = fieldList.getModel().getElementAt(lastIndex);</b>
+<b class="nc"><i>605</i>&nbsp;                        markedTextStore.setStyleForTag(tag1, &quot;used&quot;, document);</b>
+<i>606</i>&nbsp;                    }
+<i>607</i>&nbsp;
+<b class="nc"><i>608</i>&nbsp;                    String tag2 = fieldList.getModel().getElementAt(index);</b>
+<b class="nc"><i>609</i>&nbsp;                    markedTextStore.setStyleForTag(tag2, &quot;marked&quot;, document);</b>
+<i>610</i>&nbsp;
+<b class="nc"><i>611</i>&nbsp;                    lastIndex = index;</b>
+<i>612</i>&nbsp;                }
+<i>613</i>&nbsp;            }
+<b class="nc"><i>614</i>&nbsp;        }</b>
+<i>615</i>&nbsp;    }
+<i>616</i>&nbsp;
+<i>617</i>&nbsp;    // simple JList Renderer
+<i>618</i>&nbsp;    // based on : Advanced JList Programming at developers.sun.com
+<i>619</i>&nbsp;    private class SimpleCellRenderer extends DefaultListCellRenderer {
+<i>620</i>&nbsp;
+<i>621</i>&nbsp;        private final Font baseFont;
+<i>622</i>&nbsp;        private final Font usedFont;
+<b class="nc"><i>623</i>&nbsp;        private final Icon okIcon = IconTheme.JabRefIcon.PLAIN_TEXT_IMPORT_DONE.getSmallIcon();</b>
+<b class="nc"><i>624</i>&nbsp;        private final Icon needIcon = IconTheme.JabRefIcon.PLAIN_TEXT_IMPORT_TODO.getSmallIcon();</b>
+<b class="nc"><i>625</i>&nbsp;        private final Color requiredColor = Globals.prefs.getColor(JabRefPreferences.TABLE_REQ_FIELD_BACKGROUND);</b>
+<b class="nc"><i>626</i>&nbsp;        private final Color optionalColor = Globals.prefs.getColor(JabRefPreferences.TABLE_OPT_FIELD_BACKGROUND);</b>
+<i>627</i>&nbsp;
+<i>628</i>&nbsp;
+<b class="nc"><i>629</i>&nbsp;        public SimpleCellRenderer(Font normFont) {</b>
+<b class="nc"><i>630</i>&nbsp;            baseFont = normFont;</b>
+<b class="nc"><i>631</i>&nbsp;            usedFont = baseFont.deriveFont(Font.ITALIC);</b>
+<b class="nc"><i>632</i>&nbsp;        }</b>
+<i>633</i>&nbsp;
+<i>634</i>&nbsp;        /* This is the only method defined by ListCellRenderer.  We just
+<i>635</i>&nbsp;         * reconfigure the Jlabel each time we&#39;re called.
+<i>636</i>&nbsp;         */
+<i>637</i>&nbsp;        @Override
+<i>638</i>&nbsp;        public Component getListCellRendererComponent(JList&lt;?&gt; list, Object value, // value to display
+<i>639</i>&nbsp;                                                      int index, // cell index
+<i>640</i>&nbsp;                                                      boolean iss, // is the cell selected
+<i>641</i>&nbsp;                                                      boolean chf) // the list and the cell have the focus
+<i>642</i>&nbsp;        {
+<i>643</i>&nbsp;            /* The DefaultListCellRenderer class will take care of
+<i>644</i>&nbsp;             * the JLabels text property, it&#39;s foreground and background
+<i>645</i>&nbsp;             * colors, and so on.
+<i>646</i>&nbsp;             */
+<b class="nc"><i>647</i>&nbsp;            super.getListCellRendererComponent(list, value, index, iss, chf);</b>
+<i>648</i>&nbsp;
+<i>649</i>&nbsp;            /* We additionally set the JLabels icon property here.
+<i>650</i>&nbsp;             */
+<b class="nc"><i>651</i>&nbsp;            String s = value.toString();</b>
+<b class="nc"><i>652</i>&nbsp;            if (entry.hasField(s)) {</b>
+<b class="nc"><i>653</i>&nbsp;                this.setForeground(Color.gray);</b>
+<b class="nc"><i>654</i>&nbsp;                this.setFont(usedFont);</b>
+<b class="nc"><i>655</i>&nbsp;                this.setIcon(okIcon);</b>
+<b class="nc"><i>656</i>&nbsp;                this.setToolTipText(Localization.lang(&quot;Filled&quot;));</b>
+<i>657</i>&nbsp;            } else {
+<b class="nc"><i>658</i>&nbsp;                this.setIcon(needIcon);</b>
+<b class="nc"><i>659</i>&nbsp;                this.setToolTipText(Localization.lang(&quot;Field is missing&quot;));</b>
+<i>660</i>&nbsp;            }
+<b class="nc"><i>661</i>&nbsp;            if (requiredFields.contains(s)) {</b>
+<b class="nc"><i>662</i>&nbsp;                this.setBackground(requiredColor);</b>
+<b class="nc"><i>663</i>&nbsp;            } else if (optionalFields.contains(s)) {</b>
+<b class="nc"><i>664</i>&nbsp;                this.setBackground(optionalColor);</b>
+<i>665</i>&nbsp;            }
+<b class="nc"><i>666</i>&nbsp;            return this;</b>
+<i>667</i>&nbsp;        }
+<i>668</i>&nbsp;    }
+<i>669</i>&nbsp;
+<b class="nc"><i>670</i>&nbsp;    private class FieldListMouseListener extends MouseAdapter {</b>
+<i>671</i>&nbsp;
+<i>672</i>&nbsp;        @Override
+<i>673</i>&nbsp;        public void mouseClicked(MouseEvent e) {
+<b class="nc"><i>674</i>&nbsp;            if (e.getClickCount() == 2) {</b>
+<b class="nc"><i>675</i>&nbsp;                insertTextForTag(override.isSelected());</b>
+<i>676</i>&nbsp;            }
+<b class="nc"><i>677</i>&nbsp;        }</b>
+<i>678</i>&nbsp;    }
+<i>679</i>&nbsp;
+<i>680</i>&nbsp;    private class MenuTextForTagAction extends AbstractAction {
+<i>681</i>&nbsp;
+<i>682</i>&nbsp;        private final String field;
+<i>683</i>&nbsp;        private final Boolean overrideField;
+<i>684</i>&nbsp;
+<i>685</i>&nbsp;
+<b class="nc"><i>686</i>&nbsp;        public MenuTextForTagAction(String field, Boolean overrideField) {</b>
+<b class="nc"><i>687</i>&nbsp;            super(field);</b>
+<b class="nc"><i>688</i>&nbsp;            this.field = field;</b>
+<b class="nc"><i>689</i>&nbsp;            this.overrideField = overrideField;</b>
+<b class="nc"><i>690</i>&nbsp;        }</b>
+<i>691</i>&nbsp;
+<i>692</i>&nbsp;        @Override
+<i>693</i>&nbsp;        public void actionPerformed(ActionEvent e) {
+<i>694</i>&nbsp;            // To enable correct marking of used values
+<b class="nc"><i>695</i>&nbsp;            fieldList.setSelectedValue(field, false);</b>
+<b class="nc"><i>696</i>&nbsp;            insertTextForTag(overrideField);</b>
+<b class="nc"><i>697</i>&nbsp;        }</b>
+<i>698</i>&nbsp;    }
+<i>699</i>&nbsp;}
+<i>700</i>&nbsp;
+<i>701</i>&nbsp;class PopupListener extends MouseAdapter {
+<i>702</i>&nbsp;
+<i>703</i>&nbsp;    private final JPopupMenu popMenu;
+<i>704</i>&nbsp;
+<i>705</i>&nbsp;
+<i>706</i>&nbsp;    public PopupListener(JPopupMenu menu) {
+<i>707</i>&nbsp;        popMenu = menu;
+<i>708</i>&nbsp;    }
+<i>709</i>&nbsp;
+<i>710</i>&nbsp;    @Override
+<i>711</i>&nbsp;    public void mousePressed(MouseEvent e) {
+<i>712</i>&nbsp;        maybeShowPopup(e);
+<i>713</i>&nbsp;    }
+<i>714</i>&nbsp;
+<i>715</i>&nbsp;    @Override
+<i>716</i>&nbsp;    public void mouseReleased(MouseEvent e) {
+<i>717</i>&nbsp;        maybeShowPopup(e);
+<i>718</i>&nbsp;    }
+<i>719</i>&nbsp;
+<i>720</i>&nbsp;    private void maybeShowPopup(MouseEvent e) {
+<i>721</i>&nbsp;        if (e.isPopupTrigger()) {
+<i>722</i>&nbsp;            popMenu.show(e.getComponent(), e.getX(), e.getY());
+<i>723</i>&nbsp;        }
+<i>724</i>&nbsp;    }
+<i>725</i>&nbsp;}
+<i>726</i>&nbsp;
+<i>727</i>&nbsp;abstract class BasicAction extends AbstractAction {
+<i>728</i>&nbsp;
+<i>729</i>&nbsp;    public BasicAction(String text, String description, Icon icon) {
+<i>730</i>&nbsp;        super(text, icon);
+<i>731</i>&nbsp;        putValue(Action.SHORT_DESCRIPTION, description);
+<i>732</i>&nbsp;    }
+<i>733</i>&nbsp;
+<i>734</i>&nbsp;    public BasicAction(String text) {
+<i>735</i>&nbsp;        super(text);
+<i>736</i>&nbsp;    }
+<i>737</i>&nbsp;
+<i>738</i>&nbsp;    @Override
+<i>739</i>&nbsp;    public abstract void actionPerformed(ActionEvent e);
+<i>740</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

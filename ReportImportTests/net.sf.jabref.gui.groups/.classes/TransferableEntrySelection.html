@@ -1,0 +1,168 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: TransferableEntrySelection</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.groups</a> ]
+</div>
+
+<h1>Coverage Summary for Class: TransferableEntrySelection (net.sf.jabref.gui.groups)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TransferableEntrySelection</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 31)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.groups;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.datatransfer.DataFlavor;
+<i>4</i>&nbsp;import java.awt.datatransfer.Transferable;
+<i>5</i>&nbsp;import java.awt.datatransfer.UnsupportedFlavorException;
+<i>6</i>&nbsp;import java.io.ByteArrayInputStream;
+<i>7</i>&nbsp;import java.io.IOException;
+<i>8</i>&nbsp;import java.util.List;
+<i>9</i>&nbsp;import java.util.Optional;
+<i>10</i>&nbsp;import java.util.stream.Collectors;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;public class TransferableEntrySelection implements Transferable {
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;    public static final DataFlavor FLAVOR_INTERNAL;
+<i>17</i>&nbsp;    private static final DataFlavor FLAVOR_EXTERNAL;
+<i>18</i>&nbsp;    private static final DataFlavor[] FLAVORS;
+<i>19</i>&nbsp;    private final List&lt;BibEntry&gt; selectedEntries;
+<i>20</i>&nbsp;    private final String selectedEntriesCiteKeys;
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;    private boolean includeCiteKeyword;
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;    static {
+<b class="nc"><i>25</i>&nbsp;        DataFlavor df1 = null;</b>
+<b class="nc"><i>26</i>&nbsp;        DataFlavor df2 = null;</b>
+<i>27</i>&nbsp;        try {
+<b class="nc"><i>28</i>&nbsp;            df1 = new DataFlavor(DataFlavor.javaJVMLocalObjectMimeType</b>
+<i>29</i>&nbsp;                    + &quot;;class=net.sf.jabref.gui.groups.TransferableEntrySelection&quot;);
+<b class="nc"><i>30</i>&nbsp;            df2 = DataFlavor.getTextPlainUnicodeFlavor();</b>
+<b class="nc"><i>31</i>&nbsp;        } catch (ClassNotFoundException e) {</b>
+<i>32</i>&nbsp;            // never happens
+<b class="nc"><i>33</i>&nbsp;        }</b>
+<b class="nc"><i>34</i>&nbsp;        FLAVOR_INTERNAL = df1;</b>
+<b class="nc"><i>35</i>&nbsp;        FLAVOR_EXTERNAL = df2;</b>
+<b class="nc"><i>36</i>&nbsp;        FLAVORS = new DataFlavor[] {TransferableEntrySelection.FLAVOR_INTERNAL, TransferableEntrySelection.FLAVOR_EXTERNAL};</b>
+<b class="nc"><i>37</i>&nbsp;    }</b>
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;
+<b class="nc"><i>40</i>&nbsp;    public TransferableEntrySelection(List&lt;BibEntry&gt; list) {</b>
+<b class="nc"><i>41</i>&nbsp;        this.selectedEntries = list;</b>
+<b class="nc"><i>42</i>&nbsp;        selectedEntriesCiteKeys = String.join(&quot;,&quot;,</b>
+<b class="nc"><i>43</i>&nbsp;                this.selectedEntries.stream().map(BibEntry::getCiteKeyOptional).filter(Optional::isPresent)</b>
+<b class="nc"><i>44</i>&nbsp;                        .map(Optional::get).collect(Collectors.toList()));</b>
+<b class="nc"><i>45</i>&nbsp;    }</b>
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;    @Override
+<i>48</i>&nbsp;    public DataFlavor[] getTransferDataFlavors() {
+<b class="nc"><i>49</i>&nbsp;        return TransferableEntrySelection.FLAVORS;</b>
+<i>50</i>&nbsp;    }
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;    @Override
+<i>53</i>&nbsp;    public boolean isDataFlavorSupported(DataFlavor someFlavor) {
+<b class="nc"><i>54</i>&nbsp;        return someFlavor.equals(TransferableEntrySelection.FLAVOR_INTERNAL)</b>
+<b class="nc"><i>55</i>&nbsp;                || someFlavor.equals(TransferableEntrySelection.FLAVOR_EXTERNAL);</b>
+<i>56</i>&nbsp;    }
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;    @Override
+<i>59</i>&nbsp;    public Object getTransferData(DataFlavor someFlavor)
+<i>60</i>&nbsp;            throws UnsupportedFlavorException, IOException {
+<b class="nc"><i>61</i>&nbsp;        if (!isDataFlavorSupported(someFlavor)) {</b>
+<b class="nc"><i>62</i>&nbsp;            throw new UnsupportedFlavorException(someFlavor);</b>
+<i>63</i>&nbsp;        }
+<b class="nc"><i>64</i>&nbsp;        if (someFlavor.equals(TransferableEntrySelection.FLAVOR_INTERNAL)) {</b>
+<b class="nc"><i>65</i>&nbsp;            return this;</b>
+<i>66</i>&nbsp;        }
+<b class="nc"><i>67</i>&nbsp;        String s = includeCiteKeyword ?</b>
+<i>68</i>&nbsp;                &quot;\\cite{&quot; + selectedEntriesCiteKeys + &quot;}&quot;
+<i>69</i>&nbsp;                : selectedEntriesCiteKeys;
+<b class="nc"><i>70</i>&nbsp;        String charset = TransferableEntrySelection.FLAVOR_EXTERNAL.getParameter(&quot;charset&quot;);</b>
+<b class="nc"><i>71</i>&nbsp;        if (charset == null) {</b>
+<b class="nc"><i>72</i>&nbsp;            charset = &quot;&quot;;</b>
+<i>73</i>&nbsp;        }
+<b class="nc"><i>74</i>&nbsp;        return new ByteArrayInputStream(s.getBytes(charset.trim()));</b>
+<i>75</i>&nbsp;    }
+<i>76</i>&nbsp;
+<i>77</i>&nbsp;    public List&lt;BibEntry&gt; getSelection() {
+<b class="nc"><i>78</i>&nbsp;        return selectedEntries;</b>
+<i>79</i>&nbsp;    }
+<i>80</i>&nbsp;
+<i>81</i>&nbsp;    public void setIncludeCiteKeyword(boolean includeCiteKeyword) {
+<b class="nc"><i>82</i>&nbsp;        this.includeCiteKeyword = includeCiteKeyword;</b>
+<b class="nc"><i>83</i>&nbsp;    }</b>
+<i>84</i>&nbsp;
+<i>85</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

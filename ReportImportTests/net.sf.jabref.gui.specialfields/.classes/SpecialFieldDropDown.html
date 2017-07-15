@@ -1,0 +1,230 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: SpecialFieldDropDown</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.specialfields</a> ]
+</div>
+
+<h1>Coverage Summary for Class: SpecialFieldDropDown (net.sf.jabref.gui.specialfields)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SpecialFieldDropDown</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 19)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">SpecialFieldDropDown$MenuButtonActionListener</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 19)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">SpecialFieldDropDown$MenuButtonActionListener$PopupitemActionListener</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 7)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 45)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.specialfields;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.Dimension;
+<i>4</i>&nbsp;import java.awt.Insets;
+<i>5</i>&nbsp;import java.awt.event.ActionEvent;
+<i>6</i>&nbsp;import java.awt.event.ActionListener;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import javax.swing.JButton;
+<i>9</i>&nbsp;import javax.swing.JMenuItem;
+<i>10</i>&nbsp;import javax.swing.JPopupMenu;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;import net.sf.jabref.gui.BasePanel;
+<i>13</i>&nbsp;import net.sf.jabref.gui.JabRefFrame;
+<i>14</i>&nbsp;import net.sf.jabref.logic.util.OS;
+<i>15</i>&nbsp;import net.sf.jabref.model.entry.specialfields.SpecialField;
+<i>16</i>&nbsp;import net.sf.jabref.model.entry.specialfields.SpecialFieldValue;
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;import com.jgoodies.looks.HeaderStyle;
+<i>19</i>&nbsp;import com.jgoodies.looks.Options;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;
+<b class="nc"><i>22</i>&nbsp;public class SpecialFieldDropDown {</b>
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;    public static JButton generateSpecialFieldButtonWithDropDown(SpecialField field, JabRefFrame frame) {
+<b class="nc"><i>25</i>&nbsp;        Dimension buttonDim = new Dimension(23, 23);</b>
+<b class="nc"><i>26</i>&nbsp;        SpecialFieldViewModel viewModel = new SpecialFieldViewModel(field);</b>
+<b class="nc"><i>27</i>&nbsp;        JButton button = new JButton(viewModel.getRepresentingIcon());</b>
+<b class="nc"><i>28</i>&nbsp;        button.setToolTipText(viewModel.getLocalization());</b>
+<b class="nc"><i>29</i>&nbsp;        button.setPreferredSize(buttonDim);</b>
+<b class="nc"><i>30</i>&nbsp;        if (!OS.OS_X) {</b>
+<b class="nc"><i>31</i>&nbsp;            button.setMargin(new Insets(1, 0, 2, 0));</b>
+<i>32</i>&nbsp;        }
+<b class="nc"><i>33</i>&nbsp;        button.setBorder(null);</b>
+<b class="nc"><i>34</i>&nbsp;        button.setBorderPainted(false);</b>
+<b class="nc"><i>35</i>&nbsp;        button.setRolloverEnabled(true);</b>
+<b class="nc"><i>36</i>&nbsp;        button.setOpaque(false);</b>
+<b class="nc"><i>37</i>&nbsp;        button.setBounds(0, 0, buttonDim.width, buttonDim.height);</b>
+<b class="nc"><i>38</i>&nbsp;        button.setSize(buttonDim);</b>
+<b class="nc"><i>39</i>&nbsp;        button.setMinimumSize(buttonDim);</b>
+<b class="nc"><i>40</i>&nbsp;        button.setMaximumSize(buttonDim);</b>
+<b class="nc"><i>41</i>&nbsp;        button.putClientProperty(Options.HEADER_STYLE_KEY, HeaderStyle.BOTH);</b>
+<b class="nc"><i>42</i>&nbsp;        button.addActionListener(new MenuButtonActionListener(field, frame, button, buttonDim));</b>
+<b class="nc"><i>43</i>&nbsp;        return button;</b>
+<i>44</i>&nbsp;    }
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;    private static class MenuButtonActionListener implements ActionListener {
+<i>48</i>&nbsp;
+<i>49</i>&nbsp;        private JPopupMenu popup;
+<i>50</i>&nbsp;        private final Dimension dim;
+<i>51</i>&nbsp;        private final JabRefFrame frame;
+<i>52</i>&nbsp;        private final SpecialField field;
+<i>53</i>&nbsp;        private final JButton button;
+<i>54</i>&nbsp;
+<i>55</i>&nbsp;
+<b class="nc"><i>56</i>&nbsp;        public MenuButtonActionListener(SpecialField field, JabRefFrame frame, JButton button, Dimension dim) {</b>
+<b class="nc"><i>57</i>&nbsp;            this.field = field;</b>
+<b class="nc"><i>58</i>&nbsp;            this.dim = dim;</b>
+<b class="nc"><i>59</i>&nbsp;            this.frame = frame;</b>
+<b class="nc"><i>60</i>&nbsp;            this.button = button;</b>
+<b class="nc"><i>61</i>&nbsp;        }</b>
+<i>62</i>&nbsp;
+<i>63</i>&nbsp;        @Override
+<i>64</i>&nbsp;        public void actionPerformed(ActionEvent e) {
+<b class="nc"><i>65</i>&nbsp;            if (popup == null) {</b>
+<b class="nc"><i>66</i>&nbsp;                popup = new JPopupMenu();</b>
+<b class="nc"><i>67</i>&nbsp;                for (SpecialFieldValue val : field.getValues()) {</b>
+<b class="nc"><i>68</i>&nbsp;                    SpecialFieldValueViewModel viewModel = new SpecialFieldValueViewModel(val);</b>
+<b class="nc"><i>69</i>&nbsp;                    JMenuItem item = new JMenuItem(viewModel.getSpecialFieldValueIcon());</b>
+<b class="nc"><i>70</i>&nbsp;                    item.setText(viewModel.getMenuString());</b>
+<b class="nc"><i>71</i>&nbsp;                    item.setToolTipText(viewModel.getToolTipText());</b>
+<b class="nc"><i>72</i>&nbsp;                    item.addActionListener(new PopupitemActionListener(frame.getCurrentBasePanel(), new SpecialFieldValueViewModel(val).getActionName()));</b>
+<b class="nc"><i>73</i>&nbsp;                    item.setMargin(new Insets(0, 0, 0, 0));</b>
+<b class="nc"><i>74</i>&nbsp;                    popup.add(item);</b>
+<b class="nc"><i>75</i>&nbsp;                }</b>
+<i>76</i>&nbsp;            }
+<b class="nc"><i>77</i>&nbsp;            popup.show(button, 0, dim.height);</b>
+<b class="nc"><i>78</i>&nbsp;        }</b>
+<i>79</i>&nbsp;
+<i>80</i>&nbsp;
+<i>81</i>&nbsp;        private class PopupitemActionListener implements ActionListener {
+<i>82</i>&nbsp;
+<i>83</i>&nbsp;            private final BasePanel panel;
+<i>84</i>&nbsp;            private final String actionName;
+<i>85</i>&nbsp;
+<i>86</i>&nbsp;
+<b class="nc"><i>87</i>&nbsp;            public PopupitemActionListener(BasePanel panel, String actionName) {</b>
+<b class="nc"><i>88</i>&nbsp;                this.panel = panel;</b>
+<b class="nc"><i>89</i>&nbsp;                this.actionName = actionName;</b>
+<b class="nc"><i>90</i>&nbsp;            }</b>
+<i>91</i>&nbsp;
+<i>92</i>&nbsp;            @Override
+<i>93</i>&nbsp;            public void actionPerformed(ActionEvent e) {
+<b class="nc"><i>94</i>&nbsp;                panel.runCommand(actionName);</b>
+<b class="nc"><i>95</i>&nbsp;                popup.setVisible(false);</b>
+<b class="nc"><i>96</i>&nbsp;            }</b>
+<i>97</i>&nbsp;
+<i>98</i>&nbsp;        }
+<i>99</i>&nbsp;
+<i>100</i>&nbsp;    }
+<i>101</i>&nbsp;
+<i>102</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

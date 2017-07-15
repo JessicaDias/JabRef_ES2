@@ -1,0 +1,189 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: MigrationHelpDialog</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.shared</a> ]
+</div>
+
+<h1>Coverage Summary for Class: MigrationHelpDialog (net.sf.jabref.gui.shared)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MigrationHelpDialog</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 35)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">MigrationHelpDialog$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 38)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.shared;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.BorderLayout;
+<i>4</i>&nbsp;import java.awt.Component;
+<i>5</i>&nbsp;import java.awt.Dimension;
+<i>6</i>&nbsp;import java.awt.event.ActionEvent;
+<i>7</i>&nbsp;import java.awt.event.KeyEvent;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;import javax.swing.AbstractAction;
+<i>10</i>&nbsp;import javax.swing.Action;
+<i>11</i>&nbsp;import javax.swing.Box;
+<i>12</i>&nbsp;import javax.swing.BoxLayout;
+<i>13</i>&nbsp;import javax.swing.JButton;
+<i>14</i>&nbsp;import javax.swing.JComponent;
+<i>15</i>&nbsp;import javax.swing.JDialog;
+<i>16</i>&nbsp;import javax.swing.JLabel;
+<i>17</i>&nbsp;import javax.swing.JPanel;
+<i>18</i>&nbsp;import javax.swing.KeyStroke;
+<i>19</i>&nbsp;import javax.swing.border.EmptyBorder;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;import net.sf.jabref.gui.help.HelpAction;
+<i>22</i>&nbsp;import net.sf.jabref.logic.help.HelpFile;
+<i>23</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;public class MigrationHelpDialog extends JDialog {
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    public MigrationHelpDialog(ConnectToSharedDatabaseDialog openSharedDatabaseDialog) {
+<b class="nc"><i>28</i>&nbsp;        super(openSharedDatabaseDialog, Localization.lang(&quot;Migration help information&quot;));</b>
+<b class="nc"><i>29</i>&nbsp;        setModal(true);</b>
+<i>30</i>&nbsp;
+<b class="nc"><i>31</i>&nbsp;        String migrationMessage = Localization</b>
+<b class="nc"><i>32</i>&nbsp;                .lang(&quot;Entered database has obsolete structure and is no longer supported.&quot;);</b>
+<b class="nc"><i>33</i>&nbsp;        JLabel migrationLabel = new JLabel(migrationMessage);</b>
+<b class="nc"><i>34</i>&nbsp;        migrationLabel.setAlignmentX(Component.LEFT_ALIGNMENT);</b>
+<i>35</i>&nbsp;
+<b class="nc"><i>36</i>&nbsp;        String helpMessage = Localization.lang(&quot;Click here to learn about the migration of pre-3.6 databases.&quot;);</b>
+<b class="nc"><i>37</i>&nbsp;        JLabel helpLabel = new HelpAction(HelpFile.SQL_DATABASE_MIGRATION).getHelpLabel(helpMessage);</b>
+<b class="nc"><i>38</i>&nbsp;        helpLabel.setAlignmentX(Component.LEFT_ALIGNMENT);</b>
+<i>39</i>&nbsp;
+<b class="nc"><i>40</i>&nbsp;        String informationMessage = Localization.lang(&quot;However, a new database was created alongside the pre-3.6 one.&quot;);</b>
+<b class="nc"><i>41</i>&nbsp;        JLabel informationLabel = new JLabel(informationMessage);</b>
+<b class="nc"><i>42</i>&nbsp;        informationLabel.setAlignmentX(Component.LEFT_ALIGNMENT);</b>
+<i>43</i>&nbsp;
+<b class="nc"><i>44</i>&nbsp;        Action openAction = new AbstractAction() {</b>
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;            @Override
+<i>47</i>&nbsp;            public void actionPerformed(ActionEvent e) {
+<b class="nc"><i>48</i>&nbsp;                openSharedDatabaseDialog.openSharedDatabase();</b>
+<b class="nc"><i>49</i>&nbsp;            }</b>
+<i>50</i>&nbsp;        };
+<i>51</i>&nbsp;
+<b class="nc"><i>52</i>&nbsp;        JButton okButton = new JButton(Localization.lang(&quot;OK&quot;));</b>
+<b class="nc"><i>53</i>&nbsp;        okButton.addActionListener(openAction);</b>
+<b class="nc"><i>54</i>&nbsp;        okButton.setAlignmentX(Component.CENTER_ALIGNMENT);</b>
+<b class="nc"><i>55</i>&nbsp;        okButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),</b>
+<i>56</i>&nbsp;                &quot;Enter_pressed&quot;);
+<b class="nc"><i>57</i>&nbsp;        okButton.getActionMap().put(&quot;Enter_pressed&quot;, openAction);</b>
+<i>58</i>&nbsp;
+<b class="nc"><i>59</i>&nbsp;        JPanel buttonPanel = new JPanel();</b>
+<b class="nc"><i>60</i>&nbsp;        buttonPanel.add(okButton, BorderLayout.CENTER);</b>
+<i>61</i>&nbsp;
+<b class="nc"><i>62</i>&nbsp;        JPanel contentPanel = new JPanel();</b>
+<b class="nc"><i>63</i>&nbsp;        contentPanel.setBorder(new EmptyBorder(9, 9, 9, 9));</b>
+<b class="nc"><i>64</i>&nbsp;        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));</b>
+<i>65</i>&nbsp;
+<b class="nc"><i>66</i>&nbsp;        contentPanel.add(migrationLabel);</b>
+<b class="nc"><i>67</i>&nbsp;        contentPanel.add(Box.createRigidArea(new Dimension(0, 10)));</b>
+<b class="nc"><i>68</i>&nbsp;        contentPanel.add(helpLabel);</b>
+<b class="nc"><i>69</i>&nbsp;        contentPanel.add(Box.createRigidArea(new Dimension(0, 10)));</b>
+<b class="nc"><i>70</i>&nbsp;        contentPanel.add(informationLabel);</b>
+<b class="nc"><i>71</i>&nbsp;        contentPanel.add(Box.createRigidArea(new Dimension(0, 20)));</b>
+<b class="nc"><i>72</i>&nbsp;        contentPanel.add(buttonPanel);</b>
+<i>73</i>&nbsp;
+<b class="nc"><i>74</i>&nbsp;        add(contentPanel);</b>
+<i>75</i>&nbsp;
+<b class="nc"><i>76</i>&nbsp;        setResizable(false);</b>
+<b class="nc"><i>77</i>&nbsp;        pack();</b>
+<b class="nc"><i>78</i>&nbsp;        setLocationRelativeTo(openSharedDatabaseDialog);</b>
+<b class="nc"><i>79</i>&nbsp;    }</b>
+<i>80</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

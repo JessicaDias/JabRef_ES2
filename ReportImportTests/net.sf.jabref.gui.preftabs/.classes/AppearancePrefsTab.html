@@ -1,0 +1,397 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: AppearancePrefsTab</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.preftabs</a> ]
+</div>
+
+<h1>Coverage Summary for Class: AppearancePrefsTab (net.sf.jabref.gui.preftabs)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AppearancePrefsTab</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 156)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">AppearancePrefsTab$LookAndFeel</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 12)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 168)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.preftabs;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.BorderLayout;
+<i>4</i>&nbsp;import java.awt.Font;
+<i>5</i>&nbsp;import java.awt.GridBagLayout;
+<i>6</i>&nbsp;import java.util.ArrayList;
+<i>7</i>&nbsp;import java.util.Arrays;
+<i>8</i>&nbsp;import java.util.List;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;import javax.swing.BorderFactory;
+<i>11</i>&nbsp;import javax.swing.JButton;
+<i>12</i>&nbsp;import javax.swing.JCheckBox;
+<i>13</i>&nbsp;import javax.swing.JComboBox;
+<i>14</i>&nbsp;import javax.swing.JLabel;
+<i>15</i>&nbsp;import javax.swing.JOptionPane;
+<i>16</i>&nbsp;import javax.swing.JPanel;
+<i>17</i>&nbsp;import javax.swing.JTextField;
+<i>18</i>&nbsp;import javax.swing.UIManager;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;import net.sf.jabref.gui.GUIGlobals;
+<i>21</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>22</i>&nbsp;import net.sf.jabref.logic.util.OS;
+<i>23</i>&nbsp;import net.sf.jabref.preferences.JabRefPreferences;
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;import com.jgoodies.forms.builder.DefaultFormBuilder;
+<i>26</i>&nbsp;import com.jgoodies.forms.layout.FormLayout;
+<i>27</i>&nbsp;import org.apache.commons.logging.Log;
+<i>28</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;class AppearancePrefsTab extends JPanel implements PrefsTab {
+<b class="nc"><i>31</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(AppearancePrefsTab.class);</b>
+<i>32</i>&nbsp;
+<i>33</i>&nbsp;    private final JabRefPreferences prefs;
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    private final JCheckBox colorCodes;
+<i>36</i>&nbsp;    private final JCheckBox resolvedColorCodes;
+<i>37</i>&nbsp;    private final JCheckBox overrideFonts;
+<i>38</i>&nbsp;    private final JCheckBox showGrid;
+<i>39</i>&nbsp;    private final ColorSetupPanel colorPanel;
+<b class="nc"><i>40</i>&nbsp;    private Font usedFont = GUIGlobals.currentFont;</b>
+<i>41</i>&nbsp;    private int oldMenuFontSize;
+<i>42</i>&nbsp;    private boolean oldOverrideFontSize;
+<i>43</i>&nbsp;    private final JTextField fontSize;
+<i>44</i>&nbsp;    private final JTextField rowPadding;
+<i>45</i>&nbsp;    // look and feel
+<i>46</i>&nbsp;    private final JComboBox&lt;String&gt; classNamesLAF;
+<b class="nc"><i>47</i>&nbsp;    private String currentLAF = &quot;&quot;;</b>
+<i>48</i>&nbsp;    private boolean useDefaultLAF;
+<i>49</i>&nbsp;    private final JCheckBox customLAF;
+<i>50</i>&nbsp;
+<b class="nc"><i>51</i>&nbsp;    static class LookAndFeel {</b>
+<b class="nc"><i>52</i>&nbsp;        private static final List&lt;String&gt; looks = Arrays.asList(</b>
+<b class="nc"><i>53</i>&nbsp;                UIManager.getSystemLookAndFeelClassName(),</b>
+<b class="nc"><i>54</i>&nbsp;                UIManager.getCrossPlatformLookAndFeelClassName(),</b>
+<i>55</i>&nbsp;                &quot;com.jgoodies.looks.plastic.Plastic3DLookAndFeel&quot;,
+<i>56</i>&nbsp;                &quot;com.jgoodies.looks.windows.WindowsLookAndFeel&quot;);
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;        public static List&lt;String&gt; getAvailableLookAndFeels() {
+<b class="nc"><i>59</i>&nbsp;            List&lt;String&gt; lookAndFeels = new ArrayList&lt;&gt;();</b>
+<i>60</i>&nbsp;
+<b class="nc"><i>61</i>&nbsp;            for (String l : looks) {</b>
+<i>62</i>&nbsp;                try {
+<i>63</i>&nbsp;                    // Try to find L&amp;F
+<b class="nc"><i>64</i>&nbsp;                    Class.forName(l);</b>
+<b class="nc"><i>65</i>&nbsp;                    lookAndFeels.add(l);</b>
+<b class="nc"><i>66</i>&nbsp;                } catch (ClassNotFoundException|IllegalAccessError ignored) {</b>
+<i>67</i>&nbsp;                    // LookAndFeel class does not exist or we don&#39;t have rights to access it
+<i>68</i>&nbsp;                    // Ignore it
+<b class="nc"><i>69</i>&nbsp;                }</b>
+<b class="nc"><i>70</i>&nbsp;            }</b>
+<b class="nc"><i>71</i>&nbsp;            return lookAndFeels;</b>
+<i>72</i>&nbsp;        }
+<i>73</i>&nbsp;    }
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;    /**
+<i>76</i>&nbsp;     * Customization of appearance parameters.
+<i>77</i>&nbsp;     *
+<i>78</i>&nbsp;     * @param prefs a &lt;code&gt;JabRefPreferences&lt;/code&gt; value
+<i>79</i>&nbsp;     */
+<b class="nc"><i>80</i>&nbsp;    public AppearancePrefsTab(JabRefPreferences prefs) {</b>
+<b class="nc"><i>81</i>&nbsp;        this.prefs = prefs;</b>
+<b class="nc"><i>82</i>&nbsp;        setLayout(new BorderLayout());</b>
+<i>83</i>&nbsp;
+<i>84</i>&nbsp;        // Font sizes:
+<b class="nc"><i>85</i>&nbsp;        fontSize = new JTextField(5);</b>
+<i>86</i>&nbsp;
+<i>87</i>&nbsp;        // Row padding size:
+<b class="nc"><i>88</i>&nbsp;        rowPadding = new JTextField(5);</b>
+<i>89</i>&nbsp;
+<b class="nc"><i>90</i>&nbsp;        colorCodes = new JCheckBox(</b>
+<b class="nc"><i>91</i>&nbsp;                Localization.lang(&quot;Color codes for required and optional fields&quot;));</b>
+<i>92</i>&nbsp;
+<b class="nc"><i>93</i>&nbsp;        resolvedColorCodes = new JCheckBox(Localization.lang(&quot;Color code for resolved fields&quot;));</b>
+<i>94</i>&nbsp;
+<b class="nc"><i>95</i>&nbsp;        overrideFonts = new JCheckBox(Localization.lang(&quot;Override default font settings&quot;));</b>
+<i>96</i>&nbsp;
+<b class="nc"><i>97</i>&nbsp;        showGrid = new JCheckBox(Localization.lang(&quot;Show gridlines&quot;));</b>
+<i>98</i>&nbsp;
+<b class="nc"><i>99</i>&nbsp;        FormLayout layout = new FormLayout(&quot;1dlu, 8dlu, left:pref, 4dlu, fill:pref, 4dlu, fill:60dlu, 4dlu, fill:pref&quot;, &quot;&quot;);</b>
+<b class="nc"><i>100</i>&nbsp;        DefaultFormBuilder builder = new DefaultFormBuilder(layout);</b>
+<i>101</i>&nbsp;
+<b class="nc"><i>102</i>&nbsp;        customLAF = new JCheckBox(Localization.lang(&quot;Use other look and feel&quot;));</b>
+<i>103</i>&nbsp;        // Only list L&amp;F which are available
+<b class="nc"><i>104</i>&nbsp;        List&lt;String&gt; lookAndFeels = LookAndFeel.getAvailableLookAndFeels();</b>
+<b class="nc"><i>105</i>&nbsp;        classNamesLAF = new JComboBox&lt;&gt;(lookAndFeels.toArray(new String[lookAndFeels.size()]));</b>
+<b class="nc"><i>106</i>&nbsp;        classNamesLAF.setEditable(true);</b>
+<b class="nc"><i>107</i>&nbsp;        final JComboBox&lt;String&gt; clName = classNamesLAF;</b>
+<b class="nc"><i>108</i>&nbsp;        customLAF.addChangeListener(e -&gt; clName.setEnabled(((JCheckBox) e.getSource()).isSelected()));</b>
+<i>109</i>&nbsp;
+<b class="nc"><i>110</i>&nbsp;        colorPanel = new ColorSetupPanel(colorCodes, resolvedColorCodes, showGrid);</b>
+<i>111</i>&nbsp;
+<i>112</i>&nbsp;        // only the default L&amp;F shows the the OSX specific first dropdownmenu
+<b class="nc"><i>113</i>&nbsp;        if (!OS.OS_X) {</b>
+<b class="nc"><i>114</i>&nbsp;            JPanel pan = new JPanel();</b>
+<b class="nc"><i>115</i>&nbsp;            builder.appendSeparator(Localization.lang(&quot;Look and feel&quot;));</b>
+<b class="nc"><i>116</i>&nbsp;            JLabel lab = new JLabel(</b>
+<b class="nc"><i>117</i>&nbsp;                    Localization.lang(&quot;Default look and feel&quot;) + &quot;: &quot; + UIManager.getSystemLookAndFeelClassName());</b>
+<b class="nc"><i>118</i>&nbsp;            builder.nextLine();</b>
+<b class="nc"><i>119</i>&nbsp;            builder.append(pan);</b>
+<b class="nc"><i>120</i>&nbsp;            builder.append(lab);</b>
+<b class="nc"><i>121</i>&nbsp;            builder.nextLine();</b>
+<b class="nc"><i>122</i>&nbsp;            builder.append(pan);</b>
+<b class="nc"><i>123</i>&nbsp;            builder.append(customLAF);</b>
+<b class="nc"><i>124</i>&nbsp;            builder.nextLine();</b>
+<b class="nc"><i>125</i>&nbsp;            builder.append(pan);</b>
+<b class="nc"><i>126</i>&nbsp;            JPanel pan2 = new JPanel();</b>
+<b class="nc"><i>127</i>&nbsp;            lab = new JLabel(Localization.lang(&quot;Class name&quot;) + &#39;:&#39;);</b>
+<b class="nc"><i>128</i>&nbsp;            pan2.add(lab);</b>
+<b class="nc"><i>129</i>&nbsp;            pan2.add(classNamesLAF);</b>
+<b class="nc"><i>130</i>&nbsp;            builder.append(pan2);</b>
+<b class="nc"><i>131</i>&nbsp;            builder.nextLine();</b>
+<b class="nc"><i>132</i>&nbsp;            builder.append(pan);</b>
+<b class="nc"><i>133</i>&nbsp;            lab = new JLabel(Localization</b>
+<b class="nc"><i>134</i>&nbsp;                    .lang(&quot;Note that you must specify the fully qualified class name for the look and feel,&quot;));</b>
+<b class="nc"><i>135</i>&nbsp;            builder.append(lab);</b>
+<b class="nc"><i>136</i>&nbsp;            builder.nextLine();</b>
+<b class="nc"><i>137</i>&nbsp;            builder.append(pan);</b>
+<b class="nc"><i>138</i>&nbsp;            lab = new JLabel(</b>
+<b class="nc"><i>139</i>&nbsp;                    Localization.lang(&quot;and the class must be available in your classpath next time you start JabRef.&quot;));</b>
+<b class="nc"><i>140</i>&nbsp;            builder.append(lab);</b>
+<b class="nc"><i>141</i>&nbsp;            builder.nextLine();</b>
+<i>142</i>&nbsp;        }
+<i>143</i>&nbsp;
+<b class="nc"><i>144</i>&nbsp;        builder.leadingColumnOffset(2);</b>
+<i>145</i>&nbsp;        JLabel lab;
+<b class="nc"><i>146</i>&nbsp;        builder.appendSeparator(Localization.lang(&quot;General&quot;));</b>
+<b class="nc"><i>147</i>&nbsp;        JPanel p1 = new JPanel();</b>
+<b class="nc"><i>148</i>&nbsp;        lab = new JLabel(Localization.lang(&quot;Menu and label font size&quot;) + &quot;:&quot;);</b>
+<b class="nc"><i>149</i>&nbsp;        p1.add(lab);</b>
+<b class="nc"><i>150</i>&nbsp;        p1.add(fontSize);</b>
+<b class="nc"><i>151</i>&nbsp;        builder.append(p1);</b>
+<b class="nc"><i>152</i>&nbsp;        builder.nextLine();</b>
+<b class="nc"><i>153</i>&nbsp;        builder.append(overrideFonts);</b>
+<b class="nc"><i>154</i>&nbsp;        builder.nextLine();</b>
+<b class="nc"><i>155</i>&nbsp;        builder.appendSeparator(Localization.lang(&quot;Table appearance&quot;));</b>
+<b class="nc"><i>156</i>&nbsp;        JPanel p2 = new JPanel();</b>
+<b class="nc"><i>157</i>&nbsp;        p2.add(new JLabel(Localization.lang(&quot;Table row height padding&quot;) + &quot;:&quot;));</b>
+<b class="nc"><i>158</i>&nbsp;        p2.add(rowPadding);</b>
+<b class="nc"><i>159</i>&nbsp;        builder.append(p2);</b>
+<b class="nc"><i>160</i>&nbsp;        builder.nextLine();</b>
+<b class="nc"><i>161</i>&nbsp;        builder.append(colorCodes);</b>
+<b class="nc"><i>162</i>&nbsp;        builder.nextLine();</b>
+<b class="nc"><i>163</i>&nbsp;        builder.append(resolvedColorCodes);</b>
+<b class="nc"><i>164</i>&nbsp;        builder.nextLine();</b>
+<b class="nc"><i>165</i>&nbsp;        builder.append(showGrid);</b>
+<b class="nc"><i>166</i>&nbsp;        builder.nextLine();</b>
+<b class="nc"><i>167</i>&nbsp;        JButton fontButton = new JButton(Localization.lang(&quot;Set table font&quot;));</b>
+<b class="nc"><i>168</i>&nbsp;        builder.append(fontButton);</b>
+<b class="nc"><i>169</i>&nbsp;        builder.nextLine();</b>
+<b class="nc"><i>170</i>&nbsp;        builder.appendSeparator(Localization.lang(&quot;Table and entry editor colors&quot;));</b>
+<b class="nc"><i>171</i>&nbsp;        builder.append(colorPanel);</b>
+<i>172</i>&nbsp;
+<b class="nc"><i>173</i>&nbsp;        JPanel upper = new JPanel();</b>
+<b class="nc"><i>174</i>&nbsp;        JPanel sort = new JPanel();</b>
+<b class="nc"><i>175</i>&nbsp;        JPanel namesp = new JPanel();</b>
+<b class="nc"><i>176</i>&nbsp;        JPanel iconCol = new JPanel();</b>
+<b class="nc"><i>177</i>&nbsp;        GridBagLayout gbl = new GridBagLayout();</b>
+<b class="nc"><i>178</i>&nbsp;        upper.setLayout(gbl);</b>
+<b class="nc"><i>179</i>&nbsp;        sort.setLayout(gbl);</b>
+<b class="nc"><i>180</i>&nbsp;        namesp.setLayout(gbl);</b>
+<b class="nc"><i>181</i>&nbsp;        iconCol.setLayout(gbl);</b>
+<i>182</i>&nbsp;
+<b class="nc"><i>183</i>&nbsp;        overrideFonts.addActionListener(e -&gt; fontSize.setEnabled(overrideFonts.isSelected()));</b>
+<i>184</i>&nbsp;
+<b class="nc"><i>185</i>&nbsp;        fontButton.addActionListener(</b>
+<b class="nc"><i>186</i>&nbsp;                e -&gt; new FontSelectorDialog(null, usedFont).getSelectedFont().ifPresent(x -&gt; usedFont = x));</b>
+<i>187</i>&nbsp;
+<b class="nc"><i>188</i>&nbsp;        JPanel pan = builder.getPanel();</b>
+<b class="nc"><i>189</i>&nbsp;        pan.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));</b>
+<b class="nc"><i>190</i>&nbsp;        add(pan, BorderLayout.CENTER);</b>
+<b class="nc"><i>191</i>&nbsp;    }</b>
+<i>192</i>&nbsp;
+<i>193</i>&nbsp;    @Override
+<i>194</i>&nbsp;    public void setValues() {
+<i>195</i>&nbsp;        // L&amp;F
+<b class="nc"><i>196</i>&nbsp;        useDefaultLAF = prefs.getBoolean(JabRefPreferences.USE_DEFAULT_LOOK_AND_FEEL);</b>
+<b class="nc"><i>197</i>&nbsp;        currentLAF = prefs.get(JabRefPreferences.WIN_LOOK_AND_FEEL);</b>
+<b class="nc"><i>198</i>&nbsp;        customLAF.setSelected(!useDefaultLAF);</b>
+<b class="nc"><i>199</i>&nbsp;        classNamesLAF.setSelectedItem(currentLAF);</b>
+<b class="nc"><i>200</i>&nbsp;        classNamesLAF.setEnabled(!useDefaultLAF);</b>
+<i>201</i>&nbsp;
+<b class="nc"><i>202</i>&nbsp;        colorCodes.setSelected(prefs.getBoolean(JabRefPreferences.TABLE_COLOR_CODES_ON));</b>
+<b class="nc"><i>203</i>&nbsp;        resolvedColorCodes.setSelected(prefs.getBoolean(JabRefPreferences.TABLE_RESOLVED_COLOR_CODES_ON));</b>
+<b class="nc"><i>204</i>&nbsp;        fontSize.setText(String.valueOf(prefs.getInt(JabRefPreferences.MENU_FONT_SIZE)));</b>
+<b class="nc"><i>205</i>&nbsp;        rowPadding.setText(String.valueOf(prefs.getInt(JabRefPreferences.TABLE_ROW_PADDING)));</b>
+<b class="nc"><i>206</i>&nbsp;        oldMenuFontSize = prefs.getInt(JabRefPreferences.MENU_FONT_SIZE);</b>
+<b class="nc"><i>207</i>&nbsp;        overrideFonts.setSelected(prefs.getBoolean(JabRefPreferences.OVERRIDE_DEFAULT_FONTS));</b>
+<b class="nc"><i>208</i>&nbsp;        oldOverrideFontSize = overrideFonts.isSelected();</b>
+<b class="nc"><i>209</i>&nbsp;        fontSize.setEnabled(overrideFonts.isSelected());</b>
+<b class="nc"><i>210</i>&nbsp;        showGrid.setSelected(prefs.getBoolean(JabRefPreferences.TABLE_SHOW_GRID));</b>
+<b class="nc"><i>211</i>&nbsp;        colorPanel.setValues();</b>
+<b class="nc"><i>212</i>&nbsp;    }</b>
+<i>213</i>&nbsp;
+<i>214</i>&nbsp;    @Override
+<i>215</i>&nbsp;    public void storeSettings() {
+<i>216</i>&nbsp;        // L&amp;F
+<b class="nc"><i>217</i>&nbsp;        prefs.putBoolean(JabRefPreferences.USE_DEFAULT_LOOK_AND_FEEL, !customLAF.isSelected());</b>
+<b class="nc"><i>218</i>&nbsp;        prefs.put(JabRefPreferences.WIN_LOOK_AND_FEEL, classNamesLAF.getSelectedItem().toString());</b>
+<b class="nc"><i>219</i>&nbsp;        if ((customLAF.isSelected() == useDefaultLAF) || !currentLAF.equals(classNamesLAF.getSelectedItem().toString())) {</b>
+<b class="nc"><i>220</i>&nbsp;            JOptionPane.showMessageDialog(null,</b>
+<b class="nc"><i>221</i>&nbsp;                    Localization.lang(&quot;You have changed the look and feel setting.&quot;).concat(&quot; &quot;)</b>
+<b class="nc"><i>222</i>&nbsp;                            .concat(Localization.lang(&quot;You must restart JabRef for this to come into effect.&quot;)),</b>
+<b class="nc"><i>223</i>&nbsp;                    Localization.lang(&quot;Changed look and feel settings&quot;), JOptionPane.WARNING_MESSAGE);</b>
+<i>224</i>&nbsp;        }
+<i>225</i>&nbsp;
+<b class="nc"><i>226</i>&nbsp;        prefs.putBoolean(JabRefPreferences.TABLE_COLOR_CODES_ON, colorCodes.isSelected());</b>
+<b class="nc"><i>227</i>&nbsp;        prefs.putBoolean(JabRefPreferences.TABLE_RESOLVED_COLOR_CODES_ON, resolvedColorCodes.isSelected());</b>
+<b class="nc"><i>228</i>&nbsp;        prefs.put(JabRefPreferences.FONT_FAMILY, usedFont.getFamily());</b>
+<b class="nc"><i>229</i>&nbsp;        prefs.putInt(JabRefPreferences.FONT_STYLE, usedFont.getStyle());</b>
+<b class="nc"><i>230</i>&nbsp;        prefs.putInt(JabRefPreferences.FONT_SIZE, usedFont.getSize());</b>
+<b class="nc"><i>231</i>&nbsp;        prefs.putBoolean(JabRefPreferences.OVERRIDE_DEFAULT_FONTS, overrideFonts.isSelected());</b>
+<b class="nc"><i>232</i>&nbsp;        GUIGlobals.currentFont = usedFont;</b>
+<b class="nc"><i>233</i>&nbsp;        colorPanel.storeSettings();</b>
+<b class="nc"><i>234</i>&nbsp;        prefs.putBoolean(JabRefPreferences.TABLE_SHOW_GRID, showGrid.isSelected());</b>
+<i>235</i>&nbsp;        try {
+<b class="nc"><i>236</i>&nbsp;            int size = Integer.parseInt(fontSize.getText());</b>
+<b class="nc"><i>237</i>&nbsp;            if ((overrideFonts.isSelected() != oldOverrideFontSize) ||</b>
+<i>238</i>&nbsp;                    (size != oldMenuFontSize)) {
+<b class="nc"><i>239</i>&nbsp;                prefs.putInt(JabRefPreferences.MENU_FONT_SIZE, size);</b>
+<b class="nc"><i>240</i>&nbsp;                JOptionPane.showMessageDialog(null,</b>
+<b class="nc"><i>241</i>&nbsp;                        Localization.lang(&quot;You have changed the menu and label font size.&quot;)</b>
+<b class="nc"><i>242</i>&nbsp;                                .concat(&quot; &quot;)</b>
+<b class="nc"><i>243</i>&nbsp;                                .concat(Localization.lang(&quot;You must restart JabRef for this to come into effect.&quot;)),</b>
+<b class="nc"><i>244</i>&nbsp;                        Localization.lang(&quot;Changed font settings&quot;),</b>
+<i>245</i>&nbsp;                        JOptionPane.WARNING_MESSAGE);
+<i>246</i>&nbsp;            }
+<b class="nc"><i>247</i>&nbsp;        } catch (NumberFormatException ex) {</b>
+<b class="nc"><i>248</i>&nbsp;            LOGGER.info(&quot;Invalid font size&quot;, ex);</b>
+<b class="nc"><i>249</i>&nbsp;        }</b>
+<i>250</i>&nbsp;        try {
+<b class="nc"><i>251</i>&nbsp;            int padding = Integer.parseInt(rowPadding.getText());</b>
+<b class="nc"><i>252</i>&nbsp;            prefs.putInt(JabRefPreferences.TABLE_ROW_PADDING, padding);</b>
+<b class="nc"><i>253</i>&nbsp;        } catch (NumberFormatException ex) {</b>
+<b class="nc"><i>254</i>&nbsp;            LOGGER.info(&quot;Invalid row padding&quot;, ex);</b>
+<b class="nc"><i>255</i>&nbsp;        }</b>
+<b class="nc"><i>256</i>&nbsp;    }</b>
+<i>257</i>&nbsp;
+<i>258</i>&nbsp;    private boolean validateIntegerField(String fieldName, String fieldValue, String errorTitle) {
+<i>259</i>&nbsp;        try {
+<i>260</i>&nbsp;            // Test if the field value is a number:
+<b class="nc"><i>261</i>&nbsp;            Integer.parseInt(fieldValue);</b>
+<b class="nc"><i>262</i>&nbsp;        } catch (NumberFormatException ex) {</b>
+<b class="nc"><i>263</i>&nbsp;            JOptionPane.showMessageDialog(null,</b>
+<b class="nc"><i>264</i>&nbsp;                    Localization.lang(&quot;You must enter an integer value in the text field for&quot;) + &quot; &#39;&quot; + fieldName + &quot;&#39;&quot;,</b>
+<i>265</i>&nbsp;                    errorTitle, JOptionPane.ERROR_MESSAGE);
+<b class="nc"><i>266</i>&nbsp;            return false;</b>
+<b class="nc"><i>267</i>&nbsp;        }</b>
+<b class="nc"><i>268</i>&nbsp;        return true;</b>
+<i>269</i>&nbsp;    }
+<i>270</i>&nbsp;
+<i>271</i>&nbsp;    @Override
+<i>272</i>&nbsp;    public boolean validateSettings() {
+<i>273</i>&nbsp;        // Test if font size is a number:
+<b class="nc"><i>274</i>&nbsp;        if (!validateIntegerField(Localization.lang(&quot;Menu and label font size&quot;), fontSize.getText(),</b>
+<b class="nc"><i>275</i>&nbsp;                Localization.lang(&quot;Invalid setting&quot;))) {</b>
+<b class="nc"><i>276</i>&nbsp;            return false;</b>
+<i>277</i>&nbsp;        }
+<i>278</i>&nbsp;
+<i>279</i>&nbsp;        // Test if row padding is a number:
+<b class="nc"><i>280</i>&nbsp;        return validateIntegerField(Localization.lang(&quot;Table row height padding&quot;), rowPadding.getText(),</b>
+<b class="nc"><i>281</i>&nbsp;                Localization.lang(&quot;Invalid setting&quot;));</b>
+<i>282</i>&nbsp;    }
+<i>283</i>&nbsp;
+<i>284</i>&nbsp;    @Override
+<i>285</i>&nbsp;    public String getTabName() {
+<b class="nc"><i>286</i>&nbsp;        return Localization.lang(&quot;Appearance&quot;);</b>
+<i>287</i>&nbsp;    }
+<i>288</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,118 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: RemoteListenerServerThread</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.remote.server</a> ]
+</div>
+
+<h1>Coverage Summary for Class: RemoteListenerServerThread (net.sf.jabref.logic.remote.server)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">RemoteListenerServerThread</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 11)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.remote.server;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.IOException;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;import org.apache.commons.logging.Log;
+<i>6</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;/**
+<i>9</i>&nbsp; * This thread wrapper is required to be able to interrupt the remote listener while listening on a port.
+<i>10</i>&nbsp; */
+<i>11</i>&nbsp;public class RemoteListenerServerThread extends Thread {
+<i>12</i>&nbsp;
+<b class="nc"><i>13</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(RemoteListenerServerThread.class);</b>
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;    private final RemoteListenerServer server;
+<i>16</i>&nbsp;
+<b class="nc"><i>17</i>&nbsp;    public RemoteListenerServerThread(MessageHandler messageHandler, int port) throws IOException {</b>
+<b class="nc"><i>18</i>&nbsp;        this.server = new RemoteListenerServer(messageHandler, port);</b>
+<b class="nc"><i>19</i>&nbsp;        this.setName(&quot;JabRef - Remote Listener Server on port &quot; + port);</b>
+<b class="nc"><i>20</i>&nbsp;    }</b>
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;    @Override
+<i>23</i>&nbsp;    public void interrupt() {
+<b class="nc"><i>24</i>&nbsp;        super.interrupt();</b>
+<i>25</i>&nbsp;
+<b class="nc"><i>26</i>&nbsp;        LOGGER.debug(&quot;Interrupting &quot; + this.getName());</b>
+<b class="nc"><i>27</i>&nbsp;        this.server.closeServerSocket();</b>
+<b class="nc"><i>28</i>&nbsp;    }</b>
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;    @Override
+<i>31</i>&nbsp;    public void run() {
+<b class="nc"><i>32</i>&nbsp;        this.server.run();</b>
+<b class="nc"><i>33</i>&nbsp;    }</b>
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

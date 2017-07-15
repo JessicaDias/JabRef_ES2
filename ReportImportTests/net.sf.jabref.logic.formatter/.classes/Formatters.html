@@ -1,0 +1,168 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Formatters</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.formatter</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Formatters (net.sf.jabref.logic.formatter)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Formatters</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    25%
+  </span>
+  <span class="absValue">
+    (1/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    47.1%
+  </span>
+  <span class="absValue">
+    (8/ 17)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.formatter;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.ArrayList;
+<i>4</i>&nbsp;import java.util.Arrays;
+<i>5</i>&nbsp;import java.util.List;
+<i>6</i>&nbsp;import java.util.Objects;
+<i>7</i>&nbsp;import java.util.Optional;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;import net.sf.jabref.logic.formatter.bibtexfields.ClearFormatter;
+<i>10</i>&nbsp;import net.sf.jabref.logic.formatter.bibtexfields.HtmlToLatexFormatter;
+<i>11</i>&nbsp;import net.sf.jabref.logic.formatter.bibtexfields.HtmlToUnicodeFormatter;
+<i>12</i>&nbsp;import net.sf.jabref.logic.formatter.bibtexfields.LatexCleanupFormatter;
+<i>13</i>&nbsp;import net.sf.jabref.logic.formatter.bibtexfields.NormalizeDateFormatter;
+<i>14</i>&nbsp;import net.sf.jabref.logic.formatter.bibtexfields.NormalizeMonthFormatter;
+<i>15</i>&nbsp;import net.sf.jabref.logic.formatter.bibtexfields.NormalizeNamesFormatter;
+<i>16</i>&nbsp;import net.sf.jabref.logic.formatter.bibtexfields.NormalizePagesFormatter;
+<i>17</i>&nbsp;import net.sf.jabref.logic.formatter.bibtexfields.OrdinalsToSuperscriptFormatter;
+<i>18</i>&nbsp;import net.sf.jabref.logic.formatter.bibtexfields.RemoveBracesFormatter;
+<i>19</i>&nbsp;import net.sf.jabref.logic.formatter.bibtexfields.UnicodeToLatexFormatter;
+<i>20</i>&nbsp;import net.sf.jabref.logic.formatter.bibtexfields.UnitsToLatexFormatter;
+<i>21</i>&nbsp;import net.sf.jabref.logic.formatter.casechanger.CapitalizeFormatter;
+<i>22</i>&nbsp;import net.sf.jabref.logic.formatter.casechanger.LowerCaseFormatter;
+<i>23</i>&nbsp;import net.sf.jabref.logic.formatter.casechanger.ProtectTermsFormatter;
+<i>24</i>&nbsp;import net.sf.jabref.logic.formatter.casechanger.SentenceCaseFormatter;
+<i>25</i>&nbsp;import net.sf.jabref.logic.formatter.casechanger.TitleCaseFormatter;
+<i>26</i>&nbsp;import net.sf.jabref.logic.formatter.casechanger.UpperCaseFormatter;
+<i>27</i>&nbsp;import net.sf.jabref.logic.formatter.minifier.MinifyNameListFormatter;
+<i>28</i>&nbsp;import net.sf.jabref.logic.layout.format.LatexToUnicodeFormatter;
+<i>29</i>&nbsp;import net.sf.jabref.model.cleanup.Formatter;
+<i>30</i>&nbsp;
+<b class="nc"><i>31</i>&nbsp;public class Formatters {</b>
+<i>32</i>&nbsp;
+<b class="fc"><i>33</i>&nbsp;    public static final List&lt;Formatter&gt; CONVERTERS = Arrays.asList(</b>
+<i>34</i>&nbsp;            new HtmlToLatexFormatter(),
+<i>35</i>&nbsp;            new HtmlToUnicodeFormatter(),
+<i>36</i>&nbsp;            new LatexToUnicodeFormatter(),
+<i>37</i>&nbsp;            new UnicodeToLatexFormatter()
+<i>38</i>&nbsp;    );
+<i>39</i>&nbsp;
+<b class="fc"><i>40</i>&nbsp;    public static final List&lt;Formatter&gt; CASE_CHANGERS = Arrays.asList(</b>
+<i>41</i>&nbsp;            new CapitalizeFormatter(),
+<i>42</i>&nbsp;            new LowerCaseFormatter(),
+<i>43</i>&nbsp;            new ProtectTermsFormatter(),
+<i>44</i>&nbsp;            new SentenceCaseFormatter(),
+<i>45</i>&nbsp;            new TitleCaseFormatter(),
+<i>46</i>&nbsp;            new UpperCaseFormatter()
+<i>47</i>&nbsp;    );
+<i>48</i>&nbsp;
+<b class="fc"><i>49</i>&nbsp;    public static final List&lt;Formatter&gt; OTHERS = Arrays.asList(</b>
+<i>50</i>&nbsp;            new ClearFormatter(),
+<i>51</i>&nbsp;            new LatexCleanupFormatter(),
+<i>52</i>&nbsp;            new MinifyNameListFormatter(),
+<i>53</i>&nbsp;            new NormalizeDateFormatter(),
+<i>54</i>&nbsp;            new NormalizeMonthFormatter(),
+<i>55</i>&nbsp;            new NormalizeNamesFormatter(),
+<i>56</i>&nbsp;            new NormalizePagesFormatter(),
+<i>57</i>&nbsp;            new OrdinalsToSuperscriptFormatter(),
+<i>58</i>&nbsp;            new RemoveBracesFormatter(),
+<i>59</i>&nbsp;            new UnitsToLatexFormatter()
+<i>60</i>&nbsp;    );
+<i>61</i>&nbsp;
+<b class="fc"><i>62</i>&nbsp;    public static final List&lt;Formatter&gt; ALL = new ArrayList&lt;&gt;();</b>
+<i>63</i>&nbsp;
+<i>64</i>&nbsp;    public static Optional&lt;Formatter&gt; getFormatterForModifier(String modifier) {
+<b class="nc"><i>65</i>&nbsp;        Objects.requireNonNull(modifier);</b>
+<b class="nc"><i>66</i>&nbsp;        Optional&lt;Formatter&gt; formatter = ALL.stream().filter(f -&gt; f.getKey().equals(modifier)).findAny();</b>
+<b class="nc"><i>67</i>&nbsp;        if (formatter.isPresent()) {</b>
+<b class="nc"><i>68</i>&nbsp;            return formatter;</b>
+<i>69</i>&nbsp;        }
+<b class="nc"><i>70</i>&nbsp;        switch (modifier) {</b>
+<i>71</i>&nbsp;            case &quot;lower&quot;:
+<b class="nc"><i>72</i>&nbsp;                return Optional.of(new LowerCaseFormatter());</b>
+<i>73</i>&nbsp;            case &quot;upper&quot;:
+<b class="nc"><i>74</i>&nbsp;                return Optional.of(new UpperCaseFormatter());</b>
+<i>75</i>&nbsp;            default:
+<b class="nc"><i>76</i>&nbsp;                return Optional.empty();</b>
+<i>77</i>&nbsp;        }
+<i>78</i>&nbsp;    }
+<i>79</i>&nbsp;
+<i>80</i>&nbsp;    static {
+<b class="fc"><i>81</i>&nbsp;        ALL.addAll(CONVERTERS);</b>
+<b class="fc"><i>82</i>&nbsp;        ALL.addAll(CASE_CHANGERS);</b>
+<b class="fc"><i>83</i>&nbsp;        ALL.addAll(OTHERS);</b>
+<b class="fc"><i>84</i>&nbsp;    }</b>
+<i>85</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

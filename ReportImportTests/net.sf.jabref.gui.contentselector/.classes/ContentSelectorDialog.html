@@ -1,0 +1,643 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ContentSelectorDialog</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.contentselector</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ContentSelectorDialog (net.sf.jabref.gui.contentselector)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ContentSelectorDialog</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 20)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 290)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">ContentSelectorDialog$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">ContentSelectorDialog$FieldNameFocusAdapter</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 16)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 24)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 309)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.contentselector;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.GridBagConstraints;
+<i>4</i>&nbsp;import java.awt.GridBagLayout;
+<i>5</i>&nbsp;import java.awt.Insets;
+<i>6</i>&nbsp;import java.awt.Window;
+<i>7</i>&nbsp;import java.awt.event.ActionEvent;
+<i>8</i>&nbsp;import java.awt.event.ActionListener;
+<i>9</i>&nbsp;import java.awt.event.FocusAdapter;
+<i>10</i>&nbsp;import java.awt.event.FocusEvent;
+<i>11</i>&nbsp;import java.util.ArrayList;
+<i>12</i>&nbsp;import java.util.HashMap;
+<i>13</i>&nbsp;import java.util.HashSet;
+<i>14</i>&nbsp;import java.util.List;
+<i>15</i>&nbsp;import java.util.Map;
+<i>16</i>&nbsp;import java.util.Set;
+<i>17</i>&nbsp;import java.util.SortedSet;
+<i>18</i>&nbsp;import java.util.TreeSet;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;import javax.swing.AbstractAction;
+<i>21</i>&nbsp;import javax.swing.Action;
+<i>22</i>&nbsp;import javax.swing.BorderFactory;
+<i>23</i>&nbsp;import javax.swing.DefaultListModel;
+<i>24</i>&nbsp;import javax.swing.JButton;
+<i>25</i>&nbsp;import javax.swing.JDialog;
+<i>26</i>&nbsp;import javax.swing.JList;
+<i>27</i>&nbsp;import javax.swing.JOptionPane;
+<i>28</i>&nbsp;import javax.swing.JPanel;
+<i>29</i>&nbsp;import javax.swing.JScrollPane;
+<i>30</i>&nbsp;import javax.swing.JTextField;
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;import net.sf.jabref.gui.BasePanel;
+<i>33</i>&nbsp;import net.sf.jabref.gui.JabRefFrame;
+<i>34</i>&nbsp;import net.sf.jabref.gui.help.HelpAction;
+<i>35</i>&nbsp;import net.sf.jabref.gui.keyboard.KeyBinder;
+<i>36</i>&nbsp;import net.sf.jabref.logic.help.HelpFile;
+<i>37</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>38</i>&nbsp;import net.sf.jabref.model.entry.FieldName;
+<i>39</i>&nbsp;import net.sf.jabref.model.metadata.ContentSelector;
+<i>40</i>&nbsp;import net.sf.jabref.model.metadata.ContentSelectors;
+<i>41</i>&nbsp;import net.sf.jabref.model.metadata.MetaData;
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;import com.jgoodies.forms.builder.ButtonBarBuilder;
+<i>44</i>&nbsp;import org.apache.commons.logging.Log;
+<i>45</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;public class ContentSelectorDialog extends JDialog {
+<i>48</i>&nbsp;
+<b class="nc"><i>49</i>&nbsp;    private final GridBagLayout gbl = new GridBagLayout();</b>
+<b class="nc"><i>50</i>&nbsp;    private final GridBagConstraints con = new GridBagConstraints();</b>
+<b class="nc"><i>51</i>&nbsp;    private final JPanel fieldPan = new JPanel();</b>
+<b class="nc"><i>52</i>&nbsp;    private final JPanel wordPan = new JPanel();</b>
+<b class="nc"><i>53</i>&nbsp;    private final JPanel buttonPan = new JPanel();</b>
+<b class="nc"><i>54</i>&nbsp;    private final JPanel fieldNamePan = new JPanel();</b>
+<b class="nc"><i>55</i>&nbsp;    private final JPanel wordEditPan = new JPanel();</b>
+<i>56</i>&nbsp;
+<b class="nc"><i>57</i>&nbsp;    private static final String WORD_FIRSTLINE_TEXT = Localization.lang(&quot;&lt;select word&gt;&quot;);</b>
+<b class="nc"><i>58</i>&nbsp;    private static final String FIELD_FIRST_LINE = Localization.lang(&quot;&lt;field name&gt;&quot;);</b>
+<i>59</i>&nbsp;    private final MetaData metaData;
+<i>60</i>&nbsp;    private String currentField;
+<i>61</i>&nbsp;    private final JabRefFrame frame;
+<i>62</i>&nbsp;    private final BasePanel panel;
+<b class="nc"><i>63</i>&nbsp;    private final JButton newField = new JButton(Localization.lang(&quot;New&quot;));</b>
+<b class="nc"><i>64</i>&nbsp;    private final JButton removeField = new JButton(Localization.lang(&quot;Remove&quot;));</b>
+<b class="nc"><i>65</i>&nbsp;    private final JButton newWord = new JButton(Localization.lang(&quot;New&quot;));</b>
+<b class="nc"><i>66</i>&nbsp;    private final JButton removeWord = new JButton(Localization.lang(&quot;Remove&quot;));</b>
+<b class="nc"><i>67</i>&nbsp;    private final JButton ok = new JButton(Localization.lang(&quot;OK&quot;));</b>
+<b class="nc"><i>68</i>&nbsp;    private final JButton cancel = new JButton();</b>
+<b class="nc"><i>69</i>&nbsp;    private final JButton apply = new JButton(Localization.lang(&quot;Apply&quot;));</b>
+<b class="nc"><i>70</i>&nbsp;    private final DefaultListModel&lt;String&gt; fieldListModel = new DefaultListModel&lt;&gt;();</b>
+<b class="nc"><i>71</i>&nbsp;    private DefaultListModel&lt;String&gt; wordListModel = new DefaultListModel&lt;&gt;();</b>
+<b class="nc"><i>72</i>&nbsp;    private final JList&lt;String&gt; fieldList = new JList&lt;&gt;(fieldListModel);</b>
+<b class="nc"><i>73</i>&nbsp;    private final JList&lt;String&gt; wordList = new JList&lt;&gt;(wordListModel);</b>
+<b class="nc"><i>74</i>&nbsp;    private final JTextField fieldNameField = new JTextField(&quot;&quot;, 20);</b>
+<b class="nc"><i>75</i>&nbsp;    private final JTextField wordEditField = new JTextField(&quot;&quot;, 20);</b>
+<b class="nc"><i>76</i>&nbsp;    private final JScrollPane fPane = new JScrollPane(fieldList);</b>
+<b class="nc"><i>77</i>&nbsp;    private final JScrollPane wPane = new JScrollPane(wordList);</b>
+<i>78</i>&nbsp;
+<b class="nc"><i>79</i>&nbsp;    private final Map&lt;String, DefaultListModel&lt;String&gt;&gt; wordListModels = new HashMap&lt;&gt;();</b>
+<b class="nc"><i>80</i>&nbsp;    private final List&lt;String&gt; removedFields = new ArrayList&lt;&gt;();</b>
+<i>81</i>&nbsp;
+<b class="nc"><i>82</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(ContentSelectorDialog.class);</b>
+<i>83</i>&nbsp;
+<i>84</i>&nbsp;
+<i>85</i>&nbsp;    /**
+<i>86</i>&nbsp;     *
+<i>87</i>&nbsp;     * @param owner the parent Window (Dialog or Frame)
+<i>88</i>&nbsp;     * @param frame the JabRef Frame
+<i>89</i>&nbsp;     * @param panel the currently selected BasePanel
+<i>90</i>&nbsp;     * @param modal should this dialog be modal?
+<i>91</i>&nbsp;     * @param fieldName the field this selector is initialized for. May be null.
+<i>92</i>&nbsp;     */
+<i>93</i>&nbsp;    public ContentSelectorDialog(Window owner, JabRefFrame frame, BasePanel panel, boolean modal, String fieldName) {
+<b class="nc"><i>94</i>&nbsp;        super(owner, Localization.lang(&quot;Manage content selectors&quot;));</b>
+<b class="nc"><i>95</i>&nbsp;        this.setModal(modal);</b>
+<b class="nc"><i>96</i>&nbsp;        this.metaData = panel.getBibDatabaseContext().getMetaData();</b>
+<b class="nc"><i>97</i>&nbsp;        this.frame = frame;</b>
+<b class="nc"><i>98</i>&nbsp;        this.panel = panel;</b>
+<b class="nc"><i>99</i>&nbsp;        this.currentField = fieldName;</b>
+<i>100</i>&nbsp;
+<b class="nc"><i>101</i>&nbsp;        initLayout();</b>
+<i>102</i>&nbsp;
+<b class="nc"><i>103</i>&nbsp;        setupFieldSelector();</b>
+<b class="nc"><i>104</i>&nbsp;        if (currentField != null) {</b>
+<b class="nc"><i>105</i>&nbsp;            int fieldInd = fieldListModel.indexOf(currentField);</b>
+<b class="nc"><i>106</i>&nbsp;            if (fieldInd &gt;= 0) {</b>
+<b class="nc"><i>107</i>&nbsp;                fieldList.setSelectedIndex(fieldInd);</b>
+<i>108</i>&nbsp;            }
+<b class="nc"><i>109</i>&nbsp;        } else {</b>
+<b class="nc"><i>110</i>&nbsp;            if (!fieldListModel.isEmpty()) {</b>
+<b class="nc"><i>111</i>&nbsp;                fieldList.setSelectedIndex(0);</b>
+<b class="nc"><i>112</i>&nbsp;                currentField = fieldList.getSelectedValue();</b>
+<i>113</i>&nbsp;            }
+<i>114</i>&nbsp;        }
+<i>115</i>&nbsp;
+<b class="nc"><i>116</i>&nbsp;        setupWordSelector();</b>
+<b class="nc"><i>117</i>&nbsp;        setupActions();</b>
+<b class="nc"><i>118</i>&nbsp;        KeyBinder.bindCloseDialogKeyToCancelAction(this.rootPane, cancel.getAction());</b>
+<i>119</i>&nbsp;
+<b class="nc"><i>120</i>&nbsp;        pack();</b>
+<b class="nc"><i>121</i>&nbsp;    }</b>
+<i>122</i>&nbsp;
+<i>123</i>&nbsp;    private void setupActions() {
+<i>124</i>&nbsp;
+<b class="nc"><i>125</i>&nbsp;        wordList.addListSelectionListener(e -&gt; {</b>
+<b class="nc"><i>126</i>&nbsp;            wordEditField.setText(wordList.getSelectedValue());</b>
+<b class="nc"><i>127</i>&nbsp;            wordEditField.selectAll();</b>
+<b class="nc"><i>128</i>&nbsp;            wordEditField.requestFocus();</b>
+<b class="nc"><i>129</i>&nbsp;        });</b>
+<i>130</i>&nbsp;
+<b class="nc"><i>131</i>&nbsp;        newWord.addActionListener(e -&gt; newWordAction());</b>
+<i>132</i>&nbsp;
+<b class="nc"><i>133</i>&nbsp;        ActionListener wordEditFieldListener = e -&gt; actOnWordEdit();</b>
+<b class="nc"><i>134</i>&nbsp;        wordEditField.addActionListener(wordEditFieldListener);</b>
+<i>135</i>&nbsp;
+<b class="nc"><i>136</i>&nbsp;        removeWord.addActionListener(e -&gt; {</b>
+<b class="nc"><i>137</i>&nbsp;            int index = wordList.getSelectedIndex();</b>
+<b class="nc"><i>138</i>&nbsp;            if (index == -1) {</b>
+<b class="nc"><i>139</i>&nbsp;                return;</b>
+<i>140</i>&nbsp;            }
+<b class="nc"><i>141</i>&nbsp;            wordListModel.remove(index);</b>
+<b class="nc"><i>142</i>&nbsp;            wordEditField.setText(&quot;&quot;);</b>
+<b class="nc"><i>143</i>&nbsp;            if (!wordListModel.isEmpty()) {</b>
+<b class="nc"><i>144</i>&nbsp;                wordList.setSelectedIndex(Math.min(index, wordListModel.size() - 1));</b>
+<i>145</i>&nbsp;            }
+<b class="nc"><i>146</i>&nbsp;        });</b>
+<i>147</i>&nbsp;
+<b class="nc"><i>148</i>&nbsp;        fieldList.addListSelectionListener(e -&gt; {</b>
+<b class="nc"><i>149</i>&nbsp;            currentField = fieldList.getSelectedValue();</b>
+<b class="nc"><i>150</i>&nbsp;            fieldNameField.setText(&quot;&quot;);</b>
+<b class="nc"><i>151</i>&nbsp;            setupWordSelector();</b>
+<b class="nc"><i>152</i>&nbsp;        });</b>
+<i>153</i>&nbsp;
+<b class="nc"><i>154</i>&nbsp;        newField.addActionListener(e -&gt; {</b>
+<b class="nc"><i>155</i>&nbsp;            if (!fieldListModel.get(0).equals(FIELD_FIRST_LINE)) {</b>
+<i>156</i>&nbsp;                // only add &lt;field name&gt; once
+<b class="nc"><i>157</i>&nbsp;                fieldListModel.add(0, FIELD_FIRST_LINE);</b>
+<i>158</i>&nbsp;            }
+<b class="nc"><i>159</i>&nbsp;            fieldList.setSelectedIndex(0);</b>
+<b class="nc"><i>160</i>&nbsp;            fPane.getVerticalScrollBar().setValue(0);</b>
+<b class="nc"><i>161</i>&nbsp;            fieldNameField.setEnabled(true);</b>
+<b class="nc"><i>162</i>&nbsp;            fieldNameField.setText(currentField);</b>
+<b class="nc"><i>163</i>&nbsp;            fieldNameField.selectAll();</b>
+<b class="nc"><i>164</i>&nbsp;            fieldNameField.requestFocus();</b>
+<b class="nc"><i>165</i>&nbsp;        });</b>
+<i>166</i>&nbsp;
+<b class="nc"><i>167</i>&nbsp;        fieldNameField.addActionListener(e -&gt; fieldNameField.transferFocus());</b>
+<i>168</i>&nbsp;
+<b class="nc"><i>169</i>&nbsp;        fieldNameField.addFocusListener(new FieldNameFocusAdapter());</b>
+<i>170</i>&nbsp;
+<b class="nc"><i>171</i>&nbsp;        removeField.addActionListener(e -&gt; {</b>
+<b class="nc"><i>172</i>&nbsp;            int index = fieldList.getSelectedIndex();</b>
+<b class="nc"><i>173</i>&nbsp;            if (index == -1) {</b>
+<b class="nc"><i>174</i>&nbsp;                return;</b>
+<i>175</i>&nbsp;            }
+<b class="nc"><i>176</i>&nbsp;            String fieldName = fieldListModel.get(index);</b>
+<b class="nc"><i>177</i>&nbsp;            removedFields.add(fieldName);</b>
+<b class="nc"><i>178</i>&nbsp;            fieldListModel.remove(index);</b>
+<b class="nc"><i>179</i>&nbsp;            wordListModels.remove(fieldName);</b>
+<b class="nc"><i>180</i>&nbsp;            fieldNameField.setText(&quot;&quot;);</b>
+<b class="nc"><i>181</i>&nbsp;            if (!fieldListModel.isEmpty()) {</b>
+<b class="nc"><i>182</i>&nbsp;                fieldList.setSelectedIndex(Math.min(index, wordListModel.size() - 1));</b>
+<i>183</i>&nbsp;            }
+<b class="nc"><i>184</i>&nbsp;        });</b>
+<i>185</i>&nbsp;
+<b class="nc"><i>186</i>&nbsp;        ok.addActionListener(e -&gt; {</b>
+<i>187</i>&nbsp;            try {
+<b class="nc"><i>188</i>&nbsp;                applyChanges();</b>
+<b class="nc"><i>189</i>&nbsp;                dispose();</b>
+<b class="nc"><i>190</i>&nbsp;            } catch (Exception ex) {</b>
+<b class="nc"><i>191</i>&nbsp;                LOGGER.info(&quot;Could not apply changes in \&quot;Manage content selectors\&quot;&quot;, ex);</b>
+<b class="nc"><i>192</i>&nbsp;                JOptionPane.showMessageDialog(frame, Localization.lang(&quot;Could not apply changes.&quot;));</b>
+<b class="nc"><i>193</i>&nbsp;            }</b>
+<b class="nc"><i>194</i>&nbsp;        });</b>
+<i>195</i>&nbsp;
+<b class="nc"><i>196</i>&nbsp;        apply.addActionListener(e -&gt; {</b>
+<i>197</i>&nbsp;            // Store if an entry is currently being edited:
+<b class="nc"><i>198</i>&nbsp;            if (!&quot;&quot;.equals(wordEditField.getText())) {</b>
+<b class="nc"><i>199</i>&nbsp;                wordEditFieldListener.actionPerformed(null);</b>
+<i>200</i>&nbsp;            }
+<i>201</i>&nbsp;            try {
+<b class="nc"><i>202</i>&nbsp;                applyChanges();</b>
+<b class="nc"><i>203</i>&nbsp;            } catch (Exception ex) {</b>
+<b class="nc"><i>204</i>&nbsp;                LOGGER.info(&quot;Could not apply changes in \&quot;Manage content selectors\&quot;&quot;, ex);</b>
+<b class="nc"><i>205</i>&nbsp;                JOptionPane.showMessageDialog(frame, Localization.lang(&quot;Could not apply changes.&quot;));</b>
+<b class="nc"><i>206</i>&nbsp;            }</b>
+<b class="nc"><i>207</i>&nbsp;        });</b>
+<i>208</i>&nbsp;
+<b class="nc"><i>209</i>&nbsp;        Action cancelAction = new AbstractAction() {</b>
+<i>210</i>&nbsp;
+<i>211</i>&nbsp;            @Override
+<i>212</i>&nbsp;            public void actionPerformed(ActionEvent e) {
+<b class="nc"><i>213</i>&nbsp;                dispose();</b>
+<b class="nc"><i>214</i>&nbsp;            }</b>
+<i>215</i>&nbsp;        };
+<b class="nc"><i>216</i>&nbsp;        cancelAction.putValue(Action.NAME, Localization.lang(&quot;Cancel&quot;));</b>
+<b class="nc"><i>217</i>&nbsp;        cancel.setAction(cancelAction);</b>
+<b class="nc"><i>218</i>&nbsp;    }</b>
+<i>219</i>&nbsp;
+<i>220</i>&nbsp;    private void actOnWordEdit() {
+<b class="nc"><i>221</i>&nbsp;        String old = wordList.getSelectedValue();</b>
+<b class="nc"><i>222</i>&nbsp;        String newVal = wordEditField.getText();</b>
+<b class="nc"><i>223</i>&nbsp;        if (&quot;&quot;.equals(newVal) || newVal.equals(old)) {</b>
+<b class="nc"><i>224</i>&nbsp;            return; // Empty string or no change.</b>
+<i>225</i>&nbsp;        }
+<b class="nc"><i>226</i>&nbsp;        int index = wordList.getSelectedIndex();</b>
+<b class="nc"><i>227</i>&nbsp;        if (wordListModel.contains(newVal)) {</b>
+<i>228</i>&nbsp;            // ensure that word already in list is visible
+<b class="nc"><i>229</i>&nbsp;            index = wordListModel.indexOf(newVal);</b>
+<b class="nc"><i>230</i>&nbsp;            wordList.ensureIndexIsVisible(index);</b>
+<b class="nc"><i>231</i>&nbsp;            return;</b>
+<i>232</i>&nbsp;        }
+<i>233</i>&nbsp;
+<b class="nc"><i>234</i>&nbsp;        int newIndex = findPos(wordListModel, newVal);</b>
+<b class="nc"><i>235</i>&nbsp;        if (index &gt;= 0) {</b>
+<i>236</i>&nbsp;            // initiate replacement of selected word
+<b class="nc"><i>237</i>&nbsp;            wordListModel.remove(index);</b>
+<b class="nc"><i>238</i>&nbsp;            if (newIndex &gt; index) {</b>
+<i>239</i>&nbsp;                // newIndex has to be adjusted after removal of previous entry
+<b class="nc"><i>240</i>&nbsp;                newIndex--;</b>
+<i>241</i>&nbsp;            }
+<i>242</i>&nbsp;        }
+<b class="nc"><i>243</i>&nbsp;        wordListModel.add(newIndex, newVal);</b>
+<b class="nc"><i>244</i>&nbsp;        wordList.ensureIndexIsVisible(newIndex);</b>
+<b class="nc"><i>245</i>&nbsp;        wordEditField.selectAll();</b>
+<b class="nc"><i>246</i>&nbsp;    }</b>
+<i>247</i>&nbsp;
+<i>248</i>&nbsp;    private void newWordAction() {
+<b class="nc"><i>249</i>&nbsp;        if (wordListModel.isEmpty() || !wordListModel.get(0).equals(WORD_FIRSTLINE_TEXT)) {</b>
+<b class="nc"><i>250</i>&nbsp;            wordListModel.add(0, WORD_FIRSTLINE_TEXT);</b>
+<i>251</i>&nbsp;        }
+<b class="nc"><i>252</i>&nbsp;        wordList.setSelectedIndex(0);</b>
+<b class="nc"><i>253</i>&nbsp;        wPane.getVerticalScrollBar().setValue(0);</b>
+<b class="nc"><i>254</i>&nbsp;    }</b>
+<i>255</i>&nbsp;
+<i>256</i>&nbsp;    private void applyChanges() {
+<b class="nc"><i>257</i>&nbsp;        boolean changedFieldSet = false; // Watch if we need to rebuild entry editors</b>
+<b class="nc"><i>258</i>&nbsp;        boolean anythingChanged = false; // Watch if we should mark as there is data changed</b>
+<i>259</i>&nbsp;
+<i>260</i>&nbsp;        // First remove the mappings for fields that have been deleted.
+<i>261</i>&nbsp;        // If these were re-added, they will be added below, so it doesn&#39;t
+<i>262</i>&nbsp;        // cause any harm to remove them here.
+<b class="nc"><i>263</i>&nbsp;        for (String fieldName : removedFields) {</b>
+<b class="nc"><i>264</i>&nbsp;            metaData.clearContentSelectors(fieldName);</b>
+<b class="nc"><i>265</i>&nbsp;            changedFieldSet = true;</b>
+<b class="nc"><i>266</i>&nbsp;            anythingChanged = true;</b>
+<b class="nc"><i>267</i>&nbsp;        }</b>
+<i>268</i>&nbsp;
+<i>269</i>&nbsp;        // Cycle through all fields that we have created listmodels for:
+<b class="nc"><i>270</i>&nbsp;        for (Map.Entry&lt;String, DefaultListModel&lt;String&gt;&gt; entry : wordListModels.entrySet()) {</b>
+<i>271</i>&nbsp;            // For each field name, store the values:
+<b class="nc"><i>272</i>&nbsp;            if ((entry.getKey() == null) || FIELD_FIRST_LINE.equals(entry.getKey())) {</b>
+<b class="nc"><i>273</i>&nbsp;                continue;</b>
+<i>274</i>&nbsp;            }
+<b class="nc"><i>275</i>&nbsp;            DefaultListModel&lt;String&gt; lm = entry.getValue();</b>
+<b class="nc"><i>276</i>&nbsp;            int start = 0;</b>
+<i>277</i>&nbsp;            // Avoid storing the &lt;new word&gt; marker if it is there:
+<b class="nc"><i>278</i>&nbsp;            if (!lm.isEmpty()) {</b>
+<b class="nc"><i>279</i>&nbsp;                while ((start &lt; lm.size()) &amp;&amp; lm.get(start).equals(WORD_FIRSTLINE_TEXT)) {</b>
+<b class="nc"><i>280</i>&nbsp;                    start++;</b>
+<i>281</i>&nbsp;                }
+<i>282</i>&nbsp;            }
+<i>283</i>&nbsp;
+<b class="nc"><i>284</i>&nbsp;            Set&lt;String&gt; data = new HashSet&lt;&gt;();</b>
+<b class="nc"><i>285</i>&nbsp;            for (int wrd = start; wrd &lt; lm.size(); wrd++) {</b>
+<b class="nc"><i>286</i>&nbsp;                String word = lm.get(wrd);</b>
+<b class="nc"><i>287</i>&nbsp;                data.add(word);</b>
+<i>288</i>&nbsp;            }
+<i>289</i>&nbsp;
+<i>290</i>&nbsp;            // Check if any words have been added
+<b class="nc"><i>291</i>&nbsp;            if (!data.equals(new HashSet&lt;&gt;(metaData.getContentSelectorValuesForField(entry.getKey())))) {</b>
+<b class="nc"><i>292</i>&nbsp;                anythingChanged = true;</b>
+<i>293</i>&nbsp;            }
+<i>294</i>&nbsp;
+<i>295</i>&nbsp;            // Check if there are words to be added and previously there were no content selector for the field
+<b class="nc"><i>296</i>&nbsp;            if (!data.isEmpty() &amp;&amp; metaData.getContentSelectorValuesForField(entry.getKey()).isEmpty()) {</b>
+<b class="nc"><i>297</i>&nbsp;                changedFieldSet = true;</b>
+<i>298</i>&nbsp;            }
+<i>299</i>&nbsp;
+<b class="nc"><i>300</i>&nbsp;            metaData.addContentSelector(new ContentSelector(entry.getKey(), new ArrayList&lt;&gt;(data)));</b>
+<b class="nc"><i>301</i>&nbsp;        }</b>
+<i>302</i>&nbsp;
+<i>303</i>&nbsp;        // Update all selectors in the current BasePanel.
+<b class="nc"><i>304</i>&nbsp;        if (changedFieldSet) {</b>
+<i>305</i>&nbsp;            // We have added or removed content selectors, update the entry editor
+<b class="nc"><i>306</i>&nbsp;            panel.rebuildAllEntryEditors();</b>
+<b class="nc"><i>307</i>&nbsp;        } else if (anythingChanged) {</b>
+<i>308</i>&nbsp;            // Enough to update the content selectors, if anything changed
+<b class="nc"><i>309</i>&nbsp;            panel.updateAllContentSelectors();</b>
+<i>310</i>&nbsp;        }
+<i>311</i>&nbsp;
+<b class="nc"><i>312</i>&nbsp;        if (anythingChanged) {</b>
+<i>313</i>&nbsp;            // Mark the database updated so changes are not lost
+<b class="nc"><i>314</i>&nbsp;            panel.markNonUndoableBaseChanged();</b>
+<i>315</i>&nbsp;        }
+<i>316</i>&nbsp;
+<b class="nc"><i>317</i>&nbsp;        panel.getAutoCompleters().addContentSelectorValuesToAutoCompleters(panel.getBibDatabaseContext().getMetaData());</b>
+<i>318</i>&nbsp;
+<b class="nc"><i>319</i>&nbsp;    }</b>
+<i>320</i>&nbsp;
+<i>321</i>&nbsp;    /**
+<i>322</i>&nbsp;     * Set the contents of the field selector list.
+<i>323</i>&nbsp;     *
+<i>324</i>&nbsp;     */
+<i>325</i>&nbsp;    private void setupFieldSelector() {
+<b class="nc"><i>326</i>&nbsp;        fieldListModel.clear();</b>
+<b class="nc"><i>327</i>&nbsp;        SortedSet&lt;String&gt; contents = new TreeSet&lt;&gt;();</b>
+<b class="nc"><i>328</i>&nbsp;        ContentSelectors selectors = metaData.getContentSelectors();</b>
+<b class="nc"><i>329</i>&nbsp;        for (String s : selectors.getFieldNamesWithSelectors()) {</b>
+<b class="nc"><i>330</i>&nbsp;            contents.add(s);</b>
+<b class="nc"><i>331</i>&nbsp;        }</b>
+<b class="nc"><i>332</i>&nbsp;        if (contents.isEmpty()) {</b>
+<i>333</i>&nbsp;            // if nothing was added, put the default fields (as described in the help)
+<b class="nc"><i>334</i>&nbsp;            fieldListModel.addElement(FieldName.AUTHOR);</b>
+<b class="nc"><i>335</i>&nbsp;            fieldListModel.addElement(FieldName.JOURNAL);</b>
+<b class="nc"><i>336</i>&nbsp;            fieldListModel.addElement(FieldName.KEYWORDS);</b>
+<b class="nc"><i>337</i>&nbsp;            fieldListModel.addElement(FieldName.PUBLISHER);</b>
+<i>338</i>&nbsp;        } else {
+<b class="nc"><i>339</i>&nbsp;            for (String s : contents) {</b>
+<b class="nc"><i>340</i>&nbsp;                fieldListModel.addElement(s);</b>
+<b class="nc"><i>341</i>&nbsp;            }</b>
+<i>342</i>&nbsp;        }
+<i>343</i>&nbsp;
+<b class="nc"><i>344</i>&nbsp;        if (currentField == null) {</b>
+<i>345</i>&nbsp;            // if dialog is created for the whole database,
+<i>346</i>&nbsp;            // select the first field to avoid confusions in GUI usage
+<b class="nc"><i>347</i>&nbsp;            fieldList.setSelectedIndex(0);</b>
+<i>348</i>&nbsp;        } else {
+<i>349</i>&nbsp;            // a specific field has been chosen at the constructor
+<i>350</i>&nbsp;            // select this field
+<b class="nc"><i>351</i>&nbsp;            int i = fieldListModel.indexOf(currentField);</b>
+<b class="nc"><i>352</i>&nbsp;            if (i != -1) {</b>
+<i>353</i>&nbsp;                // field has been found in list, select it
+<b class="nc"><i>354</i>&nbsp;                fieldList.setSelectedIndex(i);</b>
+<i>355</i>&nbsp;            }
+<i>356</i>&nbsp;        }
+<b class="nc"><i>357</i>&nbsp;    }</b>
+<i>358</i>&nbsp;
+<i>359</i>&nbsp;    private void setupWordSelector() {
+<i>360</i>&nbsp;
+<i>361</i>&nbsp;        // Have we already created a listmodel for this field?
+<b class="nc"><i>362</i>&nbsp;        wordListModel = wordListModels.get(currentField);</b>
+<b class="nc"><i>363</i>&nbsp;        if (wordListModel == null) {</b>
+<b class="nc"><i>364</i>&nbsp;            wordListModel = new DefaultListModel&lt;&gt;();</b>
+<b class="nc"><i>365</i>&nbsp;            wordList.setModel(wordListModel);</b>
+<b class="nc"><i>366</i>&nbsp;            wordListModels.put(currentField, wordListModel);</b>
+<i>367</i>&nbsp;
+<b class="nc"><i>368</i>&nbsp;            int index = 0;</b>
+<b class="nc"><i>369</i>&nbsp;            for (String s : metaData.getContentSelectorValuesForField(currentField)) {</b>
+<b class="nc"><i>370</i>&nbsp;                wordListModel.add(index, s);</b>
+<b class="nc"><i>371</i>&nbsp;                index++;</b>
+<b class="nc"><i>372</i>&nbsp;            }</b>
+<b class="nc"><i>373</i>&nbsp;        } else {</b>
+<b class="nc"><i>374</i>&nbsp;            wordList.setModel(wordListModel);</b>
+<i>375</i>&nbsp;        }
+<b class="nc"><i>376</i>&nbsp;    }</b>
+<i>377</i>&nbsp;
+<i>378</i>&nbsp;    private static int findPos(DefaultListModel&lt;String&gt; lm, String item) {
+<b class="nc"><i>379</i>&nbsp;        for (int i = 0; i &lt; lm.size(); i++) {</b>
+<b class="nc"><i>380</i>&nbsp;            String s = lm.get(i);</b>
+<b class="nc"><i>381</i>&nbsp;            if (item.compareToIgnoreCase(s) &lt; 0) { // item precedes s</b>
+<b class="nc"><i>382</i>&nbsp;                return i;</b>
+<i>383</i>&nbsp;            }
+<i>384</i>&nbsp;        }
+<b class="nc"><i>385</i>&nbsp;        return lm.size();</b>
+<i>386</i>&nbsp;    }
+<i>387</i>&nbsp;
+<i>388</i>&nbsp;    private void initLayout() {
+<b class="nc"><i>389</i>&nbsp;        fieldNameField.setEnabled(false);</b>
+<b class="nc"><i>390</i>&nbsp;        fieldList.setVisibleRowCount(4);</b>
+<b class="nc"><i>391</i>&nbsp;        wordList.setVisibleRowCount(10);</b>
+<b class="nc"><i>392</i>&nbsp;        final String VAL = &quot;Uren luren himmelturen, ja Besseggen.&quot;;</b>
+<b class="nc"><i>393</i>&nbsp;        fieldList.setPrototypeCellValue(VAL);</b>
+<b class="nc"><i>394</i>&nbsp;        wordList.setPrototypeCellValue(VAL);</b>
+<i>395</i>&nbsp;
+<b class="nc"><i>396</i>&nbsp;        fieldPan.setBorder(</b>
+<b class="nc"><i>397</i>&nbsp;                BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), Localization.lang(&quot;Field name&quot;)));</b>
+<b class="nc"><i>398</i>&nbsp;        wordPan.setBorder(</b>
+<b class="nc"><i>399</i>&nbsp;                BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), Localization.lang(&quot;Keyword&quot;)));</b>
+<b class="nc"><i>400</i>&nbsp;        fieldPan.setLayout(gbl);</b>
+<b class="nc"><i>401</i>&nbsp;        wordPan.setLayout(gbl);</b>
+<b class="nc"><i>402</i>&nbsp;        con.insets = new Insets(2, 2, 2, 2);</b>
+<b class="nc"><i>403</i>&nbsp;        con.fill = GridBagConstraints.BOTH;</b>
+<b class="nc"><i>404</i>&nbsp;        con.gridwidth = 2;</b>
+<b class="nc"><i>405</i>&nbsp;        con.weightx = 1;</b>
+<b class="nc"><i>406</i>&nbsp;        con.weighty = 1;</b>
+<b class="nc"><i>407</i>&nbsp;        con.gridx = 0;</b>
+<b class="nc"><i>408</i>&nbsp;        con.gridy = 0;</b>
+<b class="nc"><i>409</i>&nbsp;        gbl.setConstraints(fPane, con);</b>
+<b class="nc"><i>410</i>&nbsp;        fieldPan.add(fPane);</b>
+<b class="nc"><i>411</i>&nbsp;        gbl.setConstraints(wPane, con);</b>
+<b class="nc"><i>412</i>&nbsp;        wordPan.add(wPane);</b>
+<b class="nc"><i>413</i>&nbsp;        con.gridwidth = 1;</b>
+<b class="nc"><i>414</i>&nbsp;        con.gridx = 2;</b>
+<i>415</i>&nbsp;        //con.weightx = 0.7;
+<b class="nc"><i>416</i>&nbsp;        con.gridheight = 2;</b>
+<b class="nc"><i>417</i>&nbsp;        gbl.setConstraints(fieldNamePan, con);</b>
+<b class="nc"><i>418</i>&nbsp;        fieldPan.add(fieldNamePan);</b>
+<b class="nc"><i>419</i>&nbsp;        gbl.setConstraints(wordEditPan, con);</b>
+<b class="nc"><i>420</i>&nbsp;        wordPan.add(wordEditPan);</b>
+<b class="nc"><i>421</i>&nbsp;        con.gridx = 0;</b>
+<b class="nc"><i>422</i>&nbsp;        con.gridy = 1;</b>
+<b class="nc"><i>423</i>&nbsp;        con.weightx = 0;</b>
+<b class="nc"><i>424</i>&nbsp;        con.weighty = 0;</b>
+<b class="nc"><i>425</i>&nbsp;        con.gridwidth = 1;</b>
+<b class="nc"><i>426</i>&nbsp;        con.gridheight = 1;</b>
+<b class="nc"><i>427</i>&nbsp;        con.fill = GridBagConstraints.NONE;</b>
+<b class="nc"><i>428</i>&nbsp;        con.anchor = GridBagConstraints.WEST;</b>
+<b class="nc"><i>429</i>&nbsp;        gbl.setConstraints(newField, con);</b>
+<b class="nc"><i>430</i>&nbsp;        fieldPan.add(newField);</b>
+<b class="nc"><i>431</i>&nbsp;        gbl.setConstraints(newWord, con);</b>
+<b class="nc"><i>432</i>&nbsp;        wordPan.add(newWord);</b>
+<b class="nc"><i>433</i>&nbsp;        con.gridx = 1;</b>
+<i>434</i>&nbsp;        //con.anchor = GridBagConstraints.EAST;
+<b class="nc"><i>435</i>&nbsp;        gbl.setConstraints(removeField, con);</b>
+<b class="nc"><i>436</i>&nbsp;        fieldPan.add(removeField);</b>
+<b class="nc"><i>437</i>&nbsp;        gbl.setConstraints(removeWord, con);</b>
+<b class="nc"><i>438</i>&nbsp;        wordPan.add(removeWord);</b>
+<b class="nc"><i>439</i>&nbsp;        con.anchor = GridBagConstraints.WEST;</b>
+<b class="nc"><i>440</i>&nbsp;        con.gridx = 0;</b>
+<b class="nc"><i>441</i>&nbsp;        con.gridy = 0;</b>
+<b class="nc"><i>442</i>&nbsp;        gbl.setConstraints(fieldNameField, con);</b>
+<b class="nc"><i>443</i>&nbsp;        fieldNamePan.add(fieldNameField);</b>
+<b class="nc"><i>444</i>&nbsp;        gbl.setConstraints(wordEditField, con);</b>
+<b class="nc"><i>445</i>&nbsp;        wordEditPan.add(wordEditField);</b>
+<i>446</i>&nbsp;
+<i>447</i>&nbsp;        // Add buttons:
+<b class="nc"><i>448</i>&nbsp;        ButtonBarBuilder bsb = new ButtonBarBuilder(buttonPan);</b>
+<b class="nc"><i>449</i>&nbsp;        bsb.addGlue();</b>
+<b class="nc"><i>450</i>&nbsp;        bsb.addButton(ok);</b>
+<b class="nc"><i>451</i>&nbsp;        bsb.addButton(apply);</b>
+<b class="nc"><i>452</i>&nbsp;        bsb.addButton(cancel);</b>
+<b class="nc"><i>453</i>&nbsp;        bsb.addRelatedGap();</b>
+<b class="nc"><i>454</i>&nbsp;        bsb.addButton(new HelpAction(HelpFile.CONTENT_SELECTOR).getHelpButton());</b>
+<b class="nc"><i>455</i>&nbsp;        bsb.addGlue();</b>
+<i>456</i>&nbsp;
+<i>457</i>&nbsp;        // Add panels to dialog:
+<b class="nc"><i>458</i>&nbsp;        con.fill = GridBagConstraints.BOTH;</b>
+<b class="nc"><i>459</i>&nbsp;        getContentPane().setLayout(gbl);</b>
+<b class="nc"><i>460</i>&nbsp;        con.weightx = 1;</b>
+<b class="nc"><i>461</i>&nbsp;        con.weighty = 0.5;</b>
+<b class="nc"><i>462</i>&nbsp;        con.gridwidth = 1;</b>
+<b class="nc"><i>463</i>&nbsp;        con.gridheight = 1;</b>
+<b class="nc"><i>464</i>&nbsp;        con.gridx = 0;</b>
+<b class="nc"><i>465</i>&nbsp;        con.gridy = 0;</b>
+<b class="nc"><i>466</i>&nbsp;        gbl.setConstraints(fieldPan, con);</b>
+<b class="nc"><i>467</i>&nbsp;        getContentPane().add(fieldPan);</b>
+<b class="nc"><i>468</i>&nbsp;        con.gridy = 1;</b>
+<b class="nc"><i>469</i>&nbsp;        gbl.setConstraints(wordPan, con);</b>
+<b class="nc"><i>470</i>&nbsp;        getContentPane().add(wordPan);</b>
+<b class="nc"><i>471</i>&nbsp;        con.weighty = 0;</b>
+<b class="nc"><i>472</i>&nbsp;        con.gridy = 2;</b>
+<b class="nc"><i>473</i>&nbsp;        con.insets = new Insets(12, 2, 2, 2);</b>
+<b class="nc"><i>474</i>&nbsp;        gbl.setConstraints(buttonPan, con);</b>
+<b class="nc"><i>475</i>&nbsp;        getContentPane().add(buttonPan);</b>
+<i>476</i>&nbsp;
+<b class="nc"><i>477</i>&nbsp;    }</b>
+<i>478</i>&nbsp;
+<i>479</i>&nbsp;
+<b class="nc"><i>480</i>&nbsp;    private class FieldNameFocusAdapter extends FocusAdapter {</b>
+<i>481</i>&nbsp;
+<i>482</i>&nbsp;        /**
+<i>483</i>&nbsp;         * Adds the text value to the list
+<i>484</i>&nbsp;         */
+<i>485</i>&nbsp;        @Override
+<i>486</i>&nbsp;        public void focusLost(FocusEvent e) {
+<b class="nc"><i>487</i>&nbsp;            String s = fieldNameField.getText();</b>
+<b class="nc"><i>488</i>&nbsp;            fieldNameField.setText(&quot;&quot;);</b>
+<b class="nc"><i>489</i>&nbsp;            fieldNameField.setEnabled(false);</b>
+<b class="nc"><i>490</i>&nbsp;            if (!FIELD_FIRST_LINE.equals(s) &amp;&amp; !&quot;&quot;.equals(s)) {</b>
+<i>491</i>&nbsp;                // user has typed something
+<i>492</i>&nbsp;
+<i>493</i>&nbsp;                // remove &quot;&lt;first name&gt;&quot; from list
+<b class="nc"><i>494</i>&nbsp;                fieldListModel.remove(0);</b>
+<i>495</i>&nbsp;
+<i>496</i>&nbsp;                int pos;
+<b class="nc"><i>497</i>&nbsp;                if (fieldListModel.contains(s)) {</b>
+<i>498</i>&nbsp;                    // field already exists, scroll to that field (below)
+<b class="nc"><i>499</i>&nbsp;                    pos = fieldListModel.indexOf(s);</b>
+<i>500</i>&nbsp;                } else {
+<i>501</i>&nbsp;                    // Add new field.
+<b class="nc"><i>502</i>&nbsp;                    pos = findPos(fieldListModel, s);</b>
+<b class="nc"><i>503</i>&nbsp;                    fieldListModel.add(Math.max(0, pos), s);</b>
+<i>504</i>&nbsp;                }
+<b class="nc"><i>505</i>&nbsp;                fieldList.setSelectedIndex(pos);</b>
+<b class="nc"><i>506</i>&nbsp;                fieldList.ensureIndexIsVisible(pos);</b>
+<b class="nc"><i>507</i>&nbsp;                currentField = s;</b>
+<b class="nc"><i>508</i>&nbsp;                setupWordSelector();</b>
+<b class="nc"><i>509</i>&nbsp;                newWordAction();</b>
+<i>510</i>&nbsp;            }
+<b class="nc"><i>511</i>&nbsp;        }</b>
+<i>512</i>&nbsp;
+<i>513</i>&nbsp;    }
+<i>514</i>&nbsp;
+<i>515</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

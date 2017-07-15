@@ -1,0 +1,132 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: OpenBrowserAction</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.actions</a> ]
+</div>
+
+<h1>Coverage Summary for Class: OpenBrowserAction (net.sf.jabref.gui.actions)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">OpenBrowserAction</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 11)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.actions;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.event.ActionEvent;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;import javax.swing.AbstractAction;
+<i>6</i>&nbsp;import javax.swing.Action;
+<i>7</i>&nbsp;import javax.swing.Icon;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;import net.sf.jabref.gui.desktop.JabRefDesktop;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;public class OpenBrowserAction extends AbstractAction {
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;    private final String urlToOpen;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;    /**
+<i>16</i>&nbsp;     * OpenBrowserAction without icons - only to be used for menus
+<i>17</i>&nbsp;     *
+<i>18</i>&nbsp;     * @param urlToOpen URL string of an URL to be shown in the default web browser
+<i>19</i>&nbsp;     * @param menuTitle title of the menu entry; should already be localized
+<i>20</i>&nbsp;     * @param description description shown in a tooltip hovering over the menu/icon bar entry; should already be localized
+<i>21</i>&nbsp;     */
+<i>22</i>&nbsp;    public OpenBrowserAction(String urlToOpen, String menuTitle, String description) {
+<b class="nc"><i>23</i>&nbsp;        super(menuTitle);</b>
+<b class="nc"><i>24</i>&nbsp;        this.urlToOpen = urlToOpen;</b>
+<b class="nc"><i>25</i>&nbsp;        putValue(Action.SHORT_DESCRIPTION, description);</b>
+<b class="nc"><i>26</i>&nbsp;    }</b>
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;    /**
+<i>29</i>&nbsp;     * OpenBrowserAction with icons
+<i>30</i>&nbsp;     *
+<i>31</i>&nbsp;     * @param urlToOpen URL string of an URL to be shown in the default web browser
+<i>32</i>&nbsp;     * @param menuTitle title of the menu entry; should already be localized
+<i>33</i>&nbsp;     * @param description description shown in a tooltip hovering over the menu/icon bar entry; should already be localized
+<i>34</i>&nbsp;     * @param smallIcon smallIcon to be shown in the menus
+<i>35</i>&nbsp;     * @param largeIcon larger icon to be shown in the icon bar
+<i>36</i>&nbsp;     */
+<i>37</i>&nbsp;    public OpenBrowserAction(String urlToOpen, String menuTitle, String description, Icon smallIcon, Icon largeIcon) {
+<b class="nc"><i>38</i>&nbsp;        super(menuTitle, smallIcon);</b>
+<b class="nc"><i>39</i>&nbsp;        this.urlToOpen = urlToOpen;</b>
+<b class="nc"><i>40</i>&nbsp;        putValue(Action.SHORT_DESCRIPTION, description);</b>
+<b class="nc"><i>41</i>&nbsp;        putValue(Action.LARGE_ICON_KEY, largeIcon);</b>
+<b class="nc"><i>42</i>&nbsp;    }</b>
+<i>43</i>&nbsp;
+<i>44</i>&nbsp;    @Override
+<i>45</i>&nbsp;    public void actionPerformed(ActionEvent e) {
+<b class="nc"><i>46</i>&nbsp;        JabRefDesktop.openBrowserShowPopup(urlToOpen);</b>
+<b class="nc"><i>47</i>&nbsp;    }</b>
+<i>48</i>&nbsp;
+<i>49</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

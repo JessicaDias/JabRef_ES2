@@ -1,0 +1,103 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: OS</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.util</a> ]
+</div>
+
+<h1>Coverage Summary for Class: OS (net.sf.jabref.logic.util)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">OS</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    85.7%
+  </span>
+  <span class="absValue">
+    (6/ 7)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.util;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;/***
+<i>4</i>&nbsp; * Operating system (OS) detection
+<i>5</i>&nbsp; */
+<b class="nc"><i>6</i>&nbsp;public class OS {</b>
+<i>7</i>&nbsp;    // https://commons.apache.org/proper/commons-lang/javadocs/api-2.6/org/apache/commons/lang/SystemUtils.html
+<b class="fc"><i>8</i>&nbsp;    private static final String OS_NAME = System.getProperty(&quot;os.name&quot;, &quot;unknown&quot;).toLowerCase();</b>
+<i>9</i>&nbsp;
+<b class="fc"><i>10</i>&nbsp;    public static final boolean LINUX = OS_NAME.startsWith(&quot;linux&quot;);</b>
+<b class="fc"><i>11</i>&nbsp;    public static final boolean WINDOWS = OS_NAME.startsWith(&quot;win&quot;);</b>
+<b class="fc"><i>12</i>&nbsp;    public static final boolean OS_X = OS_NAME.startsWith(&quot;mac&quot;);</b>
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;    // File separator obtained from system
+<b class="fc"><i>15</i>&nbsp;    public static final String FILE_SEPARATOR = System.getProperty(&quot;file.separator&quot;);</b>
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;    // Newlines
+<i>18</i>&nbsp;    // will be overridden in initialization due to feature #857 @ JabRef.java
+<b class="fc"><i>19</i>&nbsp;    public static String NEWLINE = System.lineSeparator();</b>
+<i>20</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

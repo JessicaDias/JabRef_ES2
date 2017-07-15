@@ -1,0 +1,118 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: CitationStyleOutputFormat</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.citationstyle</a> ]
+</div>
+
+<h1>Coverage Summary for Class: CitationStyleOutputFormat (net.sf.jabref.logic.citationstyle)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CitationStyleOutputFormat</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 13)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.citationstyle;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;
+<i>4</i>&nbsp;import net.sf.jabref.logic.util.OS;
+<i>5</i>&nbsp;
+<b class="nc"><i>6</i>&nbsp;public enum CitationStyleOutputFormat {</b>
+<i>7</i>&nbsp;
+<b class="nc"><i>8</i>&nbsp;    ASCII_DOC(&quot;asciidoc&quot;, &quot;&quot;),</b>
+<b class="nc"><i>9</i>&nbsp;    HTML(&quot;html&quot;, OS.NEWLINE + &quot;&lt;br&gt;&quot; + OS.NEWLINE),</b>
+<b class="nc"><i>10</i>&nbsp;    RTF(&quot;rtf&quot;, &quot;\\line&quot; + OS.NEWLINE),</b>
+<b class="nc"><i>11</i>&nbsp;    TEXT(&quot;text&quot;, &quot;&quot;),</b>
+<b class="nc"><i>12</i>&nbsp;    XSL_FO(&quot;fo&quot;, OS.NEWLINE);</b>
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;    private final String format;
+<i>15</i>&nbsp;    private final String lineSeparator;
+<i>16</i>&nbsp;
+<b class="nc"><i>17</i>&nbsp;    CitationStyleOutputFormat(String format, String lineSeparator) {</b>
+<b class="nc"><i>18</i>&nbsp;        this.format = format;</b>
+<b class="nc"><i>19</i>&nbsp;        this.lineSeparator = lineSeparator;</b>
+<b class="nc"><i>20</i>&nbsp;    }</b>
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;    public String getFormat() {
+<b class="nc"><i>23</i>&nbsp;        return format;</b>
+<i>24</i>&nbsp;    }
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    public String getLineSeparator() {
+<b class="nc"><i>27</i>&nbsp;        return lineSeparator;</b>
+<i>28</i>&nbsp;    }
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;    @Override
+<i>31</i>&nbsp;    public String toString() {
+<b class="nc"><i>32</i>&nbsp;        return format;</b>
+<i>33</i>&nbsp;    }
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

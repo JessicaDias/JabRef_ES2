@@ -1,0 +1,243 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Importer</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.importer</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Importer (net.sf.jabref.logic.importer)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Importer</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    36.4%
+  </span>
+  <span class="absValue">
+    (4/ 11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    40%
+  </span>
+  <span class="absValue">
+    (12/ 30)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.importer;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.BufferedReader;
+<i>4</i>&nbsp;import java.io.FileInputStream;
+<i>5</i>&nbsp;import java.io.IOException;
+<i>6</i>&nbsp;import java.io.InputStream;
+<i>7</i>&nbsp;import java.io.InputStreamReader;
+<i>8</i>&nbsp;import java.nio.charset.Charset;
+<i>9</i>&nbsp;import java.nio.charset.StandardCharsets;
+<i>10</i>&nbsp;import java.nio.file.Path;
+<i>11</i>&nbsp;import java.util.Objects;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;import net.sf.jabref.logic.util.FileExtensions;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;/**
+<i>16</i>&nbsp; * Role of an csv_importer for JabRef.
+<i>17</i>&nbsp; */
+<b class="fc"><i>18</i>&nbsp;public abstract class Importer implements Comparable&lt;Importer&gt; {</b>
+<i>19</i>&nbsp;    /**
+<i>20</i>&nbsp;     * Check whether the source is in the correct format for this csv_importer.
+<i>21</i>&nbsp;     *
+<i>22</i>&nbsp;     * The effect of this method is primarily to avoid unnecessary processing of
+<i>23</i>&nbsp;     * files when searching for a suitable import format. If this method returns
+<i>24</i>&nbsp;     * false, the import routine will move on to the next import format.
+<i>25</i>&nbsp;     *
+<i>26</i>&nbsp;     * Thus the correct behaviour is to return false if it is certain that the file is
+<i>27</i>&nbsp;     * not of the suitable type, and true otherwise. Returning true is the safe choice if not certain.
+<i>28</i>&nbsp;     */
+<i>29</i>&nbsp;    public abstract boolean isRecognizedFormat(BufferedReader input) throws IOException;
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;    public boolean isRecognizedFormat(Path filePath, Charset encoding) throws IOException {
+<b class="fc"><i>32</i>&nbsp;        try (BufferedReader bufferedReader = getReader(filePath, encoding)) {</b>
+<b class="fc"><i>33</i>&nbsp;            return isRecognizedFormat(bufferedReader);</b>
+<b class="fc"><i>34</i>&nbsp;        }</b>
+<i>35</i>&nbsp;    }
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    /**
+<i>38</i>&nbsp;     * Parse the database in the source.
+<i>39</i>&nbsp;     *
+<i>40</i>&nbsp;     * This method can be called in two different contexts - either when importing in
+<i>41</i>&nbsp;     * a specified format, or when importing in unknown format. In the latter case,
+<i>42</i>&nbsp;     * JabRef cycles through all available import formats. No error messages or feedback
+<i>43</i>&nbsp;     * is displayed from individual import formats in this case.
+<i>44</i>&nbsp;     *
+<i>45</i>&nbsp;     * If importing in a specified format and an empty database is returned, JabRef reports
+<i>46</i>&nbsp;     * that no entries were found.
+<i>47</i>&nbsp;     *
+<i>48</i>&nbsp;     * This method should never return null.
+<i>49</i>&nbsp;     *
+<i>50</i>&nbsp;     * @param input the input to read from
+<i>51</i>&nbsp;     */
+<i>52</i>&nbsp;    public abstract ParserResult importDatabase(BufferedReader input) throws IOException ;
+<i>53</i>&nbsp;
+<i>54</i>&nbsp;    /**
+<i>55</i>&nbsp;     * Parse the database in the specified file.
+<i>56</i>&nbsp;     *
+<i>57</i>&nbsp;     * Importer having the facilities to detect the correct encoding of a file should overwrite this method,
+<i>58</i>&nbsp;     * determine the encoding and then call {@link #importDatabase(BufferedReader)}.
+<i>59</i>&nbsp;     *
+<i>60</i>&nbsp;     * @param filePath the path to the file which should be imported
+<i>61</i>&nbsp;     * @param encoding the encoding used to decode the file
+<i>62</i>&nbsp;     */
+<i>63</i>&nbsp;    public ParserResult importDatabase(Path filePath, Charset encoding) throws IOException {
+<b class="fc"><i>64</i>&nbsp;        try (BufferedReader bufferedReader = getReader(filePath, encoding)) {</b>
+<b class="fc"><i>65</i>&nbsp;            ParserResult parserResult = importDatabase(bufferedReader);</b>
+<b class="fc"><i>66</i>&nbsp;            parserResult.getMetaData().setEncoding(encoding);</b>
+<b class="fc"><i>67</i>&nbsp;            parserResult.setFile(filePath.toFile());</b>
+<b class="fc"><i>68</i>&nbsp;            return parserResult;</b>
+<b class="fc"><i>69</i>&nbsp;        }</b>
+<i>70</i>&nbsp;    }
+<i>71</i>&nbsp;
+<i>72</i>&nbsp;    protected static BufferedReader getUTF8Reader(Path filePath) throws IOException {
+<b class="nc"><i>73</i>&nbsp;        return getReader(filePath, StandardCharsets.UTF_8);</b>
+<i>74</i>&nbsp;    }
+<i>75</i>&nbsp;
+<i>76</i>&nbsp;    protected static BufferedReader getUTF16Reader(Path filePath) throws IOException {
+<b class="nc"><i>77</i>&nbsp;        return getReader(filePath, StandardCharsets.UTF_16);</b>
+<i>78</i>&nbsp;    }
+<i>79</i>&nbsp;
+<i>80</i>&nbsp;    public static BufferedReader getReader(Path filePath, Charset encoding)
+<i>81</i>&nbsp;            throws IOException {
+<b class="fc"><i>82</i>&nbsp;        InputStream stream = new FileInputStream(filePath.toFile());</b>
+<b class="fc"><i>83</i>&nbsp;        return new BufferedReader(new InputStreamReader(stream, encoding));</b>
+<i>84</i>&nbsp;    }
+<i>85</i>&nbsp;
+<i>86</i>&nbsp;    /**
+<i>87</i>&nbsp;     * Returns the name of this import format.
+<i>88</i>&nbsp;     *
+<i>89</i>&nbsp;     * &lt;p&gt;The name must be unique.&lt;/p&gt;
+<i>90</i>&nbsp;     *
+<i>91</i>&nbsp;     * @return format name, must be unique and not &lt;code&gt;null&lt;/code&gt;
+<i>92</i>&nbsp;     */
+<i>93</i>&nbsp;    public abstract String getName();
+<i>94</i>&nbsp;
+<i>95</i>&nbsp;
+<i>96</i>&nbsp;    /**
+<i>97</i>&nbsp;     * Returns the file extensions that this csv_importer can read
+<i>98</i>&nbsp;     * @return {@link FileExtensions} correspoding to the csv_importer
+<i>99</i>&nbsp;     */
+<i>100</i>&nbsp;    public abstract FileExtensions getExtensions();
+<i>101</i>&nbsp;
+<i>102</i>&nbsp;    /**
+<i>103</i>&nbsp;     * Returns a one-word ID which identifies this import format.
+<i>104</i>&nbsp;     * Used for example, to identify the format when used from the command line.
+<i>105</i>&nbsp;     *
+<i>106</i>&nbsp;     * @return ID, must be unique and not &lt;code&gt;null&lt;/code&gt;
+<i>107</i>&nbsp;     */
+<i>108</i>&nbsp;    public String getId() {
+<b class="nc"><i>109</i>&nbsp;        String id = getName();</b>
+<b class="nc"><i>110</i>&nbsp;        StringBuilder result = new StringBuilder(id.length());</b>
+<b class="nc"><i>111</i>&nbsp;        for (int i = 0; i &lt; id.length(); i++) {</b>
+<b class="nc"><i>112</i>&nbsp;            char c = id.charAt(i);</b>
+<b class="nc"><i>113</i>&nbsp;            if (Character.isLetterOrDigit(c)) {</b>
+<b class="nc"><i>114</i>&nbsp;                result.append(Character.toLowerCase(c));</b>
+<i>115</i>&nbsp;            }
+<i>116</i>&nbsp;        }
+<b class="nc"><i>117</i>&nbsp;        return result.toString();</b>
+<i>118</i>&nbsp;    }
+<i>119</i>&nbsp;
+<i>120</i>&nbsp;    /**
+<i>121</i>&nbsp;     * Returns the description of the import format.
+<i>122</i>&nbsp;     *
+<i>123</i>&nbsp;     * The description should specify
+<i>124</i>&nbsp;     * &lt;ul&gt;&lt;li&gt;
+<i>125</i>&nbsp;     *   what kind of entries from what sources and based on what specification it is able to import
+<i>126</i>&nbsp;     * &lt;/li&gt;&lt;li&gt;
+<i>127</i>&nbsp;     *   by what criteria it {@link #isRecognizedFormat(BufferedReader) recognizes} an import format
+<i>128</i>&nbsp;     * &lt;/li&gt;&lt;/ul&gt;
+<i>129</i>&nbsp;     *
+<i>130</i>&nbsp;     * @return description of the import format
+<i>131</i>&nbsp;     */
+<i>132</i>&nbsp;    public abstract String getDescription();
+<i>133</i>&nbsp;
+<i>134</i>&nbsp;    @Override
+<i>135</i>&nbsp;    public int hashCode() {
+<b class="nc"><i>136</i>&nbsp;        return getName().hashCode();</b>
+<i>137</i>&nbsp;    }
+<i>138</i>&nbsp;
+<i>139</i>&nbsp;    @Override
+<i>140</i>&nbsp;    public boolean equals(Object obj) {
+<b class="nc"><i>141</i>&nbsp;        if (this == obj) {</b>
+<b class="nc"><i>142</i>&nbsp;            return true;</b>
+<i>143</i>&nbsp;        }
+<b class="nc"><i>144</i>&nbsp;        if(!(obj instanceof Importer)) {</b>
+<b class="nc"><i>145</i>&nbsp;            return false;</b>
+<i>146</i>&nbsp;        }
+<b class="nc"><i>147</i>&nbsp;        Importer other = (Importer)obj;</b>
+<b class="nc"><i>148</i>&nbsp;        return Objects.equals(this.getName(), other.getName());</b>
+<i>149</i>&nbsp;    }
+<i>150</i>&nbsp;
+<i>151</i>&nbsp;    @Override
+<i>152</i>&nbsp;    public String toString() {
+<b class="nc"><i>153</i>&nbsp;        return getName();</b>
+<i>154</i>&nbsp;    }
+<i>155</i>&nbsp;
+<i>156</i>&nbsp;    @Override
+<i>157</i>&nbsp;    public int compareTo(Importer o) {
+<b class="nc"><i>158</i>&nbsp;        return getName().compareTo(o.getName());</b>
+<i>159</i>&nbsp;    }
+<i>160</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

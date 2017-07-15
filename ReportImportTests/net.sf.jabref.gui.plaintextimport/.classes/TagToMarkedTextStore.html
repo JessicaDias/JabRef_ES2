@@ -1,0 +1,191 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: TagToMarkedTextStore</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.plaintextimport</a> ]
+</div>
+
+<h1>Coverage Summary for Class: TagToMarkedTextStore (net.sf.jabref.gui.plaintextimport)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TagToMarkedTextStore</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 23)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">TagToMarkedTextStore$TMarkedStoreItem</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 6)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 29)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.plaintextimport;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.ArrayList;
+<i>4</i>&nbsp;import java.util.HashMap;
+<i>5</i>&nbsp;import java.util.List;
+<i>6</i>&nbsp;import java.util.Map;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import javax.swing.text.StyledDocument;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;/**
+<i>11</i>&nbsp; * Save the textposition for tags in a recent TextInputDialog context
+<i>12</i>&nbsp; */
+<i>13</i>&nbsp;public class TagToMarkedTextStore {
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;    private final Map&lt;String, List&lt;TMarkedStoreItem&gt;&gt; tagMap;
+<i>16</i>&nbsp;
+<b class="nc"><i>17</i>&nbsp;    public TagToMarkedTextStore() {</b>
+<b class="nc"><i>18</i>&nbsp;        tagMap = new HashMap&lt;&gt;();</b>
+<b class="nc"><i>19</i>&nbsp;    }</b>
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;    /** appends a selection property for tag */
+<i>22</i>&nbsp;    public void appendPosition(String tag, int start, int end) {
+<b class="nc"><i>23</i>&nbsp;        List&lt;TMarkedStoreItem&gt; ll = tagMap.get(tag);</b>
+<b class="nc"><i>24</i>&nbsp;        if (ll == null) {</b>
+<b class="nc"><i>25</i>&nbsp;            ll = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>26</i>&nbsp;            tagMap.put(tag, ll);</b>
+<i>27</i>&nbsp;        }
+<i>28</i>&nbsp;
+<b class="nc"><i>29</i>&nbsp;        ll.add(new TMarkedStoreItem(start, end));</b>
+<b class="nc"><i>30</i>&nbsp;    }</b>
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;    /** insert selection properties for tag, old entries were deleted */
+<i>33</i>&nbsp;    public void insertPosition(String tag, int start, int end) {
+<b class="nc"><i>34</i>&nbsp;        List&lt;TMarkedStoreItem&gt; ll = tagMap.get(tag);</b>
+<i>35</i>&nbsp;
+<b class="nc"><i>36</i>&nbsp;        if (ll == null) {</b>
+<b class="nc"><i>37</i>&nbsp;            ll = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>38</i>&nbsp;            tagMap.put(tag, ll);</b>
+<i>39</i>&nbsp;        } else {
+<b class="nc"><i>40</i>&nbsp;            ll.clear();</b>
+<i>41</i>&nbsp;        }
+<i>42</i>&nbsp;
+<b class="nc"><i>43</i>&nbsp;        ll.add(new TMarkedStoreItem(start, end));</b>
+<b class="nc"><i>44</i>&nbsp;    }</b>
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;    /** set the Style for the tag if an entry is available */
+<i>47</i>&nbsp;    public void setStyleForTag(String tag, String style, StyledDocument doc) {
+<b class="nc"><i>48</i>&nbsp;        List&lt;TMarkedStoreItem&gt; ll = tagMap.get(tag);</b>
+<i>49</i>&nbsp;
+<b class="nc"><i>50</i>&nbsp;        if (ll != null) {</b>
+<i>51</i>&nbsp;            // iterate over all saved selections
+<b class="nc"><i>52</i>&nbsp;            for (TMarkedStoreItem item : ll) {</b>
+<b class="nc"><i>53</i>&nbsp;                if (item != null) {</b>
+<b class="nc"><i>54</i>&nbsp;                    doc.setCharacterAttributes(item.getStart(), item.getLength(), doc.getStyle(style), true);</b>
+<i>55</i>&nbsp;                }
+<b class="nc"><i>56</i>&nbsp;            }</b>
+<i>57</i>&nbsp;        }
+<b class="nc"><i>58</i>&nbsp;    }</b>
+<i>59</i>&nbsp;
+<i>60</i>&nbsp;
+<i>61</i>&nbsp;    private static class TMarkedStoreItem {
+<i>62</i>&nbsp;
+<i>63</i>&nbsp;        private final int start;
+<i>64</i>&nbsp;        private final int end;
+<i>65</i>&nbsp;
+<i>66</i>&nbsp;
+<b class="nc"><i>67</i>&nbsp;        public TMarkedStoreItem(int start, int end) {</b>
+<b class="nc"><i>68</i>&nbsp;            this.start = start;</b>
+<b class="nc"><i>69</i>&nbsp;            this.end = end;</b>
+<b class="nc"><i>70</i>&nbsp;        }</b>
+<i>71</i>&nbsp;
+<i>72</i>&nbsp;        public int getStart() {
+<b class="nc"><i>73</i>&nbsp;            return start;</b>
+<i>74</i>&nbsp;        }
+<i>75</i>&nbsp;
+<i>76</i>&nbsp;        public int getLength() {
+<b class="nc"><i>77</i>&nbsp;            return end - start;</b>
+<i>78</i>&nbsp;        }
+<i>79</i>&nbsp;
+<i>80</i>&nbsp;    }
+<i>81</i>&nbsp;
+<i>82</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

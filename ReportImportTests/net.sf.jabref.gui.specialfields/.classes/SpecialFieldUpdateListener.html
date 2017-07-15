@@ -1,0 +1,137 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: SpecialFieldUpdateListener</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.specialfields</a> ]
+</div>
+
+<h1>Coverage Summary for Class: SpecialFieldUpdateListener (net.sf.jabref.gui.specialfields)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SpecialFieldUpdateListener</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 17)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.specialfields;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import javax.swing.SwingUtilities;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;import net.sf.jabref.Globals;
+<i>6</i>&nbsp;import net.sf.jabref.JabRefGUI;
+<i>7</i>&nbsp;import net.sf.jabref.logic.specialfields.SpecialFieldsUtils;
+<i>8</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>9</i>&nbsp;import net.sf.jabref.model.entry.FieldName;
+<i>10</i>&nbsp;import net.sf.jabref.model.entry.event.FieldChangedEvent;
+<i>11</i>&nbsp;import net.sf.jabref.model.entry.specialfields.SpecialField;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;import com.google.common.eventbus.Subscribe;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;/**
+<i>16</i>&nbsp; * Listener triggering
+<i>17</i>&nbsp; *  * an update of keywords if special field has been updated
+<i>18</i>&nbsp; *  * an update of special fields if keywords have been updated
+<i>19</i>&nbsp; */
+<b class="nc"><i>20</i>&nbsp;public class SpecialFieldUpdateListener {</b>
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;    private static SpecialFieldUpdateListener INSTANCE;
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;    @Subscribe
+<i>25</i>&nbsp;    public void listen(FieldChangedEvent fieldChangedEvent) {
+<b class="nc"><i>26</i>&nbsp;        final BibEntry entry = fieldChangedEvent.getBibEntry();</b>
+<b class="nc"><i>27</i>&nbsp;        final String fieldName = fieldChangedEvent.getFieldName();</b>
+<i>28</i>&nbsp;        // Source editor cycles through all entries
+<i>29</i>&nbsp;        // if we immediately updated the fields, the entry editor would detect a subsequent change as a user change
+<i>30</i>&nbsp;        // and re-fire this event
+<i>31</i>&nbsp;        // e.g., &quot;keyword = {prio1}, priority = {prio2}&quot; and a change at keyword to prio3 would not succeed.
+<b class="nc"><i>32</i>&nbsp;        SwingUtilities.invokeLater(() -&gt; {</b>
+<b class="nc"><i>33</i>&nbsp;            if (FieldName.KEYWORDS.equals(fieldName)) {</b>
+<b class="nc"><i>34</i>&nbsp;                SpecialFieldsUtils.syncSpecialFieldsFromKeywords(entry, Globals.prefs.getKeywordDelimiter());</b>
+<b class="nc"><i>35</i>&nbsp;                SwingUtilities</b>
+<b class="nc"><i>36</i>&nbsp;                        .invokeLater(() -&gt; JabRefGUI.getMainFrame().getCurrentBasePanel().updateEntryEditorIfShowing());</b>
+<i>37</i>&nbsp;            } else {
+<b class="nc"><i>38</i>&nbsp;                if (SpecialField.isSpecialField(fieldName)) {</b>
+<b class="nc"><i>39</i>&nbsp;                    SpecialFieldsUtils.syncKeywordsFromSpecialFields(entry, Globals.prefs.isKeywordSyncEnabled(), Globals.prefs.getKeywordDelimiter());</b>
+<b class="nc"><i>40</i>&nbsp;                    SwingUtilities.invokeLater(</b>
+<b class="nc"><i>41</i>&nbsp;                            () -&gt; JabRefGUI.getMainFrame().getCurrentBasePanel().updateEntryEditorIfShowing());</b>
+<i>42</i>&nbsp;                }
+<i>43</i>&nbsp;            }
+<b class="nc"><i>44</i>&nbsp;        });</b>
+<b class="nc"><i>45</i>&nbsp;    }</b>
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;    public static SpecialFieldUpdateListener getInstance() {
+<b class="nc"><i>48</i>&nbsp;        if (SpecialFieldUpdateListener.INSTANCE == null) {</b>
+<b class="nc"><i>49</i>&nbsp;            SpecialFieldUpdateListener.INSTANCE = new SpecialFieldUpdateListener();</b>
+<i>50</i>&nbsp;        }
+<b class="nc"><i>51</i>&nbsp;        return SpecialFieldUpdateListener.INSTANCE;</b>
+<i>52</i>&nbsp;    }
+<i>53</i>&nbsp;
+<i>54</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

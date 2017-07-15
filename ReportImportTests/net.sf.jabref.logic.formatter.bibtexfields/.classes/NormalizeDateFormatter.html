@@ -1,0 +1,171 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: NormalizeDateFormatter</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.formatter.bibtexfields</a> ]
+</div>
+
+<h1>Coverage Summary for Class: NormalizeDateFormatter (net.sf.jabref.logic.formatter.bibtexfields)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">NormalizeDateFormatter</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    22.2%
+  </span>
+  <span class="absValue">
+    (2/ 9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    11.1%
+  </span>
+  <span class="absValue">
+    (2/ 18)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.formatter.bibtexfields;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.time.format.DateTimeFormatter;
+<i>4</i>&nbsp;import java.time.format.DateTimeParseException;
+<i>5</i>&nbsp;import java.time.temporal.TemporalAccessor;
+<i>6</i>&nbsp;import java.util.Arrays;
+<i>7</i>&nbsp;import java.util.List;
+<i>8</i>&nbsp;import java.util.Optional;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>11</i>&nbsp;import net.sf.jabref.model.cleanup.Formatter;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;/**
+<i>14</i>&nbsp; * This class transforms date to the format yyyy-mm-dd or yyyy-mm..
+<i>15</i>&nbsp; */
+<b class="fc"><i>16</i>&nbsp;public class NormalizeDateFormatter implements Formatter {</b>
+<i>17</i>&nbsp;    @Override
+<i>18</i>&nbsp;    public String getName() {
+<b class="nc"><i>19</i>&nbsp;        return Localization.lang(&quot;Normalize date&quot;);</b>
+<i>20</i>&nbsp;    }
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;    @Override
+<i>23</i>&nbsp;    public String getKey() {
+<b class="fc"><i>24</i>&nbsp;        return &quot;normalize_date&quot;;</b>
+<i>25</i>&nbsp;    }
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    /**
+<i>28</i>&nbsp;     * Format date string to yyyy-mm-dd or yyyy-mm. Keeps the existing String if it does not match one of the following
+<i>29</i>&nbsp;     * formats:
+<i>30</i>&nbsp;     *  &quot;M/y&quot; (covers 9/15, 9/2015, and 09/2015)
+<i>31</i>&nbsp;     *  &quot;MMMM (dd), yyyy&quot; (covers September 1, 2015 and September, 2015)
+<i>32</i>&nbsp;     *  &quot;yyyy-MM-dd&quot; (covers 2009-1-15)
+<i>33</i>&nbsp;     *  &quot;d.M.uuuu&quot; (covers 15.1.2015)
+<i>34</i>&nbsp;     */
+<i>35</i>&nbsp;    @Override
+<i>36</i>&nbsp;    public String format(String value) {
+<b class="nc"><i>37</i>&nbsp;        Optional&lt;TemporalAccessor&gt; parsedDate = tryParseDate(value);</b>
+<b class="nc"><i>38</i>&nbsp;        if (!parsedDate.isPresent()) {</b>
+<b class="nc"><i>39</i>&nbsp;            return value;</b>
+<i>40</i>&nbsp;        }
+<i>41</i>&nbsp;
+<b class="nc"><i>42</i>&nbsp;        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(&quot;uuuu-MM[-dd]&quot;);</b>
+<b class="nc"><i>43</i>&nbsp;        return dateFormatter.format(parsedDate.get());</b>
+<i>44</i>&nbsp;    }
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;    @Override
+<i>47</i>&nbsp;    public String getDescription() {
+<b class="nc"><i>48</i>&nbsp;        return Localization.lang(&quot;Normalizes the date to ISO date format.&quot;);</b>
+<i>49</i>&nbsp;    }
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;    @Override
+<i>52</i>&nbsp;    public String getExampleInput() {
+<b class="nc"><i>53</i>&nbsp;        return &quot;29.11.2003&quot;;</b>
+<i>54</i>&nbsp;    }
+<i>55</i>&nbsp;
+<i>56</i>&nbsp;    /*
+<i>57</i>&nbsp;     * Try to parse the following formats
+<i>58</i>&nbsp;     *  &quot;M/y&quot; (covers 9/15, 9/2015, and 09/2015)
+<i>59</i>&nbsp;     *  &quot;MMMM (dd), yyyy&quot; (covers September 1, 2015 and September, 2015)
+<i>60</i>&nbsp;     *  &quot;yyyy-MM-dd&quot; (covers 2009-1-15)
+<i>61</i>&nbsp;     *  &quot;d.M.uuuu&quot; (covers 15.1.2015)
+<i>62</i>&nbsp;     *  &quot;uuuu.M.d&quot; (covers 2015.1.15)
+<i>63</i>&nbsp;     * The code is essentially taken from http://stackoverflow.com/questions/4024544/how-to-parse-dates-in-multiple-formats-using-simpledateformat.
+<i>64</i>&nbsp;     */
+<i>65</i>&nbsp;    private Optional&lt;TemporalAccessor&gt; tryParseDate(String dateString) {
+<b class="nc"><i>66</i>&nbsp;        List&lt;String&gt; formatStrings = Arrays.asList(&quot;uuuu-M-d&quot;, &quot;uuuu-M&quot;, &quot;M/uu&quot;, &quot;M/uuuu&quot;, &quot;MMMM d, uuuu&quot;, &quot;MMMM, uuuu&quot;,</b>
+<i>67</i>&nbsp;                &quot;d.M.uuuu&quot;, &quot;uuuu.M.d&quot;);
+<b class="nc"><i>68</i>&nbsp;        for (String formatString : formatStrings) {</b>
+<i>69</i>&nbsp;            try {
+<b class="nc"><i>70</i>&nbsp;                return Optional.of(DateTimeFormatter.ofPattern(formatString).parse(dateString));</b>
+<b class="nc"><i>71</i>&nbsp;            } catch (DateTimeParseException ignored) {</b>
+<i>72</i>&nbsp;                // Ignored
+<i>73</i>&nbsp;            }
+<b class="nc"><i>74</i>&nbsp;        }</b>
+<i>75</i>&nbsp;
+<b class="nc"><i>76</i>&nbsp;        return Optional.empty();</b>
+<i>77</i>&nbsp;    }
+<i>78</i>&nbsp;
+<i>79</i>&nbsp;    @Override
+<i>80</i>&nbsp;    public int hashCode() {
+<b class="nc"><i>81</i>&nbsp;        return defaultHashCode();</b>
+<i>82</i>&nbsp;    }
+<i>83</i>&nbsp;
+<i>84</i>&nbsp;    @Override
+<i>85</i>&nbsp;    public boolean equals(Object obj) {
+<b class="nc"><i>86</i>&nbsp;        return defaultEquals(obj);</b>
+<i>87</i>&nbsp;    }
+<i>88</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

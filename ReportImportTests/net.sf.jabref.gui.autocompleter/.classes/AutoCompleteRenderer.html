@@ -1,0 +1,143 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: AutoCompleteRenderer</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.autocompleter</a> ]
+</div>
+
+<h1>Coverage Summary for Class: AutoCompleteRenderer (net.sf.jabref.gui.autocompleter)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AutoCompleteRenderer</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.autocompleter;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.Component;
+<i>4</i>&nbsp;import java.awt.event.ActionListener;
+<i>5</i>&nbsp;import java.util.List;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;/**
+<i>8</i>&nbsp; * Renders the list of possible autocomplete items. Also takes care of the currently selected item.
+<i>9</i>&nbsp; *
+<i>10</i>&nbsp; * @param &lt;E&gt; the type of the items
+<i>11</i>&nbsp; */
+<b class="nc"><i>12</i>&nbsp;public abstract class AutoCompleteRenderer&lt;E&gt; {</b>
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;    /**
+<i>15</i>&nbsp;     * Refreshes the list of possible autocomplete items. Clears the currently selected item.
+<i>16</i>&nbsp;     *
+<i>17</i>&nbsp;     * @param items list of possible autocomplete items
+<i>18</i>&nbsp;     */
+<i>19</i>&nbsp;    public abstract void update(List&lt;E&gt; items);
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;    /**
+<i>22</i>&nbsp;     * Creates the control which will be shown in the autocomplete popup.
+<i>23</i>&nbsp;     *
+<i>24</i>&nbsp;     * @param acceptAction the action to be performed if the current selection is chosen as the autocompletion
+<i>25</i>&nbsp;     * @return the control to be added to the autocomplete popup
+<i>26</i>&nbsp;     */
+<i>27</i>&nbsp;    public abstract Component init(ActionListener acceptAction);
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;    /**
+<i>30</i>&nbsp;     * Selects the item at the given position. If the specified index is not valid, then the selection will be cleared.
+<i>31</i>&nbsp;     *
+<i>32</i>&nbsp;     * @param index position of the item
+<i>33</i>&nbsp;     */
+<i>34</i>&nbsp;    public abstract void selectItem(int index);
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;    /**
+<i>37</i>&nbsp;     * Selects the item relative to the currently selected item. If the specified offset is not valid, then the
+<i>38</i>&nbsp;     * selection will be cleared.
+<i>39</i>&nbsp;     *
+<i>40</i>&nbsp;     * @param offset offset of the item
+<i>41</i>&nbsp;     */
+<i>42</i>&nbsp;    public void selectItemRelative(int offset) {
+<b class="nc"><i>43</i>&nbsp;        int newIndex = getSelectedIndex() + offset;</b>
+<b class="nc"><i>44</i>&nbsp;        selectItem(newIndex);</b>
+<b class="nc"><i>45</i>&nbsp;    }</b>
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;    /**
+<i>48</i>&nbsp;     * Returns the index of the currently selected item.
+<i>49</i>&nbsp;     *
+<i>50</i>&nbsp;     * @return index of the selected item
+<i>51</i>&nbsp;     */
+<i>52</i>&nbsp;    public abstract int getSelectedIndex();
+<i>53</i>&nbsp;
+<i>54</i>&nbsp;    /**
+<i>55</i>&nbsp;     * Returns the currently selected item.
+<i>56</i>&nbsp;     *
+<i>57</i>&nbsp;     * @return selected item
+<i>58</i>&nbsp;     */
+<i>59</i>&nbsp;    public abstract E getSelectedItem();
+<i>60</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

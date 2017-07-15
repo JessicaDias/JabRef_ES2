@@ -1,0 +1,195 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ExternalFileMenuItem</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.externalfiletype</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ExternalFileMenuItem (net.sf.jabref.gui.externalfiletype)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ExternalFileMenuItem</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 43)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.externalfiletype;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.event.ActionEvent;
+<i>4</i>&nbsp;import java.awt.event.ActionListener;
+<i>5</i>&nbsp;import java.io.File;
+<i>6</i>&nbsp;import java.io.IOException;
+<i>7</i>&nbsp;import java.util.Optional;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;import javax.swing.Icon;
+<i>10</i>&nbsp;import javax.swing.JMenuItem;
+<i>11</i>&nbsp;import javax.swing.JOptionPane;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;import net.sf.jabref.gui.JabRefFrame;
+<i>14</i>&nbsp;import net.sf.jabref.gui.desktop.JabRefDesktop;
+<i>15</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>16</i>&nbsp;import net.sf.jabref.model.database.BibDatabaseContext;
+<i>17</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;import org.apache.commons.logging.Log;
+<i>20</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;/**
+<i>23</i>&nbsp; * The menu item used in the popup menu for opening external resources associated
+<i>24</i>&nbsp; * with an entry. Shows the resource name and icon given, and adds an action listener
+<i>25</i>&nbsp; * to process the request if the user clicks this menu item.
+<i>26</i>&nbsp; */
+<i>27</i>&nbsp;public class ExternalFileMenuItem extends JMenuItem implements ActionListener {
+<i>28</i>&nbsp;
+<b class="nc"><i>29</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(ExternalFileMenuItem.class);</b>
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;    private final BibEntry entry;
+<i>32</i>&nbsp;    private final String link;
+<i>33</i>&nbsp;    private final BibDatabaseContext databaseContext;
+<i>34</i>&nbsp;    private Optional&lt;ExternalFileType&gt; fileType;
+<i>35</i>&nbsp;    private final JabRefFrame frame;
+<i>36</i>&nbsp;    private String fieldName;
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;    public ExternalFileMenuItem(JabRefFrame frame, BibEntry entry, String name, String link, Icon icon,
+<i>40</i>&nbsp;            BibDatabaseContext databaseContext, Optional&lt;ExternalFileType&gt; fileType) {
+<b class="nc"><i>41</i>&nbsp;        super(name, icon);</b>
+<b class="nc"><i>42</i>&nbsp;        this.frame = frame;</b>
+<b class="nc"><i>43</i>&nbsp;        this.entry = entry;</b>
+<b class="nc"><i>44</i>&nbsp;        this.link = link;</b>
+<b class="nc"><i>45</i>&nbsp;        this.databaseContext = databaseContext;</b>
+<b class="nc"><i>46</i>&nbsp;        this.fileType = fileType;</b>
+<b class="nc"><i>47</i>&nbsp;        addActionListener(this);</b>
+<b class="nc"><i>48</i>&nbsp;    }</b>
+<i>49</i>&nbsp;
+<i>50</i>&nbsp;    public ExternalFileMenuItem(JabRefFrame frame, BibEntry entry, String name, String link, Icon icon,
+<i>51</i>&nbsp;            BibDatabaseContext databaseContext, String fieldName) {
+<b class="nc"><i>52</i>&nbsp;        this(frame, entry, name, link, icon, databaseContext, Optional.empty());</b>
+<b class="nc"><i>53</i>&nbsp;        this.fieldName = fieldName;</b>
+<b class="nc"><i>54</i>&nbsp;    }</b>
+<i>55</i>&nbsp;
+<i>56</i>&nbsp;    @Override
+<i>57</i>&nbsp;    public void actionPerformed(ActionEvent e) {
+<b class="nc"><i>58</i>&nbsp;        boolean success = openLink();</b>
+<b class="nc"><i>59</i>&nbsp;        if (!success) {</b>
+<b class="nc"><i>60</i>&nbsp;            frame.output(Localization.lang(&quot;Unable to open link.&quot;));</b>
+<i>61</i>&nbsp;        }
+<b class="nc"><i>62</i>&nbsp;    }</b>
+<i>63</i>&nbsp;
+<i>64</i>&nbsp;    public boolean openLink() {
+<b class="nc"><i>65</i>&nbsp;        frame.output(Localization.lang(&quot;External viewer called&quot;) + &quot;.&quot;);</b>
+<i>66</i>&nbsp;        try {
+<b class="nc"><i>67</i>&nbsp;            Optional&lt;ExternalFileType&gt; type = fileType;</b>
+<b class="nc"><i>68</i>&nbsp;            if (!this.fileType.isPresent()) {</b>
+<b class="nc"><i>69</i>&nbsp;                if (this.fieldName == null) {</b>
+<i>70</i>&nbsp;                    // We don&#39;t already know the file type, so we try to deduce it from the extension:
+<b class="nc"><i>71</i>&nbsp;                    File file = new File(link);</b>
+<i>72</i>&nbsp;                    // We try to check the extension for the file:
+<b class="nc"><i>73</i>&nbsp;                    String name = file.getName();</b>
+<b class="nc"><i>74</i>&nbsp;                    int pos = name.indexOf(&#39;.&#39;);</b>
+<b class="nc"><i>75</i>&nbsp;                    String extension = (pos &gt;= 0) &amp;&amp; (pos &lt; (name.length() - 1)) ? name.substring(pos + 1)</b>
+<b class="nc"><i>76</i>&nbsp;                            .trim().toLowerCase() : null;</b>
+<i>77</i>&nbsp;                    // Now we know the extension, check if it is one we know about:
+<b class="nc"><i>78</i>&nbsp;                    type = ExternalFileTypes.getInstance().getExternalFileTypeByExt(extension);</b>
+<b class="nc"><i>79</i>&nbsp;                    fileType = type;</b>
+<b class="nc"><i>80</i>&nbsp;                } else {</b>
+<b class="nc"><i>81</i>&nbsp;                    JabRefDesktop.openExternalViewer(databaseContext, link, fieldName);</b>
+<b class="nc"><i>82</i>&nbsp;                    return true;</b>
+<i>83</i>&nbsp;                }
+<i>84</i>&nbsp;            }
+<i>85</i>&nbsp;
+<b class="nc"><i>86</i>&nbsp;            if (type.isPresent() &amp;&amp; (type.get() instanceof UnknownExternalFileType)) {</b>
+<b class="nc"><i>87</i>&nbsp;                return JabRefDesktop.openExternalFileUnknown(frame, entry, databaseContext, link,</b>
+<b class="nc"><i>88</i>&nbsp;                        (UnknownExternalFileType) type.get());</b>
+<i>89</i>&nbsp;            } else {
+<b class="nc"><i>90</i>&nbsp;                return JabRefDesktop.openExternalFileAnyFormat(databaseContext, link, type);</b>
+<i>91</i>&nbsp;            }
+<i>92</i>&nbsp;
+<b class="nc"><i>93</i>&nbsp;        } catch (IOException e1) {</b>
+<i>94</i>&nbsp;            // See if we should show an error message concerning the application to open the
+<i>95</i>&nbsp;            // link with. We check if the file type is set, and if the file type has a non-empty
+<i>96</i>&nbsp;            // application link. If that link is referred by the error message, we can assume
+<i>97</i>&nbsp;            // that the problem is in the open-with-application setting:
+<b class="nc"><i>98</i>&nbsp;            if ((fileType.isPresent()) &amp;&amp; (!fileType.get().getOpenWithApplication().isEmpty())</b>
+<b class="nc"><i>99</i>&nbsp;                    &amp;&amp; e1.getMessage().contains(fileType.get().getOpenWithApplication())) {</b>
+<i>100</i>&nbsp;
+<b class="nc"><i>101</i>&nbsp;                JOptionPane.showMessageDialog(frame, Localization.lang(&quot;Unable to open link. &quot;</b>
+<i>102</i>&nbsp;                                        + &quot;The application &#39;%0&#39; associated with the file type &#39;%1&#39; could not be called.&quot;,
+<b class="nc"><i>103</i>&nbsp;                        fileType.get().getOpenWithApplication(), fileType.get().getName()),</b>
+<b class="nc"><i>104</i>&nbsp;                        Localization.lang(&quot;Could not open link&quot;), JOptionPane.ERROR_MESSAGE);</b>
+<b class="nc"><i>105</i>&nbsp;                return false;</b>
+<i>106</i>&nbsp;            }
+<i>107</i>&nbsp;
+<b class="nc"><i>108</i>&nbsp;            LOGGER.warn(&quot;Unable to open link&quot;, e1);</b>
+<i>109</i>&nbsp;        }
+<b class="nc"><i>110</i>&nbsp;        return false;</b>
+<i>111</i>&nbsp;    }
+<i>112</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

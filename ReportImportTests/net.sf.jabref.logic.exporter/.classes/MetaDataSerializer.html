@@ -1,0 +1,196 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: MetaDataSerializer</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.exporter</a> ]
+</div>
+
+<h1>Coverage Summary for Class: MetaDataSerializer (net.sf.jabref.logic.exporter)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MetaDataSerializer</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 59)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.exporter;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.ArrayList;
+<i>4</i>&nbsp;import java.util.Collections;
+<i>5</i>&nbsp;import java.util.HashMap;
+<i>6</i>&nbsp;import java.util.List;
+<i>7</i>&nbsp;import java.util.Map;
+<i>8</i>&nbsp;import java.util.TreeMap;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;import net.sf.jabref.logic.util.OS;
+<i>11</i>&nbsp;import net.sf.jabref.model.bibtexkeypattern.AbstractBibtexKeyPattern;
+<i>12</i>&nbsp;import net.sf.jabref.model.bibtexkeypattern.GlobalBibtexKeyPattern;
+<i>13</i>&nbsp;import net.sf.jabref.model.cleanup.FieldFormatterCleanups;
+<i>14</i>&nbsp;import net.sf.jabref.model.groups.GroupTreeNode;
+<i>15</i>&nbsp;import net.sf.jabref.model.metadata.ContentSelector;
+<i>16</i>&nbsp;import net.sf.jabref.model.metadata.MetaData;
+<i>17</i>&nbsp;import net.sf.jabref.model.strings.StringUtil;
+<i>18</i>&nbsp;
+<b class="nc"><i>19</i>&nbsp;public class MetaDataSerializer {</b>
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;    /**
+<i>22</i>&nbsp;     * Writes all data in the format &lt;key, serialized data&gt;.
+<i>23</i>&nbsp;     */
+<i>24</i>&nbsp;    public static Map&lt;String, String&gt; getSerializedStringMap(MetaData metaData,
+<i>25</i>&nbsp;            GlobalBibtexKeyPattern globalCiteKeyPattern) {
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;        // First write all meta data except groups
+<b class="nc"><i>28</i>&nbsp;        Map&lt;String, List&lt;String&gt;&gt; stringyMetaData = new HashMap&lt;&gt;();</b>
+<b class="nc"><i>29</i>&nbsp;        metaData.getSaveOrderConfig().ifPresent(</b>
+<b class="nc"><i>30</i>&nbsp;                saveOrderConfig -&gt; stringyMetaData.put(MetaData.SAVE_ORDER_CONFIG, saveOrderConfig.getAsStringList()));</b>
+<b class="nc"><i>31</i>&nbsp;        metaData.getSaveActions().ifPresent(</b>
+<b class="nc"><i>32</i>&nbsp;                saveActions -&gt; stringyMetaData.put(MetaData.SAVE_ACTIONS, saveActions.getAsStringList(OS.NEWLINE)));</b>
+<b class="nc"><i>33</i>&nbsp;        if (metaData.isProtected()) {</b>
+<b class="nc"><i>34</i>&nbsp;            stringyMetaData.put(MetaData.PROTECTED_FLAG_META, Collections.singletonList(&quot;true&quot;));</b>
+<i>35</i>&nbsp;        }
+<b class="nc"><i>36</i>&nbsp;        stringyMetaData.putAll(serializeCiteKeyPattern(metaData, globalCiteKeyPattern));</b>
+<b class="nc"><i>37</i>&nbsp;        metaData.getMode().ifPresent(</b>
+<b class="nc"><i>38</i>&nbsp;                mode -&gt; stringyMetaData.put(MetaData.DATABASE_TYPE, Collections.singletonList(mode.getAsString())));</b>
+<b class="nc"><i>39</i>&nbsp;        metaData.getDefaultFileDirectory().ifPresent(</b>
+<b class="nc"><i>40</i>&nbsp;                path -&gt; stringyMetaData.put(MetaData.FILE_DIRECTORY, Collections.singletonList(path.trim())));</b>
+<b class="nc"><i>41</i>&nbsp;        metaData.getUserFileDirectories().forEach((user, path) -&gt; stringyMetaData</b>
+<b class="nc"><i>42</i>&nbsp;                .put(MetaData.FILE_DIRECTORY + &#39;-&#39; + user, Collections.singletonList(path.trim())));</b>
+<i>43</i>&nbsp;
+<b class="nc"><i>44</i>&nbsp;        for(ContentSelector selector: metaData.getContentSelectorList()){</b>
+<b class="nc"><i>45</i>&nbsp;                stringyMetaData.put(MetaData.SELECTOR_META_PREFIX + selector.getFieldName(), selector.getValues());</b>
+<i>46</i>&nbsp;
+<b class="nc"><i>47</i>&nbsp;        }</b>
+<i>48</i>&nbsp;
+<b class="nc"><i>49</i>&nbsp;        Map&lt;String, String&gt; serializedMetaData = serializeMetaData(stringyMetaData);</b>
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;        // Write groups if present.
+<i>52</i>&nbsp;        // Skip this if only the root node exists (which is always the AllEntriesGroup).
+<b class="nc"><i>53</i>&nbsp;        metaData.getGroups().filter(root -&gt; root.getNumberOfChildren() &gt; 0).ifPresent(</b>
+<b class="nc"><i>54</i>&nbsp;                root -&gt; serializedMetaData.put(MetaData.GROUPSTREE, serializeGroups(root)));</b>
+<b class="nc"><i>55</i>&nbsp;        return serializedMetaData;</b>
+<i>56</i>&nbsp;    }
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;    private static Map&lt;String, String&gt; serializeMetaData(Map&lt;String, List&lt;String&gt;&gt; stringyMetaData) {
+<b class="nc"><i>59</i>&nbsp;        Map&lt;String, String&gt; serializedMetaData = new TreeMap&lt;&gt;();</b>
+<b class="nc"><i>60</i>&nbsp;        for (Map.Entry&lt;String, List&lt;String&gt;&gt; metaItem : stringyMetaData.entrySet()) {</b>
+<b class="nc"><i>61</i>&nbsp;            StringBuilder stringBuilder = new StringBuilder();</b>
+<b class="nc"><i>62</i>&nbsp;            for (String dataItem : metaItem.getValue()) {</b>
+<b class="nc"><i>63</i>&nbsp;                stringBuilder.append(StringUtil.quote(dataItem, MetaData.SEPARATOR_STRING, MetaData.ESCAPE_CHARACTER)).append(MetaData.SEPARATOR_STRING);</b>
+<i>64</i>&nbsp;                
+<i>65</i>&nbsp;                //in case of save actions, add an additional newline after the enabled flag
+<b class="nc"><i>66</i>&nbsp;                if (metaItem.getKey().equals(MetaData.SAVE_ACTIONS)</b>
+<b class="nc"><i>67</i>&nbsp;                        &amp;&amp; (FieldFormatterCleanups.ENABLED.equals(dataItem)</b>
+<b class="nc"><i>68</i>&nbsp;                                || FieldFormatterCleanups.DISABLED.equals(dataItem))) {</b>
+<b class="nc"><i>69</i>&nbsp;                    stringBuilder.append(OS.NEWLINE);</b>
+<i>70</i>&nbsp;                }
+<b class="nc"><i>71</i>&nbsp;            }</b>
+<i>72</i>&nbsp;
+<b class="nc"><i>73</i>&nbsp;            String serializedItem = stringBuilder.toString();</b>
+<i>74</i>&nbsp;            // Only add non-empty values
+<b class="nc"><i>75</i>&nbsp;            if (!serializedItem.isEmpty() &amp;&amp; !MetaData.SEPARATOR_STRING.equals(serializedItem)) {</b>
+<b class="nc"><i>76</i>&nbsp;                serializedMetaData.put(metaItem.getKey(), serializedItem);</b>
+<i>77</i>&nbsp;            }
+<b class="nc"><i>78</i>&nbsp;        }</b>
+<b class="nc"><i>79</i>&nbsp;        return serializedMetaData;</b>
+<i>80</i>&nbsp;    }
+<i>81</i>&nbsp;
+<i>82</i>&nbsp;    private static Map&lt;String, List&lt;String&gt;&gt; serializeCiteKeyPattern(MetaData metaData, GlobalBibtexKeyPattern globalCiteKeyPattern) {
+<b class="nc"><i>83</i>&nbsp;        Map&lt;String, List&lt;String&gt;&gt; stringyPattern = new HashMap&lt;&gt;();</b>
+<b class="nc"><i>84</i>&nbsp;        AbstractBibtexKeyPattern citeKeyPattern = metaData.getCiteKeyPattern(globalCiteKeyPattern);</b>
+<b class="nc"><i>85</i>&nbsp;        for (String key : citeKeyPattern.getAllKeys()) {</b>
+<b class="nc"><i>86</i>&nbsp;            if (!citeKeyPattern.isDefaultValue(key)) {</b>
+<b class="nc"><i>87</i>&nbsp;                List&lt;String&gt; data = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>88</i>&nbsp;                data.add(citeKeyPattern.getValue(key).get(0));</b>
+<b class="nc"><i>89</i>&nbsp;                String metaDataKey = MetaData.PREFIX_KEYPATTERN + key;</b>
+<b class="nc"><i>90</i>&nbsp;                stringyPattern.put(metaDataKey, data);</b>
+<i>91</i>&nbsp;            }
+<b class="nc"><i>92</i>&nbsp;        }</b>
+<b class="nc"><i>93</i>&nbsp;        if (citeKeyPattern.getDefaultValue() != null &amp;&amp; !citeKeyPattern.getDefaultValue().isEmpty()) {</b>
+<b class="nc"><i>94</i>&nbsp;            List&lt;String&gt; data = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>95</i>&nbsp;            data.add(citeKeyPattern.getDefaultValue().get(0));</b>
+<b class="nc"><i>96</i>&nbsp;            stringyPattern.put(MetaData.KEYPATTERNDEFAULT, data);</b>
+<i>97</i>&nbsp;        }
+<b class="nc"><i>98</i>&nbsp;        return stringyPattern;</b>
+<i>99</i>&nbsp;    }
+<i>100</i>&nbsp;
+<i>101</i>&nbsp;    private static String serializeGroups(GroupTreeNode root) {
+<b class="nc"><i>102</i>&nbsp;        StringBuilder stringBuilder = new StringBuilder();</b>
+<b class="nc"><i>103</i>&nbsp;        stringBuilder.append(OS.NEWLINE);</b>
+<i>104</i>&nbsp;
+<b class="nc"><i>105</i>&nbsp;        for (String groupNode : new GroupSerializer().serializeTree(root)) {</b>
+<b class="nc"><i>106</i>&nbsp;            stringBuilder.append(StringUtil.quote(groupNode, MetaData.SEPARATOR_STRING, MetaData.ESCAPE_CHARACTER));</b>
+<b class="nc"><i>107</i>&nbsp;            stringBuilder.append(MetaData.SEPARATOR_STRING);</b>
+<b class="nc"><i>108</i>&nbsp;            stringBuilder.append(OS.NEWLINE);</b>
+<b class="nc"><i>109</i>&nbsp;        }</b>
+<b class="nc"><i>110</i>&nbsp;        return stringBuilder.toString();</b>
+<i>111</i>&nbsp;    }
+<i>112</i>&nbsp;
+<i>113</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

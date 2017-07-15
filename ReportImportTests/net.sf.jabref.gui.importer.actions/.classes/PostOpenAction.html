@@ -1,0 +1,85 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: PostOpenAction</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.importer.actions</a> ]
+</div>
+
+<h1>Coverage Summary for Class: PostOpenAction (net.sf.jabref.gui.importer.actions)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">PostOpenAction</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.importer.actions;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import net.sf.jabref.gui.BasePanel;
+<i>4</i>&nbsp;import net.sf.jabref.logic.importer.ParserResult;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;/**
+<i>7</i>&nbsp; * This interface defines potential actions that may need to be taken after
+<i>8</i>&nbsp; * opening a BIB file into JabRef. This can for instance be file upgrade actions
+<i>9</i>&nbsp; * that should be offered due to new features in JabRef, and may depend on e.g.
+<i>10</i>&nbsp; * which JabRef version the file was last written by.
+<i>11</i>&nbsp; *
+<i>12</i>&nbsp; * This interface is introduced in an attempt to add such functionality in a
+<i>13</i>&nbsp; * flexible manner.
+<i>14</i>&nbsp; */
+<i>15</i>&nbsp;public interface PostOpenAction {
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;    /**
+<i>18</i>&nbsp;     * This method is queried in order to find out whether the action needs to be
+<i>19</i>&nbsp;     * performed or not.
+<i>20</i>&nbsp;     * @param pr The result of the BIB parse operation.
+<i>21</i>&nbsp;     * @return true if the action should be called, false otherwise.
+<i>22</i>&nbsp;     */
+<i>23</i>&nbsp;    boolean isActionNecessary(ParserResult pr);
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;    /**
+<i>26</i>&nbsp;     * This method is called after the new database has been added to the GUI, if
+<i>27</i>&nbsp;     * the isActionNecessary() method returned true.
+<i>28</i>&nbsp;     *
+<i>29</i>&nbsp;     * Note: if several such methods need to be called sequentially, it is
+<i>30</i>&nbsp;     *       important that all implementations of this method do not return
+<i>31</i>&nbsp;     *       until the operation is finished. If work needs to be off-loaded
+<i>32</i>&nbsp;     *       into a worker thread, use Spin to do this synchronously.
+<i>33</i>&nbsp;     *
+<i>34</i>&nbsp;     * @param panel The BasePanel where the database is shown.
+<i>35</i>&nbsp;     * @param pr The result of the BIB parse operation.
+<i>36</i>&nbsp;     */
+<i>37</i>&nbsp;    void performAction(BasePanel panel, ParserResult pr);
+<i>38</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

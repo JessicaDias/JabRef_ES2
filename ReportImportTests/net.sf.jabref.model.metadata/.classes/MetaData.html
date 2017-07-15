@@ -1,0 +1,384 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: MetaData</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.model.metadata</a> ]
+</div>
+
+<h1>Coverage Summary for Class: MetaData (net.sf.jabref.model.metadata)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MetaData</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    12.2%
+  </span>
+  <span class="absValue">
+    (5/ 41)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    13.3%
+  </span>
+  <span class="absValue">
+    (15/ 113)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.model.metadata;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.nio.charset.Charset;
+<i>4</i>&nbsp;import java.util.Collections;
+<i>5</i>&nbsp;import java.util.HashMap;
+<i>6</i>&nbsp;import java.util.List;
+<i>7</i>&nbsp;import java.util.Map;
+<i>8</i>&nbsp;import java.util.Objects;
+<i>9</i>&nbsp;import java.util.Optional;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;import net.sf.jabref.model.bibtexkeypattern.AbstractBibtexKeyPattern;
+<i>12</i>&nbsp;import net.sf.jabref.model.bibtexkeypattern.DatabaseBibtexKeyPattern;
+<i>13</i>&nbsp;import net.sf.jabref.model.bibtexkeypattern.GlobalBibtexKeyPattern;
+<i>14</i>&nbsp;import net.sf.jabref.model.cleanup.FieldFormatterCleanups;
+<i>15</i>&nbsp;import net.sf.jabref.model.database.BibDatabaseMode;
+<i>16</i>&nbsp;import net.sf.jabref.model.database.event.ChangePropagation;
+<i>17</i>&nbsp;import net.sf.jabref.model.entry.FieldName;
+<i>18</i>&nbsp;import net.sf.jabref.model.groups.GroupTreeNode;
+<i>19</i>&nbsp;import net.sf.jabref.model.groups.event.GroupUpdatedEvent;
+<i>20</i>&nbsp;import net.sf.jabref.model.metadata.event.MetaDataChangedEvent;
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;import com.google.common.eventbus.EventBus;
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;public class MetaData {
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    public static final String META_FLAG = &quot;jabref-meta: &quot;;
+<i>27</i>&nbsp;    public static final String SAVE_ORDER_CONFIG = &quot;saveOrderConfig&quot;;
+<i>28</i>&nbsp;    public static final String SAVE_ACTIONS = &quot;saveActions&quot;;
+<i>29</i>&nbsp;    public static final String PREFIX_KEYPATTERN = &quot;keypattern_&quot;;
+<i>30</i>&nbsp;    public static final String KEYPATTERNDEFAULT = &quot;keypatterndefault&quot;;
+<i>31</i>&nbsp;    public static final String DATABASE_TYPE = &quot;databaseType&quot;;
+<i>32</i>&nbsp;    public static final String GROUPSTREE = &quot;groupstree&quot;;
+<i>33</i>&nbsp;    public static final String FILE_DIRECTORY = FieldName.FILE + FileDirectoryPreferences.DIR_SUFFIX;
+<i>34</i>&nbsp;    public static final String PROTECTED_FLAG_META = &quot;protectedFlag&quot;;
+<i>35</i>&nbsp;    public static final String SELECTOR_META_PREFIX = &quot;selector_&quot;;
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    public static final char ESCAPE_CHARACTER = &#39;\\&#39;;
+<i>38</i>&nbsp;    public static final char SEPARATOR_CHARACTER = &#39;;&#39;;
+<b class="fc"><i>39</i>&nbsp;    public static final String SEPARATOR_STRING = String.valueOf(SEPARATOR_CHARACTER);</b>
+<i>40</i>&nbsp;
+<b class="fc"><i>41</i>&nbsp;    private final EventBus eventBus = new EventBus();</b>
+<i>42</i>&nbsp;    private GroupTreeNode groupsRoot;
+<i>43</i>&nbsp;    private Charset encoding;
+<i>44</i>&nbsp;    private SaveOrderConfig saveOrderConfig;
+<b class="fc"><i>45</i>&nbsp;    private final Map&lt;String, String&gt; citeKeyPatterns = new HashMap&lt;&gt;(); // &lt;BibType, Pattern&gt;</b>
+<b class="fc"><i>46</i>&nbsp;    private final Map&lt;String, String&gt; userFileDirectory = new HashMap&lt;&gt;(); // &lt;User, FilePath&gt;</b>
+<i>47</i>&nbsp;    private String defaultCiteKeyPattern;
+<i>48</i>&nbsp;    private FieldFormatterCleanups saveActions;
+<i>49</i>&nbsp;    private BibDatabaseMode mode;
+<i>50</i>&nbsp;    private boolean isProtected;
+<i>51</i>&nbsp;    private String defaultFileDirectory;
+<b class="fc"><i>52</i>&nbsp;    private ContentSelectors contentSelectors = new ContentSelectors();</b>
+<i>53</i>&nbsp;
+<i>54</i>&nbsp;
+<i>55</i>&nbsp;    /**
+<i>56</i>&nbsp;     * Constructs an empty metadata.
+<i>57</i>&nbsp;     */
+<b class="fc"><i>58</i>&nbsp;    public MetaData() {</b>
+<i>59</i>&nbsp;        // Do nothing
+<b class="fc"><i>60</i>&nbsp;    }</b>
+<i>61</i>&nbsp;
+<i>62</i>&nbsp;    public Optional&lt;SaveOrderConfig&gt; getSaveOrderConfig() {
+<b class="nc"><i>63</i>&nbsp;        return Optional.ofNullable(saveOrderConfig);</b>
+<i>64</i>&nbsp;    }
+<i>65</i>&nbsp;
+<i>66</i>&nbsp;    public void setSaveOrderConfig(SaveOrderConfig saveOrderConfig) {
+<b class="nc"><i>67</i>&nbsp;        this.saveOrderConfig = saveOrderConfig;</b>
+<b class="nc"><i>68</i>&nbsp;        postChange();</b>
+<b class="nc"><i>69</i>&nbsp;    }</b>
+<i>70</i>&nbsp;
+<i>71</i>&nbsp;    public Optional&lt;GroupTreeNode&gt; getGroups() {
+<b class="nc"><i>72</i>&nbsp;        return Optional.ofNullable(groupsRoot);</b>
+<i>73</i>&nbsp;    }
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;    /**
+<i>76</i>&nbsp;     * Sets a new group root node. &lt;b&gt;WARNING &lt;/b&gt;: This invalidates everything
+<i>77</i>&nbsp;     * returned by getGroups() so far!!!
+<i>78</i>&nbsp;     */
+<i>79</i>&nbsp;    public void setGroups(GroupTreeNode root) {
+<b class="nc"><i>80</i>&nbsp;        groupsRoot = Objects.requireNonNull(root);</b>
+<b class="nc"><i>81</i>&nbsp;        groupsRoot.subscribeToDescendantChanged(groupTreeNode -&gt; eventBus.post(new GroupUpdatedEvent(this)));</b>
+<b class="nc"><i>82</i>&nbsp;        eventBus.post(new GroupUpdatedEvent(this));</b>
+<b class="nc"><i>83</i>&nbsp;    }</b>
+<i>84</i>&nbsp;
+<i>85</i>&nbsp;    /**
+<i>86</i>&nbsp;     * @return the stored label patterns
+<i>87</i>&nbsp;     */
+<i>88</i>&nbsp;    public AbstractBibtexKeyPattern getCiteKeyPattern(GlobalBibtexKeyPattern globalPattern) {
+<b class="nc"><i>89</i>&nbsp;        Objects.requireNonNull(globalPattern);</b>
+<b class="nc"><i>90</i>&nbsp;        AbstractBibtexKeyPattern bibtexKeyPattern = new DatabaseBibtexKeyPattern(globalPattern);</b>
+<i>91</i>&nbsp;
+<i>92</i>&nbsp;        // Add stored key patterns
+<b class="nc"><i>93</i>&nbsp;        citeKeyPatterns.forEach(bibtexKeyPattern::addBibtexKeyPattern);</b>
+<b class="nc"><i>94</i>&nbsp;        getDefaultCiteKeyPattern().ifPresent(bibtexKeyPattern::setDefaultValue);</b>
+<i>95</i>&nbsp;
+<b class="nc"><i>96</i>&nbsp;        return bibtexKeyPattern;</b>
+<i>97</i>&nbsp;    }
+<i>98</i>&nbsp;
+<i>99</i>&nbsp;    /**
+<i>100</i>&nbsp;     * Updates the stored key patterns to the given key patterns.
+<i>101</i>&nbsp;     *
+<i>102</i>&nbsp;     * @param bibtexKeyPattern the key patterns to update to. &lt;br /&gt;
+<i>103</i>&nbsp;     *                     A reference to this object is stored internally and is returned at getCiteKeyPattern();
+<i>104</i>&nbsp;     */
+<i>105</i>&nbsp;    public void setCiteKeyPattern(AbstractBibtexKeyPattern bibtexKeyPattern) {
+<b class="nc"><i>106</i>&nbsp;        Objects.requireNonNull(bibtexKeyPattern);</b>
+<i>107</i>&nbsp;
+<b class="nc"><i>108</i>&nbsp;        List&lt;String&gt; defaultValue = bibtexKeyPattern.getDefaultValue();</b>
+<b class="nc"><i>109</i>&nbsp;        Map&lt;String, List&lt;String&gt;&gt; nonDefaultPatterns = bibtexKeyPattern.getPatterns();</b>
+<b class="nc"><i>110</i>&nbsp;        setCiteKeyPattern(defaultValue, nonDefaultPatterns);</b>
+<b class="nc"><i>111</i>&nbsp;    }</b>
+<i>112</i>&nbsp;
+<i>113</i>&nbsp;    public void setCiteKeyPattern(List&lt;String&gt; defaultValue, Map&lt;String, List&lt;String&gt;&gt; nonDefaultPatterns) {
+<i>114</i>&nbsp;        // Remove all patterns from metadata
+<b class="nc"><i>115</i>&nbsp;        citeKeyPatterns.clear();</b>
+<i>116</i>&nbsp;
+<i>117</i>&nbsp;        // Set new value if it is not a default value
+<b class="nc"><i>118</i>&nbsp;        for (Map.Entry&lt;String, List&lt;String&gt;&gt; pattern : nonDefaultPatterns.entrySet()) {</b>
+<b class="nc"><i>119</i>&nbsp;            citeKeyPatterns.put(pattern.getKey(), pattern.getValue().get(0));</b>
+<b class="nc"><i>120</i>&nbsp;        }</b>
+<i>121</i>&nbsp;
+<i>122</i>&nbsp;        // Store default pattern
+<b class="nc"><i>123</i>&nbsp;        if (defaultValue.isEmpty()) {</b>
+<b class="nc"><i>124</i>&nbsp;            defaultCiteKeyPattern = null;</b>
+<i>125</i>&nbsp;        } else {
+<b class="nc"><i>126</i>&nbsp;            defaultCiteKeyPattern = defaultValue.get(0);</b>
+<i>127</i>&nbsp;        }
+<i>128</i>&nbsp;
+<b class="nc"><i>129</i>&nbsp;        postChange();</b>
+<b class="nc"><i>130</i>&nbsp;    }</b>
+<i>131</i>&nbsp;
+<i>132</i>&nbsp;    public Optional&lt;FieldFormatterCleanups&gt; getSaveActions() {
+<b class="nc"><i>133</i>&nbsp;        return Optional.ofNullable(saveActions);</b>
+<i>134</i>&nbsp;    }
+<i>135</i>&nbsp;
+<i>136</i>&nbsp;    public void setSaveActions(FieldFormatterCleanups saveActions) {
+<b class="nc"><i>137</i>&nbsp;        this.saveActions = Objects.requireNonNull(saveActions);</b>
+<b class="nc"><i>138</i>&nbsp;        postChange();</b>
+<b class="nc"><i>139</i>&nbsp;    }</b>
+<i>140</i>&nbsp;
+<i>141</i>&nbsp;    public Optional&lt;BibDatabaseMode&gt; getMode() {
+<b class="nc"><i>142</i>&nbsp;        return Optional.ofNullable(mode);</b>
+<i>143</i>&nbsp;    }
+<i>144</i>&nbsp;
+<i>145</i>&nbsp;    public void setMode(BibDatabaseMode mode) {
+<b class="nc"><i>146</i>&nbsp;        this.mode = Objects.requireNonNull(mode);</b>
+<b class="nc"><i>147</i>&nbsp;        postChange();</b>
+<b class="nc"><i>148</i>&nbsp;    }</b>
+<i>149</i>&nbsp;
+<i>150</i>&nbsp;    public boolean isProtected() {
+<b class="nc"><i>151</i>&nbsp;        return isProtected;</b>
+<i>152</i>&nbsp;    }
+<i>153</i>&nbsp;
+<i>154</i>&nbsp;    public ContentSelectors getContentSelectors() {
+<b class="nc"><i>155</i>&nbsp;        return contentSelectors;</b>
+<i>156</i>&nbsp;    }
+<i>157</i>&nbsp;
+<i>158</i>&nbsp;    public List&lt;ContentSelector&gt; getContentSelectorList() {
+<b class="nc"><i>159</i>&nbsp;        return contentSelectors.getContentSelectors();</b>
+<i>160</i>&nbsp;    }
+<i>161</i>&nbsp;
+<i>162</i>&nbsp;    public void addContentSelector(ContentSelector contentSelector) {
+<b class="nc"><i>163</i>&nbsp;        this.contentSelectors.addContentSelector(contentSelector);</b>
+<b class="nc"><i>164</i>&nbsp;        postChange();</b>
+<b class="nc"><i>165</i>&nbsp;    }</b>
+<i>166</i>&nbsp;
+<i>167</i>&nbsp;    public void clearContentSelectors(String fieldName) {
+<b class="nc"><i>168</i>&nbsp;        contentSelectors.removeSelector(fieldName);</b>
+<b class="nc"><i>169</i>&nbsp;        postChange();</b>
+<b class="nc"><i>170</i>&nbsp;    }</b>
+<i>171</i>&nbsp;
+<i>172</i>&nbsp;    public List&lt;String&gt; getContentSelectorValuesForField(String fieldName) {
+<b class="nc"><i>173</i>&nbsp;        return contentSelectors.getSelectorValuesForField(fieldName);</b>
+<i>174</i>&nbsp;    }
+<i>175</i>&nbsp;
+<i>176</i>&nbsp;    public Optional&lt;String&gt; getDefaultFileDirectory() {
+<b class="nc"><i>177</i>&nbsp;        return Optional.ofNullable(defaultFileDirectory);</b>
+<i>178</i>&nbsp;    }
+<i>179</i>&nbsp;
+<i>180</i>&nbsp;    public void setDefaultFileDirectory(String path) {
+<b class="nc"><i>181</i>&nbsp;        defaultFileDirectory = Objects.requireNonNull(path).trim();</b>
+<b class="nc"><i>182</i>&nbsp;        postChange();</b>
+<b class="nc"><i>183</i>&nbsp;    }</b>
+<i>184</i>&nbsp;
+<i>185</i>&nbsp;    public Optional&lt;String&gt; getUserFileDirectory(String user) {
+<b class="nc"><i>186</i>&nbsp;        return Optional.ofNullable(userFileDirectory.get(user));</b>
+<i>187</i>&nbsp;    }
+<i>188</i>&nbsp;
+<i>189</i>&nbsp;    public void markAsProtected() {
+<b class="nc"><i>190</i>&nbsp;        isProtected = true;</b>
+<b class="nc"><i>191</i>&nbsp;        postChange();</b>
+<b class="nc"><i>192</i>&nbsp;    }</b>
+<i>193</i>&nbsp;
+<i>194</i>&nbsp;    public void clearDefaultFileDirectory() {
+<b class="nc"><i>195</i>&nbsp;        defaultFileDirectory = null;</b>
+<b class="nc"><i>196</i>&nbsp;        postChange();</b>
+<b class="nc"><i>197</i>&nbsp;    }</b>
+<i>198</i>&nbsp;
+<i>199</i>&nbsp;    public void setUserFileDirectory(String user, String path) {
+<b class="nc"><i>200</i>&nbsp;        userFileDirectory.put(Objects.requireNonNull(user), Objects.requireNonNull(path));</b>
+<b class="nc"><i>201</i>&nbsp;        postChange();</b>
+<b class="nc"><i>202</i>&nbsp;    }</b>
+<i>203</i>&nbsp;
+<i>204</i>&nbsp;    public void clearUserFileDirectory(String user) {
+<b class="nc"><i>205</i>&nbsp;        userFileDirectory.remove(user);</b>
+<b class="nc"><i>206</i>&nbsp;        postChange();</b>
+<b class="nc"><i>207</i>&nbsp;    }</b>
+<i>208</i>&nbsp;
+<i>209</i>&nbsp;    public void markAsNotProtected() {
+<b class="nc"><i>210</i>&nbsp;        isProtected = false;</b>
+<b class="nc"><i>211</i>&nbsp;        postChange();</b>
+<b class="nc"><i>212</i>&nbsp;    }</b>
+<i>213</i>&nbsp;
+<i>214</i>&nbsp;    public void clearSaveActions() {
+<b class="nc"><i>215</i>&nbsp;        saveActions = null;</b>
+<b class="nc"><i>216</i>&nbsp;        postChange();</b>
+<b class="nc"><i>217</i>&nbsp;    }</b>
+<i>218</i>&nbsp;
+<i>219</i>&nbsp;    public void clearSaveOrderConfig() {
+<b class="nc"><i>220</i>&nbsp;        saveOrderConfig = null;</b>
+<b class="nc"><i>221</i>&nbsp;        postChange();</b>
+<b class="nc"><i>222</i>&nbsp;    }</b>
+<i>223</i>&nbsp;
+<i>224</i>&nbsp;    /**
+<i>225</i>&nbsp;     * Posts a new {@link MetaDataChangedEvent} on the {@link EventBus}.
+<i>226</i>&nbsp;     */
+<i>227</i>&nbsp;    private void postChange() {
+<b class="fc"><i>228</i>&nbsp;        eventBus.post(new MetaDataChangedEvent(this));</b>
+<b class="fc"><i>229</i>&nbsp;    }</b>
+<i>230</i>&nbsp;
+<i>231</i>&nbsp;    /**
+<i>232</i>&nbsp;     * Returns the encoding used during parsing.
+<i>233</i>&nbsp;     */
+<i>234</i>&nbsp;    public Optional&lt;Charset&gt; getEncoding() {
+<b class="nc"><i>235</i>&nbsp;        return Optional.ofNullable(encoding);</b>
+<i>236</i>&nbsp;    }
+<i>237</i>&nbsp;
+<i>238</i>&nbsp;    public void setEncoding(Charset encoding) {
+<b class="fc"><i>239</i>&nbsp;        setEncoding(encoding, ChangePropagation.POST_EVENT);</b>
+<b class="fc"><i>240</i>&nbsp;    }</b>
+<i>241</i>&nbsp;
+<i>242</i>&nbsp;    /**
+<i>243</i>&nbsp;     * This Method (with additional parameter) has been introduced to avoid event loops while saving a database.
+<i>244</i>&nbsp;     */
+<i>245</i>&nbsp;    public void setEncoding(Charset encoding, ChangePropagation postChanges) {
+<b class="fc"><i>246</i>&nbsp;        this.encoding = Objects.requireNonNull(encoding);</b>
+<b class="fc"><i>247</i>&nbsp;        if (postChanges == ChangePropagation.POST_EVENT) {</b>
+<b class="fc"><i>248</i>&nbsp;            postChange();</b>
+<i>249</i>&nbsp;        }
+<b class="fc"><i>250</i>&nbsp;    }</b>
+<i>251</i>&nbsp;
+<i>252</i>&nbsp;    public void registerListener(Object listener) {
+<b class="nc"><i>253</i>&nbsp;        this.eventBus.register(listener);</b>
+<b class="nc"><i>254</i>&nbsp;    }</b>
+<i>255</i>&nbsp;
+<i>256</i>&nbsp;    public void unregisterListener(Object listener) {
+<i>257</i>&nbsp;        try {
+<b class="nc"><i>258</i>&nbsp;            this.eventBus.unregister(listener);</b>
+<b class="nc"><i>259</i>&nbsp;        } catch (IllegalArgumentException e) {</b>
+<i>260</i>&nbsp;            // occurs if the event source has not been registered, should not prevent shutdown
+<b class="nc"><i>261</i>&nbsp;        }</b>
+<b class="nc"><i>262</i>&nbsp;    }</b>
+<i>263</i>&nbsp;
+<i>264</i>&nbsp;    private Optional&lt;String&gt; getDefaultCiteKeyPattern() {
+<b class="nc"><i>265</i>&nbsp;        return Optional.ofNullable(defaultCiteKeyPattern);</b>
+<i>266</i>&nbsp;    }
+<i>267</i>&nbsp;
+<i>268</i>&nbsp;    public boolean isEmpty() {
+<b class="nc"><i>269</i>&nbsp;        return this.equals(new MetaData());</b>
+<i>270</i>&nbsp;    }
+<i>271</i>&nbsp;
+<i>272</i>&nbsp;    public Map&lt;String, String&gt; getUserFileDirectories() {
+<b class="nc"><i>273</i>&nbsp;        return Collections.unmodifiableMap(userFileDirectory);</b>
+<i>274</i>&nbsp;    }
+<i>275</i>&nbsp;
+<i>276</i>&nbsp;    @Override
+<i>277</i>&nbsp;    public boolean equals(Object o) {
+<b class="nc"><i>278</i>&nbsp;        if (this == o) {</b>
+<b class="nc"><i>279</i>&nbsp;            return true;</b>
+<i>280</i>&nbsp;        }
+<b class="nc"><i>281</i>&nbsp;        if ((o == null) || (getClass() != o.getClass())) {</b>
+<b class="nc"><i>282</i>&nbsp;            return false;</b>
+<i>283</i>&nbsp;        }
+<b class="nc"><i>284</i>&nbsp;        MetaData metaData = (MetaData) o;</b>
+<b class="nc"><i>285</i>&nbsp;        return (isProtected == metaData.isProtected) &amp;&amp; Objects.equals(groupsRoot, metaData.groupsRoot)</b>
+<b class="nc"><i>286</i>&nbsp;                &amp;&amp; Objects.equals(encoding, metaData.encoding)</b>
+<b class="nc"><i>287</i>&nbsp;                &amp;&amp; Objects.equals(saveOrderConfig, metaData.saveOrderConfig)</b>
+<b class="nc"><i>288</i>&nbsp;                &amp;&amp; Objects.equals(citeKeyPatterns, metaData.citeKeyPatterns)</b>
+<b class="nc"><i>289</i>&nbsp;                &amp;&amp; Objects.equals(userFileDirectory, metaData.userFileDirectory)</b>
+<b class="nc"><i>290</i>&nbsp;                &amp;&amp; Objects.equals(defaultCiteKeyPattern, metaData.defaultCiteKeyPattern)</b>
+<b class="nc"><i>291</i>&nbsp;                &amp;&amp; Objects.equals(saveActions, metaData.saveActions) &amp;&amp; (mode == metaData.mode)</b>
+<b class="nc"><i>292</i>&nbsp;                &amp;&amp; Objects.equals(defaultFileDirectory, metaData.defaultFileDirectory)</b>
+<b class="nc"><i>293</i>&nbsp;                &amp;&amp; Objects.equals(contentSelectors, metaData.contentSelectors);</b>
+<i>294</i>&nbsp;    }
+<i>295</i>&nbsp;
+<i>296</i>&nbsp;    @Override
+<i>297</i>&nbsp;    public int hashCode() {
+<b class="nc"><i>298</i>&nbsp;        return Objects.hash(groupsRoot, encoding, saveOrderConfig, citeKeyPatterns, userFileDirectory,</b>
+<b class="nc"><i>299</i>&nbsp;                defaultCiteKeyPattern, saveActions, mode, isProtected, defaultFileDirectory);</b>
+<i>300</i>&nbsp;    }
+<i>301</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

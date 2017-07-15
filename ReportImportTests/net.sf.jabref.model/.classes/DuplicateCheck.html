@@ -1,0 +1,379 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: DuplicateCheck</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.model</a> ]
+</div>
+
+<h1>Coverage Summary for Class: DuplicateCheck (net.sf.jabref.model)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DuplicateCheck</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 133)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.model;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.HashMap;
+<i>4</i>&nbsp;import java.util.HashSet;
+<i>5</i>&nbsp;import java.util.List;
+<i>6</i>&nbsp;import java.util.Map;
+<i>7</i>&nbsp;import java.util.Optional;
+<i>8</i>&nbsp;import java.util.Set;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;import net.sf.jabref.model.database.BibDatabase;
+<i>11</i>&nbsp;import net.sf.jabref.model.database.BibDatabaseMode;
+<i>12</i>&nbsp;import net.sf.jabref.model.entry.AuthorList;
+<i>13</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>14</i>&nbsp;import net.sf.jabref.model.entry.EntryType;
+<i>15</i>&nbsp;import net.sf.jabref.model.entry.FieldName;
+<i>16</i>&nbsp;import net.sf.jabref.model.entry.FieldProperty;
+<i>17</i>&nbsp;import net.sf.jabref.model.entry.InternalBibtexFields;
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;import org.apache.commons.logging.Log;
+<i>20</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;/**
+<i>23</i>&nbsp; * This class contains utility method for duplicate checking of entries.
+<i>24</i>&nbsp; */
+<b class="nc"><i>25</i>&nbsp;public class DuplicateCheck {</b>
+<i>26</i>&nbsp;
+<b class="nc"><i>27</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(DuplicateCheck.class);</b>
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;    /*
+<i>30</i>&nbsp;     * Integer values for indicating result of duplicate check (for entries):
+<i>31</i>&nbsp;     *
+<i>32</i>&nbsp;     */
+<i>33</i>&nbsp;    private static final int NOT_EQUAL = 0;
+<i>34</i>&nbsp;    private static final int EQUAL = 1;
+<i>35</i>&nbsp;    private static final int EMPTY_IN_ONE = 2;
+<i>36</i>&nbsp;    private static final int EMPTY_IN_TWO = 3;
+<i>37</i>&nbsp;    private static final int EMPTY_IN_BOTH = 4;
+<i>38</i>&nbsp;
+<b class="nc"><i>39</i>&nbsp;    public static double duplicateThreshold = 0.75; // The overall threshold to signal a duplicate pair</b>
+<i>40</i>&nbsp;    // Non-required fields are investigated only if the required fields give a value within
+<i>41</i>&nbsp;    // the doubt range of the threshold:
+<i>42</i>&nbsp;    private static final double DOUBT_RANGE = 0.05;
+<i>43</i>&nbsp;
+<i>44</i>&nbsp;    private static final double REQUIRED_WEIGHT = 3; // Weighting of all required fields
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;    // Extra weighting of those fields that are most likely to provide correct duplicate detection:
+<b class="nc"><i>47</i>&nbsp;    private static final Map&lt;String, Double&gt; FIELD_WEIGHTS = new HashMap&lt;&gt;();</b>
+<i>48</i>&nbsp;
+<i>49</i>&nbsp;
+<i>50</i>&nbsp;    static {
+<b class="nc"><i>51</i>&nbsp;        DuplicateCheck.FIELD_WEIGHTS.put(FieldName.AUTHOR, 2.5);</b>
+<b class="nc"><i>52</i>&nbsp;        DuplicateCheck.FIELD_WEIGHTS.put(FieldName.EDITOR, 2.5);</b>
+<b class="nc"><i>53</i>&nbsp;        DuplicateCheck.FIELD_WEIGHTS.put(FieldName.TITLE, 3.);</b>
+<b class="nc"><i>54</i>&nbsp;        DuplicateCheck.FIELD_WEIGHTS.put(FieldName.JOURNAL, 2.);</b>
+<b class="nc"><i>55</i>&nbsp;    }</b>
+<i>56</i>&nbsp;
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;    /**
+<i>59</i>&nbsp;     * Checks if the two entries represent the same publication.
+<i>60</i>&nbsp;     *
+<i>61</i>&nbsp;     * @param one BibEntry
+<i>62</i>&nbsp;     * @param two BibEntry
+<i>63</i>&nbsp;     * @return boolean
+<i>64</i>&nbsp;     */
+<i>65</i>&nbsp;    public static boolean isDuplicate(BibEntry one, BibEntry two, BibDatabaseMode bibDatabaseMode) {
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;        // First check if they are of the same type - a necessary condition:
+<b class="nc"><i>68</i>&nbsp;        if (!one.getType().equals(two.getType())) {</b>
+<b class="nc"><i>69</i>&nbsp;            return false;</b>
+<i>70</i>&nbsp;        }
+<b class="nc"><i>71</i>&nbsp;        EntryType type = EntryTypes.getTypeOrDefault(one.getType(), bibDatabaseMode);</b>
+<i>72</i>&nbsp;
+<i>73</i>&nbsp;        // The check if they have the same required fields:
+<b class="nc"><i>74</i>&nbsp;        List&lt;String&gt; var = type.getRequiredFieldsFlat();</b>
+<i>75</i>&nbsp;        double[] req;
+<b class="nc"><i>76</i>&nbsp;        if (var == null) {</b>
+<b class="nc"><i>77</i>&nbsp;            req = new double[]{0., 0.};</b>
+<i>78</i>&nbsp;        } else {
+<b class="nc"><i>79</i>&nbsp;            req = DuplicateCheck.compareFieldSet(var, one, two);</b>
+<i>80</i>&nbsp;        }
+<i>81</i>&nbsp;
+<b class="nc"><i>82</i>&nbsp;        if (Math.abs(req[0] - DuplicateCheck.duplicateThreshold) &gt; DuplicateCheck.DOUBT_RANGE) {</b>
+<i>83</i>&nbsp;            // Far from the threshold value, so we base our decision on the req. fields only
+<b class="nc"><i>84</i>&nbsp;            return req[0] &gt;= DuplicateCheck.duplicateThreshold;</b>
+<i>85</i>&nbsp;        }
+<i>86</i>&nbsp;        // Close to the threshold value, so we take a look at the optional fields, if any:
+<b class="nc"><i>87</i>&nbsp;        List&lt;String&gt; optionalFields = type.getOptionalFields();</b>
+<b class="nc"><i>88</i>&nbsp;        if (optionalFields != null) {</b>
+<b class="nc"><i>89</i>&nbsp;            double[] opt = DuplicateCheck.compareFieldSet(optionalFields, one, two);</b>
+<b class="nc"><i>90</i>&nbsp;            double totValue = ((DuplicateCheck.REQUIRED_WEIGHT * req[0] * req[1]) + (opt[0] * opt[1])) / ((req[1] * DuplicateCheck.REQUIRED_WEIGHT) + opt[1]);</b>
+<b class="nc"><i>91</i>&nbsp;            return totValue &gt;= DuplicateCheck.duplicateThreshold;</b>
+<i>92</i>&nbsp;        }
+<b class="nc"><i>93</i>&nbsp;        return req[0] &gt;= DuplicateCheck.duplicateThreshold;</b>
+<i>94</i>&nbsp;    }
+<i>95</i>&nbsp;
+<i>96</i>&nbsp;    private static double[] compareFieldSet(List&lt;String&gt; fields, BibEntry one, BibEntry two) {
+<b class="nc"><i>97</i>&nbsp;        double res = 0;</b>
+<b class="nc"><i>98</i>&nbsp;        double totWeights = 0.;</b>
+<b class="nc"><i>99</i>&nbsp;        for (String field : fields) {</b>
+<i>100</i>&nbsp;            double weight;
+<b class="nc"><i>101</i>&nbsp;            if (DuplicateCheck.FIELD_WEIGHTS.containsKey(field)) {</b>
+<b class="nc"><i>102</i>&nbsp;                weight = DuplicateCheck.FIELD_WEIGHTS.get(field);</b>
+<i>103</i>&nbsp;            } else {
+<b class="nc"><i>104</i>&nbsp;                weight = 1.0;</b>
+<i>105</i>&nbsp;            }
+<b class="nc"><i>106</i>&nbsp;            totWeights += weight;</b>
+<b class="nc"><i>107</i>&nbsp;            int result = DuplicateCheck.compareSingleField(field, one, two);</b>
+<b class="nc"><i>108</i>&nbsp;            if (result == EQUAL) {</b>
+<b class="nc"><i>109</i>&nbsp;                res += weight;</b>
+<b class="nc"><i>110</i>&nbsp;            } else if (result == EMPTY_IN_BOTH) {</b>
+<b class="nc"><i>111</i>&nbsp;                totWeights -= weight;</b>
+<i>112</i>&nbsp;            }
+<b class="nc"><i>113</i>&nbsp;        }</b>
+<b class="nc"><i>114</i>&nbsp;        if (totWeights &gt; 0) {</b>
+<b class="nc"><i>115</i>&nbsp;            return new double[]{res / totWeights, totWeights};</b>
+<i>116</i>&nbsp;        }
+<b class="nc"><i>117</i>&nbsp;        return new double[] {0.5, 0.0};</b>
+<i>118</i>&nbsp;    }
+<i>119</i>&nbsp;
+<i>120</i>&nbsp;    private static int compareSingleField(String field, BibEntry one, BibEntry two) {
+<b class="nc"><i>121</i>&nbsp;        Optional&lt;String&gt; optionalStringOne = one.getField(field);</b>
+<b class="nc"><i>122</i>&nbsp;        Optional&lt;String&gt; optionalStringTwo = two.getField(field);</b>
+<b class="nc"><i>123</i>&nbsp;        if (!optionalStringOne.isPresent()) {</b>
+<b class="nc"><i>124</i>&nbsp;            if (!optionalStringTwo.isPresent()) {</b>
+<b class="nc"><i>125</i>&nbsp;                return EMPTY_IN_BOTH;</b>
+<i>126</i>&nbsp;            }
+<b class="nc"><i>127</i>&nbsp;            return EMPTY_IN_ONE;</b>
+<b class="nc"><i>128</i>&nbsp;        } else if (!optionalStringTwo.isPresent()) {</b>
+<b class="nc"><i>129</i>&nbsp;            return EMPTY_IN_TWO;</b>
+<i>130</i>&nbsp;        }
+<i>131</i>&nbsp;
+<i>132</i>&nbsp;        // Both strings present
+<b class="nc"><i>133</i>&nbsp;        String stringOne = optionalStringOne.get();</b>
+<b class="nc"><i>134</i>&nbsp;        String stringTwo = optionalStringTwo.get();</b>
+<i>135</i>&nbsp;
+<b class="nc"><i>136</i>&nbsp;        if (InternalBibtexFields.getFieldProperties(field).contains(FieldProperty.PERSON_NAMES)) {</b>
+<i>137</i>&nbsp;            // Specific for name fields.
+<i>138</i>&nbsp;            // Harmonise case:
+<b class="nc"><i>139</i>&nbsp;            String authorOne = AuthorList.fixAuthorLastNameOnlyCommas(stringOne, false).replace(&quot; and &quot;, &quot; &quot;).toLowerCase();</b>
+<b class="nc"><i>140</i>&nbsp;            String authorTwo = AuthorList.fixAuthorLastNameOnlyCommas(stringTwo, false).replace(&quot; and &quot;, &quot; &quot;).toLowerCase();</b>
+<b class="nc"><i>141</i>&nbsp;            double similarity = DuplicateCheck.correlateByWords(authorOne, authorTwo);</b>
+<b class="nc"><i>142</i>&nbsp;            if (similarity &gt; 0.8) {</b>
+<b class="nc"><i>143</i>&nbsp;                return EQUAL;</b>
+<i>144</i>&nbsp;            }
+<b class="nc"><i>145</i>&nbsp;            return NOT_EQUAL;</b>
+<b class="nc"><i>146</i>&nbsp;        } else if (FieldName.PAGES.equals(field)) {</b>
+<i>147</i>&nbsp;            // Pages can be given with a variety of delimiters, &quot;-&quot;, &quot;--&quot;, &quot; - &quot;, &quot; -- &quot;.
+<i>148</i>&nbsp;            // We do a replace to harmonize these to a simple &quot;-&quot;:
+<i>149</i>&nbsp;            // After this, a simple test for equality should be enough:
+<b class="nc"><i>150</i>&nbsp;            stringOne = stringOne.replaceAll(&quot;[- ]+&quot;, &quot;-&quot;);</b>
+<b class="nc"><i>151</i>&nbsp;            stringTwo = stringTwo.replaceAll(&quot;[- ]+&quot;, &quot;-&quot;);</b>
+<b class="nc"><i>152</i>&nbsp;            if (stringOne.equals(stringTwo)) {</b>
+<b class="nc"><i>153</i>&nbsp;                return EQUAL;</b>
+<i>154</i>&nbsp;            }
+<b class="nc"><i>155</i>&nbsp;            return NOT_EQUAL;</b>
+<b class="nc"><i>156</i>&nbsp;        } else if (FieldName.JOURNAL.equals(field)) {</b>
+<i>157</i>&nbsp;            // We do not attempt to harmonize abbreviation state of the journal names,
+<i>158</i>&nbsp;            // but we remove periods from the names in case they are abbreviated with
+<i>159</i>&nbsp;            // and without dots:
+<b class="nc"><i>160</i>&nbsp;            stringOne = stringOne.replace(&quot;.&quot;, &quot;&quot;).toLowerCase();</b>
+<b class="nc"><i>161</i>&nbsp;            stringTwo = stringTwo.replace(&quot;.&quot;, &quot;&quot;).toLowerCase();</b>
+<b class="nc"><i>162</i>&nbsp;            double similarity = DuplicateCheck.correlateByWords(stringOne, stringTwo);</b>
+<b class="nc"><i>163</i>&nbsp;            if (similarity &gt; 0.8) {</b>
+<b class="nc"><i>164</i>&nbsp;                return EQUAL;</b>
+<i>165</i>&nbsp;            }
+<b class="nc"><i>166</i>&nbsp;            return NOT_EQUAL;</b>
+<i>167</i>&nbsp;        } else {
+<b class="nc"><i>168</i>&nbsp;            stringOne = stringOne.toLowerCase();</b>
+<b class="nc"><i>169</i>&nbsp;            stringTwo = stringTwo.toLowerCase();</b>
+<b class="nc"><i>170</i>&nbsp;            double similarity = DuplicateCheck.correlateByWords(stringOne, stringTwo);</b>
+<b class="nc"><i>171</i>&nbsp;            if (similarity &gt; 0.8) {</b>
+<b class="nc"><i>172</i>&nbsp;                return EQUAL;</b>
+<i>173</i>&nbsp;            }
+<b class="nc"><i>174</i>&nbsp;            return NOT_EQUAL;</b>
+<i>175</i>&nbsp;        }
+<i>176</i>&nbsp;    }
+<i>177</i>&nbsp;
+<i>178</i>&nbsp;    public static double compareEntriesStrictly(BibEntry one, BibEntry two) {
+<b class="nc"><i>179</i>&nbsp;        Set&lt;String&gt; allFields = new HashSet&lt;&gt;();</b>
+<b class="nc"><i>180</i>&nbsp;        allFields.addAll(one.getFieldNames());</b>
+<b class="nc"><i>181</i>&nbsp;        allFields.addAll(two.getFieldNames());</b>
+<i>182</i>&nbsp;
+<b class="nc"><i>183</i>&nbsp;        int score = 0;</b>
+<b class="nc"><i>184</i>&nbsp;        for (String field : allFields) {</b>
+<b class="nc"><i>185</i>&nbsp;            Optional&lt;String&gt; stringOne = one.getField(field);</b>
+<b class="nc"><i>186</i>&nbsp;            Optional&lt;String&gt; stringTwo = two.getField(field);</b>
+<b class="nc"><i>187</i>&nbsp;            if (stringOne.equals(stringTwo)) {</b>
+<b class="nc"><i>188</i>&nbsp;                score++;</b>
+<i>189</i>&nbsp;            }
+<b class="nc"><i>190</i>&nbsp;        }</b>
+<b class="nc"><i>191</i>&nbsp;        if (score == allFields.size()) {</b>
+<b class="nc"><i>192</i>&nbsp;            return 1.01; // Just to make sure we can</b>
+<i>193</i>&nbsp;            // use score&gt;1 without
+<i>194</i>&nbsp;            // trouble.
+<i>195</i>&nbsp;        }
+<b class="nc"><i>196</i>&nbsp;        return (double) score / allFields.size();</b>
+<i>197</i>&nbsp;    }
+<i>198</i>&nbsp;
+<i>199</i>&nbsp;    /**
+<i>200</i>&nbsp;     * Goes through all entries in the given database, and if at least one of
+<i>201</i>&nbsp;     * them is a duplicate of the given entry, as per
+<i>202</i>&nbsp;     * Util.isDuplicate(BibEntry, BibEntry), the duplicate is returned.
+<i>203</i>&nbsp;     * The search is terminated when the first duplicate is found.
+<i>204</i>&nbsp;     *
+<i>205</i>&nbsp;     * @param database The database to search.
+<i>206</i>&nbsp;     * @param entry    The entry of which we are looking for duplicates.
+<i>207</i>&nbsp;     * @return The first duplicate entry found. null if no duplicates are found.
+<i>208</i>&nbsp;     */
+<i>209</i>&nbsp;    public static Optional&lt;BibEntry&gt; containsDuplicate(BibDatabase database, BibEntry entry, BibDatabaseMode bibDatabaseMode) {
+<b class="nc"><i>210</i>&nbsp;        for (BibEntry other : database.getEntries()) {</b>
+<b class="nc"><i>211</i>&nbsp;            if (DuplicateCheck.isDuplicate(entry, other, bibDatabaseMode)) {</b>
+<b class="nc"><i>212</i>&nbsp;                return Optional.of(other); // Duplicate found.</b>
+<i>213</i>&nbsp;            }
+<b class="nc"><i>214</i>&nbsp;        }</b>
+<b class="nc"><i>215</i>&nbsp;        return Optional.empty(); // No duplicate found.</b>
+<i>216</i>&nbsp;    }
+<i>217</i>&nbsp;
+<i>218</i>&nbsp;    /**
+<i>219</i>&nbsp;     * Compare two strings on the basis of word-by-word correlation analysis.
+<i>220</i>&nbsp;     *
+<i>221</i>&nbsp;     * @param s1       The first string
+<i>222</i>&nbsp;     * @param s2       The second string
+<i>223</i>&nbsp;     * @return a value in the interval [0, 1] indicating the degree of match.
+<i>224</i>&nbsp;     */
+<i>225</i>&nbsp;    public static double correlateByWords(String s1, String s2) {
+<b class="nc"><i>226</i>&nbsp;        String[] w1 = s1.split(&quot;\\s&quot;);</b>
+<b class="nc"><i>227</i>&nbsp;        String[] w2 = s2.split(&quot;\\s&quot;);</b>
+<b class="nc"><i>228</i>&nbsp;        int n = Math.min(w1.length, w2.length);</b>
+<b class="nc"><i>229</i>&nbsp;        int misses = 0;</b>
+<b class="nc"><i>230</i>&nbsp;        for (int i = 0; i &lt; n; i++) {</b>
+<b class="nc"><i>231</i>&nbsp;            double corr = similarity(w1[i], w2[i]);</b>
+<b class="nc"><i>232</i>&nbsp;            if (corr &lt; 0.75) {</b>
+<b class="nc"><i>233</i>&nbsp;                misses++;</b>
+<i>234</i>&nbsp;            }
+<i>235</i>&nbsp;        }
+<b class="nc"><i>236</i>&nbsp;        double missRate = (double) misses / (double) n;</b>
+<b class="nc"><i>237</i>&nbsp;        return 1 - missRate;</b>
+<i>238</i>&nbsp;    }
+<i>239</i>&nbsp;
+<i>240</i>&nbsp;
+<i>241</i>&nbsp;    /**
+<i>242</i>&nbsp;     * Calculates the similarity (a number within 0 and 1) between two strings.
+<i>243</i>&nbsp;     * http://stackoverflow.com/questions/955110/similarity-string-comparison-in-java
+<i>244</i>&nbsp;     */
+<i>245</i>&nbsp;    private static double similarity(String s1, String s2) {
+<b class="nc"><i>246</i>&nbsp;        String longer = s1;</b>
+<b class="nc"><i>247</i>&nbsp;        String shorter = s2;</b>
+<i>248</i>&nbsp;
+<b class="nc"><i>249</i>&nbsp;        if (s1.length() &lt; s2.length()) { // longer should always have greater length</b>
+<b class="nc"><i>250</i>&nbsp;            longer = s2;</b>
+<b class="nc"><i>251</i>&nbsp;            shorter = s1;</b>
+<i>252</i>&nbsp;        }
+<b class="nc"><i>253</i>&nbsp;        int longerLength = longer.length();</b>
+<b class="nc"><i>254</i>&nbsp;        if (longerLength == 0) {</b>
+<b class="nc"><i>255</i>&nbsp;            return 1.0;</b>
+<i>256</i>&nbsp;            /* both strings are zero length */ }
+<b class="nc"><i>257</i>&nbsp;        double sim = (longerLength - editDistance(longer, shorter)) / (double) longerLength;</b>
+<b class="nc"><i>258</i>&nbsp;        LOGGER.debug(&quot;Longer string: &quot; + longer + &quot; Shorter string: &quot; + shorter + &quot; Similarity: &quot; + sim);</b>
+<b class="nc"><i>259</i>&nbsp;        return sim;</b>
+<i>260</i>&nbsp;
+<i>261</i>&nbsp;    }
+<i>262</i>&nbsp;
+<i>263</i>&nbsp;    /*
+<i>264</i>&nbsp;    * Levenshtein Edit Distance
+<i>265</i>&nbsp;    * http://stackoverflow.com/questions/955110/similarity-string-comparison-in-java
+<i>266</i>&nbsp;    */
+<i>267</i>&nbsp;    private static int editDistance(String s1, String s2) {
+<b class="nc"><i>268</i>&nbsp;        String s1LowerCase = s1.toLowerCase();</b>
+<b class="nc"><i>269</i>&nbsp;        String s2LowerCase = s2.toLowerCase();</b>
+<i>270</i>&nbsp;
+<b class="nc"><i>271</i>&nbsp;        int[] costs = new int[s2LowerCase.length() + 1];</b>
+<b class="nc"><i>272</i>&nbsp;        for (int i = 0; i &lt;= s1LowerCase.length(); i++) {</b>
+<b class="nc"><i>273</i>&nbsp;            int lastValue = i;</b>
+<b class="nc"><i>274</i>&nbsp;            for (int j = 0; j &lt;= s2LowerCase.length(); j++) {</b>
+<b class="nc"><i>275</i>&nbsp;                if (i == 0) {</b>
+<b class="nc"><i>276</i>&nbsp;                    costs[j] = j;</b>
+<b class="nc"><i>277</i>&nbsp;                } else if (j &gt; 0) {</b>
+<b class="nc"><i>278</i>&nbsp;                    int newValue = costs[j - 1];</b>
+<b class="nc"><i>279</i>&nbsp;                    if (s1LowerCase.charAt(i - 1) != s2LowerCase.charAt(j - 1)) {</b>
+<b class="nc"><i>280</i>&nbsp;                        newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;</b>
+<i>281</i>&nbsp;                    }
+<b class="nc"><i>282</i>&nbsp;                    costs[j - 1] = lastValue;</b>
+<b class="nc"><i>283</i>&nbsp;                    lastValue = newValue;</b>
+<i>284</i>&nbsp;
+<i>285</i>&nbsp;                }
+<i>286</i>&nbsp;            }
+<b class="nc"><i>287</i>&nbsp;            if (i &gt; 0) {</b>
+<b class="nc"><i>288</i>&nbsp;                costs[s2LowerCase.length()] = lastValue;</b>
+<i>289</i>&nbsp;            }
+<i>290</i>&nbsp;        }
+<b class="nc"><i>291</i>&nbsp;        LOGGER.debug(&quot;String 1: &quot; + s1LowerCase + &quot; String 2: &quot; + s2LowerCase + &quot; Distance: &quot; + costs[s2LowerCase.length()]);</b>
+<b class="nc"><i>292</i>&nbsp;        return costs[s2LowerCase.length()];</b>
+<i>293</i>&nbsp;    }
+<i>294</i>&nbsp;
+<i>295</i>&nbsp;
+<i>296</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

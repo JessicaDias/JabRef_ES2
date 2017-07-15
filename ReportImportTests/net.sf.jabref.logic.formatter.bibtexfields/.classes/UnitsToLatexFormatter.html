@@ -1,0 +1,225 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: UnitsToLatexFormatter</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.formatter.bibtexfields</a> ]
+</div>
+
+<h1>Coverage Summary for Class: UnitsToLatexFormatter (net.sf.jabref.logic.formatter.bibtexfields)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UnitsToLatexFormatter</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    28.6%
+  </span>
+  <span class="absValue">
+    (2/ 7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    44.4%
+  </span>
+  <span class="absValue">
+    (12/ 27)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.formatter.bibtexfields;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.ArrayList;
+<i>4</i>&nbsp;import java.util.Arrays;
+<i>5</i>&nbsp;import java.util.Collections;
+<i>6</i>&nbsp;import java.util.List;
+<i>7</i>&nbsp;import java.util.Objects;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>10</i>&nbsp;import net.sf.jabref.logic.util.strings.StringLengthComparator;
+<i>11</i>&nbsp;import net.sf.jabref.model.cleanup.Formatter;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;public class UnitsToLatexFormatter implements Formatter {
+<i>14</i>&nbsp;
+<b class="fc"><i>15</i>&nbsp;    private static final List&lt;String&gt; UNIT_LIST = Arrays.asList(</b>
+<i>16</i>&nbsp;            &quot;A&quot;, // Ampere
+<i>17</i>&nbsp;            &quot;Ah&quot;, // Ampere hours
+<i>18</i>&nbsp;            &quot;B&quot;, // Byte
+<i>19</i>&nbsp;            &quot;Bq&quot;, // Bequerel
+<i>20</i>&nbsp;            &quot;C&quot;, // Coulomb
+<i>21</i>&nbsp;            &quot;F&quot;, // Farad
+<i>22</i>&nbsp;            &quot;Gy&quot;, // Gray
+<i>23</i>&nbsp;            &quot;H&quot;, // Henry
+<i>24</i>&nbsp;            &quot;Hz&quot;, // Hertz
+<i>25</i>&nbsp;            &quot;J&quot;, // Joule
+<i>26</i>&nbsp;            &quot;K&quot;, // Kelvin
+<i>27</i>&nbsp;            &quot;N&quot;, // Newton
+<i>28</i>&nbsp;            &quot;\\$\\\\Omega\\$&quot;, // Ohm
+<i>29</i>&nbsp;            &quot;Pa&quot;, // Pascal
+<i>30</i>&nbsp;            &quot;S&quot;, // Siemens, Samples
+<i>31</i>&nbsp;            &quot;Sa&quot;, // Samples
+<i>32</i>&nbsp;            &quot;Sv&quot;, // Sv
+<i>33</i>&nbsp;            &quot;T&quot;, // Tesla
+<i>34</i>&nbsp;            &quot;V&quot;, // Volt
+<i>35</i>&nbsp;            &quot;VA&quot;, // Volt ampere
+<i>36</i>&nbsp;            &quot;W&quot;, // Watt
+<i>37</i>&nbsp;            &quot;Wb&quot;, // Weber
+<i>38</i>&nbsp;            &quot;Wh&quot;, // Watt hours
+<i>39</i>&nbsp;            &quot;bar&quot;, // bar
+<i>40</i>&nbsp;            &quot;b&quot;, // bit
+<i>41</i>&nbsp;            &quot;cd&quot;, // candela
+<i>42</i>&nbsp;            &quot;dB&quot;, // decibel
+<i>43</i>&nbsp;            &quot;dBm&quot;, // decibel
+<i>44</i>&nbsp;            &quot;dBc&quot;, //decibel
+<i>45</i>&nbsp;            &quot;eV&quot;, // electron volts
+<i>46</i>&nbsp;            &quot;inch&quot;, // inch
+<i>47</i>&nbsp;            &quot;kat&quot;, // katal
+<i>48</i>&nbsp;            &quot;lm&quot;, // lumen
+<i>49</i>&nbsp;            &quot;lx&quot;, // lux
+<i>50</i>&nbsp;            &quot;m&quot;, // meters
+<i>51</i>&nbsp;            &quot;mol&quot;, // mol
+<i>52</i>&nbsp;            &quot;rad&quot;, // radians
+<i>53</i>&nbsp;            &quot;s&quot;, // seconds
+<i>54</i>&nbsp;            &quot;sr&quot; // steradians
+<i>55</i>&nbsp;    );
+<i>56</i>&nbsp;
+<b class="fc"><i>57</i>&nbsp;    private static final List&lt;String&gt; UNIT_PREFIX_LIST = Arrays.asList(</b>
+<i>58</i>&nbsp;            &quot;y&quot;, // yocto
+<i>59</i>&nbsp;            &quot;z&quot;, // zepto
+<i>60</i>&nbsp;            &quot;a&quot;, // atto
+<i>61</i>&nbsp;            &quot;f&quot;, // femto
+<i>62</i>&nbsp;            &quot;p&quot;, // pico
+<i>63</i>&nbsp;            &quot;n&quot;, // nano
+<i>64</i>&nbsp;            &quot;\\$\\\\mu\\$&quot;, // micro
+<i>65</i>&nbsp;            &quot;u&quot;, // micro
+<i>66</i>&nbsp;            &quot;m&quot;, // milli
+<i>67</i>&nbsp;            &quot;c&quot;, // centi
+<i>68</i>&nbsp;            &quot;d&quot;, // deci
+<i>69</i>&nbsp;            &quot;&quot;, // no prefix
+<i>70</i>&nbsp;            &quot;da&quot;, // deca
+<i>71</i>&nbsp;            &quot;h&quot;, // hekto
+<i>72</i>&nbsp;            &quot;k&quot;, // kilo
+<i>73</i>&nbsp;            &quot;M&quot;, // mega
+<i>74</i>&nbsp;            &quot;G&quot;, // giga
+<i>75</i>&nbsp;            &quot;T&quot;, // tera
+<i>76</i>&nbsp;            &quot;P&quot;, // peta
+<i>77</i>&nbsp;            &quot;E&quot;, // exa
+<i>78</i>&nbsp;            &quot;Z&quot;, // zetta
+<i>79</i>&nbsp;            &quot;Y&quot; // yotta
+<i>80</i>&nbsp;    );
+<i>81</i>&nbsp;
+<i>82</i>&nbsp;    private final List&lt;String&gt; prefixUnitCombinations;
+<i>83</i>&nbsp;
+<i>84</i>&nbsp;
+<b class="fc"><i>85</i>&nbsp;    public UnitsToLatexFormatter() {</b>
+<b class="fc"><i>86</i>&nbsp;        prefixUnitCombinations = new ArrayList&lt;&gt;(</b>
+<b class="fc"><i>87</i>&nbsp;                UnitsToLatexFormatter.UNIT_LIST.size() * UnitsToLatexFormatter.UNIT_PREFIX_LIST.size());</b>
+<b class="fc"><i>88</i>&nbsp;        for (String unit : UnitsToLatexFormatter.UNIT_LIST) {</b>
+<b class="fc"><i>89</i>&nbsp;            for (String prefix : UnitsToLatexFormatter.UNIT_PREFIX_LIST) {</b>
+<b class="fc"><i>90</i>&nbsp;                prefixUnitCombinations.add(prefix + unit);</b>
+<b class="fc"><i>91</i>&nbsp;            }</b>
+<b class="fc"><i>92</i>&nbsp;        }</b>
+<b class="fc"><i>93</i>&nbsp;        Collections.sort(prefixUnitCombinations, new StringLengthComparator()); // Sort based on string length</b>
+<b class="fc"><i>94</i>&nbsp;    }</b>
+<i>95</i>&nbsp;
+<i>96</i>&nbsp;
+<i>97</i>&nbsp;    @Override
+<i>98</i>&nbsp;    public String format(String text) {
+<b class="nc"><i>99</i>&nbsp;        Objects.requireNonNull(text);</b>
+<b class="nc"><i>100</i>&nbsp;        if (text.isEmpty()) {</b>
+<b class="nc"><i>101</i>&nbsp;            return text;</b>
+<i>102</i>&nbsp;        }
+<i>103</i>&nbsp;
+<i>104</i>&nbsp;        // Replace the hyphen in 12-bit etc with a non-breaking hyphen, will also avoid bad casing of 12-Bit
+<b class="nc"><i>105</i>&nbsp;        String result = text.replaceAll(&quot;([0-9,\\.]+)-([Bb][Ii][Tt])&quot;, &quot;$1\\\\mbox\\{-\\}$2&quot;);</b>
+<i>106</i>&nbsp;
+<i>107</i>&nbsp;        // Replace the space in 12 bit etc with a non-breaking space, will also avoid bad casing of 12 Bit
+<b class="nc"><i>108</i>&nbsp;        result = result.replaceAll(&quot;([0-9,\\.]+) ([Bb][Ii][Tt])&quot;, &quot;$1~$2&quot;);</b>
+<i>109</i>&nbsp;
+<i>110</i>&nbsp;        // For each word in the list
+<b class="nc"><i>111</i>&nbsp;        for (String listOfWord : prefixUnitCombinations) {</b>
+<i>112</i>&nbsp;            // Add {} if the character before is a space, -, /, (, [, or } or if it is at the start of the string but not if it is followed by a }
+<b class="nc"><i>113</i>&nbsp;            result = result.replaceAll(&quot;([0-9])(&quot; + listOfWord + &quot;)&quot;, &quot;$1\\{$2\\}&quot;); // Only add brackets to keep case</b>
+<b class="nc"><i>114</i>&nbsp;            result = result.replaceAll(&quot;([0-9])-(&quot; + listOfWord + &quot;)&quot;, &quot;$1\\\\mbox\\{-\\}\\{$2\\}&quot;); // Replace hyphen with non-break hyphen</b>
+<b class="nc"><i>115</i>&nbsp;            result = result.replaceAll(&quot;([0-9]) (&quot; + listOfWord + &quot;)&quot;, &quot;$1~\\{$2\\}&quot;); // Replace space with a hard space</b>
+<i>116</i>&nbsp;
+<b class="nc"><i>117</i>&nbsp;        }</b>
+<i>118</i>&nbsp;
+<b class="nc"><i>119</i>&nbsp;        return result;</b>
+<i>120</i>&nbsp;    }
+<i>121</i>&nbsp;
+<i>122</i>&nbsp;    @Override
+<i>123</i>&nbsp;    public String getDescription() {
+<b class="nc"><i>124</i>&nbsp;        return Localization.lang(&quot;Converts units to LaTeX formatting.&quot;);</b>
+<i>125</i>&nbsp;    }
+<i>126</i>&nbsp;
+<i>127</i>&nbsp;    @Override
+<i>128</i>&nbsp;    public String getExampleInput() {
+<b class="nc"><i>129</i>&nbsp;        return &quot;1 Hz&quot;;</b>
+<i>130</i>&nbsp;    }
+<i>131</i>&nbsp;
+<i>132</i>&nbsp;    @Override
+<i>133</i>&nbsp;    public String getName() {
+<b class="nc"><i>134</i>&nbsp;        return Localization.lang(&quot;Units to LaTeX&quot;);</b>
+<i>135</i>&nbsp;    }
+<i>136</i>&nbsp;
+<i>137</i>&nbsp;    @Override
+<i>138</i>&nbsp;    public String getKey() {
+<b class="nc"><i>139</i>&nbsp;        return &quot;units_to_latex&quot;;</b>
+<i>140</i>&nbsp;    }
+<i>141</i>&nbsp;
+<i>142</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

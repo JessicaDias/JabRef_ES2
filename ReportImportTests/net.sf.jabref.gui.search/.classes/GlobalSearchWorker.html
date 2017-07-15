@@ -1,0 +1,152 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: GlobalSearchWorker</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.search</a> ]
+</div>
+
+<h1>Coverage Summary for Class: GlobalSearchWorker (net.sf.jabref.gui.search)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GlobalSearchWorker</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 27)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.search;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.HashMap;
+<i>4</i>&nbsp;import java.util.List;
+<i>5</i>&nbsp;import java.util.Map;
+<i>6</i>&nbsp;import java.util.Objects;
+<i>7</i>&nbsp;import java.util.concurrent.ExecutionException;
+<i>8</i>&nbsp;import java.util.stream.Collectors;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;import javax.swing.SwingWorker;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;import net.sf.jabref.gui.BasePanel;
+<i>13</i>&nbsp;import net.sf.jabref.gui.JabRefFrame;
+<i>14</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>15</i>&nbsp;import net.sf.jabref.logic.search.SearchQuery;
+<i>16</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;import org.apache.commons.logging.Log;
+<i>19</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;class GlobalSearchWorker extends SwingWorker&lt;Map&lt;BasePanel, List&lt;BibEntry&gt;&gt;, Void&gt; {
+<i>23</i>&nbsp;
+<b class="nc"><i>24</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(GlobalSearchWorker.class);</b>
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    private final JabRefFrame frame;
+<i>27</i>&nbsp;    private final SearchQuery searchQuery;
+<i>28</i>&nbsp;    private final SearchResultFrame dialog;
+<i>29</i>&nbsp;
+<b class="nc"><i>30</i>&nbsp;    public GlobalSearchWorker(JabRefFrame frame, SearchQuery query) {</b>
+<b class="nc"><i>31</i>&nbsp;        this.frame = Objects.requireNonNull(frame);</b>
+<b class="nc"><i>32</i>&nbsp;        this.searchQuery = Objects.requireNonNull(query);</b>
+<i>33</i>&nbsp;
+<b class="nc"><i>34</i>&nbsp;        dialog = new SearchResultFrame(frame,</b>
+<b class="nc"><i>35</i>&nbsp;                Localization.lang(&quot;Search results in all databases for %0&quot;,</b>
+<b class="nc"><i>36</i>&nbsp;                        this.searchQuery.localize()),</b>
+<i>37</i>&nbsp;                searchQuery, true);
+<b class="nc"><i>38</i>&nbsp;        frame.getGlobalSearchBar().setSearchResultFrame(dialog);</b>
+<b class="nc"><i>39</i>&nbsp;    }</b>
+<i>40</i>&nbsp;
+<i>41</i>&nbsp;    @Override
+<i>42</i>&nbsp;    protected Map&lt;BasePanel, List&lt;BibEntry&gt;&gt; doInBackground() throws Exception {
+<b class="nc"><i>43</i>&nbsp;        Map&lt;BasePanel, List&lt;BibEntry&gt;&gt; matches = new HashMap&lt;&gt;();</b>
+<b class="nc"><i>44</i>&nbsp;        for (BasePanel basePanel : frame.getBasePanelList()) {</b>
+<b class="nc"><i>45</i>&nbsp;            matches.put(basePanel, basePanel.getDatabase().getEntries().parallelStream()</b>
+<b class="nc"><i>46</i>&nbsp;                    .filter(searchQuery::isMatch)</b>
+<b class="nc"><i>47</i>&nbsp;                    .collect(Collectors.toList()));</b>
+<b class="nc"><i>48</i>&nbsp;        }</b>
+<b class="nc"><i>49</i>&nbsp;        return matches;</b>
+<i>50</i>&nbsp;    }
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;    @Override
+<i>53</i>&nbsp;    protected void done() {
+<b class="nc"><i>54</i>&nbsp;        if (isCancelled()) {</b>
+<b class="nc"><i>55</i>&nbsp;            return;</b>
+<i>56</i>&nbsp;        }
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;        try {
+<b class="nc"><i>59</i>&nbsp;            for (Map.Entry&lt;BasePanel, List&lt;BibEntry&gt;&gt; match : get().entrySet()) {</b>
+<b class="nc"><i>60</i>&nbsp;                dialog.addEntries(match.getValue(), match.getKey());</b>
+<b class="nc"><i>61</i>&nbsp;            }</b>
+<b class="nc"><i>62</i>&nbsp;            dialog.selectFirstEntry();</b>
+<b class="nc"><i>63</i>&nbsp;            dialog.setVisible(true);</b>
+<b class="nc"><i>64</i>&nbsp;        } catch (InterruptedException | ExecutionException e) {</b>
+<b class="nc"><i>65</i>&nbsp;            LOGGER.error(&quot;something went wrong during the search&quot;, e);</b>
+<b class="nc"><i>66</i>&nbsp;        }</b>
+<b class="nc"><i>67</i>&nbsp;    }</b>
+<i>68</i>&nbsp;
+<i>69</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

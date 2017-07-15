@@ -1,0 +1,154 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: DBMSType</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.shared</a> ]
+</div>
+
+<h1>Coverage Summary for Class: DBMSType (net.sf.jabref.shared)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DBMSType</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 17)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.shared;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.Locale;
+<i>4</i>&nbsp;import java.util.Optional;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;/**
+<i>7</i>&nbsp; * Enumerates all supported database systems (DBMS) by JabRef.
+<i>8</i>&nbsp; */
+<b class="nc"><i>9</i>&nbsp;public enum DBMSType {</b>
+<i>10</i>&nbsp;
+<b class="nc"><i>11</i>&nbsp;    MYSQL(</b>
+<i>12</i>&nbsp;            &quot;MySQL&quot;,
+<i>13</i>&nbsp;            &quot;com.mysql.jdbc.Driver&quot;,
+<i>14</i>&nbsp;            &quot;jdbc:mysql://%s:%d/%s&quot;, 3306),
+<b class="nc"><i>15</i>&nbsp;    ORACLE(</b>
+<i>16</i>&nbsp;            &quot;Oracle&quot;,
+<i>17</i>&nbsp;            &quot;oracle.jdbc.driver.OracleDriver&quot;,
+<i>18</i>&nbsp;            &quot;jdbc:oracle:thin:@%s:%d:%s&quot;, 1521),
+<b class="nc"><i>19</i>&nbsp;    POSTGRESQL(</b>
+<i>20</i>&nbsp;            &quot;PostgreSQL&quot;,
+<i>21</i>&nbsp;            &quot;com.impossibl.postgres.jdbc.PGDriver&quot;,
+<i>22</i>&nbsp;            &quot;jdbc:pgsql://%s:%d/%s&quot;, 5432);
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;    private final String type;
+<i>25</i>&nbsp;    private final String driverPath;
+<i>26</i>&nbsp;    private final String urlPattern;
+<i>27</i>&nbsp;    private final int defaultPort;
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;
+<b class="nc"><i>30</i>&nbsp;    private DBMSType(String type, String driverPath, String urlPattern, int defaultPort) {</b>
+<b class="nc"><i>31</i>&nbsp;        this.type = type;</b>
+<b class="nc"><i>32</i>&nbsp;        this.driverPath = driverPath;</b>
+<b class="nc"><i>33</i>&nbsp;        this.urlPattern = urlPattern;</b>
+<b class="nc"><i>34</i>&nbsp;        this.defaultPort = defaultPort;</b>
+<b class="nc"><i>35</i>&nbsp;    }</b>
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    @Override
+<i>38</i>&nbsp;    public String toString() {
+<b class="nc"><i>39</i>&nbsp;        return this.type;</b>
+<i>40</i>&nbsp;    }
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;    /**
+<i>43</i>&nbsp;     * @return Java Class path for establishing JDBC connection.
+<i>44</i>&nbsp;     */
+<i>45</i>&nbsp;    public String getDriverClassPath() throws Error {
+<b class="nc"><i>46</i>&nbsp;        return this.driverPath;</b>
+<i>47</i>&nbsp;    }
+<i>48</i>&nbsp;
+<i>49</i>&nbsp;    /**
+<i>50</i>&nbsp;     * @return prepared connection URL for appropriate system.
+<i>51</i>&nbsp;     */
+<i>52</i>&nbsp;    public String getUrl(String host, int port, String database) {
+<b class="nc"><i>53</i>&nbsp;        return String.format(urlPattern, host, port, database);</b>
+<i>54</i>&nbsp;    }
+<i>55</i>&nbsp;
+<i>56</i>&nbsp;    /**
+<i>57</i>&nbsp;     * Retrieves the port number dependent on the type of the database system.
+<i>58</i>&nbsp;     */
+<i>59</i>&nbsp;    public int getDefaultPort() {
+<b class="nc"><i>60</i>&nbsp;        return this.defaultPort;</b>
+<i>61</i>&nbsp;    }
+<i>62</i>&nbsp;
+<i>63</i>&nbsp;    public static Optional&lt;DBMSType&gt; fromString(String typeName) {
+<i>64</i>&nbsp;        try {
+<b class="nc"><i>65</i>&nbsp;            return Optional.of(Enum.valueOf(DBMSType.class, typeName.toUpperCase(Locale.ENGLISH)));</b>
+<b class="nc"><i>66</i>&nbsp;        } catch (IllegalArgumentException exception) {</b>
+<b class="nc"><i>67</i>&nbsp;            return Optional.empty();</b>
+<i>68</i>&nbsp;        }
+<i>69</i>&nbsp;    }
+<i>70</i>&nbsp;
+<i>71</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

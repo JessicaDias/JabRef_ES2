@@ -1,0 +1,125 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: NormalizeMonthFormatter</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.formatter.bibtexfields</a> ]
+</div>
+
+<h1>Coverage Summary for Class: NormalizeMonthFormatter (net.sf.jabref.logic.formatter.bibtexfields)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">NormalizeMonthFormatter</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    33.3%
+  </span>
+  <span class="absValue">
+    (2/ 6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    20%
+  </span>
+  <span class="absValue">
+    (2/ 10)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.formatter.bibtexfields;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.Objects;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>6</i>&nbsp;import net.sf.jabref.model.cleanup.Formatter;
+<i>7</i>&nbsp;import net.sf.jabref.model.entry.MonthUtil;
+<i>8</i>&nbsp;
+<b class="fc"><i>9</i>&nbsp;public class NormalizeMonthFormatter implements Formatter {</b>
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;    @Override
+<i>12</i>&nbsp;    public String getName() {
+<b class="nc"><i>13</i>&nbsp;        return Localization.lang(&quot;Normalize month&quot;);</b>
+<i>14</i>&nbsp;    }
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;    @Override
+<i>17</i>&nbsp;    public String getKey() {
+<b class="fc"><i>18</i>&nbsp;        return &quot;normalize_month&quot;;</b>
+<i>19</i>&nbsp;    }
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;    @Override
+<i>22</i>&nbsp;    public String format(String value) {
+<b class="nc"><i>23</i>&nbsp;        Objects.requireNonNull(value);</b>
+<b class="nc"><i>24</i>&nbsp;        MonthUtil.Month month = MonthUtil.getMonth(value);</b>
+<b class="nc"><i>25</i>&nbsp;        if (month.isValid()) {</b>
+<b class="nc"><i>26</i>&nbsp;            return month.bibtexFormat;</b>
+<i>27</i>&nbsp;        } else {
+<b class="nc"><i>28</i>&nbsp;            return value;</b>
+<i>29</i>&nbsp;        }
+<i>30</i>&nbsp;    }
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;    @Override
+<i>33</i>&nbsp;    public String getDescription() {
+<b class="nc"><i>34</i>&nbsp;        return Localization.lang(&quot;Normalize month to BibTeX standard abbreviation.&quot;);</b>
+<i>35</i>&nbsp;    }
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    @Override
+<i>38</i>&nbsp;    public String getExampleInput() {
+<b class="nc"><i>39</i>&nbsp;        return &quot;December&quot;;</b>
+<i>40</i>&nbsp;    }
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

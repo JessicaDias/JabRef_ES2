@@ -1,0 +1,184 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Word</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.formatter.casechanger</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Word (net.sf.jabref.logic.formatter.casechanger)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Word</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 33)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.formatter.casechanger;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.Arrays;
+<i>4</i>&nbsp;import java.util.Collections;
+<i>5</i>&nbsp;import java.util.HashSet;
+<i>6</i>&nbsp;import java.util.Objects;
+<i>7</i>&nbsp;import java.util.Set;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;/**
+<i>10</i>&nbsp; * Represents a word in a title of a bibtex entry.
+<i>11</i>&nbsp; * &lt;p&gt;
+<i>12</i>&nbsp; * A word can have protected chars (enclosed in &#39;{&#39; &#39;}&#39;) and may be a small (a, an, the, ...) word.
+<i>13</i>&nbsp; */
+<i>14</i>&nbsp;public final class Word {
+<i>15</i>&nbsp;    public static final Set&lt;String&gt; SMALLER_WORDS;
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;    static {
+<b class="nc"><i>18</i>&nbsp;        Set&lt;String&gt; smallerWords = new HashSet&lt;&gt;();</b>
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;        // Articles
+<b class="nc"><i>21</i>&nbsp;        smallerWords.addAll(Arrays.asList(&quot;a&quot;, &quot;an&quot;, &quot;the&quot;));</b>
+<i>22</i>&nbsp;        // Prepositions
+<b class="nc"><i>23</i>&nbsp;        smallerWords.addAll(Arrays.asList(&quot;above&quot;, &quot;about&quot;, &quot;across&quot;, &quot;against&quot;, &quot;along&quot;, &quot;among&quot;, &quot;around&quot;, &quot;at&quot;, &quot;before&quot;, &quot;behind&quot;, &quot;below&quot;, &quot;beneath&quot;, &quot;beside&quot;, &quot;between&quot;, &quot;beyond&quot;, &quot;by&quot;, &quot;down&quot;, &quot;during&quot;, &quot;except&quot;, &quot;for&quot;, &quot;from&quot;, &quot;in&quot;, &quot;inside&quot;, &quot;into&quot;, &quot;like&quot;, &quot;near&quot;, &quot;of&quot;, &quot;off&quot;, &quot;on&quot;, &quot;onto&quot;, &quot;since&quot;, &quot;to&quot;, &quot;toward&quot;, &quot;through&quot;, &quot;under&quot;, &quot;until&quot;, &quot;up&quot;, &quot;upon&quot;, &quot;with&quot;, &quot;within&quot;, &quot;without&quot;));</b>
+<i>24</i>&nbsp;        // Conjunctions
+<b class="nc"><i>25</i>&nbsp;        smallerWords.addAll(Arrays.asList(&quot;and&quot;, &quot;but&quot;, &quot;for&quot;, &quot;nor&quot;, &quot;or&quot;, &quot;so&quot;, &quot;yet&quot;));</b>
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;        // unmodifiable for thread safety
+<b class="nc"><i>28</i>&nbsp;        SMALLER_WORDS = Collections.unmodifiableSet(smallerWords);</b>
+<b class="nc"><i>29</i>&nbsp;    }</b>
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;    private final char[] chars;
+<i>32</i>&nbsp;    private final boolean[] protectedChars;
+<i>33</i>&nbsp;
+<b class="nc"><i>34</i>&nbsp;    public Word(char[] chars, boolean[] protectedChars) {</b>
+<b class="nc"><i>35</i>&nbsp;        this.chars = Objects.requireNonNull(chars);</b>
+<b class="nc"><i>36</i>&nbsp;        this.protectedChars = Objects.requireNonNull(protectedChars);</b>
+<i>37</i>&nbsp;
+<b class="nc"><i>38</i>&nbsp;        if (this.chars.length != this.protectedChars.length) {</b>
+<b class="nc"><i>39</i>&nbsp;            throw new IllegalArgumentException(&quot;the chars and the protectedChars array must be of same length&quot;);</b>
+<i>40</i>&nbsp;        }
+<b class="nc"><i>41</i>&nbsp;    }</b>
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;    /**
+<i>44</i>&nbsp;     * Only change letters of the word that are unprotected to upper case.
+<i>45</i>&nbsp;     */
+<i>46</i>&nbsp;    public void toUpperCase() {
+<b class="nc"><i>47</i>&nbsp;        for (int i = 0; i &lt; chars.length; i++) {</b>
+<b class="nc"><i>48</i>&nbsp;            if (protectedChars[i]) {</b>
+<b class="nc"><i>49</i>&nbsp;                continue;</b>
+<i>50</i>&nbsp;            }
+<i>51</i>&nbsp;
+<b class="nc"><i>52</i>&nbsp;            chars[i] = Character.toUpperCase(chars[i]);</b>
+<i>53</i>&nbsp;        }
+<b class="nc"><i>54</i>&nbsp;    }</b>
+<i>55</i>&nbsp;
+<i>56</i>&nbsp;    /**
+<i>57</i>&nbsp;     * Only change letters of the word that are unprotected to lower case.
+<i>58</i>&nbsp;     */
+<i>59</i>&nbsp;    public void toLowerCase() {
+<b class="nc"><i>60</i>&nbsp;        for (int i = 0; i &lt; chars.length; i++) {</b>
+<b class="nc"><i>61</i>&nbsp;            if (protectedChars[i]) {</b>
+<b class="nc"><i>62</i>&nbsp;                continue;</b>
+<i>63</i>&nbsp;            }
+<i>64</i>&nbsp;
+<b class="nc"><i>65</i>&nbsp;            chars[i] = Character.toLowerCase(chars[i]);</b>
+<i>66</i>&nbsp;        }
+<b class="nc"><i>67</i>&nbsp;    }</b>
+<i>68</i>&nbsp;
+<i>69</i>&nbsp;
+<i>70</i>&nbsp;    public void toUpperFirst() {
+<b class="nc"><i>71</i>&nbsp;        for (int i = 0; i &lt; chars.length; i++) {</b>
+<b class="nc"><i>72</i>&nbsp;            if (protectedChars[i]) {</b>
+<b class="nc"><i>73</i>&nbsp;                continue;</b>
+<i>74</i>&nbsp;            }
+<i>75</i>&nbsp;
+<b class="nc"><i>76</i>&nbsp;            if (i == 0) {</b>
+<b class="nc"><i>77</i>&nbsp;                chars[i] = Character.toUpperCase(chars[i]);</b>
+<i>78</i>&nbsp;            } else {
+<b class="nc"><i>79</i>&nbsp;                chars[i] = Character.toLowerCase(chars[i]);</b>
+<i>80</i>&nbsp;            }
+<i>81</i>&nbsp;        }
+<b class="nc"><i>82</i>&nbsp;    }</b>
+<i>83</i>&nbsp;
+<i>84</i>&nbsp;    public boolean isSmallerWord() {
+<i>85</i>&nbsp;        // &quot;word:&quot; is still a small &quot;word&quot;
+<b class="nc"><i>86</i>&nbsp;        return SMALLER_WORDS.contains(this.toString().replace(&quot;:&quot;, &quot;&quot;).toLowerCase());</b>
+<i>87</i>&nbsp;    }
+<i>88</i>&nbsp;
+<i>89</i>&nbsp;    public boolean isLargerWord() {
+<b class="nc"><i>90</i>&nbsp;        return !isSmallerWord();</b>
+<i>91</i>&nbsp;    }
+<i>92</i>&nbsp;
+<i>93</i>&nbsp;    @Override
+<i>94</i>&nbsp;    public String toString() {
+<b class="nc"><i>95</i>&nbsp;        return new String(chars);</b>
+<i>96</i>&nbsp;    }
+<i>97</i>&nbsp;
+<i>98</i>&nbsp;    public boolean endsWithColon() {
+<b class="nc"><i>99</i>&nbsp;        return this.toString().endsWith(&quot;:&quot;);</b>
+<i>100</i>&nbsp;    }
+<i>101</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

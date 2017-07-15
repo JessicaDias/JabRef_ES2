@@ -1,0 +1,261 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: AuxParser</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.auxparser</a> ]
+</div>
+
+<h1>Coverage Summary for Class: AuxParser (net.sf.jabref.logic.auxparser)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AuxParser</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 71)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.auxparser;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.BufferedReader;
+<i>4</i>&nbsp;import java.io.File;
+<i>5</i>&nbsp;import java.io.FileNotFoundException;
+<i>6</i>&nbsp;import java.io.FileReader;
+<i>7</i>&nbsp;import java.io.IOException;
+<i>8</i>&nbsp;import java.nio.file.Path;
+<i>9</i>&nbsp;import java.util.ArrayList;
+<i>10</i>&nbsp;import java.util.List;
+<i>11</i>&nbsp;import java.util.Optional;
+<i>12</i>&nbsp;import java.util.regex.Matcher;
+<i>13</i>&nbsp;import java.util.regex.Pattern;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;import net.sf.jabref.model.database.BibDatabase;
+<i>16</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>17</i>&nbsp;import net.sf.jabref.model.entry.FieldName;
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;import org.apache.commons.logging.Log;
+<i>20</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;/**
+<i>23</i>&nbsp; * LaTeX Aux to BibTeX Parser
+<i>24</i>&nbsp; * &lt;p&gt;
+<i>25</i>&nbsp; * Extracts a subset of BibTeX entries from a BibDatabase that are included in an AUX file.
+<i>26</i>&nbsp; * Also supports nested AUX files (latex \\include).
+<i>27</i>&nbsp; *
+<i>28</i>&nbsp; * There exists no specification of the AUX file.
+<i>29</i>&nbsp; * Every package, class or document can write to the AUX file.
+<i>30</i>&nbsp; * The AUX file consists of LaTeX macros and is read at the \begin{document} and again at the \end{document}.
+<i>31</i>&nbsp; *
+<i>32</i>&nbsp; * BibTeX citation: \citation{x,y,z}
+<i>33</i>&nbsp; * Biblatex citation: \abx@aux@cite{x,y,z}
+<i>34</i>&nbsp; * Nested AUX files: \@input{x}
+<i>35</i>&nbsp; */
+<i>36</i>&nbsp;public class AuxParser {
+<b class="nc"><i>37</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(AuxParser.class);</b>
+<i>38</i>&nbsp;
+<b class="nc"><i>39</i>&nbsp;    private static final Pattern CITE_PATTERN = Pattern.compile(&quot;\\\\(citation|abx@aux@cite)\\{(.+)\\}&quot;);</b>
+<b class="nc"><i>40</i>&nbsp;    private static final Pattern INPUT_PATTERN = Pattern.compile(&quot;\\\\@input\\{(.+)\\}&quot;);</b>
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;    private final String auxFile;
+<i>43</i>&nbsp;    private final BibDatabase masterDatabase;
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;    /**
+<i>46</i>&nbsp;     * Generates a database based on the given AUX file and BibTeX database
+<i>47</i>&nbsp;     *
+<i>48</i>&nbsp;     * @param auxFile  Path to the LaTeX AUX file
+<i>49</i>&nbsp;     * @param database BibTeX database
+<i>50</i>&nbsp;     */
+<b class="nc"><i>51</i>&nbsp;    public AuxParser(String auxFile, BibDatabase database) {</b>
+<b class="nc"><i>52</i>&nbsp;        this.auxFile = auxFile;</b>
+<b class="nc"><i>53</i>&nbsp;        masterDatabase = database;</b>
+<b class="nc"><i>54</i>&nbsp;    }</b>
+<i>55</i>&nbsp;
+<i>56</i>&nbsp;    /**
+<i>57</i>&nbsp;     * Executes the parsing logic and returns a result containing all information and the generated BibDatabase.
+<i>58</i>&nbsp;     *
+<i>59</i>&nbsp;     * @return an AuxParserResult containing the generated BibDatabase and parsing statistics
+<i>60</i>&nbsp;     */
+<i>61</i>&nbsp;    public AuxParserResult parse() {
+<b class="nc"><i>62</i>&nbsp;        return parseAuxFile();</b>
+<i>63</i>&nbsp;    }
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;    private AuxParserResult parseAuxFile() {
+<b class="nc"><i>66</i>&nbsp;        AuxParserResult result = new AuxParserResult(masterDatabase);</b>
+<i>67</i>&nbsp;
+<i>68</i>&nbsp;        // nested AUX files
+<b class="nc"><i>69</i>&nbsp;        List&lt;String&gt; fileList = new ArrayList&lt;&gt;(1);</b>
+<b class="nc"><i>70</i>&nbsp;        fileList.add(auxFile);</b>
+<i>71</i>&nbsp;
+<b class="nc"><i>72</i>&nbsp;        int fileIndex = 0;</b>
+<i>73</i>&nbsp;
+<b class="nc"><i>74</i>&nbsp;        while (fileIndex &lt; fileList.size()) {</b>
+<b class="nc"><i>75</i>&nbsp;            String file = fileList.get(fileIndex);</b>
+<i>76</i>&nbsp;
+<b class="nc"><i>77</i>&nbsp;            try (BufferedReader br = new BufferedReader(new FileReader(file))) {</b>
+<i>78</i>&nbsp;                String line;
+<i>79</i>&nbsp;
+<b class="nc"><i>80</i>&nbsp;                while ((line = br.readLine()) != null) {</b>
+<b class="nc"><i>81</i>&nbsp;                    matchCitation(result, line);</b>
+<b class="nc"><i>82</i>&nbsp;                    matchNestedAux(result, fileList, line);</b>
+<i>83</i>&nbsp;                }
+<b class="nc"><i>84</i>&nbsp;            } catch (FileNotFoundException e) {</b>
+<b class="nc"><i>85</i>&nbsp;                LOGGER.info(&quot;Cannot locate input file&quot;, e);</b>
+<b class="nc"><i>86</i>&nbsp;            } catch (IOException e) {</b>
+<b class="nc"><i>87</i>&nbsp;                LOGGER.warn(&quot;Problem opening file&quot;, e);</b>
+<b class="nc"><i>88</i>&nbsp;            }</b>
+<i>89</i>&nbsp;
+<b class="nc"><i>90</i>&nbsp;            fileIndex++;</b>
+<b class="nc"><i>91</i>&nbsp;        }</b>
+<b class="nc"><i>92</i>&nbsp;        resolveTags(result);</b>
+<i>93</i>&nbsp;
+<b class="nc"><i>94</i>&nbsp;        return result;</b>
+<i>95</i>&nbsp;    }
+<i>96</i>&nbsp;
+<i>97</i>&nbsp;    private void matchNestedAux(AuxParserResult result, List&lt;String&gt; fileList, String line) {
+<b class="nc"><i>98</i>&nbsp;        Matcher inputMatch = INPUT_PATTERN.matcher(line);</b>
+<i>99</i>&nbsp;
+<b class="nc"><i>100</i>&nbsp;        while (inputMatch.find()) {</b>
+<b class="nc"><i>101</i>&nbsp;            String inputString = inputMatch.group(1);</b>
+<i>102</i>&nbsp;
+<b class="nc"><i>103</i>&nbsp;            String inputFile = inputString;</b>
+<b class="nc"><i>104</i>&nbsp;            Path rootPath = new File(auxFile).toPath().getParent();</b>
+<b class="nc"><i>105</i>&nbsp;            if (rootPath != null) {</b>
+<b class="nc"><i>106</i>&nbsp;                inputFile = rootPath.resolve(inputString).toString();</b>
+<i>107</i>&nbsp;            }
+<i>108</i>&nbsp;
+<b class="nc"><i>109</i>&nbsp;            if (!fileList.contains(inputFile)) {</b>
+<b class="nc"><i>110</i>&nbsp;                fileList.add(inputFile);</b>
+<b class="nc"><i>111</i>&nbsp;                result.increaseNestedAuxFilesCounter();</b>
+<i>112</i>&nbsp;            }
+<b class="nc"><i>113</i>&nbsp;        }</b>
+<b class="nc"><i>114</i>&nbsp;    }</b>
+<i>115</i>&nbsp;
+<i>116</i>&nbsp;    private void matchCitation(AuxParserResult result, String line) {
+<b class="nc"><i>117</i>&nbsp;        Matcher citeMatch = CITE_PATTERN.matcher(line);</b>
+<i>118</i>&nbsp;
+<b class="nc"><i>119</i>&nbsp;        while (citeMatch.find()) {</b>
+<b class="nc"><i>120</i>&nbsp;            String keyString = citeMatch.group(2);</b>
+<b class="nc"><i>121</i>&nbsp;            String[] keys = keyString.split(&quot;,&quot;);</b>
+<i>122</i>&nbsp;
+<b class="nc"><i>123</i>&nbsp;            for (String key : keys) {</b>
+<b class="nc"><i>124</i>&nbsp;                result.getUniqueKeys().add(key.trim());</b>
+<i>125</i>&nbsp;            }
+<b class="nc"><i>126</i>&nbsp;        }</b>
+<b class="nc"><i>127</i>&nbsp;    }</b>
+<i>128</i>&nbsp;
+<i>129</i>&nbsp;    /*
+<i>130</i>&nbsp;     * Try to find an equivalent BibTeX entry inside the reference database for all keys inside the AUX file.
+<i>131</i>&nbsp;     */
+<i>132</i>&nbsp;    private void resolveTags(AuxParserResult result) {
+<b class="nc"><i>133</i>&nbsp;        for (String key : result.getUniqueKeys()) {</b>
+<b class="nc"><i>134</i>&nbsp;            Optional&lt;BibEntry&gt; entry = masterDatabase.getEntryByKey(key);</b>
+<i>135</i>&nbsp;
+<b class="nc"><i>136</i>&nbsp;            if(result.getGeneratedBibDatabase().getEntryByKey(key).isPresent()) {</b>
+<i>137</i>&nbsp;                // do nothing, key has already been processed
+<b class="nc"><i>138</i>&nbsp;            } else if (entry.isPresent()) {</b>
+<b class="nc"><i>139</i>&nbsp;                insertEntry(entry.get(), result);</b>
+<b class="nc"><i>140</i>&nbsp;                resolveCrossReferences(entry.get(), result);</b>
+<i>141</i>&nbsp;            } else {
+<b class="nc"><i>142</i>&nbsp;                result.getUnresolvedKeys().add(key);</b>
+<i>143</i>&nbsp;            }
+<b class="nc"><i>144</i>&nbsp;        }</b>
+<i>145</i>&nbsp;
+<i>146</i>&nbsp;        // Copy database definitions
+<b class="nc"><i>147</i>&nbsp;        if (result.getGeneratedBibDatabase().hasEntries()) {</b>
+<b class="nc"><i>148</i>&nbsp;            result.getGeneratedBibDatabase().copyPreamble(masterDatabase);</b>
+<b class="nc"><i>149</i>&nbsp;            result.getGeneratedBibDatabase().copyStrings(masterDatabase);</b>
+<i>150</i>&nbsp;        }
+<b class="nc"><i>151</i>&nbsp;    }</b>
+<i>152</i>&nbsp;
+<i>153</i>&nbsp;    /*
+<i>154</i>&nbsp;     * Resolves and adds CrossRef entries
+<i>155</i>&nbsp;     */
+<i>156</i>&nbsp;    private void resolveCrossReferences(BibEntry entry, AuxParserResult result) {
+<b class="nc"><i>157</i>&nbsp;        entry.getField(FieldName.CROSSREF).ifPresent(crossref -&gt; {</b>
+<b class="nc"><i>158</i>&nbsp;            if (!result.getGeneratedBibDatabase().getEntryByKey(crossref).isPresent()) {</b>
+<b class="nc"><i>159</i>&nbsp;                Optional&lt;BibEntry&gt; refEntry = masterDatabase.getEntryByKey(crossref);</b>
+<i>160</i>&nbsp;
+<b class="nc"><i>161</i>&nbsp;                if (refEntry.isPresent()) {</b>
+<b class="nc"><i>162</i>&nbsp;                    insertEntry(refEntry.get(), result);</b>
+<b class="nc"><i>163</i>&nbsp;                    result.increaseCrossRefEntriesCounter();</b>
+<i>164</i>&nbsp;                } else {
+<b class="nc"><i>165</i>&nbsp;                    result.getUnresolvedKeys().add(crossref);</b>
+<i>166</i>&nbsp;                }
+<i>167</i>&nbsp;            }
+<b class="nc"><i>168</i>&nbsp;        });</b>
+<b class="nc"><i>169</i>&nbsp;    }</b>
+<i>170</i>&nbsp;
+<i>171</i>&nbsp;    /*
+<i>172</i>&nbsp;     * Insert a clone of the given entry. The clone is given a new unique ID.
+<i>173</i>&nbsp;     */
+<i>174</i>&nbsp;    private void insertEntry(BibEntry entry, AuxParserResult result) {
+<b class="nc"><i>175</i>&nbsp;        BibEntry clonedEntry = (BibEntry) entry.clone();</b>
+<b class="nc"><i>176</i>&nbsp;        result.getGeneratedBibDatabase().insertEntry(clonedEntry);</b>
+<b class="nc"><i>177</i>&nbsp;    }</b>
+<i>178</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

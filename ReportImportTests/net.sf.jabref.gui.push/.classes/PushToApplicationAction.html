@@ -1,0 +1,181 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: PushToApplicationAction</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.push</a> ]
+</div>
+
+<h1>Coverage Summary for Class: PushToApplicationAction (net.sf.jabref.gui.push)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PushToApplicationAction</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 39)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.push;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.event.ActionEvent;
+<i>4</i>&nbsp;import java.util.List;
+<i>5</i>&nbsp;import java.util.Optional;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import javax.swing.AbstractAction;
+<i>8</i>&nbsp;import javax.swing.Action;
+<i>9</i>&nbsp;import javax.swing.JOptionPane;
+<i>10</i>&nbsp;import javax.swing.SwingUtilities;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;import net.sf.jabref.JabRefExecutorService;
+<i>13</i>&nbsp;import net.sf.jabref.gui.BasePanel;
+<i>14</i>&nbsp;import net.sf.jabref.gui.JabRefFrame;
+<i>15</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>16</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;/**
+<i>19</i>&nbsp; * An Action class representing the process of invoking a PushToApplication operation.
+<i>20</i>&nbsp; */
+<i>21</i>&nbsp;class PushToApplicationAction extends AbstractAction implements Runnable {
+<i>22</i>&nbsp;    private final PushToApplication operation;
+<i>23</i>&nbsp;    private final JabRefFrame frame;
+<i>24</i>&nbsp;    private BasePanel panel;
+<i>25</i>&nbsp;    private List&lt;BibEntry&gt; entries;
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;
+<b class="nc"><i>28</i>&nbsp;    public PushToApplicationAction(JabRefFrame frame, PushToApplication operation) {</b>
+<b class="nc"><i>29</i>&nbsp;        this.frame = frame;</b>
+<b class="nc"><i>30</i>&nbsp;        putValue(Action.SMALL_ICON, operation.getIcon());</b>
+<b class="nc"><i>31</i>&nbsp;        putValue(Action.NAME, operation.getName());</b>
+<b class="nc"><i>32</i>&nbsp;        putValue(Action.SHORT_DESCRIPTION, operation.getTooltip());</b>
+<b class="nc"><i>33</i>&nbsp;        this.operation = operation;</b>
+<b class="nc"><i>34</i>&nbsp;    }</b>
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;    @Override
+<i>37</i>&nbsp;    public void actionPerformed(ActionEvent e) {
+<b class="nc"><i>38</i>&nbsp;        panel = frame.getCurrentBasePanel();</b>
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;        // Check if a BasePanel exists:
+<b class="nc"><i>41</i>&nbsp;        if (panel == null) {</b>
+<b class="nc"><i>42</i>&nbsp;            return;</b>
+<i>43</i>&nbsp;        }
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;        // Check if any entries are selected:
+<b class="nc"><i>46</i>&nbsp;        entries = panel.getSelectedEntries();</b>
+<b class="nc"><i>47</i>&nbsp;        if (entries.isEmpty()) {</b>
+<b class="nc"><i>48</i>&nbsp;            JOptionPane.showMessageDialog(frame, Localization.lang(&quot;This operation requires one or more entries to be selected.&quot;), (String) getValue(Action.NAME), JOptionPane.ERROR_MESSAGE);</b>
+<b class="nc"><i>49</i>&nbsp;            return;</b>
+<i>50</i>&nbsp;        }
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;        // If required, check that all entries have BibTeX keys defined:
+<b class="nc"><i>53</i>&nbsp;        if (operation.requiresBibtexKeys()) {</b>
+<b class="nc"><i>54</i>&nbsp;            for (BibEntry entry : entries) {</b>
+<b class="nc"><i>55</i>&nbsp;                if (!(entry.getCiteKeyOptional().isPresent()) || entry.getCiteKeyOptional().get().trim().isEmpty()) {</b>
+<b class="nc"><i>56</i>&nbsp;                    JOptionPane.showMessageDialog(frame,</b>
+<i>57</i>&nbsp;                            Localization
+<b class="nc"><i>58</i>&nbsp;                                    .lang(&quot;This operation requires all selected entries to have BibTeX keys defined.&quot;),</b>
+<b class="nc"><i>59</i>&nbsp;                            (String) getValue(Action.NAME), JOptionPane.ERROR_MESSAGE);</b>
+<b class="nc"><i>60</i>&nbsp;                    return;</b>
+<i>61</i>&nbsp;                }
+<b class="nc"><i>62</i>&nbsp;            }</b>
+<i>63</i>&nbsp;        }
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;        // All set, call the operation in a new thread:
+<b class="nc"><i>66</i>&nbsp;        JabRefExecutorService.INSTANCE.execute(this);</b>
+<b class="nc"><i>67</i>&nbsp;    }</b>
+<i>68</i>&nbsp;
+<i>69</i>&nbsp;    @Override
+<i>70</i>&nbsp;    public void run() {
+<i>71</i>&nbsp;        // Do the operation:
+<b class="nc"><i>72</i>&nbsp;        operation.pushEntries(panel.getDatabase(), entries, getKeyString(entries), panel.getBibDatabaseContext().getMetaData());</b>
+<i>73</i>&nbsp;
+<i>74</i>&nbsp;        // Call the operationCompleted() method on the event dispatch thread:
+<b class="nc"><i>75</i>&nbsp;        SwingUtilities.invokeLater(() -&gt; operation.operationCompleted(panel));</b>
+<b class="nc"><i>76</i>&nbsp;    }</b>
+<i>77</i>&nbsp;
+<i>78</i>&nbsp;    private static String getKeyString(List&lt;BibEntry&gt; bibentries) {
+<b class="nc"><i>79</i>&nbsp;        StringBuilder result = new StringBuilder();</b>
+<i>80</i>&nbsp;        Optional&lt;String&gt; citeKey;
+<b class="nc"><i>81</i>&nbsp;        boolean first = true;</b>
+<b class="nc"><i>82</i>&nbsp;        for (BibEntry bes : bibentries) {</b>
+<b class="nc"><i>83</i>&nbsp;            citeKey = bes.getCiteKeyOptional();</b>
+<i>84</i>&nbsp;            // if the key is empty we give a warning and ignore this entry
+<i>85</i>&nbsp;            // TODO: Give warning
+<b class="nc"><i>86</i>&nbsp;            if (!(citeKey.isPresent()) || citeKey.get().isEmpty()) {</b>
+<b class="nc"><i>87</i>&nbsp;                continue;</b>
+<i>88</i>&nbsp;            }
+<b class="nc"><i>89</i>&nbsp;            if (first) {</b>
+<b class="nc"><i>90</i>&nbsp;                result.append(citeKey.get());</b>
+<b class="nc"><i>91</i>&nbsp;                first = false;</b>
+<i>92</i>&nbsp;            } else {
+<b class="nc"><i>93</i>&nbsp;                result.append(&#39;,&#39;).append(citeKey.get());</b>
+<i>94</i>&nbsp;            }
+<b class="nc"><i>95</i>&nbsp;        }</b>
+<b class="nc"><i>96</i>&nbsp;        return result.toString();</b>
+<i>97</i>&nbsp;    }
+<i>98</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

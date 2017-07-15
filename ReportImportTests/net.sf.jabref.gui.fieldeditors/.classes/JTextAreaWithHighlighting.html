@@ -1,0 +1,304 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: JTextAreaWithHighlighting</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.fieldeditors</a> ]
+</div>
+
+<h1>Coverage Summary for Class: JTextAreaWithHighlighting (net.sf.jabref.gui.fieldeditors)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">JTextAreaWithHighlighting</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 56)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">JTextAreaWithHighlighting$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 6)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">JTextAreaWithHighlighting$2</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 6)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 15)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 68)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.fieldeditors;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.event.ActionEvent;
+<i>4</i>&nbsp;import java.util.Optional;
+<i>5</i>&nbsp;import java.util.regex.Matcher;
+<i>6</i>&nbsp;import java.util.regex.Pattern;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import javax.swing.AbstractAction;
+<i>9</i>&nbsp;import javax.swing.KeyStroke;
+<i>10</i>&nbsp;import javax.swing.text.BadLocationException;
+<i>11</i>&nbsp;import javax.swing.text.DefaultHighlighter;
+<i>12</i>&nbsp;import javax.swing.text.Document;
+<i>13</i>&nbsp;import javax.swing.text.Highlighter;
+<i>14</i>&nbsp;import javax.swing.text.Keymap;
+<i>15</i>&nbsp;import javax.swing.undo.CannotRedoException;
+<i>16</i>&nbsp;import javax.swing.undo.CannotUndoException;
+<i>17</i>&nbsp;import javax.swing.undo.UndoManager;
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;import net.sf.jabref.Globals;
+<i>20</i>&nbsp;import net.sf.jabref.gui.actions.Actions;
+<i>21</i>&nbsp;import net.sf.jabref.gui.actions.PasteAction;
+<i>22</i>&nbsp;import net.sf.jabref.gui.util.component.JTextAreaWithPlaceholder;
+<i>23</i>&nbsp;import net.sf.jabref.logic.search.SearchQueryHighlightListener;
+<i>24</i>&nbsp;import net.sf.jabref.preferences.JabRefPreferences;
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;import org.apache.commons.logging.Log;
+<i>27</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;public class JTextAreaWithHighlighting extends JTextAreaWithPlaceholder implements SearchQueryHighlightListener {
+<i>30</i>&nbsp;
+<b class="nc"><i>31</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(JTextAreaWithHighlighting.class);</b>
+<i>32</i>&nbsp;
+<b class="nc"><i>33</i>&nbsp;    private Optional&lt;Pattern&gt; highlightPattern = Optional.empty();</b>
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    private UndoManager undo;
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    public JTextAreaWithHighlighting() {
+<b class="nc"><i>38</i>&nbsp;        this(&quot;&quot;);</b>
+<b class="nc"><i>39</i>&nbsp;    }</b>
+<i>40</i>&nbsp;
+<i>41</i>&nbsp;    public JTextAreaWithHighlighting(String text) {
+<b class="nc"><i>42</i>&nbsp;        this(text, &quot;&quot;);</b>
+<b class="nc"><i>43</i>&nbsp;    }</b>
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;    /**
+<i>46</i>&nbsp;     * Creates a text area with the ability to highlight parts of the content.
+<i>47</i>&nbsp;     * It also defines a placeholder which will be displayed the content is empty.
+<i>48</i>&nbsp;     *
+<i>49</i>&nbsp;     * @param text
+<i>50</i>&nbsp;     * @param placeholder
+<i>51</i>&nbsp;     */
+<i>52</i>&nbsp;    public JTextAreaWithHighlighting(String text, String placeholder) {
+<b class="nc"><i>53</i>&nbsp;        super(text, placeholder);</b>
+<b class="nc"><i>54</i>&nbsp;        setupUndoRedo();</b>
+<b class="nc"><i>55</i>&nbsp;        setupPasteListener();</b>
+<b class="nc"><i>56</i>&nbsp;    }</b>
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;    private void setupPasteListener() {
+<i>59</i>&nbsp;        //register &quot;Paste&quot; action
+<b class="nc"><i>60</i>&nbsp;        getActionMap().put(Actions.PASTE, new PasteAction(this));</b>
+<i>61</i>&nbsp;        // Bind paste command to KeyBinds.PASTE
+<b class="nc"><i>62</i>&nbsp;        getInputMap().put(Globals.getKeyPrefs().getKey(net.sf.jabref.gui.keyboard.KeyBinding.PASTE), Actions.PASTE);</b>
+<b class="nc"><i>63</i>&nbsp;    }</b>
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;    private void setupUndoRedo() {
+<b class="nc"><i>66</i>&nbsp;        undo = new UndoManager();</b>
+<b class="nc"><i>67</i>&nbsp;        Document doc = getDocument();</b>
+<i>68</i>&nbsp;
+<i>69</i>&nbsp;        // Listen for undo and redo events
+<b class="nc"><i>70</i>&nbsp;        doc.addUndoableEditListener(evt -&gt; undo.addEdit(evt.getEdit()));</b>
+<i>71</i>&nbsp;
+<i>72</i>&nbsp;        // Create an undo action and add it to the text component
+<b class="nc"><i>73</i>&nbsp;        getActionMap().put(&quot;Undo&quot;, new AbstractAction(&quot;Undo&quot;) {</b>
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;            @Override
+<i>76</i>&nbsp;            public void actionPerformed(ActionEvent evt) {
+<i>77</i>&nbsp;                try {
+<b class="nc"><i>78</i>&nbsp;                    if (undo.canUndo()) {</b>
+<b class="nc"><i>79</i>&nbsp;                        undo.undo();</b>
+<i>80</i>&nbsp;                    }
+<b class="nc"><i>81</i>&nbsp;                } catch (CannotUndoException ignored) {</b>
+<i>82</i>&nbsp;                    // Ignored
+<b class="nc"><i>83</i>&nbsp;                }</b>
+<b class="nc"><i>84</i>&nbsp;            }</b>
+<i>85</i>&nbsp;        });
+<i>86</i>&nbsp;
+<i>87</i>&nbsp;        // Bind the undo action to ctl-Z
+<b class="nc"><i>88</i>&nbsp;        getInputMap().put(Globals.getKeyPrefs().getKey(net.sf.jabref.gui.keyboard.KeyBinding.UNDO), &quot;Undo&quot;);</b>
+<i>89</i>&nbsp;
+<i>90</i>&nbsp;        // Create a redo action and add it to the text component
+<b class="nc"><i>91</i>&nbsp;        getActionMap().put(&quot;Redo&quot;, new AbstractAction(Actions.REDO) {</b>
+<i>92</i>&nbsp;
+<i>93</i>&nbsp;            @Override
+<i>94</i>&nbsp;            public void actionPerformed(ActionEvent evt) {
+<i>95</i>&nbsp;                try {
+<b class="nc"><i>96</i>&nbsp;                    if (undo.canRedo()) {</b>
+<b class="nc"><i>97</i>&nbsp;                        undo.redo();</b>
+<i>98</i>&nbsp;                    }
+<b class="nc"><i>99</i>&nbsp;                } catch (CannotRedoException ignored) {</b>
+<i>100</i>&nbsp;                    // Ignored
+<b class="nc"><i>101</i>&nbsp;                }</b>
+<b class="nc"><i>102</i>&nbsp;            }</b>
+<i>103</i>&nbsp;        });
+<i>104</i>&nbsp;
+<i>105</i>&nbsp;        // Bind the redo action to ctrl-Y
+<b class="nc"><i>106</i>&nbsp;        boolean bind = true;</b>
+<b class="nc"><i>107</i>&nbsp;        KeyStroke redoKey = Globals.getKeyPrefs().getKey(net.sf.jabref.gui.keyboard.KeyBinding.REDO);</b>
+<b class="nc"><i>108</i>&nbsp;        if (Globals.prefs.getBoolean(JabRefPreferences.EDITOR_EMACS_KEYBINDINGS)) {</b>
+<i>109</i>&nbsp;            // If emacs is enabled, check if we have a conflict at keys
+<i>110</i>&nbsp;            // If yes, do not bind
+<i>111</i>&nbsp;            // Typically, we have: CTRL+y is &quot;yank&quot; in emacs and REDO in &#39;normal&#39; settings
+<i>112</i>&nbsp;            // The Emacs key bindings are stored in the keymap, not in the input map.
+<b class="nc"><i>113</i>&nbsp;            Keymap keymap = getKeymap();</b>
+<b class="nc"><i>114</i>&nbsp;            KeyStroke[] keys = keymap.getBoundKeyStrokes();</b>
+<b class="nc"><i>115</i>&nbsp;            int i = 0;</b>
+<b class="nc"><i>116</i>&nbsp;            while ((i &lt; keys.length) &amp;&amp; !keys[i].equals(redoKey)) {</b>
+<b class="nc"><i>117</i>&nbsp;                i++;</b>
+<i>118</i>&nbsp;            }
+<b class="nc"><i>119</i>&nbsp;            if (i &lt; keys.length) {</b>
+<i>120</i>&nbsp;                // conflict found -&gt; do not bind
+<b class="nc"><i>121</i>&nbsp;                bind = false;</b>
+<i>122</i>&nbsp;            }
+<i>123</i>&nbsp;        }
+<b class="nc"><i>124</i>&nbsp;        if (bind) {</b>
+<b class="nc"><i>125</i>&nbsp;            getInputMap().put(redoKey, &quot;Redo&quot;);</b>
+<i>126</i>&nbsp;        }
+<b class="nc"><i>127</i>&nbsp;    }</b>
+<i>128</i>&nbsp;
+<i>129</i>&nbsp;    /**
+<i>130</i>&nbsp;     * Highlight words in the Textarea
+<i>131</i>&nbsp;     *
+<i>132</i>&nbsp;     * @param words to highlight
+<i>133</i>&nbsp;     */
+<i>134</i>&nbsp;    private void highLight() {
+<i>135</i>&nbsp;        // highlight all characters that appear in charsToHighlight
+<b class="nc"><i>136</i>&nbsp;        Highlighter highlighter = getHighlighter();</b>
+<b class="nc"><i>137</i>&nbsp;        highlighter.removeAllHighlights();</b>
+<i>138</i>&nbsp;
+<b class="nc"><i>139</i>&nbsp;        if ((highlightPattern == null) || !highlightPattern.isPresent()) {</b>
+<b class="nc"><i>140</i>&nbsp;            return;</b>
+<i>141</i>&nbsp;        }
+<b class="nc"><i>142</i>&nbsp;        String content = getText();</b>
+<b class="nc"><i>143</i>&nbsp;        if (content.isEmpty()) {</b>
+<b class="nc"><i>144</i>&nbsp;            return;</b>
+<i>145</i>&nbsp;        }
+<i>146</i>&nbsp;
+<b class="nc"><i>147</i>&nbsp;        highlightPattern.ifPresent(pattern -&gt; {</b>
+<b class="nc"><i>148</i>&nbsp;            Matcher matcher = pattern.matcher(content);</b>
+<b class="nc"><i>149</i>&nbsp;            while (matcher.find()) {</b>
+<i>150</i>&nbsp;                try {
+<b class="nc"><i>151</i>&nbsp;                    highlighter.addHighlight(matcher.start(), matcher.end(), DefaultHighlighter.DefaultPainter);</b>
+<b class="nc"><i>152</i>&nbsp;                } catch (BadLocationException ble) {</b>
+<i>153</i>&nbsp;                    // should not occur if matcher works right
+<b class="nc"><i>154</i>&nbsp;                    LOGGER.warn(&quot;Highlighting not possible, bad location&quot;, ble);</b>
+<b class="nc"><i>155</i>&nbsp;                }</b>
+<i>156</i>&nbsp;            }
+<b class="nc"><i>157</i>&nbsp;        });</b>
+<i>158</i>&nbsp;
+<b class="nc"><i>159</i>&nbsp;    }</b>
+<i>160</i>&nbsp;
+<i>161</i>&nbsp;    @Override
+<i>162</i>&nbsp;    public void setText(String text) {
+<b class="nc"><i>163</i>&nbsp;        super.setText(text);</b>
+<b class="nc"><i>164</i>&nbsp;        highLight();</b>
+<b class="nc"><i>165</i>&nbsp;        if (undo != null) {</b>
+<b class="nc"><i>166</i>&nbsp;            undo.discardAllEdits();</b>
+<i>167</i>&nbsp;        }
+<b class="nc"><i>168</i>&nbsp;    }</b>
+<i>169</i>&nbsp;
+<i>170</i>&nbsp;    @Override
+<i>171</i>&nbsp;    public void highlightPattern(Optional&lt;Pattern&gt; highlightPattern) {
+<b class="nc"><i>172</i>&nbsp;        this.highlightPattern = highlightPattern;</b>
+<b class="nc"><i>173</i>&nbsp;        highLight();</b>
+<b class="nc"><i>174</i>&nbsp;    }</b>
+<i>175</i>&nbsp;
+<i>176</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,369 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: OAI2Fetcher</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.importer.fetcher</a> ]
+</div>
+
+<h1>Coverage Summary for Class: OAI2Fetcher (net.sf.jabref.gui.importer.fetcher)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">OAI2Fetcher</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 92)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.importer.fetcher;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.IOException;
+<i>4</i>&nbsp;import java.io.InputStream;
+<i>5</i>&nbsp;import java.io.UnsupportedEncodingException;
+<i>6</i>&nbsp;import java.net.HttpURLConnection;
+<i>7</i>&nbsp;import java.net.URL;
+<i>8</i>&nbsp;import java.net.URLEncoder;
+<i>9</i>&nbsp;import java.nio.charset.StandardCharsets;
+<i>10</i>&nbsp;import java.util.Date;
+<i>11</i>&nbsp;import java.util.Locale;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;import javax.swing.JOptionPane;
+<i>14</i>&nbsp;import javax.swing.JPanel;
+<i>15</i>&nbsp;import javax.xml.parsers.ParserConfigurationException;
+<i>16</i>&nbsp;import javax.xml.parsers.SAXParser;
+<i>17</i>&nbsp;import javax.xml.parsers.SAXParserFactory;
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;import net.sf.jabref.gui.importer.ImportInspectionDialog;
+<i>20</i>&nbsp;import net.sf.jabref.logic.help.HelpFile;
+<i>21</i>&nbsp;import net.sf.jabref.logic.importer.ImportInspector;
+<i>22</i>&nbsp;import net.sf.jabref.logic.importer.OutputPrinter;
+<i>23</i>&nbsp;import net.sf.jabref.logic.importer.util.OAI2Handler;
+<i>24</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>25</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>26</i>&nbsp;import net.sf.jabref.model.entry.FieldName;
+<i>27</i>&nbsp;import net.sf.jabref.model.entry.MonthUtil;
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;import org.apache.commons.logging.Log;
+<i>30</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>31</i>&nbsp;import org.xml.sax.SAXException;
+<i>32</i>&nbsp;import org.xml.sax.helpers.DefaultHandler;
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;/**
+<i>35</i>&nbsp; *
+<i>36</i>&nbsp; * This class can be used to access any archive offering an OAI2 interface. By
+<i>37</i>&nbsp; * default it will access ArXiv.org
+<i>38</i>&nbsp; *
+<i>39</i>&nbsp; * @see &lt;a href=&quot;http://arxiv.org/help/oa/index&quot;&gt;&lt;/a&gt;
+<i>40</i>&nbsp; *
+<i>41</i>&nbsp; * @author Ulrich St&amp;auml;rk
+<i>42</i>&nbsp; * @author Christian Kopf
+<i>43</i>&nbsp; */
+<i>44</i>&nbsp;public class OAI2Fetcher implements EntryFetcher {
+<i>45</i>&nbsp;
+<b class="nc"><i>46</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(OAI2Fetcher.class);</b>
+<i>47</i>&nbsp;    private static final String OAI2_ARXIV_PREFIXIDENTIFIER = &quot;oai%3AarXiv.org%3A&quot;;
+<i>48</i>&nbsp;    private static final String OAI2_ARXIV_HOST = &quot;export.arxiv.org&quot;;
+<i>49</i>&nbsp;    private static final String OAI2_ARXIV_SCRIPT = &quot;oai2&quot;;
+<i>50</i>&nbsp;    private static final String OAI2_ARXIV_METADATAPREFIX = &quot;arXiv&quot;;
+<i>51</i>&nbsp;    private static final String OAI2_ARXIV_ARCHIVENAME = &quot;ArXiv.org&quot;;
+<i>52</i>&nbsp;    private static final String OAI2_IDENTIFIER_FIELD = &quot;oai2identifier&quot;;
+<i>53</i>&nbsp;    private SAXParser saxParser;
+<i>54</i>&nbsp;    private final String oai2Host;
+<i>55</i>&nbsp;    private final String oai2Script;
+<i>56</i>&nbsp;    private final String oai2MetaDataPrefix;
+<i>57</i>&nbsp;    private final String oai2PrefixIdentifier;
+<i>58</i>&nbsp;    private final String oai2ArchiveName;
+<b class="nc"><i>59</i>&nbsp;    private boolean shouldContinue = true;</b>
+<b class="nc"><i>60</i>&nbsp;    private long waitTime = -1;</b>
+<i>61</i>&nbsp;    private Date lastCall;
+<i>62</i>&nbsp;
+<i>63</i>&nbsp;    /**
+<i>64</i>&nbsp;     *
+<i>65</i>&nbsp;     *
+<i>66</i>&nbsp;     * @param oai2Host
+<i>67</i>&nbsp;     *            the host to query without leading http:// and without trailing /
+<i>68</i>&nbsp;     * @param oai2Script
+<i>69</i>&nbsp;     *            the relative location of the oai2 interface without leading
+<i>70</i>&nbsp;     *            and trailing /
+<i>71</i>&nbsp;     * @param oai2Metadataprefix
+<i>72</i>&nbsp;     *            the urlencoded metadataprefix
+<i>73</i>&nbsp;     * @param oai2Prefixidentifier
+<i>74</i>&nbsp;     *            the urlencoded prefix identifier
+<i>75</i>&nbsp;     * @param waitTimeMs
+<i>76</i>&nbsp;     *            Time to wait in milliseconds between query-requests.
+<i>77</i>&nbsp;     */
+<i>78</i>&nbsp;    public OAI2Fetcher(String oai2Host, String oai2Script, String oai2Metadataprefix, String oai2Prefixidentifier,
+<b class="nc"><i>79</i>&nbsp;            String oai2ArchiveName, long waitTimeMs) {</b>
+<b class="nc"><i>80</i>&nbsp;        this.oai2Host = oai2Host;</b>
+<b class="nc"><i>81</i>&nbsp;        this.oai2Script = oai2Script;</b>
+<b class="nc"><i>82</i>&nbsp;        this.oai2MetaDataPrefix = oai2Metadataprefix;</b>
+<b class="nc"><i>83</i>&nbsp;        this.oai2PrefixIdentifier = oai2Prefixidentifier;</b>
+<b class="nc"><i>84</i>&nbsp;        this.oai2ArchiveName = oai2ArchiveName;</b>
+<b class="nc"><i>85</i>&nbsp;        this.waitTime = waitTimeMs;</b>
+<i>86</i>&nbsp;        try {
+<b class="nc"><i>87</i>&nbsp;            SAXParserFactory parserFactory = SAXParserFactory.newInstance();</b>
+<b class="nc"><i>88</i>&nbsp;            saxParser = parserFactory.newSAXParser();</b>
+<b class="nc"><i>89</i>&nbsp;        } catch (ParserConfigurationException | SAXException e) {</b>
+<b class="nc"><i>90</i>&nbsp;            LOGGER.error(&quot;Error creating SAXParser for OAI2Fetcher&quot;, e);</b>
+<b class="nc"><i>91</i>&nbsp;        }</b>
+<b class="nc"><i>92</i>&nbsp;    }</b>
+<i>93</i>&nbsp;
+<i>94</i>&nbsp;    /**
+<i>95</i>&nbsp;     * Default Constructor. The archive queried will be ArXiv.org
+<i>96</i>&nbsp;     *
+<i>97</i>&nbsp;     */
+<i>98</i>&nbsp;    public OAI2Fetcher() {
+<b class="nc"><i>99</i>&nbsp;        this(OAI2Fetcher.OAI2_ARXIV_HOST, OAI2Fetcher.OAI2_ARXIV_SCRIPT, OAI2Fetcher.OAI2_ARXIV_METADATAPREFIX,</b>
+<i>100</i>&nbsp;                OAI2Fetcher.OAI2_ARXIV_PREFIXIDENTIFIER, OAI2Fetcher.OAI2_ARXIV_ARCHIVENAME, 20000L);
+<b class="nc"><i>101</i>&nbsp;    }</b>
+<i>102</i>&nbsp;
+<i>103</i>&nbsp;    /**
+<i>104</i>&nbsp;     * Construct the query URL
+<i>105</i>&nbsp;     *
+<i>106</i>&nbsp;     * @param key
+<i>107</i>&nbsp;     *            The key of the OAI2 entry that the url should point to.
+<i>108</i>&nbsp;     *
+<i>109</i>&nbsp;     * @return a String denoting the query URL
+<i>110</i>&nbsp;     */
+<i>111</i>&nbsp;    public String constructUrl(String key) {
+<i>112</i>&nbsp;        String identifier;
+<i>113</i>&nbsp;        try {
+<b class="nc"><i>114</i>&nbsp;            identifier = URLEncoder.encode(key, StandardCharsets.UTF_8.name());</b>
+<b class="nc"><i>115</i>&nbsp;        } catch (UnsupportedEncodingException e) {</b>
+<b class="nc"><i>116</i>&nbsp;            return &quot;&quot;;</b>
+<b class="nc"><i>117</i>&nbsp;        }</b>
+<b class="nc"><i>118</i>&nbsp;        return &quot;http://&quot; + oai2Host + &quot;/&quot; + oai2Script + &quot;?&quot; + &quot;verb=GetRecord&quot; + &quot;&amp;identifier=&quot; + oai2PrefixIdentifier</b>
+<i>119</i>&nbsp;                + identifier + &quot;&amp;metadataPrefix=&quot; + oai2MetaDataPrefix;
+<i>120</i>&nbsp;    }
+<i>121</i>&nbsp;
+<i>122</i>&nbsp;    /**
+<i>123</i>&nbsp;     * some archives - like ArXiv.org - might expect of you to wait some time
+<i>124</i>&nbsp;     */
+<i>125</i>&nbsp;    private boolean shouldWait() {
+<b class="nc"><i>126</i>&nbsp;        return waitTime &gt; 0;</b>
+<i>127</i>&nbsp;    }
+<i>128</i>&nbsp;
+<i>129</i>&nbsp;    /**
+<i>130</i>&nbsp;     * Strip subcategories from ArXiv key.
+<i>131</i>&nbsp;     *
+<i>132</i>&nbsp;     * @param key The key to fix.
+<i>133</i>&nbsp;     * @return Fixed key.
+<i>134</i>&nbsp;     */
+<i>135</i>&nbsp;    public static String fixKey(String key) {
+<i>136</i>&nbsp;
+<b class="nc"><i>137</i>&nbsp;        String resultingKey = key;</b>
+<b class="nc"><i>138</i>&nbsp;        if (resultingKey.toLowerCase(Locale.ENGLISH).startsWith(&quot;arxiv:&quot;)) {</b>
+<b class="nc"><i>139</i>&nbsp;            resultingKey = resultingKey.substring(6);</b>
+<i>140</i>&nbsp;        }
+<i>141</i>&nbsp;
+<b class="nc"><i>142</i>&nbsp;        int dot = resultingKey.indexOf(&#39;.&#39;);</b>
+<b class="nc"><i>143</i>&nbsp;        int slash = resultingKey.indexOf(&#39;/&#39;);</b>
+<i>144</i>&nbsp;
+<b class="nc"><i>145</i>&nbsp;        if ((dot &gt; -1) &amp;&amp; (dot &lt; slash)) {</b>
+<b class="nc"><i>146</i>&nbsp;            resultingKey = resultingKey.substring(0, dot) + resultingKey.substring(slash, resultingKey.length());</b>
+<i>147</i>&nbsp;        }
+<i>148</i>&nbsp;
+<b class="nc"><i>149</i>&nbsp;        return resultingKey;</b>
+<i>150</i>&nbsp;    }
+<i>151</i>&nbsp;
+<i>152</i>&nbsp;    /**
+<i>153</i>&nbsp;     * Import an entry from an OAI2 archive. The BibEntry provided has to
+<i>154</i>&nbsp;     * have the field OAI2_IDENTIFIER_FIELD set to the search string.
+<i>155</i>&nbsp;     *
+<i>156</i>&nbsp;     * @param key
+<i>157</i>&nbsp;     *            The OAI2 key to fetch from ArXiv.
+<i>158</i>&nbsp;     * @return The imported BibEntry or null if none.
+<i>159</i>&nbsp;     */
+<i>160</i>&nbsp;    protected BibEntry importOai2Entry(String key) throws IOException, SAXException {
+<i>161</i>&nbsp;        /**
+<i>162</i>&nbsp;         * Fix for problem reported in mailing-list:
+<i>163</i>&nbsp;         *   https://sourceforge.net/forum/message.php?msg_id=4087158
+<i>164</i>&nbsp;         */
+<b class="nc"><i>165</i>&nbsp;        String fixedKey = OAI2Fetcher.fixKey(key);</b>
+<i>166</i>&nbsp;
+<b class="nc"><i>167</i>&nbsp;        String url = constructUrl(fixedKey);</b>
+<b class="nc"><i>168</i>&nbsp;        URL oai2Url = new URL(url);</b>
+<b class="nc"><i>169</i>&nbsp;        HttpURLConnection oai2Connection = (HttpURLConnection) oai2Url.openConnection();</b>
+<b class="nc"><i>170</i>&nbsp;        oai2Connection.setRequestProperty(&quot;User-Agent&quot;, &quot;JabRef&quot;);</b>
+<i>171</i>&nbsp;
+<i>172</i>&nbsp;        /* create an empty BibEntry and set the oai2identifier field */
+<b class="nc"><i>173</i>&nbsp;        BibEntry entry = new BibEntry(&quot;article&quot;);</b>
+<b class="nc"><i>174</i>&nbsp;        entry.setField(OAI2Fetcher.OAI2_IDENTIFIER_FIELD, fixedKey);</b>
+<b class="nc"><i>175</i>&nbsp;        DefaultHandler handlerBase = new OAI2Handler(entry);</b>
+<i>176</i>&nbsp;
+<b class="nc"><i>177</i>&nbsp;        try (InputStream inputStream = oai2Connection.getInputStream()) {</b>
+<i>178</i>&nbsp;            /* parse the result */
+<b class="nc"><i>179</i>&nbsp;            saxParser.parse(inputStream, handlerBase);</b>
+<i>180</i>&nbsp;
+<i>181</i>&nbsp;            /* Correct line breaks and spacing */
+<b class="nc"><i>182</i>&nbsp;            for (String name : entry.getFieldNames()) {</b>
+<b class="nc"><i>183</i>&nbsp;                entry.getField(name)</b>
+<b class="nc"><i>184</i>&nbsp;                        .ifPresent(content -&gt; entry.setField(name, OAI2Handler.correctLineBreaks(content)));</b>
+<b class="nc"><i>185</i>&nbsp;            }</b>
+<i>186</i>&nbsp;
+<b class="nc"><i>187</i>&nbsp;            if (fixedKey.matches(&quot;\\d\\d\\d\\d\\..*&quot;)) {</b>
+<b class="nc"><i>188</i>&nbsp;                entry.setField(FieldName.YEAR, &quot;20&quot; + fixedKey.substring(0, 2));</b>
+<i>189</i>&nbsp;
+<b class="nc"><i>190</i>&nbsp;                int monthNumber = Integer.parseInt(fixedKey.substring(2, 4));</b>
+<b class="nc"><i>191</i>&nbsp;                MonthUtil.Month month = MonthUtil.getMonthByNumber(monthNumber);</b>
+<b class="nc"><i>192</i>&nbsp;                if (month.isValid()) {</b>
+<b class="nc"><i>193</i>&nbsp;                    entry.setField(FieldName.MONTH, month.bibtexFormat);</b>
+<i>194</i>&nbsp;                }
+<i>195</i>&nbsp;            }
+<b class="nc"><i>196</i>&nbsp;        }</b>
+<b class="nc"><i>197</i>&nbsp;        return entry;</b>
+<i>198</i>&nbsp;    }
+<i>199</i>&nbsp;
+<i>200</i>&nbsp;    @Override
+<i>201</i>&nbsp;    public HelpFile getHelpPage() {
+<b class="nc"><i>202</i>&nbsp;        return HelpFile.FETCHER_OAI2_ARXIV;</b>
+<i>203</i>&nbsp;    }
+<i>204</i>&nbsp;
+<i>205</i>&nbsp;    @Override
+<i>206</i>&nbsp;    public JPanel getOptionsPanel() {
+<i>207</i>&nbsp;        // we have no additional options
+<b class="nc"><i>208</i>&nbsp;        return null;</b>
+<i>209</i>&nbsp;    }
+<i>210</i>&nbsp;
+<i>211</i>&nbsp;    @Override
+<i>212</i>&nbsp;    public String getTitle() {
+<b class="nc"><i>213</i>&nbsp;        return &quot;ArXiv.org&quot;;</b>
+<i>214</i>&nbsp;    }
+<i>215</i>&nbsp;
+<i>216</i>&nbsp;    @Override
+<i>217</i>&nbsp;    public boolean processQuery(String query, ImportInspector dialog, OutputPrinter status) {
+<i>218</i>&nbsp;        try {
+<b class="nc"><i>219</i>&nbsp;            shouldContinue = true;</b>
+<i>220</i>&nbsp;
+<i>221</i>&nbsp;            /* multiple keys can be delimited by ; or space */
+<b class="nc"><i>222</i>&nbsp;            String[] keys = query.replace(&quot; &quot;, &quot;;&quot;).split(&quot;;&quot;);</b>
+<b class="nc"><i>223</i>&nbsp;            for (int i = 0; i &lt; keys.length; i++) {</b>
+<b class="nc"><i>224</i>&nbsp;                String key = keys[i];</b>
+<i>225</i>&nbsp;
+<i>226</i>&nbsp;                /*
+<i>227</i>&nbsp;                 * some archives - like arxive.org - might expect of you to wait
+<i>228</i>&nbsp;                 * some time
+<i>229</i>&nbsp;                 */
+<b class="nc"><i>230</i>&nbsp;                if (shouldWait() &amp;&amp; (lastCall != null)) {</b>
+<i>231</i>&nbsp;
+<b class="nc"><i>232</i>&nbsp;                    long elapsed = new Date().getTime() - lastCall.getTime();</b>
+<i>233</i>&nbsp;
+<b class="nc"><i>234</i>&nbsp;                    while (elapsed &lt; waitTime) {</b>
+<b class="nc"><i>235</i>&nbsp;                        status.setStatus(</b>
+<b class="nc"><i>236</i>&nbsp;                                Localization.lang(&quot;Waiting for ArXiv...&quot;) + ((waitTime - elapsed) / 1000) + &quot; s&quot;);</b>
+<b class="nc"><i>237</i>&nbsp;                        Thread.sleep(1000);</b>
+<b class="nc"><i>238</i>&nbsp;                        elapsed = new Date().getTime() - lastCall.getTime();</b>
+<i>239</i>&nbsp;                    }
+<i>240</i>&nbsp;                }
+<i>241</i>&nbsp;
+<b class="nc"><i>242</i>&nbsp;                status.setStatus(Localization.lang(&quot;Processing %0&quot;, key));</b>
+<i>243</i>&nbsp;
+<i>244</i>&nbsp;                /* the cancel button has been hit */
+<b class="nc"><i>245</i>&nbsp;                if (!shouldContinue) {</b>
+<b class="nc"><i>246</i>&nbsp;                    break;</b>
+<i>247</i>&nbsp;                }
+<i>248</i>&nbsp;
+<i>249</i>&nbsp;                /* query the archive and load the results into the BibEntry */
+<b class="nc"><i>250</i>&nbsp;                BibEntry be = null;</b>
+<i>251</i>&nbsp;                try {
+<b class="nc"><i>252</i>&nbsp;                    be = importOai2Entry(key);</b>
+<b class="nc"><i>253</i>&nbsp;                } catch (SAXException e) {</b>
+<b class="nc"><i>254</i>&nbsp;                    String url = constructUrl(OAI2Fetcher.fixKey(key));</b>
+<b class="nc"><i>255</i>&nbsp;                    LOGGER.error(&quot;Error while fetching from &quot; + getTitle(), e);</b>
+<b class="nc"><i>256</i>&nbsp;                    ((ImportInspectionDialog)dialog).showMessage(Localization.lang(&quot;Error while fetching from %0&quot;, getTitle()) +&quot;\n&quot;+</b>
+<b class="nc"><i>257</i>&nbsp;                                    Localization.lang(&quot;A SAX exception occurred while parsing &#39;%0&#39;:&quot;, url),</b>
+<b class="nc"><i>258</i>&nbsp;                            Localization.lang(&quot;Search %0&quot;, getTitle()), JOptionPane.ERROR_MESSAGE);</b>
+<b class="nc"><i>259</i>&nbsp;                }</b>
+<i>260</i>&nbsp;
+<b class="nc"><i>261</i>&nbsp;                if (shouldWait()) {</b>
+<b class="nc"><i>262</i>&nbsp;                    lastCall = new Date();</b>
+<i>263</i>&nbsp;                }
+<i>264</i>&nbsp;
+<i>265</i>&nbsp;                /* add the entry to the inspection dialog */
+<b class="nc"><i>266</i>&nbsp;                if (be != null) {</b>
+<b class="nc"><i>267</i>&nbsp;                    dialog.addEntry(be);</b>
+<i>268</i>&nbsp;                }
+<i>269</i>&nbsp;
+<i>270</i>&nbsp;                /* update the dialogs progress bar */
+<b class="nc"><i>271</i>&nbsp;                dialog.setProgress(i + 1, keys.length);</b>
+<i>272</i>&nbsp;            }
+<i>273</i>&nbsp;
+<b class="nc"><i>274</i>&nbsp;            return true;</b>
+<b class="nc"><i>275</i>&nbsp;        } catch (IOException | InterruptedException e) {</b>
+<b class="nc"><i>276</i>&nbsp;            LOGGER.error(&quot;Error while fetching from &quot; + getTitle(), e);</b>
+<b class="nc"><i>277</i>&nbsp;            ((ImportInspectionDialog)dialog).showErrorMessage(this.getTitle(), e.getLocalizedMessage());</b>
+<i>278</i>&nbsp;    }
+<b class="nc"><i>279</i>&nbsp;        return false;</b>
+<i>280</i>&nbsp;    }
+<i>281</i>&nbsp;
+<i>282</i>&nbsp;    @Override
+<i>283</i>&nbsp;    public void stopFetching() {
+<b class="nc"><i>284</i>&nbsp;        shouldContinue = false;</b>
+<b class="nc"><i>285</i>&nbsp;    }</b>
+<i>286</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

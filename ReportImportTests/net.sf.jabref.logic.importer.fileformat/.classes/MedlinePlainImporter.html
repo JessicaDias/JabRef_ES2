@@ -1,0 +1,489 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: MedlinePlainImporter</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.importer.fileformat</a> ]
+</div>
+
+<h1>Coverage Summary for Class: MedlinePlainImporter (net.sf.jabref.logic.importer.fileformat)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MedlinePlainImporter</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 19)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 237)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.importer.fileformat;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.BufferedReader;
+<i>4</i>&nbsp;import java.io.IOException;
+<i>5</i>&nbsp;import java.util.ArrayList;
+<i>6</i>&nbsp;import java.util.HashMap;
+<i>7</i>&nbsp;import java.util.List;
+<i>8</i>&nbsp;import java.util.Locale;
+<i>9</i>&nbsp;import java.util.Map;
+<i>10</i>&nbsp;import java.util.Optional;
+<i>11</i>&nbsp;import java.util.regex.Pattern;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;import net.sf.jabref.logic.importer.Importer;
+<i>14</i>&nbsp;import net.sf.jabref.logic.importer.ParserResult;
+<i>15</i>&nbsp;import net.sf.jabref.logic.util.FileExtensions;
+<i>16</i>&nbsp;import net.sf.jabref.logic.util.OS;
+<i>17</i>&nbsp;import net.sf.jabref.model.entry.AuthorList;
+<i>18</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>19</i>&nbsp;import net.sf.jabref.model.entry.FieldName;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;/**
+<i>22</i>&nbsp; * Importer for the MEDLINE Plain format.
+<i>23</i>&nbsp; *
+<i>24</i>&nbsp; * check here for details on the format
+<i>25</i>&nbsp; * http://www.nlm.nih.gov/bsd/mms/medlineelements.html
+<i>26</i>&nbsp; *
+<i>27</i>&nbsp; * @author vegeziel
+<i>28</i>&nbsp; */
+<b class="nc"><i>29</i>&nbsp;public class MedlinePlainImporter extends Importer {</b>
+<i>30</i>&nbsp;
+<b class="nc"><i>31</i>&nbsp;    private static final Pattern PMID_PATTERN = Pattern.compile(&quot;PMID.*-.*&quot;);</b>
+<b class="nc"><i>32</i>&nbsp;    private static final Pattern PMC_PATTERN = Pattern.compile(&quot;PMC.*-.*&quot;);</b>
+<b class="nc"><i>33</i>&nbsp;    private static final Pattern PMCR_PATTERN = Pattern.compile(&quot;PMCR.*-.*&quot;);</b>
+<b class="nc"><i>34</i>&nbsp;    private static final Pattern CREATE_DATE_PATTERN = Pattern.compile(&quot;\\d{4}/[0123]?\\d/\\s?[012]\\d:[0-5]\\d&quot;);</b>
+<b class="nc"><i>35</i>&nbsp;    private static final Pattern COMPLETE_DATE_PATTERN = Pattern.compile(&quot;\\d{8}&quot;);</b>
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;    @Override
+<i>39</i>&nbsp;    public String getName() {
+<b class="nc"><i>40</i>&nbsp;        return &quot;MedlinePlain&quot;;</b>
+<i>41</i>&nbsp;    }
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;    @Override
+<i>44</i>&nbsp;    public FileExtensions getExtensions() {
+<b class="nc"><i>45</i>&nbsp;        return FileExtensions.MEDLINE_PLAIN;</b>
+<i>46</i>&nbsp;    }
+<i>47</i>&nbsp;
+<i>48</i>&nbsp;    @Override
+<i>49</i>&nbsp;    public String getDescription() {
+<b class="nc"><i>50</i>&nbsp;        return &quot;Importer for the MedlinePlain format.&quot;;</b>
+<i>51</i>&nbsp;    }
+<i>52</i>&nbsp;
+<i>53</i>&nbsp;    @Override
+<i>54</i>&nbsp;    public boolean isRecognizedFormat(BufferedReader reader) throws IOException {
+<i>55</i>&nbsp;
+<i>56</i>&nbsp;        // Our strategy is to look for the &quot;PMID  - *&quot;, &quot;PMC.*-.*&quot;, or &quot;PMCR.*-.*&quot; line
+<i>57</i>&nbsp;        // (i.e., PubMed Unique Identifier, PubMed Central Identifier, PubMed Central Release)
+<i>58</i>&nbsp;        String str;
+<b class="nc"><i>59</i>&nbsp;        while ((str = reader.readLine()) != null) {</b>
+<b class="nc"><i>60</i>&nbsp;            if (PMID_PATTERN.matcher(str).find() || PMC_PATTERN.matcher(str).find()</b>
+<b class="nc"><i>61</i>&nbsp;                    || PMCR_PATTERN.matcher(str).find()) {</b>
+<b class="nc"><i>62</i>&nbsp;                return true;</b>
+<i>63</i>&nbsp;            }
+<i>64</i>&nbsp;        }
+<b class="nc"><i>65</i>&nbsp;        return false;</b>
+<i>66</i>&nbsp;    }
+<i>67</i>&nbsp;
+<i>68</i>&nbsp;    @Override
+<i>69</i>&nbsp;    public ParserResult importDatabase(BufferedReader reader) throws IOException {
+<b class="nc"><i>70</i>&nbsp;        List&lt;BibEntry&gt; bibitems = new ArrayList&lt;&gt;();</b>
+<i>71</i>&nbsp;
+<i>72</i>&nbsp;        //use optional here, so that no exception will be thrown if the file is empty
+<b class="nc"><i>73</i>&nbsp;        Optional&lt;String&gt; OptionalLines = reader.lines().reduce((line, nextline) -&gt; line + &quot;\n&quot; + nextline);</b>
+<b class="nc"><i>74</i>&nbsp;        String linesAsString = OptionalLines.isPresent() ? OptionalLines.get() : &quot;&quot;;</b>
+<i>75</i>&nbsp;
+<b class="nc"><i>76</i>&nbsp;        String[] entries = linesAsString.replace(&quot;\u2013&quot;, &quot;-&quot;).replace(&quot;\u2014&quot;, &quot;--&quot;).replace(&quot;\u2015&quot;, &quot;--&quot;)</b>
+<b class="nc"><i>77</i>&nbsp;                .split(&quot;\\n\\n&quot;);</b>
+<i>78</i>&nbsp;
+<b class="nc"><i>79</i>&nbsp;        for (String entry1 : entries) {</b>
+<i>80</i>&nbsp;
+<b class="nc"><i>81</i>&nbsp;            if (entry1.trim().isEmpty() || !entry1.contains(&quot;-&quot;)) {</b>
+<b class="nc"><i>82</i>&nbsp;                continue;</b>
+<i>83</i>&nbsp;            }
+<i>84</i>&nbsp;
+<b class="nc"><i>85</i>&nbsp;            String type = BibEntry.DEFAULT_TYPE;</b>
+<b class="nc"><i>86</i>&nbsp;            String author = &quot;&quot;;</b>
+<b class="nc"><i>87</i>&nbsp;            String editor = &quot;&quot;;</b>
+<b class="nc"><i>88</i>&nbsp;            String comment = &quot;&quot;;</b>
+<b class="nc"><i>89</i>&nbsp;            Map&lt;String, String&gt; fields = new HashMap&lt;&gt;();</b>
+<i>90</i>&nbsp;
+<b class="nc"><i>91</i>&nbsp;            String[] lines = entry1.split(&quot;\n&quot;);</b>
+<i>92</i>&nbsp;
+<b class="nc"><i>93</i>&nbsp;            for (int j = 0; j &lt; lines.length; j++) {</b>
+<i>94</i>&nbsp;
+<b class="nc"><i>95</i>&nbsp;                StringBuilder current = new StringBuilder(lines[j]);</b>
+<b class="nc"><i>96</i>&nbsp;                boolean done = false;</b>
+<i>97</i>&nbsp;
+<b class="nc"><i>98</i>&nbsp;                while (!done &amp;&amp; (j &lt; (lines.length - 1))) {</b>
+<b class="nc"><i>99</i>&nbsp;                    if (lines[j + 1].length() &lt;= 4) {</b>
+<b class="nc"><i>100</i>&nbsp;                        j++;</b>
+<b class="nc"><i>101</i>&nbsp;                        continue;</b>
+<i>102</i>&nbsp;                    }
+<b class="nc"><i>103</i>&nbsp;                    if (lines[j + 1].charAt(4) != &#39;-&#39;) {</b>
+<b class="nc"><i>104</i>&nbsp;                        if ((current.length() &gt; 0) &amp;&amp; !Character.isWhitespace(current.charAt(current.length() - 1))) {</b>
+<b class="nc"><i>105</i>&nbsp;                            current.append(&#39; &#39;);</b>
+<i>106</i>&nbsp;                        }
+<b class="nc"><i>107</i>&nbsp;                        current.append(lines[j + 1].trim());</b>
+<b class="nc"><i>108</i>&nbsp;                        j++;</b>
+<i>109</i>&nbsp;                    } else {
+<b class="nc"><i>110</i>&nbsp;                        done = true;</b>
+<i>111</i>&nbsp;                    }
+<i>112</i>&nbsp;                }
+<b class="nc"><i>113</i>&nbsp;                String entry = current.toString();</b>
+<b class="nc"><i>114</i>&nbsp;                if (!checkLineValidity(entry)) {</b>
+<b class="nc"><i>115</i>&nbsp;                    continue;</b>
+<i>116</i>&nbsp;                }
+<i>117</i>&nbsp;
+<b class="nc"><i>118</i>&nbsp;                String label = entry.substring(0, entry.indexOf(&#39;-&#39;)).trim();</b>
+<b class="nc"><i>119</i>&nbsp;                String value = entry.substring(entry.indexOf(&#39;-&#39;) + 1).trim();</b>
+<i>120</i>&nbsp;
+<b class="nc"><i>121</i>&nbsp;                if (&quot;PT&quot;.equals(label)) {</b>
+<b class="nc"><i>122</i>&nbsp;                    type = addSourceType(value, type);</b>
+<i>123</i>&nbsp;                }
+<b class="nc"><i>124</i>&nbsp;                addDates(fields, label, value);</b>
+<b class="nc"><i>125</i>&nbsp;                addAbstract(fields, label, value);</b>
+<b class="nc"><i>126</i>&nbsp;                addTitles(fields, label, value, type);</b>
+<b class="nc"><i>127</i>&nbsp;                addIDs(fields, label, value);</b>
+<b class="nc"><i>128</i>&nbsp;                addStandardNumber(fields, label, value);</b>
+<i>129</i>&nbsp;
+<b class="nc"><i>130</i>&nbsp;                if (&quot;FAU&quot;.equals(label)) {</b>
+<b class="nc"><i>131</i>&nbsp;                    if (&quot;&quot;.equals(author)) {</b>
+<b class="nc"><i>132</i>&nbsp;                        author = value;</b>
+<i>133</i>&nbsp;                    } else {
+<b class="nc"><i>134</i>&nbsp;                        author += &quot; and &quot; + value;</b>
+<i>135</i>&nbsp;                    }
+<b class="nc"><i>136</i>&nbsp;                } else if (&quot;FED&quot;.equals(label)) {</b>
+<b class="nc"><i>137</i>&nbsp;                    if (&quot;&quot;.equals(editor)) {</b>
+<b class="nc"><i>138</i>&nbsp;                        editor = value;</b>
+<i>139</i>&nbsp;                    } else {
+<b class="nc"><i>140</i>&nbsp;                        editor += &quot; and &quot; + value;</b>
+<i>141</i>&nbsp;                    }
+<i>142</i>&nbsp;                }
+<i>143</i>&nbsp;
+<i>144</i>&nbsp;                //store the fields in a map
+<b class="nc"><i>145</i>&nbsp;                Map&lt;String, String&gt; hashMap = new HashMap&lt;&gt;();</b>
+<b class="nc"><i>146</i>&nbsp;                hashMap.put(&quot;PG&quot;, FieldName.PAGES);</b>
+<b class="nc"><i>147</i>&nbsp;                hashMap.put(&quot;PL&quot;, FieldName.ADDRESS);</b>
+<b class="nc"><i>148</i>&nbsp;                hashMap.put(&quot;PHST&quot;, &quot;history&quot;);</b>
+<b class="nc"><i>149</i>&nbsp;                hashMap.put(&quot;PST&quot;, &quot;publication-status&quot;);</b>
+<b class="nc"><i>150</i>&nbsp;                hashMap.put(&quot;VI&quot;, FieldName.VOLUME);</b>
+<b class="nc"><i>151</i>&nbsp;                hashMap.put(&quot;LA&quot;, FieldName.LANGUAGE);</b>
+<b class="nc"><i>152</i>&nbsp;                hashMap.put(&quot;PUBM&quot;, &quot;model&quot;);</b>
+<b class="nc"><i>153</i>&nbsp;                hashMap.put(&quot;RN&quot;, &quot;registry-number&quot;);</b>
+<b class="nc"><i>154</i>&nbsp;                hashMap.put(&quot;NM&quot;, &quot;substance-name&quot;);</b>
+<b class="nc"><i>155</i>&nbsp;                hashMap.put(&quot;OCI&quot;, &quot;copyright-owner&quot;);</b>
+<b class="nc"><i>156</i>&nbsp;                hashMap.put(&quot;CN&quot;, &quot;corporate&quot;);</b>
+<b class="nc"><i>157</i>&nbsp;                hashMap.put(&quot;IP&quot;, FieldName.ISSUE);</b>
+<b class="nc"><i>158</i>&nbsp;                hashMap.put(&quot;EN&quot;, FieldName.EDITION);</b>
+<b class="nc"><i>159</i>&nbsp;                hashMap.put(&quot;GS&quot;, &quot;gene-symbol&quot;);</b>
+<b class="nc"><i>160</i>&nbsp;                hashMap.put(&quot;GN&quot;, FieldName.NOTE);</b>
+<b class="nc"><i>161</i>&nbsp;                hashMap.put(&quot;GR&quot;, &quot;grantno&quot;);</b>
+<b class="nc"><i>162</i>&nbsp;                hashMap.put(&quot;SO&quot;, &quot;source&quot;);</b>
+<b class="nc"><i>163</i>&nbsp;                hashMap.put(&quot;NR&quot;, &quot;number-of-references&quot;);</b>
+<b class="nc"><i>164</i>&nbsp;                hashMap.put(&quot;SFM&quot;, &quot;space-flight-mission&quot;);</b>
+<b class="nc"><i>165</i>&nbsp;                hashMap.put(&quot;STAT&quot;, &quot;status&quot;);</b>
+<b class="nc"><i>166</i>&nbsp;                hashMap.put(&quot;SB&quot;, &quot;subset&quot;);</b>
+<b class="nc"><i>167</i>&nbsp;                hashMap.put(&quot;OTO&quot;, &quot;termowner&quot;);</b>
+<b class="nc"><i>168</i>&nbsp;                hashMap.put(&quot;OWN&quot;, FieldName.OWNER);</b>
+<i>169</i>&nbsp;
+<i>170</i>&nbsp;                //add the fields to hm
+<b class="nc"><i>171</i>&nbsp;                for (Map.Entry&lt;String, String&gt; mapEntry : hashMap.entrySet()) {</b>
+<b class="nc"><i>172</i>&nbsp;                    String medlineKey = mapEntry.getKey();</b>
+<b class="nc"><i>173</i>&nbsp;                    String bibtexKey = mapEntry.getValue();</b>
+<b class="nc"><i>174</i>&nbsp;                    if (medlineKey.equals(label)) {</b>
+<b class="nc"><i>175</i>&nbsp;                        fields.put(bibtexKey, value);</b>
+<i>176</i>&nbsp;                    }
+<b class="nc"><i>177</i>&nbsp;                }</b>
+<i>178</i>&nbsp;
+<b class="nc"><i>179</i>&nbsp;                if (&quot;IRAD&quot;.equals(label) || &quot;IR&quot;.equals(label) || &quot;FIR&quot;.equals(label)) {</b>
+<b class="nc"><i>180</i>&nbsp;                    String oldInvestigator = fields.get(&quot;investigator&quot;);</b>
+<b class="nc"><i>181</i>&nbsp;                    if (oldInvestigator == null) {</b>
+<b class="nc"><i>182</i>&nbsp;                        fields.put(&quot;investigator&quot;, value);</b>
+<i>183</i>&nbsp;                    } else {
+<b class="nc"><i>184</i>&nbsp;                        fields.put(&quot;investigator&quot;, oldInvestigator + &quot;, &quot; + value);</b>
+<i>185</i>&nbsp;                    }
+<b class="nc"><i>186</i>&nbsp;                } else if (&quot;MH&quot;.equals(label) || &quot;OT&quot;.equals(label)) {</b>
+<b class="nc"><i>187</i>&nbsp;                    if (!fields.containsKey(FieldName.KEYWORDS)) {</b>
+<b class="nc"><i>188</i>&nbsp;                        fields.put(FieldName.KEYWORDS, value);</b>
+<i>189</i>&nbsp;                    } else {
+<b class="nc"><i>190</i>&nbsp;                        String kw = fields.get(FieldName.KEYWORDS);</b>
+<b class="nc"><i>191</i>&nbsp;                        fields.put(FieldName.KEYWORDS, kw + &quot;, &quot; + value);</b>
+<b class="nc"><i>192</i>&nbsp;                    }</b>
+<b class="nc"><i>193</i>&nbsp;                } else if (&quot;CON&quot;.equals(label) || &quot;CIN&quot;.equals(label) || &quot;EIN&quot;.equals(label) || &quot;EFR&quot;.equals(label)</b>
+<b class="nc"><i>194</i>&nbsp;                        || &quot;CRI&quot;.equals(label) || &quot;CRF&quot;.equals(label) || &quot;PRIN&quot;.equals(label) || &quot;PROF&quot;.equals(label)</b>
+<b class="nc"><i>195</i>&nbsp;                        || &quot;RPI&quot;.equals(label) || &quot;RPF&quot;.equals(label) || &quot;RIN&quot;.equals(label) || &quot;ROF&quot;.equals(label)</b>
+<b class="nc"><i>196</i>&nbsp;                        || &quot;UIN&quot;.equals(label) || &quot;UOF&quot;.equals(label) || &quot;SPIN&quot;.equals(label) || &quot;ORI&quot;.equals(label)) {</b>
+<b class="nc"><i>197</i>&nbsp;                    if (!comment.isEmpty()) {</b>
+<b class="nc"><i>198</i>&nbsp;                        comment = comment + &quot;\n&quot;;</b>
+<i>199</i>&nbsp;                    }
+<b class="nc"><i>200</i>&nbsp;                    comment = comment + value;</b>
+<i>201</i>&nbsp;                }
+<i>202</i>&nbsp;            }
+<b class="nc"><i>203</i>&nbsp;            fixAuthors(fields, author, FieldName.AUTHOR);</b>
+<b class="nc"><i>204</i>&nbsp;            fixAuthors(fields, editor, FieldName.EDITOR);</b>
+<b class="nc"><i>205</i>&nbsp;            if (!comment.isEmpty()) {</b>
+<b class="nc"><i>206</i>&nbsp;                fields.put(FieldName.COMMENT, comment);</b>
+<i>207</i>&nbsp;            }
+<i>208</i>&nbsp;
+<b class="nc"><i>209</i>&nbsp;            BibEntry b = new BibEntry(type);</b>
+<i>210</i>&nbsp;
+<i>211</i>&nbsp;            // Remove empty fields:
+<b class="nc"><i>212</i>&nbsp;            fields.entrySet().stream().filter(n -&gt; n.getValue().trim().isEmpty()).forEach(fields::remove);</b>
+<i>213</i>&nbsp;
+<i>214</i>&nbsp;            // create one here
+<b class="nc"><i>215</i>&nbsp;            b.setField(fields);</b>
+<b class="nc"><i>216</i>&nbsp;            bibitems.add(b);</b>
+<i>217</i>&nbsp;        }
+<i>218</i>&nbsp;
+<b class="nc"><i>219</i>&nbsp;        return new ParserResult(bibitems);</b>
+<i>220</i>&nbsp;
+<i>221</i>&nbsp;    }
+<i>222</i>&nbsp;
+<i>223</i>&nbsp;    private boolean checkLineValidity(String line) {
+<b class="nc"><i>224</i>&nbsp;        return (line.length() &gt;= 5) &amp;&amp; (line.charAt(4) == &#39;-&#39;);</b>
+<i>225</i>&nbsp;    }
+<i>226</i>&nbsp;
+<i>227</i>&nbsp;    private String addSourceType(String value, String type) {
+<b class="nc"><i>228</i>&nbsp;        String val = value.toLowerCase(Locale.ENGLISH);</b>
+<b class="nc"><i>229</i>&nbsp;        String theType = type;</b>
+<b class="nc"><i>230</i>&nbsp;        switch (val) {</b>
+<i>231</i>&nbsp;        case &quot;book&quot;:
+<b class="nc"><i>232</i>&nbsp;            theType = &quot;book&quot;;</b>
+<b class="nc"><i>233</i>&nbsp;            break;</b>
+<i>234</i>&nbsp;        case &quot;journal article&quot;:
+<i>235</i>&nbsp;        case &quot;classical article&quot;:
+<i>236</i>&nbsp;        case &quot;corrected and republished article&quot;:
+<i>237</i>&nbsp;        case &quot;historical article&quot;:
+<i>238</i>&nbsp;        case &quot;introductory journal article&quot;:
+<i>239</i>&nbsp;        case &quot;newspaper article&quot;:
+<b class="nc"><i>240</i>&nbsp;            theType = &quot;article&quot;;</b>
+<b class="nc"><i>241</i>&nbsp;            break;</b>
+<i>242</i>&nbsp;        case &quot;clinical conference&quot;:
+<i>243</i>&nbsp;        case &quot;consensus development conference&quot;:
+<i>244</i>&nbsp;        case &quot;consensus development conference, nih&quot;:
+<b class="nc"><i>245</i>&nbsp;            theType = &quot;conference&quot;;</b>
+<b class="nc"><i>246</i>&nbsp;            break;</b>
+<i>247</i>&nbsp;        case &quot;technical report&quot;:
+<b class="nc"><i>248</i>&nbsp;            theType = &quot;techreport&quot;;</b>
+<b class="nc"><i>249</i>&nbsp;            break;</b>
+<i>250</i>&nbsp;        case &quot;editorial&quot;:
+<b class="nc"><i>251</i>&nbsp;            theType = &quot;inproceedings&quot;;</b>
+<b class="nc"><i>252</i>&nbsp;            break;</b>
+<i>253</i>&nbsp;        case &quot;overall&quot;:
+<b class="nc"><i>254</i>&nbsp;            theType = &quot;proceedings&quot;;</b>
+<b class="nc"><i>255</i>&nbsp;            break;</b>
+<i>256</i>&nbsp;        default:
+<i>257</i>&nbsp;            break;
+<i>258</i>&nbsp;        }
+<b class="nc"><i>259</i>&nbsp;        if (&quot;&quot;.equals(theType)) {</b>
+<b class="nc"><i>260</i>&nbsp;            theType = &quot;other&quot;;</b>
+<i>261</i>&nbsp;        }
+<b class="nc"><i>262</i>&nbsp;        return theType;</b>
+<i>263</i>&nbsp;    }
+<i>264</i>&nbsp;
+<i>265</i>&nbsp;    private void addStandardNumber(Map&lt;String, String&gt; hm, String lab, String value) {
+<b class="nc"><i>266</i>&nbsp;        if (&quot;IS&quot;.equals(lab)) {</b>
+<b class="nc"><i>267</i>&nbsp;            String key = FieldName.ISSN;</b>
+<i>268</i>&nbsp;            //it is possible to have two issn, one for electronic and for print
+<i>269</i>&nbsp;            //if there are two then it comes at the end in brackets (electronic) or (print)
+<i>270</i>&nbsp;            //so search for the brackets
+<b class="nc"><i>271</i>&nbsp;            if (value.indexOf(&#39;(&#39;) &gt; 0) {</b>
+<b class="nc"><i>272</i>&nbsp;                int keyStart = value.indexOf(&#39;(&#39;);</b>
+<b class="nc"><i>273</i>&nbsp;                int keyEnd = value.indexOf(&#39;)&#39;);</b>
+<b class="nc"><i>274</i>&nbsp;                key = value.substring(keyStart + 1, keyEnd) + &quot;-&quot; + key;</b>
+<b class="nc"><i>275</i>&nbsp;                String numberValue = value.substring(0, keyStart - 1);</b>
+<b class="nc"><i>276</i>&nbsp;                hm.put(key, numberValue);</b>
+<b class="nc"><i>277</i>&nbsp;            } else {</b>
+<b class="nc"><i>278</i>&nbsp;                hm.put(key, value);</b>
+<i>279</i>&nbsp;            }
+<b class="nc"><i>280</i>&nbsp;        } else if (&quot;ISBN&quot;.equals(lab)) {</b>
+<b class="nc"><i>281</i>&nbsp;            hm.put(FieldName.ISBN, value);</b>
+<i>282</i>&nbsp;        }
+<b class="nc"><i>283</i>&nbsp;    }</b>
+<i>284</i>&nbsp;
+<i>285</i>&nbsp;    private void fixAuthors(Map&lt;String, String&gt; hm, String author, String field) {
+<b class="nc"><i>286</i>&nbsp;        if (!author.isEmpty()) {</b>
+<b class="nc"><i>287</i>&nbsp;            String fixedAuthor = AuthorList.fixAuthorLastNameFirst(author);</b>
+<b class="nc"><i>288</i>&nbsp;            hm.put(field, fixedAuthor);</b>
+<i>289</i>&nbsp;        }
+<b class="nc"><i>290</i>&nbsp;    }</b>
+<i>291</i>&nbsp;
+<i>292</i>&nbsp;    private void addIDs(Map&lt;String, String&gt; hm, String lab, String value) {
+<b class="nc"><i>293</i>&nbsp;        if (&quot;AID&quot;.equals(lab)) {</b>
+<b class="nc"><i>294</i>&nbsp;            String key = &quot;article-id&quot;;</b>
+<b class="nc"><i>295</i>&nbsp;            String idValue = value;</b>
+<b class="nc"><i>296</i>&nbsp;            if (value.startsWith(&quot;doi:&quot;)) {</b>
+<b class="nc"><i>297</i>&nbsp;                idValue = idValue.replaceAll(&quot;(?i)doi:&quot;, &quot;&quot;).trim();</b>
+<b class="nc"><i>298</i>&nbsp;                key = FieldName.DOI;</b>
+<b class="nc"><i>299</i>&nbsp;            } else if (value.indexOf(&#39;[&#39;) &gt; 0) {</b>
+<b class="nc"><i>300</i>&nbsp;                int startOfIdentifier = value.indexOf(&#39;[&#39;);</b>
+<b class="nc"><i>301</i>&nbsp;                int endOfIdentifier = value.indexOf(&#39;]&#39;);</b>
+<b class="nc"><i>302</i>&nbsp;                key = &quot;article-&quot; + value.substring(startOfIdentifier + 1, endOfIdentifier);</b>
+<b class="nc"><i>303</i>&nbsp;                idValue = value.substring(0, startOfIdentifier - 1);</b>
+<i>304</i>&nbsp;            }
+<b class="nc"><i>305</i>&nbsp;            hm.put(key, idValue);</b>
+<i>306</i>&nbsp;
+<b class="nc"><i>307</i>&nbsp;        } else if (&quot;LID&quot;.equals(lab)) {</b>
+<b class="nc"><i>308</i>&nbsp;            hm.put(&quot;location-id&quot;, value);</b>
+<b class="nc"><i>309</i>&nbsp;        } else if (&quot;MID&quot;.equals(lab)) {</b>
+<b class="nc"><i>310</i>&nbsp;            hm.put(&quot;manuscript-id&quot;, value);</b>
+<b class="nc"><i>311</i>&nbsp;        } else if (&quot;JID&quot;.equals(lab)) {</b>
+<b class="nc"><i>312</i>&nbsp;            hm.put(&quot;nlm-unique-id&quot;, value);</b>
+<b class="nc"><i>313</i>&nbsp;        } else if (&quot;OID&quot;.equals(lab)) {</b>
+<b class="nc"><i>314</i>&nbsp;            hm.put(&quot;other-id&quot;, value);</b>
+<b class="nc"><i>315</i>&nbsp;        } else if (&quot;SI&quot;.equals(lab)) {</b>
+<b class="nc"><i>316</i>&nbsp;            hm.put(&quot;second-id&quot;, value);</b>
+<i>317</i>&nbsp;        }
+<b class="nc"><i>318</i>&nbsp;    }</b>
+<i>319</i>&nbsp;
+<i>320</i>&nbsp;    private void addTitles(Map&lt;String, String&gt; hm, String lab, String val, String type) {
+<b class="nc"><i>321</i>&nbsp;        if (&quot;TI&quot;.equals(lab)) {</b>
+<b class="nc"><i>322</i>&nbsp;            String oldVal = hm.get(FieldName.TITLE);</b>
+<b class="nc"><i>323</i>&nbsp;            if (oldVal == null) {</b>
+<b class="nc"><i>324</i>&nbsp;                hm.put(FieldName.TITLE, val);</b>
+<i>325</i>&nbsp;            } else {
+<b class="nc"><i>326</i>&nbsp;                if (oldVal.endsWith(&quot;:&quot;) || oldVal.endsWith(&quot;.&quot;) || oldVal.endsWith(&quot;?&quot;)) {</b>
+<b class="nc"><i>327</i>&nbsp;                    hm.put(FieldName.TITLE, oldVal + &quot; &quot; + val);</b>
+<i>328</i>&nbsp;                } else {
+<b class="nc"><i>329</i>&nbsp;                    hm.put(FieldName.TITLE, oldVal + &quot;: &quot; + val);</b>
+<i>330</i>&nbsp;                }
+<i>331</i>&nbsp;            }
+<b class="nc"><i>332</i>&nbsp;        } else if (&quot;BTI&quot;.equals(lab) || &quot;CTI&quot;.equals(lab)) {</b>
+<b class="nc"><i>333</i>&nbsp;            hm.put(FieldName.BOOKTITLE, val);</b>
+<b class="nc"><i>334</i>&nbsp;        } else if (&quot;JT&quot;.equals(lab)) {</b>
+<b class="nc"><i>335</i>&nbsp;            if (&quot;inproceedings&quot;.equals(type)) {</b>
+<b class="nc"><i>336</i>&nbsp;                hm.put(FieldName.BOOKTITLE, val);</b>
+<i>337</i>&nbsp;            } else {
+<b class="nc"><i>338</i>&nbsp;                hm.put(FieldName.JOURNAL, val);</b>
+<i>339</i>&nbsp;            }
+<b class="nc"><i>340</i>&nbsp;        } else if (&quot;CTI&quot;.equals(lab)) {</b>
+<b class="nc"><i>341</i>&nbsp;            hm.put(&quot;collection-title&quot;, val);</b>
+<b class="nc"><i>342</i>&nbsp;        } else if (&quot;TA&quot;.equals(lab)) {</b>
+<b class="nc"><i>343</i>&nbsp;            hm.put(&quot;title-abbreviation&quot;, val);</b>
+<b class="nc"><i>344</i>&nbsp;        } else if (&quot;TT&quot;.equals(lab)) {</b>
+<b class="nc"><i>345</i>&nbsp;            hm.put(&quot;transliterated-title&quot;, val);</b>
+<b class="nc"><i>346</i>&nbsp;        } else if (&quot;VTI&quot;.equals(lab)) {</b>
+<b class="nc"><i>347</i>&nbsp;            hm.put(&quot;volume-title&quot;, val);</b>
+<i>348</i>&nbsp;        }
+<b class="nc"><i>349</i>&nbsp;    }</b>
+<i>350</i>&nbsp;
+<i>351</i>&nbsp;    private void addAbstract(Map&lt;String, String&gt; hm, String lab, String value) {
+<b class="nc"><i>352</i>&nbsp;        String abstractValue = &quot;&quot;;</b>
+<b class="nc"><i>353</i>&nbsp;        if (&quot;AB&quot;.equals(lab)) {</b>
+<i>354</i>&nbsp;            //adds copyright information that comes at the end of an abstract
+<b class="nc"><i>355</i>&nbsp;            if (value.contains(&quot;Copyright&quot;)) {</b>
+<b class="nc"><i>356</i>&nbsp;                int copyrightIndex = value.lastIndexOf(&quot;Copyright&quot;);</b>
+<i>357</i>&nbsp;                //remove the copyright from the field since the name of the field is copyright
+<b class="nc"><i>358</i>&nbsp;                String copyrightInfo = value.substring(copyrightIndex, value.length()).replaceAll(&quot;Copyright &quot;, &quot;&quot;);</b>
+<b class="nc"><i>359</i>&nbsp;                hm.put(&quot;copyright&quot;, copyrightInfo);</b>
+<b class="nc"><i>360</i>&nbsp;                abstractValue = value.substring(0, copyrightIndex);</b>
+<b class="nc"><i>361</i>&nbsp;            } else {</b>
+<b class="nc"><i>362</i>&nbsp;                abstractValue = value;</b>
+<i>363</i>&nbsp;            }
+<b class="nc"><i>364</i>&nbsp;            String oldAb = hm.get(FieldName.ABSTRACT);</b>
+<b class="nc"><i>365</i>&nbsp;            if (oldAb == null) {</b>
+<b class="nc"><i>366</i>&nbsp;                hm.put(FieldName.ABSTRACT, abstractValue);</b>
+<i>367</i>&nbsp;            } else {
+<b class="nc"><i>368</i>&nbsp;                hm.put(FieldName.ABSTRACT, oldAb + OS.NEWLINE + abstractValue);</b>
+<i>369</i>&nbsp;            }
+<b class="nc"><i>370</i>&nbsp;        } else if (&quot;OAB&quot;.equals(lab) || &quot;OABL&quot;.equals(lab)) {</b>
+<b class="nc"><i>371</i>&nbsp;            hm.put(&quot;other-abstract&quot;, value);</b>
+<i>372</i>&nbsp;        }
+<b class="nc"><i>373</i>&nbsp;    }</b>
+<i>374</i>&nbsp;
+<i>375</i>&nbsp;    private void addDates(Map&lt;String, String&gt; hm, String lab, String val) {
+<b class="nc"><i>376</i>&nbsp;        if (&quot;CRDT&quot;.equals(lab) &amp;&amp; isCreateDateFormat(val)) {</b>
+<b class="nc"><i>377</i>&nbsp;            hm.put(&quot;create-date&quot;, val);</b>
+<b class="nc"><i>378</i>&nbsp;        } else if (&quot;DEP&quot;.equals(lab) &amp;&amp; isDateFormat(val)) {</b>
+<b class="nc"><i>379</i>&nbsp;            hm.put(&quot;electronic-publication&quot;, val);</b>
+<b class="nc"><i>380</i>&nbsp;        } else if (&quot;DA&quot;.equals(lab) &amp;&amp; isDateFormat(val)) {</b>
+<b class="nc"><i>381</i>&nbsp;            hm.put(&quot;date-created&quot;, val);</b>
+<b class="nc"><i>382</i>&nbsp;        } else if (&quot;DCOM&quot;.equals(lab) &amp;&amp; isDateFormat(val)) {</b>
+<b class="nc"><i>383</i>&nbsp;            hm.put(&quot;completed&quot;, val);</b>
+<b class="nc"><i>384</i>&nbsp;        } else if (&quot;LR&quot;.equals(lab) &amp;&amp; isDateFormat(val)) {</b>
+<b class="nc"><i>385</i>&nbsp;            hm.put(&quot;revised&quot;, val);</b>
+<b class="nc"><i>386</i>&nbsp;        } else if (&quot;DP&quot;.equals(lab)) {</b>
+<b class="nc"><i>387</i>&nbsp;            String[] parts = val.split(&quot; &quot;);</b>
+<b class="nc"><i>388</i>&nbsp;            hm.put(FieldName.YEAR, parts[0]);</b>
+<b class="nc"><i>389</i>&nbsp;            if ((parts.length &gt; 1) &amp;&amp; !parts[1].isEmpty()) {</b>
+<b class="nc"><i>390</i>&nbsp;                hm.put(FieldName.MONTH, parts[1]);</b>
+<i>391</i>&nbsp;            }
+<b class="nc"><i>392</i>&nbsp;        } else if (&quot;EDAT&quot;.equals(lab) &amp;&amp; isCreateDateFormat(val)) {</b>
+<b class="nc"><i>393</i>&nbsp;            hm.put(&quot;publication&quot;, val);</b>
+<b class="nc"><i>394</i>&nbsp;        } else if (&quot;MHDA&quot;.equals(lab) &amp;&amp; isCreateDateFormat(val)) {</b>
+<b class="nc"><i>395</i>&nbsp;            hm.put(&quot;mesh-date&quot;, val);</b>
+<i>396</i>&nbsp;        }
+<b class="nc"><i>397</i>&nbsp;    }</b>
+<i>398</i>&nbsp;
+<i>399</i>&nbsp;    private boolean isCreateDateFormat(String value) {
+<b class="nc"><i>400</i>&nbsp;        return CREATE_DATE_PATTERN.matcher(value).matches();</b>
+<i>401</i>&nbsp;    }
+<i>402</i>&nbsp;
+<i>403</i>&nbsp;    private boolean isDateFormat(String value) {
+<b class="nc"><i>404</i>&nbsp;        return COMPLETE_DATE_PATTERN.matcher(value).matches();</b>
+<i>405</i>&nbsp;    }
+<i>406</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,365 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: LatexFieldFormatter</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.bibtex</a> ]
+</div>
+
+<h1>Coverage Summary for Class: LatexFieldFormatter (net.sf.jabref.logic.bibtex)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">LatexFieldFormatter</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 120)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.bibtex;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.ArrayList;
+<i>4</i>&nbsp;import java.util.List;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import net.sf.jabref.logic.util.OS;
+<i>7</i>&nbsp;import net.sf.jabref.model.entry.InternalBibtexFields;
+<i>8</i>&nbsp;import net.sf.jabref.model.strings.StringUtil;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;/**
+<i>11</i>&nbsp; * Currently the only implementation of net.sf.jabref.exporter.FieldFormatter
+<i>12</i>&nbsp; * &lt;p&gt;
+<i>13</i>&nbsp; * Obeys following settings:
+<i>14</i>&nbsp; * * JabRefPreferences.RESOLVE_STRINGS_ALL_FIELDS
+<i>15</i>&nbsp; * * JabRefPreferences.DO_NOT_RESOLVE_STRINGS_FOR
+<i>16</i>&nbsp; * * JabRefPreferences.WRITEFIELD_WRAPFIELD
+<i>17</i>&nbsp; */
+<i>18</i>&nbsp;public class LatexFieldFormatter {
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;    // &quot;Fieldname&quot; to indicate that a field should be treated as a bibtex string. Used when writing database to file.
+<i>21</i>&nbsp;    public static final String BIBTEX_STRING = &quot;__string&quot;;
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;    private StringBuilder stringBuilder;
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;    private final boolean neverFailOnHashes;
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    private final LatexFieldFormatterPreferences prefs;
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;    private final FieldContentParser parser;
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;    private static final char FIELD_START = &#39;{&#39;;
+<i>32</i>&nbsp;    private static final char FIELD_END = &#39;}&#39;;
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    public LatexFieldFormatter(LatexFieldFormatterPreferences prefs) {
+<b class="nc"><i>36</i>&nbsp;        this(true, prefs);</b>
+<b class="nc"><i>37</i>&nbsp;    }</b>
+<i>38</i>&nbsp;
+<b class="nc"><i>39</i>&nbsp;    private LatexFieldFormatter(boolean neverFailOnHashes, LatexFieldFormatterPreferences prefs) {</b>
+<b class="nc"><i>40</i>&nbsp;        this.neverFailOnHashes = neverFailOnHashes;</b>
+<b class="nc"><i>41</i>&nbsp;        this.prefs = prefs;</b>
+<i>42</i>&nbsp;
+<b class="nc"><i>43</i>&nbsp;        parser = new FieldContentParser(prefs.getFieldContentParserPreferences());</b>
+<b class="nc"><i>44</i>&nbsp;    }</b>
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;    public static LatexFieldFormatter buildIgnoreHashes(LatexFieldFormatterPreferences prefs) {
+<b class="nc"><i>47</i>&nbsp;        return new LatexFieldFormatter(true, prefs);</b>
+<i>48</i>&nbsp;    }
+<i>49</i>&nbsp;
+<i>50</i>&nbsp;    /**
+<i>51</i>&nbsp;     * Formats the content of a field.
+<i>52</i>&nbsp;     *
+<i>53</i>&nbsp;     * @param content   the content of the field
+<i>54</i>&nbsp;     * @param fieldName the name of the field - used to trigger different serializations, e.g., turning off resolution for some strings
+<i>55</i>&nbsp;     * @return a formatted string suitable for output
+<i>56</i>&nbsp;     * @throws IllegalArgumentException if s is not a correct bibtex string, e.g., because of improperly balanced braces or using # not paired
+<i>57</i>&nbsp;     */
+<i>58</i>&nbsp;    public String format(String content, String fieldName)
+<i>59</i>&nbsp;            throws IllegalArgumentException {
+<i>60</i>&nbsp;
+<b class="nc"><i>61</i>&nbsp;        if (content == null) {</b>
+<b class="nc"><i>62</i>&nbsp;            return FIELD_START + String.valueOf(FIELD_END);</b>
+<i>63</i>&nbsp;        }
+<i>64</i>&nbsp;
+<b class="nc"><i>65</i>&nbsp;        String result = content;</b>
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;        // normalize newlines
+<b class="nc"><i>68</i>&nbsp;        boolean shouldNormalizeNewlines = !result.contains(OS.NEWLINE) &amp;&amp; result.contains(&quot;\n&quot;);</b>
+<b class="nc"><i>69</i>&nbsp;        if (shouldNormalizeNewlines) {</b>
+<i>70</i>&nbsp;            // if we don&#39;t have real new lines, but pseudo newlines, we replace them
+<i>71</i>&nbsp;            // On Win 8.1, this is always true for multiline fields
+<b class="nc"><i>72</i>&nbsp;            result = result.replace(&quot;\n&quot;, OS.NEWLINE);</b>
+<i>73</i>&nbsp;        }
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;        // If the field is non-standard, we will just append braces,
+<i>76</i>&nbsp;        // wrap and write.
+<b class="nc"><i>77</i>&nbsp;        boolean resolveStrings = shouldResolveStrings(fieldName);</b>
+<i>78</i>&nbsp;
+<b class="nc"><i>79</i>&nbsp;        if (!resolveStrings) {</b>
+<b class="nc"><i>80</i>&nbsp;            return formatWithoutResolvingStrings(result, fieldName);</b>
+<i>81</i>&nbsp;        }
+<i>82</i>&nbsp;
+<i>83</i>&nbsp;        // Trim whitespace
+<b class="nc"><i>84</i>&nbsp;        result = result.trim();</b>
+<b class="nc"><i>85</i>&nbsp;        return formatAndResolveStrings(result, fieldName);</b>
+<i>86</i>&nbsp;    }
+<i>87</i>&nbsp;
+<i>88</i>&nbsp;    private String formatAndResolveStrings(String content, String fieldName) {
+<b class="nc"><i>89</i>&nbsp;        stringBuilder = new StringBuilder();</b>
+<b class="nc"><i>90</i>&nbsp;        int pivot = 0;</b>
+<i>91</i>&nbsp;        int pos1;
+<i>92</i>&nbsp;        int pos2;
+<i>93</i>&nbsp;        // Here we assume that the user encloses any bibtex strings in #, e.g.:
+<i>94</i>&nbsp;        // #jan# - #feb#
+<i>95</i>&nbsp;        // ...which will be written to the file like this:
+<i>96</i>&nbsp;        // jan # { - } # feb
+<b class="nc"><i>97</i>&nbsp;        checkBraces(content);</b>
+<i>98</i>&nbsp;
+<b class="nc"><i>99</i>&nbsp;        while (pivot &lt; content.length()) {</b>
+<b class="nc"><i>100</i>&nbsp;            int goFrom = pivot;</b>
+<b class="nc"><i>101</i>&nbsp;            pos1 = pivot;</b>
+<b class="nc"><i>102</i>&nbsp;            while (goFrom == pos1) {</b>
+<b class="nc"><i>103</i>&nbsp;                pos1 = content.indexOf(&#39;#&#39;, goFrom);</b>
+<b class="nc"><i>104</i>&nbsp;                if ((pos1 &gt; 0) &amp;&amp; (content.charAt(pos1 - 1) == &#39;\\&#39;)) {</b>
+<b class="nc"><i>105</i>&nbsp;                    goFrom = pos1 + 1;</b>
+<b class="nc"><i>106</i>&nbsp;                    pos1++;</b>
+<i>107</i>&nbsp;                } else {
+<b class="nc"><i>108</i>&nbsp;                    goFrom = pos1 - 1; // Ends the loop.</b>
+<i>109</i>&nbsp;                }
+<i>110</i>&nbsp;            }
+<i>111</i>&nbsp;
+<b class="nc"><i>112</i>&nbsp;            if (pos1 == -1) {</b>
+<b class="nc"><i>113</i>&nbsp;                pos1 = content.length(); // No more occurrences found.</b>
+<b class="nc"><i>114</i>&nbsp;                pos2 = -1;</b>
+<i>115</i>&nbsp;            } else {
+<b class="nc"><i>116</i>&nbsp;                pos2 = content.indexOf(&#39;#&#39;, pos1 + 1);</b>
+<b class="nc"><i>117</i>&nbsp;                if (pos2 == -1) {</b>
+<b class="nc"><i>118</i>&nbsp;                    if (neverFailOnHashes) {</b>
+<b class="nc"><i>119</i>&nbsp;                        pos1 = content.length(); // just write out the rest of the text, and throw no exception</b>
+<i>120</i>&nbsp;                    } else {
+<b class="nc"><i>121</i>&nbsp;                        throw new IllegalArgumentException(</b>
+<i>122</i>&nbsp;                                &quot;The # character is not allowed in BibTeX strings unless escaped as in &#39;\\#&#39;.\n&quot;
+<i>123</i>&nbsp;                                        + &quot;In JabRef, use pairs of # characters to indicate a string.\n&quot;
+<i>124</i>&nbsp;                                        + &quot;Note that the entry causing the problem has been selected.&quot;);
+<i>125</i>&nbsp;                    }
+<i>126</i>&nbsp;                }
+<i>127</i>&nbsp;            }
+<i>128</i>&nbsp;
+<b class="nc"><i>129</i>&nbsp;            if (pos1 &gt; pivot) {</b>
+<b class="nc"><i>130</i>&nbsp;                writeText(content, pivot, pos1);</b>
+<i>131</i>&nbsp;            }
+<b class="nc"><i>132</i>&nbsp;            if ((pos1 &lt; content.length()) &amp;&amp; ((pos2 - 1) &gt; pos1)) {</b>
+<i>133</i>&nbsp;                // We check that the string label is not empty. That means
+<i>134</i>&nbsp;                // an occurrence of ## will simply be ignored. Should it instead
+<i>135</i>&nbsp;                // cause an error message?
+<b class="nc"><i>136</i>&nbsp;                writeStringLabel(content, pos1 + 1, pos2, pos1 == pivot,</b>
+<b class="nc"><i>137</i>&nbsp;                        (pos2 + 1) == content.length());</b>
+<i>138</i>&nbsp;            }
+<i>139</i>&nbsp;
+<b class="nc"><i>140</i>&nbsp;            if (pos2 &gt; -1) {</b>
+<b class="nc"><i>141</i>&nbsp;                pivot = pos2 + 1;</b>
+<i>142</i>&nbsp;            } else {
+<b class="nc"><i>143</i>&nbsp;                pivot = pos1 + 1;</b>
+<i>144</i>&nbsp;                //if (tell++ &gt; 10) System.exit(0);
+<i>145</i>&nbsp;            }
+<b class="nc"><i>146</i>&nbsp;        }</b>
+<i>147</i>&nbsp;
+<b class="nc"><i>148</i>&nbsp;        return parser.format(stringBuilder, fieldName);</b>
+<i>149</i>&nbsp;    }
+<i>150</i>&nbsp;
+<i>151</i>&nbsp;    private boolean shouldResolveStrings(String fieldName) {
+<b class="nc"><i>152</i>&nbsp;        boolean resolveStrings = true;</b>
+<b class="nc"><i>153</i>&nbsp;        if (prefs.isResolveStringsAllFields()) {</b>
+<i>154</i>&nbsp;            // Resolve strings for all fields except some:
+<b class="nc"><i>155</i>&nbsp;            for (String exception : prefs.getDoNotResolveStringsFor()) {</b>
+<b class="nc"><i>156</i>&nbsp;                if (exception.equals(fieldName)) {</b>
+<b class="nc"><i>157</i>&nbsp;                    resolveStrings = false;</b>
+<b class="nc"><i>158</i>&nbsp;                    break;</b>
+<i>159</i>&nbsp;                }
+<b class="nc"><i>160</i>&nbsp;            }</b>
+<i>161</i>&nbsp;        } else {
+<i>162</i>&nbsp;            // Default operation - we only resolve strings for standard fields:
+<b class="nc"><i>163</i>&nbsp;            resolveStrings = InternalBibtexFields.isStandardField(fieldName)</b>
+<b class="nc"><i>164</i>&nbsp;                    || BIBTEX_STRING.equals(fieldName);</b>
+<i>165</i>&nbsp;        }
+<b class="nc"><i>166</i>&nbsp;        return resolveStrings;</b>
+<i>167</i>&nbsp;    }
+<i>168</i>&nbsp;
+<i>169</i>&nbsp;    private String formatWithoutResolvingStrings(String content, String fieldName) {
+<b class="nc"><i>170</i>&nbsp;        checkBraces(content);</b>
+<i>171</i>&nbsp;
+<b class="nc"><i>172</i>&nbsp;        stringBuilder = new StringBuilder(</b>
+<b class="nc"><i>173</i>&nbsp;                String.valueOf(FIELD_START));</b>
+<i>174</i>&nbsp;
+<b class="nc"><i>175</i>&nbsp;        stringBuilder.append(parser.format(content, fieldName));</b>
+<i>176</i>&nbsp;
+<b class="nc"><i>177</i>&nbsp;        stringBuilder.append(FIELD_END);</b>
+<i>178</i>&nbsp;
+<b class="nc"><i>179</i>&nbsp;        return stringBuilder.toString();</b>
+<i>180</i>&nbsp;    }
+<i>181</i>&nbsp;
+<i>182</i>&nbsp;    private void writeText(String text, int startPos, int endPos) {
+<i>183</i>&nbsp;
+<b class="nc"><i>184</i>&nbsp;        stringBuilder.append(FIELD_START);</b>
+<b class="nc"><i>185</i>&nbsp;        boolean escape = false;</b>
+<b class="nc"><i>186</i>&nbsp;        boolean inCommandName = false;</b>
+<b class="nc"><i>187</i>&nbsp;        boolean inCommand = false;</b>
+<b class="nc"><i>188</i>&nbsp;        boolean inCommandOption = false;</b>
+<b class="nc"><i>189</i>&nbsp;        int nestedEnvironments = 0;</b>
+<b class="nc"><i>190</i>&nbsp;        StringBuilder commandName = new StringBuilder();</b>
+<i>191</i>&nbsp;        char c;
+<b class="nc"><i>192</i>&nbsp;        for (int i = startPos; i &lt; endPos; i++) {</b>
+<b class="nc"><i>193</i>&nbsp;            c = text.charAt(i);</b>
+<i>194</i>&nbsp;
+<i>195</i>&nbsp;            // Track whether we are in a LaTeX command of some sort.
+<b class="nc"><i>196</i>&nbsp;            if (Character.isLetter(c) &amp;&amp; (escape || inCommandName)) {</b>
+<b class="nc"><i>197</i>&nbsp;                inCommandName = true;</b>
+<b class="nc"><i>198</i>&nbsp;                if (!inCommandOption) {</b>
+<b class="nc"><i>199</i>&nbsp;                    commandName.append(c);</b>
+<i>200</i>&nbsp;                }
+<b class="nc"><i>201</i>&nbsp;            } else if (Character.isWhitespace(c) &amp;&amp; (inCommand || inCommandOption)) {</b>
+<i>202</i>&nbsp;                // Whitespace
+<b class="nc"><i>203</i>&nbsp;            } else if (inCommandName) {</b>
+<i>204</i>&nbsp;                // This means the command name is ended.
+<i>205</i>&nbsp;                // Perhaps the beginning of an argument:
+<b class="nc"><i>206</i>&nbsp;                if (c == &#39;[&#39;) {</b>
+<b class="nc"><i>207</i>&nbsp;                    inCommandOption = true;</b>
+<b class="nc"><i>208</i>&nbsp;                } else if (inCommandOption &amp;&amp; (c == &#39;]&#39;)) {</b>
+<i>209</i>&nbsp;                    // Or the end of an argument:
+<b class="nc"><i>210</i>&nbsp;                    inCommandOption = false;</b>
+<b class="nc"><i>211</i>&nbsp;                } else if (!inCommandOption &amp;&amp; (c == &#39;{&#39;)) {</b>
+<b class="nc"><i>212</i>&nbsp;                    inCommandName = false;</b>
+<b class="nc"><i>213</i>&nbsp;                    inCommand = true;</b>
+<i>214</i>&nbsp;                } else {
+<i>215</i>&nbsp;                    // Or simply the end of this command altogether:
+<b class="nc"><i>216</i>&nbsp;                    commandName.delete(0, commandName.length());</b>
+<b class="nc"><i>217</i>&nbsp;                    inCommandName = false;</b>
+<i>218</i>&nbsp;                }
+<i>219</i>&nbsp;            }
+<i>220</i>&nbsp;            // If we are in a command body, see if it has ended:
+<b class="nc"><i>221</i>&nbsp;            if (inCommand &amp;&amp; (c == &#39;}&#39;)) {</b>
+<b class="nc"><i>222</i>&nbsp;                if (&quot;begin&quot;.equals(commandName.toString())) {</b>
+<b class="nc"><i>223</i>&nbsp;                    nestedEnvironments++;</b>
+<i>224</i>&nbsp;                }
+<b class="nc"><i>225</i>&nbsp;                if ((nestedEnvironments &gt; 0) &amp;&amp; &quot;end&quot;.equals(commandName.toString())) {</b>
+<b class="nc"><i>226</i>&nbsp;                    nestedEnvironments--;</b>
+<i>227</i>&nbsp;                }
+<i>228</i>&nbsp;
+<b class="nc"><i>229</i>&nbsp;                commandName.delete(0, commandName.length());</b>
+<b class="nc"><i>230</i>&nbsp;                inCommand = false;</b>
+<i>231</i>&nbsp;            }
+<i>232</i>&nbsp;
+<i>233</i>&nbsp;            // We add a backslash before any ampersand characters, with one exception: if
+<i>234</i>&nbsp;            // we are inside an \\url{...} command, we should write it as it is. Maybe.
+<b class="nc"><i>235</i>&nbsp;            if ((c == &#39;&amp;&#39;) &amp;&amp; !escape &amp;&amp; !(inCommand &amp;&amp; &quot;url&quot;.equals(commandName.toString()))</b>
+<i>236</i>&nbsp;                    &amp;&amp; (nestedEnvironments == 0)) {
+<b class="nc"><i>237</i>&nbsp;                stringBuilder.append(&quot;\\&amp;&quot;);</b>
+<i>238</i>&nbsp;            } else {
+<b class="nc"><i>239</i>&nbsp;                stringBuilder.append(c);</b>
+<i>240</i>&nbsp;            }
+<b class="nc"><i>241</i>&nbsp;            escape = c == &#39;\\&#39;;</b>
+<i>242</i>&nbsp;        }
+<b class="nc"><i>243</i>&nbsp;        stringBuilder.append(FIELD_END);</b>
+<b class="nc"><i>244</i>&nbsp;    }</b>
+<i>245</i>&nbsp;
+<i>246</i>&nbsp;    private void writeStringLabel(String text, int startPos, int endPos,
+<i>247</i>&nbsp;                                  boolean first, boolean last) {
+<b class="nc"><i>248</i>&nbsp;        putIn((first ? &quot;&quot; : &quot; # &quot;) + text.substring(startPos, endPos)</b>
+<i>249</i>&nbsp;                + (last ? &quot;&quot; : &quot; # &quot;));
+<b class="nc"><i>250</i>&nbsp;    }</b>
+<i>251</i>&nbsp;
+<i>252</i>&nbsp;    private void putIn(String s) {
+<b class="nc"><i>253</i>&nbsp;        stringBuilder.append(StringUtil.wrap(s, prefs.getLineLength(), OS.NEWLINE));</b>
+<b class="nc"><i>254</i>&nbsp;    }</b>
+<i>255</i>&nbsp;
+<i>256</i>&nbsp;    private static void checkBraces(String text) throws IllegalArgumentException {
+<b class="nc"><i>257</i>&nbsp;        List&lt;Integer&gt; left = new ArrayList&lt;&gt;(5);</b>
+<b class="nc"><i>258</i>&nbsp;        List&lt;Integer&gt; right = new ArrayList&lt;&gt;(5);</b>
+<b class="nc"><i>259</i>&nbsp;        int current = -1;</b>
+<i>260</i>&nbsp;
+<i>261</i>&nbsp;        // First we collect all occurrences:
+<b class="nc"><i>262</i>&nbsp;        while ((current = text.indexOf(&#39;{&#39;, current + 1)) != -1) {</b>
+<b class="nc"><i>263</i>&nbsp;            left.add(current);</b>
+<i>264</i>&nbsp;        }
+<b class="nc"><i>265</i>&nbsp;        while ((current = text.indexOf(&#39;}&#39;, current + 1)) != -1) {</b>
+<b class="nc"><i>266</i>&nbsp;            right.add(current);</b>
+<i>267</i>&nbsp;        }
+<i>268</i>&nbsp;
+<i>269</i>&nbsp;        // Then we throw an exception if the error criteria are met.
+<b class="nc"><i>270</i>&nbsp;        if (!right.isEmpty() &amp;&amp; left.isEmpty()) {</b>
+<b class="nc"><i>271</i>&nbsp;            throw new IllegalArgumentException(&quot;&#39;}&#39; character ends string prematurely.&quot;);</b>
+<i>272</i>&nbsp;        }
+<b class="nc"><i>273</i>&nbsp;        if (!right.isEmpty() &amp;&amp; (right.get(0) &lt; left.get(0))) {</b>
+<b class="nc"><i>274</i>&nbsp;            throw new IllegalArgumentException(&quot;&#39;}&#39; character ends string prematurely.&quot;);</b>
+<i>275</i>&nbsp;        }
+<b class="nc"><i>276</i>&nbsp;        if (left.size() != right.size()) {</b>
+<b class="nc"><i>277</i>&nbsp;            throw new IllegalArgumentException(&quot;Braces don&#39;t match.&quot;);</b>
+<i>278</i>&nbsp;        }
+<i>279</i>&nbsp;
+<b class="nc"><i>280</i>&nbsp;    }</b>
+<i>281</i>&nbsp;
+<i>282</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>
