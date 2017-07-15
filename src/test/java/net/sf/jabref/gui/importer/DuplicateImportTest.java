@@ -1,4 +1,4 @@
-package net.sf.jabref.duplicatetests;
+package net.sf.jabref.gui.importer;
 
 
 import java.io.File;
