@@ -197,7 +197,17 @@ public class BibEntry implements Cloneable {
      * @param newCiteKey The cite key to set. Must not be null; use {@link #clearCiteKey()} to remove the cite key.
      */
     public void setCiteKey(String newCiteKey) {
+        // Adicionando a verificacao de entrada de caracteres: deve ser no minimo 2 e comecar com uma letra
+        try {
+            if (!(newCiteKey.length() >= 2) && Character.isLetter(newCiteKey.charAt(0))) {
+                throw new ParseException("", 0);
+            }
+
             setField(KEY_FIELD, newCiteKey);
+        } catch (ParseException e) {
+            throw new IllegalArgumentException("Entrada Invalida! Deve-se possuir ao menos dois caracteres e deve-se" +
+                    "comecar com caracteres textuais");
+        }
     }
 
     /**
@@ -463,11 +473,18 @@ public class BibEntry implements Cloneable {
             throw new IllegalArgumentException("The field name '" + name + "' is reserved");
         }
 
-        /*Validação do nome do autor*/
-        if ("author".equals(name)) {
-            if (!value.matches("[a-zA-Z]+(\\.)?(\\,)?(\\;)?(\\s+[a-zA-Z]+(\\.)?(\\,)?(\\;)?)*")) {
-                JOptionPane.showMessageDialog(new JFrame(), "Nome do autor inválido");
-                return Optional.empty();
+        if ("year".equals(name)) {
+            try {
+                if (!value.matches("^[0-9]+")) {
+                    throw new ParseException("", 0);
+                }
+
+                SimpleDateFormat date_format = new java.text.SimpleDateFormat("yyyy");
+                date_format.setLenient(false);
+                date_format.parse(value);
+
+            } catch (ParseException e) {
+                throw new IllegalArgumentException("Ano invalido!");
             }
         }
 

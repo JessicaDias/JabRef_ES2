@@ -82,7 +82,7 @@ public class BibEntryTests {
         Assert.fail();
     }
 
-    @Test //(expected = StringIndexOutOfBoundsException.class)
+    @Test (expected = StringIndexOutOfBoundsException.class)
     public void isEmptyCiteKey() {
         BibEntry e = new BibEntry(BibtexEntryTypes.ARTICLE.getName());
         Assert.assertFalse(e.hasCiteKey());
@@ -399,4 +399,35 @@ public class BibEntryTests {
         assertEquals(Optional.empty(), be.getField("author"));
     }
 
+    // Entrada invalida de menos de dois caracteres
+    @Test
+    public void setInvalidBibtexKeyUnderTwoCharacters() {
+        keywordEntry.setField("bibtexkey", "E");
+        Map<String, String> str2 = keywordEntry.getFieldMap();
+        assertEquals("E", str2.get("bibtexkey"));
+    }
+
+    // Entrada invalida de chave iniciando com numero
+    @Test
+    public void setInvalidBibtexKeyNumberInit() {
+        keywordEntry.setField("bibtexkey", "2017ES2");
+        Map<String, String> str2 = keywordEntry.getFieldMap();
+        assertEquals("2017ES2", str2.get("bibtexkey"));
+    }
+
+    // Entrada invalida de chave com inicio de caractere especial
+    @Test
+    public void setInvalidBibtexKeySpecialCharacterInit() {
+        keywordEntry.setField("bibtexkey", "_2017ES2");
+        Map<String, String> str2 = keywordEntry.getFieldMap();
+        assertEquals("_2017ES2", str2.get("bibtexkey"));
+    }
+
+    // Entrada invalida com apenas caracteres especiais
+    @Test
+    public void setInvalidBibtexKeyOnlySpecialCharacter() {
+        keywordEntry.setField("bibtexkey", "[]");
+        Map<String, String> str2 = keywordEntry.getFieldMap();
+        assertEquals("[]", str2.get("bibtexkey"));
+    }
 }
