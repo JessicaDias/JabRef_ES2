@@ -1,0 +1,198 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: OAI2Handler</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.importer.util</a> ]
+</div>
+
+<h1>Coverage Summary for Class: OAI2Handler (net.sf.jabref.logic.importer.util)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">OAI2Handler</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 57)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.importer.util;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.Optional;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>6</i>&nbsp;import net.sf.jabref.model.entry.FieldName;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import org.xml.sax.Attributes;
+<i>9</i>&nbsp;import org.xml.sax.SAXException;
+<i>10</i>&nbsp;import org.xml.sax.helpers.DefaultHandler;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;/**
+<i>13</i>&nbsp; * SAX-Handler to parse OAI2-xml files.
+<i>14</i>&nbsp; *
+<i>15</i>&nbsp; * @author Ulrich St&amp;auml;rk
+<i>16</i>&nbsp; * @author Christian Kopf
+<i>17</i>&nbsp; * @author Christopher Oezbek
+<i>18</i>&nbsp; */
+<i>19</i>&nbsp;public class OAI2Handler extends DefaultHandler {
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;    private final BibEntry entry;
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;    private StringBuffer authors;
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;    private String keyname;
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    private String forenames;
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;    private StringBuffer characters;
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;
+<b class="nc"><i>32</i>&nbsp;    public OAI2Handler(BibEntry be) {</b>
+<b class="nc"><i>33</i>&nbsp;        this.entry = be;</b>
+<b class="nc"><i>34</i>&nbsp;    }</b>
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;    @Override
+<i>37</i>&nbsp;    public void startDocument() throws SAXException {
+<b class="nc"><i>38</i>&nbsp;        authors = new StringBuffer();</b>
+<b class="nc"><i>39</i>&nbsp;    }</b>
+<i>40</i>&nbsp;
+<i>41</i>&nbsp;    @Override
+<i>42</i>&nbsp;    public void characters(char[] ch, int start, int length) throws SAXException {
+<b class="nc"><i>43</i>&nbsp;        characters.append(ch, start, length);</b>
+<b class="nc"><i>44</i>&nbsp;    }</b>
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;    @Override
+<i>47</i>&nbsp;    public void startElement(String uri, String localName, String qualifiedName,
+<i>48</i>&nbsp;            Attributes attributes) throws SAXException {
+<i>49</i>&nbsp;
+<b class="nc"><i>50</i>&nbsp;        characters = new StringBuffer();</b>
+<b class="nc"><i>51</i>&nbsp;    }</b>
+<i>52</i>&nbsp;
+<i>53</i>&nbsp;    @Override
+<i>54</i>&nbsp;    public void endElement(String uri, String localName, String qualifiedName) throws SAXException {
+<i>55</i>&nbsp;
+<b class="nc"><i>56</i>&nbsp;        String content = characters.toString();</b>
+<i>57</i>&nbsp;
+<b class="nc"><i>58</i>&nbsp;        if (&quot;error&quot;.equals(qualifiedName)) {</b>
+<b class="nc"><i>59</i>&nbsp;            throw new RuntimeException(content);</b>
+<b class="nc"><i>60</i>&nbsp;        } else if (&quot;id&quot;.equals(qualifiedName)) {</b>
+<b class="nc"><i>61</i>&nbsp;            entry.setField(FieldName.EPRINT, content);</b>
+<b class="nc"><i>62</i>&nbsp;        } else if (&quot;keyname&quot;.equals(qualifiedName)) {</b>
+<b class="nc"><i>63</i>&nbsp;            keyname = content;</b>
+<b class="nc"><i>64</i>&nbsp;        } else if (&quot;forenames&quot;.equals(qualifiedName)) {</b>
+<b class="nc"><i>65</i>&nbsp;            forenames = content;</b>
+<b class="nc"><i>66</i>&nbsp;        } else if (&quot;journal-ref&quot;.equals(qualifiedName)) {</b>
+<b class="nc"><i>67</i>&nbsp;            String journal = content.replaceFirst(&quot;[0-9].*&quot;, &quot;&quot;);</b>
+<b class="nc"><i>68</i>&nbsp;            entry.setField(FieldName.JOURNAL, journal);</b>
+<b class="nc"><i>69</i>&nbsp;            String volume = content.replaceFirst(journal, &quot;&quot;);</b>
+<b class="nc"><i>70</i>&nbsp;            volume = volume.replaceFirst(&quot; .*&quot;, &quot;&quot;);</b>
+<b class="nc"><i>71</i>&nbsp;            entry.setField(FieldName.VOLUME, volume);</b>
+<b class="nc"><i>72</i>&nbsp;            String year = content.replaceFirst(&quot;.*?\\(&quot;, &quot;&quot;);</b>
+<b class="nc"><i>73</i>&nbsp;            year = year.replaceFirst(&quot;\\).*&quot;, &quot;&quot;);</b>
+<b class="nc"><i>74</i>&nbsp;            entry.setField(FieldName.YEAR, year);</b>
+<b class="nc"><i>75</i>&nbsp;            String pages = content.replaceFirst(journal, &quot;&quot;);</b>
+<b class="nc"><i>76</i>&nbsp;            pages = pages.replaceFirst(volume, &quot;&quot;);</b>
+<b class="nc"><i>77</i>&nbsp;            pages = pages.replaceFirst(&quot;\\(&quot; + year + &quot;\\)&quot;, &quot;&quot;);</b>
+<b class="nc"><i>78</i>&nbsp;            pages = pages.replace(&quot; &quot;, &quot;&quot;);</b>
+<b class="nc"><i>79</i>&nbsp;            entry.setField(FieldName.PAGES, pages);</b>
+<b class="nc"><i>80</i>&nbsp;        } else if (&quot;datestamp&quot;.equals(qualifiedName)) {</b>
+<b class="nc"><i>81</i>&nbsp;            Optional&lt;String&gt; year = entry.getField(FieldName.YEAR);</b>
+<b class="nc"><i>82</i>&nbsp;            if (!year.isPresent() || year.get().isEmpty()) {</b>
+<b class="nc"><i>83</i>&nbsp;                entry.setField(FieldName.YEAR, content.replaceFirst(&quot;-.*&quot;, &quot;&quot;));</b>
+<i>84</i>&nbsp;            }
+<b class="nc"><i>85</i>&nbsp;        } else if (&quot;title&quot;.equals(qualifiedName)) {</b>
+<b class="nc"><i>86</i>&nbsp;            entry.setField(FieldName.TITLE, content);</b>
+<b class="nc"><i>87</i>&nbsp;        } else if (&quot;abstract&quot;.equals(qualifiedName)) {</b>
+<b class="nc"><i>88</i>&nbsp;            entry.setField(FieldName.ABSTRACT, content);</b>
+<b class="nc"><i>89</i>&nbsp;        } else if (&quot;comments&quot;.equals(qualifiedName)) {</b>
+<b class="nc"><i>90</i>&nbsp;            entry.setField(FieldName.COMMENT, content);</b>
+<b class="nc"><i>91</i>&nbsp;        } else if (&quot;report-no&quot;.equals(qualifiedName)) {</b>
+<b class="nc"><i>92</i>&nbsp;            entry.setField(FieldName.REPORTNO, content);</b>
+<b class="nc"><i>93</i>&nbsp;        } else if (&quot;doi&quot;.equals(qualifiedName)) {</b>
+<b class="nc"><i>94</i>&nbsp;          entry.setField(FieldName.DOI, content);</b>
+<b class="nc"><i>95</i>&nbsp;        } else if (&quot;author&quot;.equals(qualifiedName)) {</b>
+<b class="nc"><i>96</i>&nbsp;            String author = forenames + &quot; &quot; + keyname;</b>
+<b class="nc"><i>97</i>&nbsp;            if (authors.length() &gt; 0) {</b>
+<b class="nc"><i>98</i>&nbsp;                authors.append(&quot; and &quot;);</b>
+<i>99</i>&nbsp;            }
+<b class="nc"><i>100</i>&nbsp;            authors.append(author);</b>
+<i>101</i>&nbsp;        }
+<b class="nc"><i>102</i>&nbsp;    }</b>
+<i>103</i>&nbsp;
+<i>104</i>&nbsp;    @Override
+<i>105</i>&nbsp;    public void endDocument() throws SAXException {
+<b class="nc"><i>106</i>&nbsp;        entry.setField(FieldName.AUTHOR, authors.toString());</b>
+<b class="nc"><i>107</i>&nbsp;    }</b>
+<i>108</i>&nbsp;
+<i>109</i>&nbsp;    public static String correctLineBreaks(String s) {
+<b class="nc"><i>110</i>&nbsp;        String result = s.replaceAll(&quot;\\n(?!\\s*\\n)&quot;, &quot; &quot;);</b>
+<b class="nc"><i>111</i>&nbsp;        result = result.replaceAll(&quot;\\s*\\n\\s*&quot;, &quot;\n&quot;);</b>
+<b class="nc"><i>112</i>&nbsp;        return result.replaceAll(&quot; {2,}&quot;, &quot; &quot;).replaceAll(&quot;(^\\s*|\\s+$)&quot;, &quot;&quot;);</b>
+<i>113</i>&nbsp;    }
+<i>114</i>&nbsp;
+<i>115</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

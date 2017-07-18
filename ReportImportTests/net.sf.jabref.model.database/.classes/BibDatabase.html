@@ -1,0 +1,662 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: BibDatabase</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.model.database</a> ]
+</div>
+
+<h1>Coverage Summary for Class: BibDatabase (net.sf.jabref.model.database)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">BibDatabase</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    14.6%
+  </span>
+  <span class="absValue">
+    (7/ 48)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    15.2%
+  </span>
+  <span class="absValue">
+    (25/ 164)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.model.database;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.math.BigInteger;
+<i>4</i>&nbsp;import java.security.SecureRandom;
+<i>5</i>&nbsp;import java.util.ArrayList;
+<i>6</i>&nbsp;import java.util.Collection;
+<i>7</i>&nbsp;import java.util.Collections;
+<i>8</i>&nbsp;import java.util.Comparator;
+<i>9</i>&nbsp;import java.util.HashSet;
+<i>10</i>&nbsp;import java.util.List;
+<i>11</i>&nbsp;import java.util.Map;
+<i>12</i>&nbsp;import java.util.Objects;
+<i>13</i>&nbsp;import java.util.Optional;
+<i>14</i>&nbsp;import java.util.Set;
+<i>15</i>&nbsp;import java.util.TreeSet;
+<i>16</i>&nbsp;import java.util.concurrent.ConcurrentHashMap;
+<i>17</i>&nbsp;import java.util.regex.Pattern;
+<i>18</i>&nbsp;import java.util.stream.Collectors;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;import net.sf.jabref.model.database.event.EntryAddedEvent;
+<i>21</i>&nbsp;import net.sf.jabref.model.database.event.EntryRemovedEvent;
+<i>22</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>23</i>&nbsp;import net.sf.jabref.model.entry.BibtexString;
+<i>24</i>&nbsp;import net.sf.jabref.model.entry.FieldName;
+<i>25</i>&nbsp;import net.sf.jabref.model.entry.InternalBibtexFields;
+<i>26</i>&nbsp;import net.sf.jabref.model.entry.MonthUtil;
+<i>27</i>&nbsp;import net.sf.jabref.model.entry.event.EntryChangedEvent;
+<i>28</i>&nbsp;import net.sf.jabref.model.entry.event.EntryEventSource;
+<i>29</i>&nbsp;import net.sf.jabref.model.entry.event.FieldChangedEvent;
+<i>30</i>&nbsp;import net.sf.jabref.model.strings.StringUtil;
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;import com.google.common.eventbus.EventBus;
+<i>33</i>&nbsp;import com.google.common.eventbus.Subscribe;
+<i>34</i>&nbsp;import org.apache.commons.logging.Log;
+<i>35</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;/**
+<i>38</i>&nbsp; * A bibliography database.
+<i>39</i>&nbsp; */
+<i>40</i>&nbsp;public class BibDatabase {
+<b class="fc"><i>41</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(BibDatabase.class);</b>
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;    /**
+<i>44</i>&nbsp;     * State attributes
+<i>45</i>&nbsp;     */
+<b class="fc"><i>46</i>&nbsp;    private final List&lt;BibEntry&gt; entries = Collections.synchronizedList(new ArrayList&lt;&gt;());</b>
+<i>47</i>&nbsp;
+<i>48</i>&nbsp;    private String preamble;
+<i>49</i>&nbsp;    // All file contents below the last entry in the file
+<b class="fc"><i>50</i>&nbsp;    private String epilog = &quot;&quot;;</b>
+<b class="fc"><i>51</i>&nbsp;    private final Map&lt;String, BibtexString&gt; bibtexStrings = new ConcurrentHashMap&lt;&gt;();</b>
+<i>52</i>&nbsp;
+<i>53</i>&nbsp;    /**
+<i>54</i>&nbsp;     * this is kept in sync with the database (upon adding/removing an entry, it is updated as well)
+<i>55</i>&nbsp;     */
+<b class="fc"><i>56</i>&nbsp;    private final DuplicationChecker duplicationChecker = new DuplicationChecker();</b>
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;    /**
+<i>59</i>&nbsp;     * contains all entry.getID() of the current database
+<i>60</i>&nbsp;     */
+<b class="fc"><i>61</i>&nbsp;    private final Set&lt;String&gt; internalIDs = new HashSet&lt;&gt;();</b>
+<i>62</i>&nbsp;
+<b class="fc"><i>63</i>&nbsp;    private final EventBus eventBus = new EventBus();</b>
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;    private String sharedDatabaseID;
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;
+<b class="fc"><i>68</i>&nbsp;    public BibDatabase() {</b>
+<b class="fc"><i>69</i>&nbsp;        this.eventBus.register(duplicationChecker);</b>
+<b class="fc"><i>70</i>&nbsp;        this.registerListener(new KeyChangeListener(this));</b>
+<b class="fc"><i>71</i>&nbsp;    }</b>
+<i>72</i>&nbsp;
+<i>73</i>&nbsp;    /**
+<i>74</i>&nbsp;     * Returns the number of entries.
+<i>75</i>&nbsp;     */
+<i>76</i>&nbsp;    public int getEntryCount() {
+<b class="nc"><i>77</i>&nbsp;        return entries.size();</b>
+<i>78</i>&nbsp;    }
+<i>79</i>&nbsp;
+<i>80</i>&nbsp;    /**
+<i>81</i>&nbsp;     * Checks if the database contains entries.
+<i>82</i>&nbsp;     */
+<i>83</i>&nbsp;    public boolean hasEntries() {
+<b class="nc"><i>84</i>&nbsp;        return !entries.isEmpty();</b>
+<i>85</i>&nbsp;    }
+<i>86</i>&nbsp;
+<i>87</i>&nbsp;    /**
+<i>88</i>&nbsp;     * Returns an EntrySorter with the sorted entries from this base,
+<i>89</i>&nbsp;     * sorted by the given Comparator.
+<i>90</i>&nbsp;     */
+<i>91</i>&nbsp;    public synchronized EntrySorter getSorter(Comparator&lt;BibEntry&gt; comp) {
+<b class="nc"><i>92</i>&nbsp;        return new EntrySorter(new ArrayList&lt;&gt;(getEntries()), comp);</b>
+<i>93</i>&nbsp;    }
+<i>94</i>&nbsp;
+<i>95</i>&nbsp;    /**
+<i>96</i>&nbsp;     * Returns whether an entry with the given ID exists (-&gt; entry_type + hashcode).
+<i>97</i>&nbsp;     */
+<i>98</i>&nbsp;    public boolean containsEntryWithId(String id) {
+<b class="fc"><i>99</i>&nbsp;        return internalIDs.contains(id);</b>
+<i>100</i>&nbsp;    }
+<i>101</i>&nbsp;
+<i>102</i>&nbsp;    public List&lt;BibEntry&gt; getEntries() {
+<b class="fc"><i>103</i>&nbsp;        return Collections.unmodifiableList(entries);</b>
+<i>104</i>&nbsp;    }
+<i>105</i>&nbsp;
+<i>106</i>&nbsp;    /**
+<i>107</i>&nbsp;     * Returns a set of Strings, that contains all field names that are visible. This means that the fields
+<i>108</i>&nbsp;     * are not internal fields. Internal fields are fields, that are starting with &quot;_&quot;.
+<i>109</i>&nbsp;     *
+<i>110</i>&nbsp;     * @return set of fieldnames, that are visible
+<i>111</i>&nbsp;     */
+<i>112</i>&nbsp;    public Set&lt;String&gt; getAllVisibleFields() {
+<b class="nc"><i>113</i>&nbsp;        Set&lt;String&gt; allFields = new TreeSet&lt;&gt;();</b>
+<b class="nc"><i>114</i>&nbsp;        for (BibEntry e : getEntries()) {</b>
+<b class="nc"><i>115</i>&nbsp;            allFields.addAll(e.getFieldNames());</b>
+<b class="nc"><i>116</i>&nbsp;        }</b>
+<b class="nc"><i>117</i>&nbsp;        return allFields.stream().filter(field -&gt; !InternalBibtexFields.isInternalField(field))</b>
+<b class="nc"><i>118</i>&nbsp;                .collect(Collectors.toSet());</b>
+<i>119</i>&nbsp;    }
+<i>120</i>&nbsp;
+<i>121</i>&nbsp;    /**
+<i>122</i>&nbsp;     * Returns the entry with the given bibtex key.
+<i>123</i>&nbsp;     */
+<i>124</i>&nbsp;    public synchronized Optional&lt;BibEntry&gt; getEntryByKey(String key) {
+<b class="nc"><i>125</i>&nbsp;        for (BibEntry entry : entries) {</b>
+<b class="nc"><i>126</i>&nbsp;            if (key.equals(entry.getCiteKeyOptional().orElse(null))) {</b>
+<b class="nc"><i>127</i>&nbsp;                return Optional.of(entry);</b>
+<i>128</i>&nbsp;            }
+<b class="nc"><i>129</i>&nbsp;        }</b>
+<b class="nc"><i>130</i>&nbsp;        return Optional.empty();</b>
+<i>131</i>&nbsp;    }
+<i>132</i>&nbsp;
+<i>133</i>&nbsp;    /**
+<i>134</i>&nbsp;     * Collects entries having the specified BibTeX key and returns these entries as list.
+<i>135</i>&nbsp;     * The order of the entries is the order they appear in the database.
+<i>136</i>&nbsp;     *
+<i>137</i>&nbsp;     * @param key
+<i>138</i>&nbsp;     * @return list of entries that contains the given key
+<i>139</i>&nbsp;     */
+<i>140</i>&nbsp;    public synchronized List&lt;BibEntry&gt; getEntriesByKey(String key) {
+<b class="nc"><i>141</i>&nbsp;        List&lt;BibEntry&gt; result = new ArrayList&lt;&gt;();</b>
+<i>142</i>&nbsp;
+<b class="nc"><i>143</i>&nbsp;        for (BibEntry entry : entries) {</b>
+<b class="nc"><i>144</i>&nbsp;            entry.getCiteKeyOptional().ifPresent(entryKey -&gt; {</b>
+<b class="nc"><i>145</i>&nbsp;                if (key.equals(entryKey)) {</b>
+<b class="nc"><i>146</i>&nbsp;                    result.add(entry);</b>
+<i>147</i>&nbsp;                }
+<b class="nc"><i>148</i>&nbsp;            });</b>
+<b class="nc"><i>149</i>&nbsp;        }</b>
+<b class="nc"><i>150</i>&nbsp;        return result;</b>
+<i>151</i>&nbsp;    }
+<i>152</i>&nbsp;
+<i>153</i>&nbsp;    /**
+<i>154</i>&nbsp;     * Finds the entry with a specified ID.
+<i>155</i>&nbsp;     *
+<i>156</i>&nbsp;     * @param id
+<i>157</i>&nbsp;     * @return The entry that has the given id
+<i>158</i>&nbsp;     */
+<i>159</i>&nbsp;    public synchronized Optional&lt;BibEntry&gt; getEntryById(String id) {
+<b class="nc"><i>160</i>&nbsp;        return entries.stream().filter(entry -&gt; entry.getId().equals(id)).findFirst();</b>
+<i>161</i>&nbsp;    }
+<i>162</i>&nbsp;
+<i>163</i>&nbsp;    /**
+<i>164</i>&nbsp;     * Inserts the entry, given that its ID is not already in use.
+<i>165</i>&nbsp;     * use Util.createId(...) to make up a unique ID for an entry.
+<i>166</i>&nbsp;     *
+<i>167</i>&nbsp;     * @param entry BibEntry to insert into the database
+<i>168</i>&nbsp;     * @return false if the insert was done without a duplicate warning
+<i>169</i>&nbsp;     * @throws KeyCollisionException thrown if the entry id ({@link BibEntry#getId()}) is already  present in the database
+<i>170</i>&nbsp;     */
+<i>171</i>&nbsp;    public synchronized boolean insertEntry(BibEntry entry) throws KeyCollisionException {
+<b class="fc"><i>172</i>&nbsp;        return insertEntry(entry, EntryEventSource.LOCAL);</b>
+<i>173</i>&nbsp;    }
+<i>174</i>&nbsp;
+<i>175</i>&nbsp;    /**
+<i>176</i>&nbsp;     * Inserts the entry, given that its ID is not already in use.
+<i>177</i>&nbsp;     * use Util.createId(...) to make up a unique ID for an entry.
+<i>178</i>&nbsp;     *
+<i>179</i>&nbsp;     * @param entry BibEntry to insert
+<i>180</i>&nbsp;     * @param eventSource Source the event is sent from
+<i>181</i>&nbsp;     * @return false if the insert was done without a duplicate warning
+<i>182</i>&nbsp;     */
+<i>183</i>&nbsp;    public synchronized boolean insertEntry(BibEntry entry, EntryEventSource eventSource) throws KeyCollisionException {
+<b class="fc"><i>184</i>&nbsp;        Objects.requireNonNull(entry);</b>
+<i>185</i>&nbsp;
+<b class="fc"><i>186</i>&nbsp;        String id = entry.getId();</b>
+<b class="fc"><i>187</i>&nbsp;        if (containsEntryWithId(id)) {</b>
+<b class="nc"><i>188</i>&nbsp;            throw new KeyCollisionException(&quot;ID is already in use, please choose another&quot;);</b>
+<i>189</i>&nbsp;        }
+<i>190</i>&nbsp;
+<b class="fc"><i>191</i>&nbsp;        internalIDs.add(id);</b>
+<b class="fc"><i>192</i>&nbsp;        entries.add(entry);</b>
+<b class="fc"><i>193</i>&nbsp;        entry.registerListener(this);</b>
+<i>194</i>&nbsp;
+<b class="fc"><i>195</i>&nbsp;        eventBus.post(new EntryAddedEvent(entry, eventSource));</b>
+<b class="fc"><i>196</i>&nbsp;        return duplicationChecker.isDuplicateCiteKeyExisting(entry);</b>
+<i>197</i>&nbsp;    }
+<i>198</i>&nbsp;
+<i>199</i>&nbsp;    /**
+<i>200</i>&nbsp;     * Removes the given entry.
+<i>201</i>&nbsp;     * The Entry is removed based on the id {@link BibEntry#id}
+<i>202</i>&nbsp;     * @param toBeDeleted Entry to delete
+<i>203</i>&nbsp;     */
+<i>204</i>&nbsp;    public synchronized void removeEntry(BibEntry toBeDeleted) {
+<b class="nc"><i>205</i>&nbsp;        removeEntry(toBeDeleted, EntryEventSource.LOCAL);</b>
+<b class="nc"><i>206</i>&nbsp;    }</b>
+<i>207</i>&nbsp;
+<i>208</i>&nbsp;    /**
+<i>209</i>&nbsp;     * Removes the given entry.
+<i>210</i>&nbsp;     * The Entry is removed based on the id {@link BibEntry#id}
+<i>211</i>&nbsp;     *
+<i>212</i>&nbsp;     * @param toBeDeleted Entry to delete
+<i>213</i>&nbsp;     * @param eventSource Source the event is sent from
+<i>214</i>&nbsp;     */
+<i>215</i>&nbsp;    public synchronized void removeEntry(BibEntry toBeDeleted, EntryEventSource eventSource) {
+<b class="nc"><i>216</i>&nbsp;        Objects.requireNonNull(toBeDeleted);</b>
+<i>217</i>&nbsp;
+<b class="nc"><i>218</i>&nbsp;        boolean anyRemoved = entries.removeIf(entry -&gt; entry.getId().equals(toBeDeleted.getId()));</b>
+<b class="nc"><i>219</i>&nbsp;        if (anyRemoved) {</b>
+<b class="nc"><i>220</i>&nbsp;            internalIDs.remove(toBeDeleted.getId());</b>
+<b class="nc"><i>221</i>&nbsp;            eventBus.post(new EntryRemovedEvent(toBeDeleted, eventSource));</b>
+<i>222</i>&nbsp;        }
+<b class="nc"><i>223</i>&nbsp;    }</b>
+<i>224</i>&nbsp;
+<i>225</i>&nbsp;    /**
+<i>226</i>&nbsp;     * Sets the database&#39;s preamble.
+<i>227</i>&nbsp;     */
+<i>228</i>&nbsp;    public synchronized void setPreamble(String preamble) {
+<b class="nc"><i>229</i>&nbsp;        this.preamble = preamble;</b>
+<b class="nc"><i>230</i>&nbsp;    }</b>
+<i>231</i>&nbsp;
+<i>232</i>&nbsp;    /**
+<i>233</i>&nbsp;     * Returns the database&#39;s preamble.
+<i>234</i>&nbsp;     * If the preamble text consists only of whitespace, then also an empty optional is returned.
+<i>235</i>&nbsp;     */
+<i>236</i>&nbsp;    public synchronized Optional&lt;String&gt; getPreamble() {
+<b class="nc"><i>237</i>&nbsp;        if (StringUtil.isBlank(preamble)) {</b>
+<b class="nc"><i>238</i>&nbsp;            return Optional.empty();</b>
+<i>239</i>&nbsp;        } else {
+<b class="nc"><i>240</i>&nbsp;            return Optional.of(preamble);</b>
+<i>241</i>&nbsp;        }
+<i>242</i>&nbsp;    }
+<i>243</i>&nbsp;
+<i>244</i>&nbsp;    /**
+<i>245</i>&nbsp;     * Inserts a Bibtex String.
+<i>246</i>&nbsp;     */
+<i>247</i>&nbsp;    public synchronized void addString(BibtexString string) throws KeyCollisionException {
+<b class="nc"><i>248</i>&nbsp;        if (hasStringLabel(string.getName())) {</b>
+<b class="nc"><i>249</i>&nbsp;            throw new KeyCollisionException(&quot;A string with that label already exists&quot;);</b>
+<i>250</i>&nbsp;        }
+<i>251</i>&nbsp;
+<b class="nc"><i>252</i>&nbsp;        if (bibtexStrings.containsKey(string.getId())) {</b>
+<b class="nc"><i>253</i>&nbsp;            throw new KeyCollisionException(&quot;Duplicate BibTeX string id.&quot;);</b>
+<i>254</i>&nbsp;        }
+<i>255</i>&nbsp;
+<b class="nc"><i>256</i>&nbsp;        bibtexStrings.put(string.getId(), string);</b>
+<b class="nc"><i>257</i>&nbsp;    }</b>
+<i>258</i>&nbsp;
+<i>259</i>&nbsp;    /**
+<i>260</i>&nbsp;     * Removes the string with the given id.
+<i>261</i>&nbsp;     */
+<i>262</i>&nbsp;    public void removeString(String id) {
+<b class="nc"><i>263</i>&nbsp;        bibtexStrings.remove(id);</b>
+<b class="nc"><i>264</i>&nbsp;    }</b>
+<i>265</i>&nbsp;
+<i>266</i>&nbsp;    /**
+<i>267</i>&nbsp;     * Returns a Set of keys to all BibtexString objects in the database.
+<i>268</i>&nbsp;     * These are in no sorted order.
+<i>269</i>&nbsp;     */
+<i>270</i>&nbsp;    public Set&lt;String&gt; getStringKeySet() {
+<b class="nc"><i>271</i>&nbsp;        return bibtexStrings.keySet();</b>
+<i>272</i>&nbsp;    }
+<i>273</i>&nbsp;
+<i>274</i>&nbsp;    /**
+<i>275</i>&nbsp;     * Returns a Collection of all BibtexString objects in the database.
+<i>276</i>&nbsp;     * These are in no particular order.
+<i>277</i>&nbsp;     */
+<i>278</i>&nbsp;    public Collection&lt;BibtexString&gt; getStringValues() {
+<b class="nc"><i>279</i>&nbsp;        return bibtexStrings.values();</b>
+<i>280</i>&nbsp;    }
+<i>281</i>&nbsp;
+<i>282</i>&nbsp;    /**
+<i>283</i>&nbsp;     * Returns the string with the given id.
+<i>284</i>&nbsp;     */
+<i>285</i>&nbsp;    public BibtexString getString(String id) {
+<b class="nc"><i>286</i>&nbsp;        return bibtexStrings.get(id);</b>
+<i>287</i>&nbsp;    }
+<i>288</i>&nbsp;
+<i>289</i>&nbsp;    /**
+<i>290</i>&nbsp;     * Returns the number of strings.
+<i>291</i>&nbsp;     */
+<i>292</i>&nbsp;    public int getStringCount() {
+<b class="nc"><i>293</i>&nbsp;        return bibtexStrings.size();</b>
+<i>294</i>&nbsp;    }
+<i>295</i>&nbsp;
+<i>296</i>&nbsp;    /**
+<i>297</i>&nbsp;     * Check if there are strings.
+<i>298</i>&nbsp;     */
+<i>299</i>&nbsp;    public boolean hasNoStrings() {
+<b class="nc"><i>300</i>&nbsp;        return bibtexStrings.isEmpty();</b>
+<i>301</i>&nbsp;    }
+<i>302</i>&nbsp;
+<i>303</i>&nbsp;    /**
+<i>304</i>&nbsp;     * Copies the preamble of another BibDatabase.
+<i>305</i>&nbsp;     *
+<i>306</i>&nbsp;     * @param database another BibDatabase
+<i>307</i>&nbsp;     */
+<i>308</i>&nbsp;    public void copyPreamble(BibDatabase database) {
+<b class="nc"><i>309</i>&nbsp;        setPreamble(database.getPreamble().orElse(&quot;&quot;));</b>
+<b class="nc"><i>310</i>&nbsp;    }</b>
+<i>311</i>&nbsp;
+<i>312</i>&nbsp;    /**
+<i>313</i>&nbsp;     * Copies all Strings from another BibDatabase.
+<i>314</i>&nbsp;     *
+<i>315</i>&nbsp;     * @param database another BibDatabase
+<i>316</i>&nbsp;     */
+<i>317</i>&nbsp;    public void copyStrings(BibDatabase database) {
+<b class="nc"><i>318</i>&nbsp;        for (String key : database.getStringKeySet()) {</b>
+<b class="nc"><i>319</i>&nbsp;            BibtexString string = database.getString(key);</b>
+<b class="nc"><i>320</i>&nbsp;            addString(string);</b>
+<b class="nc"><i>321</i>&nbsp;        }</b>
+<b class="nc"><i>322</i>&nbsp;    }</b>
+<i>323</i>&nbsp;
+<i>324</i>&nbsp;    /**
+<i>325</i>&nbsp;     * Returns true if a string with the given label already exists.
+<i>326</i>&nbsp;     */
+<i>327</i>&nbsp;    public synchronized boolean hasStringLabel(String label) {
+<b class="nc"><i>328</i>&nbsp;        for (BibtexString value : bibtexStrings.values()) {</b>
+<b class="nc"><i>329</i>&nbsp;            if (value.getName().equals(label)) {</b>
+<b class="nc"><i>330</i>&nbsp;                return true;</b>
+<i>331</i>&nbsp;            }
+<b class="nc"><i>332</i>&nbsp;        }</b>
+<b class="nc"><i>333</i>&nbsp;        return false;</b>
+<i>334</i>&nbsp;    }
+<i>335</i>&nbsp;
+<i>336</i>&nbsp;    /**
+<i>337</i>&nbsp;     * Resolves any references to strings contained in this field content,
+<i>338</i>&nbsp;     * if possible.
+<i>339</i>&nbsp;     */
+<i>340</i>&nbsp;    public String resolveForStrings(String content) {
+<b class="nc"><i>341</i>&nbsp;        Objects.requireNonNull(content, &quot;Content for resolveForStrings must not be null.&quot;);</b>
+<b class="nc"><i>342</i>&nbsp;        return resolveContent(content, new HashSet&lt;&gt;());</b>
+<i>343</i>&nbsp;    }
+<i>344</i>&nbsp;
+<i>345</i>&nbsp;    /**
+<i>346</i>&nbsp;     * Take the given collection of BibEntry and resolve any string
+<i>347</i>&nbsp;     * references.
+<i>348</i>&nbsp;     *
+<i>349</i>&nbsp;     * @param entriesToResolve A collection of BibtexEntries in which all strings of the form
+<i>350</i>&nbsp;     *                #xxx# will be resolved against the hash map of string
+<i>351</i>&nbsp;     *                references stored in the database.
+<i>352</i>&nbsp;     * @param inPlace If inPlace is true then the given BibtexEntries will be modified, if false then copies of the BibtexEntries are made before resolving the strings.
+<i>353</i>&nbsp;     * @return a list of bibtexentries, with all strings resolved. It is dependent on the value of inPlace whether copies are made or the given BibtexEntries are modified.
+<i>354</i>&nbsp;     */
+<i>355</i>&nbsp;    public List&lt;BibEntry&gt; resolveForStrings(Collection&lt;BibEntry&gt; entriesToResolve, boolean inPlace) {
+<b class="nc"><i>356</i>&nbsp;        Objects.requireNonNull(entriesToResolve, &quot;entries must not be null.&quot;);</b>
+<i>357</i>&nbsp;
+<b class="nc"><i>358</i>&nbsp;        List&lt;BibEntry&gt; results = new ArrayList&lt;&gt;(entriesToResolve.size());</b>
+<i>359</i>&nbsp;
+<b class="nc"><i>360</i>&nbsp;        for (BibEntry entry : entriesToResolve) {</b>
+<b class="nc"><i>361</i>&nbsp;            results.add(this.resolveForStrings(entry, inPlace));</b>
+<b class="nc"><i>362</i>&nbsp;        }</b>
+<b class="nc"><i>363</i>&nbsp;        return results;</b>
+<i>364</i>&nbsp;    }
+<i>365</i>&nbsp;
+<i>366</i>&nbsp;    /**
+<i>367</i>&nbsp;     * Take the given BibEntry and resolve any string references.
+<i>368</i>&nbsp;     *
+<i>369</i>&nbsp;     * @param entry   A BibEntry in which all strings of the form #xxx# will be
+<i>370</i>&nbsp;     *                resolved against the hash map of string references stored in
+<i>371</i>&nbsp;     *                the database.
+<i>372</i>&nbsp;     * @param inPlace If inPlace is true then the given BibEntry will be
+<i>373</i>&nbsp;     *                modified, if false then a copy is made using close made before
+<i>374</i>&nbsp;     *                resolving the strings.
+<i>375</i>&nbsp;     * @return a BibEntry with all string references resolved. It is
+<i>376</i>&nbsp;     * dependent on the value of inPlace whether a copy is made or the
+<i>377</i>&nbsp;     * given BibtexEntries is modified.
+<i>378</i>&nbsp;     */
+<i>379</i>&nbsp;    public BibEntry resolveForStrings(BibEntry entry, boolean inPlace) {
+<i>380</i>&nbsp;
+<i>381</i>&nbsp;        BibEntry resultingEntry;
+<b class="nc"><i>382</i>&nbsp;        if (inPlace) {</b>
+<b class="nc"><i>383</i>&nbsp;            resultingEntry = entry;</b>
+<i>384</i>&nbsp;        } else {
+<b class="nc"><i>385</i>&nbsp;            resultingEntry = (BibEntry) entry.clone();</b>
+<i>386</i>&nbsp;        }
+<i>387</i>&nbsp;
+<b class="nc"><i>388</i>&nbsp;        for (Map.Entry&lt;String, String&gt; field : resultingEntry.getFieldMap().entrySet()) {</b>
+<b class="nc"><i>389</i>&nbsp;            resultingEntry.setField(field.getKey(), this.resolveForStrings(field.getValue()));</b>
+<b class="nc"><i>390</i>&nbsp;        }</b>
+<b class="nc"><i>391</i>&nbsp;        return resultingEntry;</b>
+<i>392</i>&nbsp;    }
+<i>393</i>&nbsp;
+<i>394</i>&nbsp;    /**
+<i>395</i>&nbsp;     * If the label represents a string contained in this database, returns
+<i>396</i>&nbsp;     * that string&#39;s content. Resolves references to other strings, taking
+<i>397</i>&nbsp;     * care not to follow a circular reference pattern.
+<i>398</i>&nbsp;     * If the string is undefined, returns null.
+<i>399</i>&nbsp;     */
+<i>400</i>&nbsp;    private String resolveString(String label, Set&lt;String&gt; usedIds) {
+<b class="nc"><i>401</i>&nbsp;        for (BibtexString string : bibtexStrings.values()) {</b>
+<b class="nc"><i>402</i>&nbsp;            if (string.getName().equalsIgnoreCase(label)) {</b>
+<i>403</i>&nbsp;                // First check if this string label has been resolved
+<i>404</i>&nbsp;                // earlier in this recursion. If so, we have a
+<i>405</i>&nbsp;                // circular reference, and have to stop to avoid
+<i>406</i>&nbsp;                // infinite recursion.
+<b class="nc"><i>407</i>&nbsp;                if (usedIds.contains(string.getId())) {</b>
+<b class="nc"><i>408</i>&nbsp;                    LOGGER.info(&quot;Stopped due to circular reference in strings: &quot; + label);</b>
+<b class="nc"><i>409</i>&nbsp;                    return label;</b>
+<i>410</i>&nbsp;                }
+<i>411</i>&nbsp;                // If not, log this string&#39;s ID now.
+<b class="nc"><i>412</i>&nbsp;                usedIds.add(string.getId());</b>
+<i>413</i>&nbsp;
+<i>414</i>&nbsp;                // Ok, we found the string. Now we must make sure we
+<i>415</i>&nbsp;                // resolve any references to other strings in this one.
+<b class="nc"><i>416</i>&nbsp;                String result = string.getContent();</b>
+<b class="nc"><i>417</i>&nbsp;                result = resolveContent(result, usedIds);</b>
+<i>418</i>&nbsp;
+<i>419</i>&nbsp;                // Finished with recursing this branch, so we remove our
+<i>420</i>&nbsp;                // ID again:
+<b class="nc"><i>421</i>&nbsp;                usedIds.remove(string.getId());</b>
+<i>422</i>&nbsp;
+<b class="nc"><i>423</i>&nbsp;                return result;</b>
+<i>424</i>&nbsp;            }
+<b class="nc"><i>425</i>&nbsp;        }</b>
+<i>426</i>&nbsp;
+<i>427</i>&nbsp;        // If we get to this point, the string has obviously not been defined locally.
+<i>428</i>&nbsp;        // Check if one of the standard BibTeX month strings has been used:
+<b class="nc"><i>429</i>&nbsp;        MonthUtil.Month month = MonthUtil.getMonthByShortName(label);</b>
+<b class="nc"><i>430</i>&nbsp;        if (month.isValid()) {</b>
+<b class="nc"><i>431</i>&nbsp;            return month.fullName;</b>
+<i>432</i>&nbsp;        } else {
+<b class="nc"><i>433</i>&nbsp;            return null;</b>
+<i>434</i>&nbsp;        }
+<i>435</i>&nbsp;    }
+<i>436</i>&nbsp;
+<i>437</i>&nbsp;
+<b class="fc"><i>438</i>&nbsp;    private static final Pattern RESOLVE_CONTENT_PATTERN = Pattern.compile(&quot;.*#[^#]+#.*&quot;);</b>
+<i>439</i>&nbsp;
+<i>440</i>&nbsp;
+<i>441</i>&nbsp;    private String resolveContent(String result, Set&lt;String&gt; usedIds) {
+<b class="nc"><i>442</i>&nbsp;        String res = result;</b>
+<b class="nc"><i>443</i>&nbsp;        if (RESOLVE_CONTENT_PATTERN.matcher(res).matches()) {</b>
+<b class="nc"><i>444</i>&nbsp;            StringBuilder newRes = new StringBuilder();</b>
+<b class="nc"><i>445</i>&nbsp;            int piv = 0;</b>
+<i>446</i>&nbsp;            int next;
+<b class="nc"><i>447</i>&nbsp;            while ((next = res.indexOf(&#39;#&#39;, piv)) &gt;= 0) {</b>
+<i>448</i>&nbsp;
+<i>449</i>&nbsp;                // We found the next string ref. Append the text
+<i>450</i>&nbsp;                // up to it.
+<b class="nc"><i>451</i>&nbsp;                if (next &gt; 0) {</b>
+<b class="nc"><i>452</i>&nbsp;                    newRes.append(res.substring(piv, next));</b>
+<i>453</i>&nbsp;                }
+<b class="nc"><i>454</i>&nbsp;                int stringEnd = res.indexOf(&#39;#&#39;, next + 1);</b>
+<b class="nc"><i>455</i>&nbsp;                if (stringEnd &gt;= 0) {</b>
+<i>456</i>&nbsp;                    // We found the boundaries of the string ref,
+<i>457</i>&nbsp;                    // now resolve that one.
+<b class="nc"><i>458</i>&nbsp;                    String refLabel = res.substring(next + 1, stringEnd);</b>
+<b class="nc"><i>459</i>&nbsp;                    String resolved = resolveString(refLabel, usedIds);</b>
+<i>460</i>&nbsp;
+<b class="nc"><i>461</i>&nbsp;                    if (resolved == null) {</b>
+<i>462</i>&nbsp;                        // Could not resolve string. Display the #
+<i>463</i>&nbsp;                        // characters rather than removing them:
+<b class="nc"><i>464</i>&nbsp;                        newRes.append(res.substring(next, stringEnd + 1));</b>
+<i>465</i>&nbsp;                    } else {
+<i>466</i>&nbsp;                        // The string was resolved, so we display its meaning only,
+<i>467</i>&nbsp;                        // stripping the # characters signifying the string label:
+<b class="nc"><i>468</i>&nbsp;                        newRes.append(resolved);</b>
+<i>469</i>&nbsp;                    }
+<b class="nc"><i>470</i>&nbsp;                    piv = stringEnd + 1;</b>
+<b class="nc"><i>471</i>&nbsp;                } else {</b>
+<i>472</i>&nbsp;                    // We did not find the boundaries of the string ref. This
+<i>473</i>&nbsp;                    // makes it impossible to interpret it as a string label.
+<i>474</i>&nbsp;                    // So we should just append the rest of the text and finish.
+<b class="nc"><i>475</i>&nbsp;                    newRes.append(res.substring(next));</b>
+<b class="nc"><i>476</i>&nbsp;                    piv = res.length();</b>
+<b class="nc"><i>477</i>&nbsp;                    break;</b>
+<i>478</i>&nbsp;                }
+<i>479</i>&nbsp;
+<b class="nc"><i>480</i>&nbsp;            }</b>
+<b class="nc"><i>481</i>&nbsp;            if (piv &lt; (res.length() - 1)) {</b>
+<b class="nc"><i>482</i>&nbsp;                newRes.append(res.substring(piv));</b>
+<i>483</i>&nbsp;            }
+<b class="nc"><i>484</i>&nbsp;            res = newRes.toString();</b>
+<i>485</i>&nbsp;        }
+<b class="nc"><i>486</i>&nbsp;        return res;</b>
+<i>487</i>&nbsp;    }
+<i>488</i>&nbsp;
+<i>489</i>&nbsp;    /**
+<i>490</i>&nbsp;     * @deprecated use  {@link BibDatabase#resolveForStrings(String)}
+<i>491</i>&nbsp;     *
+<i>492</i>&nbsp;     * Returns a text with references resolved according to an optionally given database.
+<i>493</i>&nbsp;     *
+<i>494</i>&nbsp;     * @param toResolve maybenull The text to resolve.
+<i>495</i>&nbsp;     * @param database  maybenull The database to use for resolving the text.
+<i>496</i>&nbsp;     * @return The resolved text or the original text if either the text or the database are null
+<i>497</i>&nbsp;     */
+<i>498</i>&nbsp;    @Deprecated
+<i>499</i>&nbsp;    public static String getText(String toResolve, BibDatabase database) {
+<b class="nc"><i>500</i>&nbsp;        if ((toResolve != null) &amp;&amp; (database != null)) {</b>
+<b class="nc"><i>501</i>&nbsp;            return database.resolveForStrings(toResolve);</b>
+<i>502</i>&nbsp;        }
+<b class="nc"><i>503</i>&nbsp;        return toResolve;</b>
+<i>504</i>&nbsp;    }
+<i>505</i>&nbsp;
+<i>506</i>&nbsp;    public void setEpilog(String epilog) {
+<b class="nc"><i>507</i>&nbsp;        this.epilog = epilog;</b>
+<b class="nc"><i>508</i>&nbsp;    }</b>
+<i>509</i>&nbsp;
+<i>510</i>&nbsp;    public String getEpilog() {
+<b class="nc"><i>511</i>&nbsp;        return epilog;</b>
+<i>512</i>&nbsp;    }
+<i>513</i>&nbsp;
+<i>514</i>&nbsp;    /**
+<i>515</i>&nbsp;     * Registers an listener object (subscriber) to the internal event bus.
+<i>516</i>&nbsp;     * The following events are posted:
+<i>517</i>&nbsp;     *
+<i>518</i>&nbsp;     *   - {@link EntryAddedEvent}
+<i>519</i>&nbsp;     *   - {@link EntryChangedEvent}
+<i>520</i>&nbsp;     *   - {@link EntryRemovedEvent}
+<i>521</i>&nbsp;     *
+<i>522</i>&nbsp;     * @param listener listener (subscriber) to add
+<i>523</i>&nbsp;     */
+<i>524</i>&nbsp;    public void registerListener(Object listener) {
+<b class="fc"><i>525</i>&nbsp;        this.eventBus.register(listener);</b>
+<b class="fc"><i>526</i>&nbsp;    }</b>
+<i>527</i>&nbsp;
+<i>528</i>&nbsp;    /**
+<i>529</i>&nbsp;     * Unregisters an listener object.
+<i>530</i>&nbsp;     * @param listener listener (subscriber) to remove
+<i>531</i>&nbsp;     */
+<i>532</i>&nbsp;    public void unregisterListener(Object listener) {
+<i>533</i>&nbsp;        try {
+<b class="nc"><i>534</i>&nbsp;            this.eventBus.unregister(listener);</b>
+<b class="nc"><i>535</i>&nbsp;        } catch (IllegalArgumentException e) {</b>
+<i>536</i>&nbsp;            // occurs if the event source has not been registered, should not prevent shutdown
+<b class="nc"><i>537</i>&nbsp;            LOGGER.debug(e);</b>
+<b class="nc"><i>538</i>&nbsp;        }</b>
+<b class="nc"><i>539</i>&nbsp;    }</b>
+<i>540</i>&nbsp;
+<i>541</i>&nbsp;    @Subscribe
+<i>542</i>&nbsp;    private void relayEntryChangeEvent(FieldChangedEvent event) {
+<b class="nc"><i>543</i>&nbsp;        eventBus.post(event);</b>
+<b class="nc"><i>544</i>&nbsp;    }</b>
+<i>545</i>&nbsp;
+<i>546</i>&nbsp;    public Optional&lt;BibEntry&gt; getReferencedEntry(BibEntry entry) {
+<b class="nc"><i>547</i>&nbsp;        return entry.getField(FieldName.CROSSREF).flatMap(this::getEntryByKey);</b>
+<i>548</i>&nbsp;    }
+<i>549</i>&nbsp;
+<i>550</i>&nbsp;    public Optional&lt;String&gt; getSharedDatabaseID() {
+<b class="nc"><i>551</i>&nbsp;        return Optional.ofNullable(this.sharedDatabaseID);</b>
+<i>552</i>&nbsp;    }
+<i>553</i>&nbsp;
+<i>554</i>&nbsp;    public boolean isShared() {
+<b class="nc"><i>555</i>&nbsp;        return getSharedDatabaseID().isPresent();</b>
+<i>556</i>&nbsp;    }
+<i>557</i>&nbsp;
+<i>558</i>&nbsp;    public void setSharedDatabaseID(String sharedDatabaseID) {
+<b class="nc"><i>559</i>&nbsp;        this.sharedDatabaseID = sharedDatabaseID;</b>
+<b class="nc"><i>560</i>&nbsp;    }</b>
+<i>561</i>&nbsp;
+<i>562</i>&nbsp;    public void clearSharedDatabaseID() {
+<b class="nc"><i>563</i>&nbsp;        this.sharedDatabaseID = null;</b>
+<b class="nc"><i>564</i>&nbsp;    }</b>
+<i>565</i>&nbsp;
+<i>566</i>&nbsp;    /**
+<i>567</i>&nbsp;     * Generates and sets a random ID which is globally unique.
+<i>568</i>&nbsp;     *
+<i>569</i>&nbsp;     * @return The generated sharedDatabaseID
+<i>570</i>&nbsp;     */
+<i>571</i>&nbsp;    public String generateSharedDatabaseID() {
+<b class="nc"><i>572</i>&nbsp;        this.sharedDatabaseID = new BigInteger(128, new SecureRandom()).toString(32);</b>
+<b class="nc"><i>573</i>&nbsp;        return this.sharedDatabaseID;</b>
+<i>574</i>&nbsp;    }
+<i>575</i>&nbsp;
+<i>576</i>&nbsp;    public DuplicationChecker getDuplicationChecker() {
+<b class="nc"><i>577</i>&nbsp;        return duplicationChecker;</b>
+<i>578</i>&nbsp;    }
+<i>579</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

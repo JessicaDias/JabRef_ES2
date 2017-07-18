@@ -1,0 +1,220 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: EntryFromPDFCreator</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.importer</a> ]
+</div>
+
+<h1>Coverage Summary for Class: EntryFromPDFCreator (net.sf.jabref.gui.importer)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">EntryFromPDFCreator</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 40)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.importer;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.File;
+<i>4</i>&nbsp;import java.io.IOException;
+<i>5</i>&nbsp;import java.time.LocalDate;
+<i>6</i>&nbsp;import java.time.format.DateTimeFormatter;
+<i>7</i>&nbsp;import java.util.Calendar;
+<i>8</i>&nbsp;import java.util.Collections;
+<i>9</i>&nbsp;import java.util.List;
+<i>10</i>&nbsp;import java.util.Optional;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;import net.sf.jabref.Globals;
+<i>13</i>&nbsp;import net.sf.jabref.JabRefGUI;
+<i>14</i>&nbsp;import net.sf.jabref.gui.IconTheme;
+<i>15</i>&nbsp;import net.sf.jabref.gui.externalfiletype.ExternalFileType;
+<i>16</i>&nbsp;import net.sf.jabref.gui.externalfiletype.ExternalFileTypes;
+<i>17</i>&nbsp;import net.sf.jabref.logic.xmp.XMPUtil;
+<i>18</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>19</i>&nbsp;import net.sf.jabref.pdfimport.PdfImporter;
+<i>20</i>&nbsp;import net.sf.jabref.pdfimport.PdfImporter.ImportPdfFilesResult;
+<i>21</i>&nbsp;import net.sf.jabref.preferences.JabRefPreferences;
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;import org.apache.pdfbox.pdmodel.PDDocument;
+<i>24</i>&nbsp;import org.apache.pdfbox.pdmodel.PDDocumentInformation;
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;/**
+<i>27</i>&nbsp; * Uses XMPUtils to get one BibEntry for a PDF-File.
+<i>28</i>&nbsp; * Also imports the non-XMP Data (PDDocument-Information) using XMPUtil.getBibtexEntryFromDocumentInformation.
+<i>29</i>&nbsp; * If data from more than one entry is read by XMPUtil then this entys are merged into one.
+<i>30</i>&nbsp; * @author Dan
+<i>31</i>&nbsp; * @version 12.11.2008 | 22:12:48
+<i>32</i>&nbsp; *
+<i>33</i>&nbsp; */
+<i>34</i>&nbsp;public class EntryFromPDFCreator extends EntryFromFileCreator {
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;    public EntryFromPDFCreator() {
+<b class="nc"><i>37</i>&nbsp;        super(EntryFromPDFCreator.getPDFExternalFileType());</b>
+<b class="nc"><i>38</i>&nbsp;    }</b>
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;    private static ExternalFileType getPDFExternalFileType() {
+<b class="nc"><i>41</i>&nbsp;        Optional&lt;ExternalFileType&gt; pdfFileType = ExternalFileTypes.getInstance().getExternalFileTypeByExt(&quot;pdf&quot;);</b>
+<b class="nc"><i>42</i>&nbsp;        if (!pdfFileType.isPresent()) {</b>
+<b class="nc"><i>43</i>&nbsp;            return new ExternalFileType(&quot;PDF&quot;, &quot;pdf&quot;, &quot;application/pdf&quot;, &quot;evince&quot;, &quot;pdfSmall&quot;, IconTheme.JabRefIcon.PDF_FILE.getSmallIcon());</b>
+<i>44</i>&nbsp;        }
+<b class="nc"><i>45</i>&nbsp;        return pdfFileType.get();</b>
+<i>46</i>&nbsp;    }
+<i>47</i>&nbsp;
+<i>48</i>&nbsp;    /**
+<i>49</i>&nbsp;     * Accepts all Files having as suffix &quot;.PDF&quot; (in ignore case mode).
+<i>50</i>&nbsp;     */
+<i>51</i>&nbsp;    @Override
+<i>52</i>&nbsp;    public boolean accept(File f) {
+<b class="nc"><i>53</i>&nbsp;        return (f != null) &amp;&amp; f.getName().toUpperCase().endsWith(&quot;.PDF&quot;);</b>
+<i>54</i>&nbsp;    }
+<i>55</i>&nbsp;
+<i>56</i>&nbsp;    @Override
+<i>57</i>&nbsp;    protected Optional&lt;BibEntry&gt; createBibtexEntry(File pdfFile) {
+<i>58</i>&nbsp;
+<b class="nc"><i>59</i>&nbsp;        if (!accept(pdfFile)) {</b>
+<b class="nc"><i>60</i>&nbsp;            return Optional.empty();</b>
+<i>61</i>&nbsp;        }
+<i>62</i>&nbsp;
+<b class="nc"><i>63</i>&nbsp;        PdfImporter pi = new PdfImporter(JabRefGUI.getMainFrame(), JabRefGUI.getMainFrame().getCurrentBasePanel(), JabRefGUI.getMainFrame().getCurrentBasePanel().getMainTable(), -1);</b>
+<b class="nc"><i>64</i>&nbsp;        ImportPdfFilesResult res = pi.importPdfFiles(Collections.singletonList(pdfFile.toString()));</b>
+<b class="nc"><i>65</i>&nbsp;        if (res.getEntries().size() == 1) {</b>
+<b class="nc"><i>66</i>&nbsp;            return Optional.of(res.getEntries().get(0));</b>
+<i>67</i>&nbsp;        } else {
+<b class="nc"><i>68</i>&nbsp;            return Optional.empty();</b>
+<i>69</i>&nbsp;        }
+<i>70</i>&nbsp;
+<i>71</i>&nbsp;        /*addEntryDataFromPDDocumentInformation(pdfFile, entry);
+<i>72</i>&nbsp;        addEntryDataFromXMP(pdfFile, entry);
+<i>73</i>&nbsp;
+<i>74</i>&nbsp;        if (entry.getField(FieldName.TITLE) == null) {
+<i>75</i>&nbsp;        	entry.setField(FieldName.TITLE, pdfFile.getName());
+<i>76</i>&nbsp;        }
+<i>77</i>&nbsp;
+<i>78</i>&nbsp;        return entry;*/
+<i>79</i>&nbsp;    }
+<i>80</i>&nbsp;
+<i>81</i>&nbsp;    /** Adds entry data read from the PDDocument information of the file.
+<i>82</i>&nbsp;     * @param pdfFile
+<i>83</i>&nbsp;     * @param entry
+<i>84</i>&nbsp;     */
+<i>85</i>&nbsp;    private void addEntryDataFromPDDocumentInformation(File pdfFile, BibEntry entry) {
+<b class="nc"><i>86</i>&nbsp;        try (PDDocument document = PDDocument.load(pdfFile.getAbsoluteFile())) {</b>
+<b class="nc"><i>87</i>&nbsp;            PDDocumentInformation pdfDocInfo = document</b>
+<b class="nc"><i>88</i>&nbsp;                    .getDocumentInformation();</b>
+<i>89</i>&nbsp;
+<b class="nc"><i>90</i>&nbsp;            if (pdfDocInfo != null) {</b>
+<b class="nc"><i>91</i>&nbsp;                Optional&lt;BibEntry&gt; entryDI = XMPUtil</b>
+<b class="nc"><i>92</i>&nbsp;                        .getBibtexEntryFromDocumentInformation(document</b>
+<b class="nc"><i>93</i>&nbsp;                        .getDocumentInformation());</b>
+<b class="nc"><i>94</i>&nbsp;                if (entryDI.isPresent()) {</b>
+<b class="nc"><i>95</i>&nbsp;                    addEntryDataToEntry(entry, entryDI.get());</b>
+<b class="nc"><i>96</i>&nbsp;                    Calendar creationDate = pdfDocInfo.getCreationDate();</b>
+<b class="nc"><i>97</i>&nbsp;                    if (creationDate != null) {</b>
+<i>98</i>&nbsp;                        // default time stamp follows ISO-8601. Reason: https://xkcd.com/1179/
+<b class="nc"><i>99</i>&nbsp;                        String date = LocalDate.of(Calendar.YEAR, Calendar.MONTH + 1, Calendar.DAY_OF_MONTH)</b>
+<b class="nc"><i>100</i>&nbsp;                                .format(DateTimeFormatter.ISO_LOCAL_DATE);</b>
+<b class="nc"><i>101</i>&nbsp;                        appendToField(entry, Globals.prefs.get(JabRefPreferences.TIME_STAMP_FIELD), date);</b>
+<i>102</i>&nbsp;                    }
+<i>103</i>&nbsp;
+<b class="nc"><i>104</i>&nbsp;                    if (pdfDocInfo.getCustomMetadataValue(&quot;bibtex/bibtexkey&quot;) != null) {</b>
+<b class="nc"><i>105</i>&nbsp;                        entry.setId(pdfDocInfo</b>
+<b class="nc"><i>106</i>&nbsp;                                .getCustomMetadataValue(&quot;bibtex/bibtexkey&quot;));</b>
+<i>107</i>&nbsp;                    }
+<i>108</i>&nbsp;                }
+<i>109</i>&nbsp;            }
+<b class="nc"><i>110</i>&nbsp;        } catch (IOException e) {</b>
+<i>111</i>&nbsp;            // no canceling here, just no data added.
+<b class="nc"><i>112</i>&nbsp;        }</b>
+<b class="nc"><i>113</i>&nbsp;    }</b>
+<i>114</i>&nbsp;
+<i>115</i>&nbsp;    /**
+<i>116</i>&nbsp;     * Adds all data Found in all the entries of this XMP file to the given
+<i>117</i>&nbsp;     * entry. This was implemented without having much knowledge of the XMP
+<i>118</i>&nbsp;     * format.
+<i>119</i>&nbsp;     *
+<i>120</i>&nbsp;     * @param aFile
+<i>121</i>&nbsp;     * @param entry
+<i>122</i>&nbsp;     */
+<i>123</i>&nbsp;    private void addEntryDataFromXMP(File aFile, BibEntry entry) {
+<i>124</i>&nbsp;        try {
+<b class="nc"><i>125</i>&nbsp;            List&lt;BibEntry&gt; entrys = XMPUtil.readXMP(aFile.getAbsoluteFile(), Globals.prefs.getXMPPreferences());</b>
+<b class="nc"><i>126</i>&nbsp;            addEntrysToEntry(entry, entrys);</b>
+<b class="nc"><i>127</i>&nbsp;        } catch (IOException e) {</b>
+<i>128</i>&nbsp;            // no canceling here, just no data added.
+<b class="nc"><i>129</i>&nbsp;        }</b>
+<b class="nc"><i>130</i>&nbsp;    }</b>
+<i>131</i>&nbsp;
+<i>132</i>&nbsp;    @Override
+<i>133</i>&nbsp;    public String getFormatName() {
+<b class="nc"><i>134</i>&nbsp;        return &quot;PDF&quot;;</b>
+<i>135</i>&nbsp;    }
+<i>136</i>&nbsp;
+<i>137</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,232 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: CopacImporter</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.importer.fileformat</a> ]
+</div>
+
+<h1>Coverage Summary for Class: CopacImporter (net.sf.jabref.logic.importer.fileformat)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CopacImporter</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 64)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.importer.fileformat;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.BufferedReader;
+<i>4</i>&nbsp;import java.io.IOException;
+<i>5</i>&nbsp;import java.util.LinkedList;
+<i>6</i>&nbsp;import java.util.List;
+<i>7</i>&nbsp;import java.util.Objects;
+<i>8</i>&nbsp;import java.util.regex.Pattern;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;import net.sf.jabref.logic.importer.Importer;
+<i>11</i>&nbsp;import net.sf.jabref.logic.importer.ParserResult;
+<i>12</i>&nbsp;import net.sf.jabref.logic.util.FileExtensions;
+<i>13</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>14</i>&nbsp;import net.sf.jabref.model.entry.FieldName;
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;/**
+<i>17</i>&nbsp; * Importer for COPAC format.
+<i>18</i>&nbsp; *
+<i>19</i>&nbsp; * Documentation can be found online at:
+<i>20</i>&nbsp; *
+<i>21</i>&nbsp; * http://copac.ac.uk/faq/#format
+<i>22</i>&nbsp; */
+<b class="nc"><i>23</i>&nbsp;public class CopacImporter extends Importer {</b>
+<i>24</i>&nbsp;
+<b class="nc"><i>25</i>&nbsp;    private static final Pattern COPAC_PATTERN = Pattern.compile(&quot;^\\s*TI- &quot;);</b>
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    @Override
+<i>28</i>&nbsp;    public String getName() {
+<b class="nc"><i>29</i>&nbsp;        return &quot;Copac&quot;;</b>
+<i>30</i>&nbsp;    }
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;    @Override
+<i>33</i>&nbsp;    public FileExtensions getExtensions() {
+<b class="nc"><i>34</i>&nbsp;        return FileExtensions.COPAC;</b>
+<i>35</i>&nbsp;    }
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    @Override
+<i>38</i>&nbsp;    public String getId() {
+<b class="nc"><i>39</i>&nbsp;        return &quot;cpc&quot;;</b>
+<i>40</i>&nbsp;    }
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;    @Override
+<i>43</i>&nbsp;    public String getDescription() {
+<b class="nc"><i>44</i>&nbsp;        return &quot;Importer for COPAC format.&quot;;</b>
+<i>45</i>&nbsp;    }
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;    @Override
+<i>48</i>&nbsp;    public boolean isRecognizedFormat(BufferedReader reader) throws IOException {
+<i>49</i>&nbsp;        String str;
+<b class="nc"><i>50</i>&nbsp;        while ((str = reader.readLine()) != null) {</b>
+<b class="nc"><i>51</i>&nbsp;            if (CopacImporter.COPAC_PATTERN.matcher(str).find()) {</b>
+<b class="nc"><i>52</i>&nbsp;                return true;</b>
+<i>53</i>&nbsp;            }
+<i>54</i>&nbsp;        }
+<b class="nc"><i>55</i>&nbsp;        return false;</b>
+<i>56</i>&nbsp;    }
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;    @Override
+<i>59</i>&nbsp;    public ParserResult importDatabase(BufferedReader reader) throws IOException {
+<b class="nc"><i>60</i>&nbsp;        Objects.requireNonNull(reader);</b>
+<i>61</i>&nbsp;
+<b class="nc"><i>62</i>&nbsp;        List&lt;String&gt; entries = new LinkedList&lt;&gt;();</b>
+<b class="nc"><i>63</i>&nbsp;        StringBuilder sb = new StringBuilder();</b>
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;        // Preprocess entries
+<i>66</i>&nbsp;        String str;
+<i>67</i>&nbsp;
+<b class="nc"><i>68</i>&nbsp;        while ((str = reader.readLine()) != null) {</b>
+<i>69</i>&nbsp;
+<b class="nc"><i>70</i>&nbsp;            if (str.length() &lt; 4) {</b>
+<b class="nc"><i>71</i>&nbsp;                continue;</b>
+<i>72</i>&nbsp;            }
+<i>73</i>&nbsp;
+<b class="nc"><i>74</i>&nbsp;            String code = str.substring(0, 4);</b>
+<i>75</i>&nbsp;
+<b class="nc"><i>76</i>&nbsp;            if (&quot;    &quot;.equals(code)) {</b>
+<b class="nc"><i>77</i>&nbsp;                sb.append(&#39; &#39;).append(str.trim());</b>
+<i>78</i>&nbsp;            } else {
+<i>79</i>&nbsp;
+<i>80</i>&nbsp;                // begining of a new item
+<b class="nc"><i>81</i>&nbsp;                if (&quot;TI- &quot;.equals(str.substring(0, 4))) {</b>
+<b class="nc"><i>82</i>&nbsp;                    if (sb.length() &gt; 0) {</b>
+<b class="nc"><i>83</i>&nbsp;                        entries.add(sb.toString());</b>
+<i>84</i>&nbsp;                    }
+<b class="nc"><i>85</i>&nbsp;                    sb = new StringBuilder();</b>
+<i>86</i>&nbsp;                }
+<b class="nc"><i>87</i>&nbsp;                sb.append(&#39;\n&#39;).append(str);</b>
+<i>88</i>&nbsp;            }
+<b class="nc"><i>89</i>&nbsp;        }</b>
+<i>90</i>&nbsp;
+<b class="nc"><i>91</i>&nbsp;        if (sb.length() &gt; 0) {</b>
+<b class="nc"><i>92</i>&nbsp;            entries.add(sb.toString());</b>
+<i>93</i>&nbsp;        }
+<i>94</i>&nbsp;
+<b class="nc"><i>95</i>&nbsp;        List&lt;BibEntry&gt; results = new LinkedList&lt;&gt;();</b>
+<i>96</i>&nbsp;
+<b class="nc"><i>97</i>&nbsp;        for (String entry : entries) {</b>
+<i>98</i>&nbsp;
+<i>99</i>&nbsp;            // Copac does not contain enough information on the type of the
+<i>100</i>&nbsp;            // document. A book is assumed.
+<b class="nc"><i>101</i>&nbsp;            BibEntry b = new BibEntry(&quot;book&quot;);</b>
+<i>102</i>&nbsp;
+<b class="nc"><i>103</i>&nbsp;            String[] lines = entry.split(&quot;\n&quot;);</b>
+<i>104</i>&nbsp;
+<b class="nc"><i>105</i>&nbsp;            for (String line1 : lines) {</b>
+<b class="nc"><i>106</i>&nbsp;                String line = line1.trim();</b>
+<b class="nc"><i>107</i>&nbsp;                if (line.length() &lt; 4) {</b>
+<b class="nc"><i>108</i>&nbsp;                    continue;</b>
+<i>109</i>&nbsp;                }
+<b class="nc"><i>110</i>&nbsp;                String code = line.substring(0, 4);</b>
+<i>111</i>&nbsp;
+<b class="nc"><i>112</i>&nbsp;                if (&quot;TI- &quot;.equals(code)) {</b>
+<b class="nc"><i>113</i>&nbsp;                    setOrAppend(b, FieldName.TITLE, line.substring(4).trim(), &quot;, &quot;);</b>
+<b class="nc"><i>114</i>&nbsp;                } else if (&quot;AU- &quot;.equals(code)) {</b>
+<b class="nc"><i>115</i>&nbsp;                    setOrAppend(b, FieldName.AUTHOR, line.substring(4).trim(), &quot; and &quot;);</b>
+<b class="nc"><i>116</i>&nbsp;                } else if (&quot;PY- &quot;.equals(code)) {</b>
+<b class="nc"><i>117</i>&nbsp;                    setOrAppend(b, FieldName.YEAR, line.substring(4).trim(), &quot;, &quot;);</b>
+<b class="nc"><i>118</i>&nbsp;                } else if (&quot;PU- &quot;.equals(code)) {</b>
+<b class="nc"><i>119</i>&nbsp;                    setOrAppend(b, FieldName.PUBLISHER, line.substring(4).trim(), &quot;, &quot;);</b>
+<b class="nc"><i>120</i>&nbsp;                } else if (&quot;SE- &quot;.equals(code)) {</b>
+<b class="nc"><i>121</i>&nbsp;                    setOrAppend(b, FieldName.SERIES, line.substring(4).trim(), &quot;, &quot;);</b>
+<b class="nc"><i>122</i>&nbsp;                } else if (&quot;IS- &quot;.equals(code)) {</b>
+<b class="nc"><i>123</i>&nbsp;                    setOrAppend(b, FieldName.ISBN, line.substring(4).trim(), &quot;, &quot;);</b>
+<b class="nc"><i>124</i>&nbsp;                } else if (&quot;KW- &quot;.equals(code)) {</b>
+<b class="nc"><i>125</i>&nbsp;                    setOrAppend(b, FieldName.KEYWORDS, line.substring(4).trim(), &quot;, &quot;);</b>
+<b class="nc"><i>126</i>&nbsp;                } else if (&quot;NT- &quot;.equals(code)) {</b>
+<b class="nc"><i>127</i>&nbsp;                    setOrAppend(b, FieldName.NOTE, line.substring(4).trim(), &quot;, &quot;);</b>
+<b class="nc"><i>128</i>&nbsp;                } else if (&quot;PD- &quot;.equals(code)) {</b>
+<b class="nc"><i>129</i>&nbsp;                    setOrAppend(b, &quot;physicaldimensions&quot;, line.substring(4).trim(), &quot;, &quot;);</b>
+<b class="nc"><i>130</i>&nbsp;                } else if (&quot;DT- &quot;.equals(code)) {</b>
+<b class="nc"><i>131</i>&nbsp;                    setOrAppend(b, &quot;documenttype&quot;, line.substring(4).trim(), &quot;, &quot;);</b>
+<i>132</i>&nbsp;                } else {
+<b class="nc"><i>133</i>&nbsp;                    setOrAppend(b, code.substring(0, 2), line.substring(4).trim(), &quot;, &quot;);</b>
+<i>134</i>&nbsp;                }
+<i>135</i>&nbsp;            }
+<b class="nc"><i>136</i>&nbsp;            results.add(b);</b>
+<b class="nc"><i>137</i>&nbsp;        }</b>
+<i>138</i>&nbsp;
+<b class="nc"><i>139</i>&nbsp;        return new ParserResult(results);</b>
+<i>140</i>&nbsp;    }
+<i>141</i>&nbsp;
+<i>142</i>&nbsp;    private static void setOrAppend(BibEntry b, String field, String value, String separator) {
+<b class="nc"><i>143</i>&nbsp;        if (b.hasField(field)) {</b>
+<b class="nc"><i>144</i>&nbsp;            b.setField(field, b.getField(field).get() + separator + value);</b>
+<i>145</i>&nbsp;        } else {
+<b class="nc"><i>146</i>&nbsp;            b.setField(field, value);</b>
+<i>147</i>&nbsp;        }
+<b class="nc"><i>148</i>&nbsp;    }</b>
+<i>149</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,425 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: CitationManager</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.openoffice</a> ]
+</div>
+
+<h1>Coverage Summary for Class: CitationManager (net.sf.jabref.gui.openoffice)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CitationManager</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 53)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">CitationManager$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">CitationManager$CitationEntryFormat</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 8)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">CitationManager$SingleCitationDialog</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 38)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">CitationManager$SingleCitationDialog$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">CitationManager$TableClickListener</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 7)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 112)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.openoffice;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.BorderLayout;
+<i>4</i>&nbsp;import java.awt.Dimension;
+<i>5</i>&nbsp;import java.awt.event.ActionEvent;
+<i>6</i>&nbsp;import java.awt.event.MouseAdapter;
+<i>7</i>&nbsp;import java.awt.event.MouseEvent;
+<i>8</i>&nbsp;import java.util.List;
+<i>9</i>&nbsp;import java.util.Optional;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;import javax.swing.AbstractAction;
+<i>12</i>&nbsp;import javax.swing.Action;
+<i>13</i>&nbsp;import javax.swing.BorderFactory;
+<i>14</i>&nbsp;import javax.swing.JButton;
+<i>15</i>&nbsp;import javax.swing.JComponent;
+<i>16</i>&nbsp;import javax.swing.JDialog;
+<i>17</i>&nbsp;import javax.swing.JOptionPane;
+<i>18</i>&nbsp;import javax.swing.JScrollPane;
+<i>19</i>&nbsp;import javax.swing.JTable;
+<i>20</i>&nbsp;import javax.swing.JTextField;
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;import net.sf.jabref.Globals;
+<i>23</i>&nbsp;import net.sf.jabref.gui.JabRefFrame;
+<i>24</i>&nbsp;import net.sf.jabref.gui.keyboard.KeyBinding;
+<i>25</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>26</i>&nbsp;import net.sf.jabref.logic.openoffice.CitationEntry;
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;import ca.odell.glazedlists.BasicEventList;
+<i>29</i>&nbsp;import ca.odell.glazedlists.EventList;
+<i>30</i>&nbsp;import ca.odell.glazedlists.gui.TableFormat;
+<i>31</i>&nbsp;import ca.odell.glazedlists.swing.DefaultEventTableModel;
+<i>32</i>&nbsp;import com.jgoodies.forms.builder.ButtonBarBuilder;
+<i>33</i>&nbsp;import com.jgoodies.forms.builder.FormBuilder;
+<i>34</i>&nbsp;import com.jgoodies.forms.layout.FormLayout;
+<i>35</i>&nbsp;import com.sun.star.beans.IllegalTypeException;
+<i>36</i>&nbsp;import com.sun.star.beans.NotRemoveableException;
+<i>37</i>&nbsp;import com.sun.star.beans.PropertyExistException;
+<i>38</i>&nbsp;import com.sun.star.beans.UnknownPropertyException;
+<i>39</i>&nbsp;import com.sun.star.container.NoSuchElementException;
+<i>40</i>&nbsp;import com.sun.star.container.XNameAccess;
+<i>41</i>&nbsp;import com.sun.star.lang.IllegalArgumentException;
+<i>42</i>&nbsp;import com.sun.star.lang.WrappedTargetException;
+<i>43</i>&nbsp;import org.apache.commons.logging.Log;
+<i>44</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;/**
+<i>47</i>&nbsp; * Dialog for modifying existing citations.
+<i>48</i>&nbsp; */
+<i>49</i>&nbsp;class CitationManager {
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;    private final OOBibBase ooBase;
+<i>52</i>&nbsp;    private final JDialog diag;
+<i>53</i>&nbsp;    private final EventList&lt;CitationEntry&gt; list;
+<i>54</i>&nbsp;    private final JTable table;
+<i>55</i>&nbsp;    private final DefaultEventTableModel&lt;CitationEntry&gt; tableModel;
+<i>56</i>&nbsp;
+<b class="nc"><i>57</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(CitationManager.class);</b>
+<i>58</i>&nbsp;
+<i>59</i>&nbsp;
+<i>60</i>&nbsp;    public CitationManager(final JabRefFrame frame, OOBibBase ooBase)
+<b class="nc"><i>61</i>&nbsp;            throws NoSuchElementException, WrappedTargetException, UnknownPropertyException {</b>
+<b class="nc"><i>62</i>&nbsp;        diag = new JDialog(frame, Localization.lang(&quot;Manage citations&quot;), true);</b>
+<b class="nc"><i>63</i>&nbsp;        this.ooBase = ooBase;</b>
+<i>64</i>&nbsp;
+<b class="nc"><i>65</i>&nbsp;        list = new BasicEventList&lt;&gt;();</b>
+<b class="nc"><i>66</i>&nbsp;        XNameAccess nameAccess = ooBase.getReferenceMarks();</b>
+<b class="nc"><i>67</i>&nbsp;        List&lt;String&gt; names = ooBase.getJabRefReferenceMarks(nameAccess);</b>
+<b class="nc"><i>68</i>&nbsp;        for (String name : names) {</b>
+<b class="nc"><i>69</i>&nbsp;            list.add(new CitationEntry(name,</b>
+<b class="nc"><i>70</i>&nbsp;                    &quot;&lt;html&gt;...&quot; + ooBase.getCitationContext(nameAccess, name, 30, 30, true) + &quot;...&lt;/html&gt;&quot;,</b>
+<b class="nc"><i>71</i>&nbsp;                    ooBase.getCustomProperty(name)));</b>
+<b class="nc"><i>72</i>&nbsp;        }</b>
+<b class="nc"><i>73</i>&nbsp;        tableModel = new DefaultEventTableModel&lt;&gt;(list, new CitationEntryFormat());</b>
+<b class="nc"><i>74</i>&nbsp;        table = new JTable(tableModel);</b>
+<i>75</i>&nbsp;
+<b class="nc"><i>76</i>&nbsp;        diag.add(new JScrollPane(table), BorderLayout.CENTER);</b>
+<i>77</i>&nbsp;
+<b class="nc"><i>78</i>&nbsp;        ButtonBarBuilder bb = new ButtonBarBuilder();</b>
+<b class="nc"><i>79</i>&nbsp;        bb.addGlue();</b>
+<b class="nc"><i>80</i>&nbsp;        JButton ok = new JButton(Localization.lang(&quot;OK&quot;));</b>
+<b class="nc"><i>81</i>&nbsp;        bb.addButton(ok);</b>
+<b class="nc"><i>82</i>&nbsp;        JButton cancel = new JButton(Localization.lang(&quot;Cancel&quot;));</b>
+<b class="nc"><i>83</i>&nbsp;        bb.addButton(cancel);</b>
+<b class="nc"><i>84</i>&nbsp;        bb.addGlue();</b>
+<b class="nc"><i>85</i>&nbsp;        bb.getPanel().setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));</b>
+<b class="nc"><i>86</i>&nbsp;        diag.add(bb.getPanel(), BorderLayout.SOUTH);</b>
+<i>87</i>&nbsp;
+<b class="nc"><i>88</i>&nbsp;        diag.pack();</b>
+<b class="nc"><i>89</i>&nbsp;        diag.setSize(700, 400);</b>
+<i>90</i>&nbsp;
+<b class="nc"><i>91</i>&nbsp;        ok.addActionListener(e -&gt; {</b>
+<i>92</i>&nbsp;            try {
+<b class="nc"><i>93</i>&nbsp;                storeSettings();</b>
+<b class="nc"><i>94</i>&nbsp;            } catch (UnknownPropertyException | NotRemoveableException | PropertyExistException | IllegalTypeException |</b>
+<i>95</i>&nbsp;                    IllegalArgumentException ex) {
+<b class="nc"><i>96</i>&nbsp;                LOGGER.warn(&quot;Problem modifying citation&quot;, ex);</b>
+<b class="nc"><i>97</i>&nbsp;                JOptionPane.showMessageDialog(frame, Localization.lang(&quot;Problem modifying citation&quot;));</b>
+<b class="nc"><i>98</i>&nbsp;            }</b>
+<b class="nc"><i>99</i>&nbsp;            diag.dispose();</b>
+<b class="nc"><i>100</i>&nbsp;        });</b>
+<i>101</i>&nbsp;
+<b class="nc"><i>102</i>&nbsp;        Action cancelAction = new AbstractAction() {</b>
+<i>103</i>&nbsp;
+<i>104</i>&nbsp;            @Override
+<i>105</i>&nbsp;            public void actionPerformed(ActionEvent actionEvent) {
+<b class="nc"><i>106</i>&nbsp;                diag.dispose();</b>
+<b class="nc"><i>107</i>&nbsp;            }</b>
+<i>108</i>&nbsp;        };
+<b class="nc"><i>109</i>&nbsp;        cancel.addActionListener(cancelAction);</b>
+<i>110</i>&nbsp;
+<b class="nc"><i>111</i>&nbsp;        bb.getPanel().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put</b>
+<b class="nc"><i>112</i>&nbsp;                (Globals.getKeyPrefs().getKey(KeyBinding.CLOSE_DIALOG), &quot;close&quot;);</b>
+<b class="nc"><i>113</i>&nbsp;        bb.getPanel().getActionMap().put(&quot;close&quot;, cancelAction);</b>
+<i>114</i>&nbsp;
+<b class="nc"><i>115</i>&nbsp;        table.getColumnModel().getColumn(0).setPreferredWidth(580);</b>
+<b class="nc"><i>116</i>&nbsp;        table.getColumnModel().getColumn(1).setPreferredWidth(110);</b>
+<b class="nc"><i>117</i>&nbsp;        table.setPreferredScrollableViewportSize(new Dimension(700, 500));</b>
+<b class="nc"><i>118</i>&nbsp;        table.addMouseListener(new TableClickListener());</b>
+<b class="nc"><i>119</i>&nbsp;    }</b>
+<i>120</i>&nbsp;
+<i>121</i>&nbsp;    private void storeSettings() throws UnknownPropertyException, NotRemoveableException, PropertyExistException,
+<i>122</i>&nbsp;            IllegalTypeException, IllegalArgumentException {
+<b class="nc"><i>123</i>&nbsp;        for (CitationEntry entry : list) {</b>
+<b class="nc"><i>124</i>&nbsp;            Optional&lt;String&gt; pageInfo = entry.getPageInfo();</b>
+<b class="nc"><i>125</i>&nbsp;            if (entry.pageInfoChanged() &amp;&amp; pageInfo.isPresent()) {</b>
+<b class="nc"><i>126</i>&nbsp;                ooBase.setCustomProperty(entry.getRefMarkName(), pageInfo.get());</b>
+<i>127</i>&nbsp;            }
+<b class="nc"><i>128</i>&nbsp;        }</b>
+<b class="nc"><i>129</i>&nbsp;    }</b>
+<i>130</i>&nbsp;
+<i>131</i>&nbsp;    public void showDialog() {
+<b class="nc"><i>132</i>&nbsp;        diag.setLocationRelativeTo(diag.getParent());</b>
+<b class="nc"><i>133</i>&nbsp;        diag.setVisible(true);</b>
+<b class="nc"><i>134</i>&nbsp;    }</b>
+<i>135</i>&nbsp;
+<i>136</i>&nbsp;
+<i>137</i>&nbsp;
+<b class="nc"><i>138</i>&nbsp;    private static class CitationEntryFormat implements TableFormat&lt;CitationEntry&gt; {</b>
+<i>139</i>&nbsp;
+<i>140</i>&nbsp;        @Override
+<i>141</i>&nbsp;        public int getColumnCount() {
+<b class="nc"><i>142</i>&nbsp;            return 2;</b>
+<i>143</i>&nbsp;        }
+<i>144</i>&nbsp;
+<i>145</i>&nbsp;        @Override
+<i>146</i>&nbsp;        public String getColumnName(int i) {
+<b class="nc"><i>147</i>&nbsp;            if (i == 0) {</b>
+<b class="nc"><i>148</i>&nbsp;                return Localization.lang(&quot;Citation&quot;);</b>
+<i>149</i>&nbsp;            } else {
+<b class="nc"><i>150</i>&nbsp;                return Localization.lang(&quot;Extra information&quot;);</b>
+<i>151</i>&nbsp;            }
+<i>152</i>&nbsp;        }
+<i>153</i>&nbsp;
+<i>154</i>&nbsp;        @Override
+<i>155</i>&nbsp;        public Object getColumnValue(CitationEntry citEntry, int i) {
+<b class="nc"><i>156</i>&nbsp;            if (i == 0) {</b>
+<b class="nc"><i>157</i>&nbsp;                return citEntry.getContext();</b>
+<i>158</i>&nbsp;            } else {
+<b class="nc"><i>159</i>&nbsp;                return citEntry.getPageInfo().orElse(&quot;&quot;);</b>
+<i>160</i>&nbsp;            }
+<i>161</i>&nbsp;        }
+<i>162</i>&nbsp;    }
+<i>163</i>&nbsp;
+<b class="nc"><i>164</i>&nbsp;    private class TableClickListener extends MouseAdapter {</b>
+<i>165</i>&nbsp;
+<i>166</i>&nbsp;        @Override
+<i>167</i>&nbsp;        public void mouseClicked(MouseEvent e) {
+<b class="nc"><i>168</i>&nbsp;            if ((e.getButton() == MouseEvent.BUTTON1) &amp;&amp; (e.getClickCount() == 2)) {</b>
+<b class="nc"><i>169</i>&nbsp;                int row = table.rowAtPoint(e.getPoint());</b>
+<b class="nc"><i>170</i>&nbsp;                if (row &gt;= 0) {</b>
+<b class="nc"><i>171</i>&nbsp;                    SingleCitationDialog scd = new SingleCitationDialog(list.get(row));</b>
+<b class="nc"><i>172</i>&nbsp;                    scd.showDialog();</b>
+<i>173</i>&nbsp;                }
+<i>174</i>&nbsp;            }
+<b class="nc"><i>175</i>&nbsp;        }</b>
+<i>176</i>&nbsp;    }
+<i>177</i>&nbsp;
+<i>178</i>&nbsp;    class SingleCitationDialog {
+<i>179</i>&nbsp;
+<i>180</i>&nbsp;        private final JDialog singleCiteDialog;
+<b class="nc"><i>181</i>&nbsp;        private final JTextField pageInfo = new JTextField(20);</b>
+<b class="nc"><i>182</i>&nbsp;        private final JButton okButton = new JButton(Localization.lang(&quot;OK&quot;));</b>
+<b class="nc"><i>183</i>&nbsp;        private final JButton cancelButton = new JButton(Localization.lang(&quot;Cancel&quot;));</b>
+<i>184</i>&nbsp;        private final CitationEntry entry;
+<i>185</i>&nbsp;
+<i>186</i>&nbsp;
+<b class="nc"><i>187</i>&nbsp;        public SingleCitationDialog(CitationEntry citEntry) {</b>
+<b class="nc"><i>188</i>&nbsp;            this.entry = citEntry;</b>
+<b class="nc"><i>189</i>&nbsp;            pageInfo.setText(entry.getPageInfo().orElse(&quot;&quot;));</b>
+<i>190</i>&nbsp;
+<b class="nc"><i>191</i>&nbsp;            singleCiteDialog = new JDialog(CitationManager.this.diag, Localization.lang(&quot;Citation&quot;), true);</b>
+<i>192</i>&nbsp;
+<b class="nc"><i>193</i>&nbsp;            FormBuilder builder = FormBuilder.create()</b>
+<b class="nc"><i>194</i>&nbsp;                    .layout(new FormLayout(&quot;left:pref, 4dlu, fill:150dlu:grow&quot;, &quot;pref, 4dlu, pref&quot;));</b>
+<b class="nc"><i>195</i>&nbsp;            builder.add(entry.getContext()).xyw(1, 1, 3);</b>
+<b class="nc"><i>196</i>&nbsp;            builder.add(Localization.lang(&quot;Extra information (e.g. page number)&quot;)).xy(1, 3);</b>
+<b class="nc"><i>197</i>&nbsp;            builder.add(pageInfo).xy(3, 3);</b>
+<b class="nc"><i>198</i>&nbsp;            builder.padding(&quot;10dlu, 10dlu, 10dlu, 10dlu&quot;);</b>
+<b class="nc"><i>199</i>&nbsp;            singleCiteDialog.getContentPane().add(builder.getPanel(), BorderLayout.CENTER);</b>
+<i>200</i>&nbsp;
+<b class="nc"><i>201</i>&nbsp;            ButtonBarBuilder bb = new ButtonBarBuilder();</b>
+<b class="nc"><i>202</i>&nbsp;            bb.addGlue();</b>
+<b class="nc"><i>203</i>&nbsp;            bb.addButton(okButton);</b>
+<b class="nc"><i>204</i>&nbsp;            bb.addButton(cancelButton);</b>
+<b class="nc"><i>205</i>&nbsp;            bb.addGlue();</b>
+<b class="nc"><i>206</i>&nbsp;            bb.padding(&quot;5dlu, 5dlu, 5dlu, 5dlu&quot;);</b>
+<b class="nc"><i>207</i>&nbsp;            singleCiteDialog.add(bb.getPanel(), BorderLayout.SOUTH);</b>
+<i>208</i>&nbsp;
+<b class="nc"><i>209</i>&nbsp;            okButton.addActionListener(e -&gt; {</b>
+<b class="nc"><i>210</i>&nbsp;                if (pageInfo.getText().trim().isEmpty()) {</b>
+<b class="nc"><i>211</i>&nbsp;                    entry.setPageInfo(null);</b>
+<i>212</i>&nbsp;                } else {
+<b class="nc"><i>213</i>&nbsp;                    entry.setPageInfo(pageInfo.getText().trim());</b>
+<i>214</i>&nbsp;                }
+<b class="nc"><i>215</i>&nbsp;                tableModel.fireTableDataChanged();</b>
+<b class="nc"><i>216</i>&nbsp;                singleCiteDialog.dispose();</b>
+<b class="nc"><i>217</i>&nbsp;            });</b>
+<i>218</i>&nbsp;
+<b class="nc"><i>219</i>&nbsp;            Action cancelAction = new AbstractAction() {</b>
+<i>220</i>&nbsp;
+<i>221</i>&nbsp;                @Override
+<i>222</i>&nbsp;                public void actionPerformed(ActionEvent actionEvent) {
+<b class="nc"><i>223</i>&nbsp;                    singleCiteDialog.dispose();</b>
+<b class="nc"><i>224</i>&nbsp;                }</b>
+<i>225</i>&nbsp;            };
+<b class="nc"><i>226</i>&nbsp;            cancelButton.addActionListener(cancelAction);</b>
+<i>227</i>&nbsp;
+<b class="nc"><i>228</i>&nbsp;            builder.getPanel().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put</b>
+<b class="nc"><i>229</i>&nbsp;                    (Globals.getKeyPrefs().getKey(KeyBinding.CLOSE_DIALOG), &quot;close&quot;);</b>
+<b class="nc"><i>230</i>&nbsp;            builder.getPanel().getActionMap().put(&quot;close&quot;, cancelAction);</b>
+<i>231</i>&nbsp;
+<b class="nc"><i>232</i>&nbsp;        }</b>
+<i>233</i>&nbsp;
+<i>234</i>&nbsp;        public void showDialog() {
+<b class="nc"><i>235</i>&nbsp;            singleCiteDialog.pack();</b>
+<b class="nc"><i>236</i>&nbsp;            singleCiteDialog.setLocationRelativeTo(singleCiteDialog.getParent());</b>
+<b class="nc"><i>237</i>&nbsp;            singleCiteDialog.setVisible(true);</b>
+<b class="nc"><i>238</i>&nbsp;        }</b>
+<i>239</i>&nbsp;    }
+<i>240</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

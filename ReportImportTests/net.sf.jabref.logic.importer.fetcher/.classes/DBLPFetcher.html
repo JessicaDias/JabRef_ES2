@@ -1,0 +1,161 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: DBLPFetcher</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.importer.fetcher</a> ]
+</div>
+
+<h1>Coverage Summary for Class: DBLPFetcher (net.sf.jabref.logic.importer.fetcher)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DBLPFetcher</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 19)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.importer.fetcher;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.net.MalformedURLException;
+<i>4</i>&nbsp;import java.net.URISyntaxException;
+<i>5</i>&nbsp;import java.net.URL;
+<i>6</i>&nbsp;import java.util.Objects;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import net.sf.jabref.logic.cleanup.DoiCleanup;
+<i>9</i>&nbsp;import net.sf.jabref.logic.formatter.bibtexfields.ClearFormatter;
+<i>10</i>&nbsp;import net.sf.jabref.logic.help.HelpFile;
+<i>11</i>&nbsp;import net.sf.jabref.logic.importer.FetcherException;
+<i>12</i>&nbsp;import net.sf.jabref.logic.importer.ImportFormatPreferences;
+<i>13</i>&nbsp;import net.sf.jabref.logic.importer.Parser;
+<i>14</i>&nbsp;import net.sf.jabref.logic.importer.SearchBasedParserFetcher;
+<i>15</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.BibtexParser;
+<i>16</i>&nbsp;import net.sf.jabref.model.cleanup.FieldFormatterCleanup;
+<i>17</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>18</i>&nbsp;import net.sf.jabref.model.entry.FieldName;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;import org.apache.http.client.utils.URIBuilder;
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;/**
+<i>23</i>&nbsp; * Fetches BibTeX data from DBLP (dblp.org)
+<i>24</i>&nbsp; *
+<i>25</i>&nbsp; * @see &lt;a href=&quot;http://dblp.dagstuhl.de/faq/13501473&quot;&gt;Basic API documentation&lt;/a&gt;
+<i>26</i>&nbsp; */
+<i>27</i>&nbsp;public class DBLPFetcher implements SearchBasedParserFetcher {
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;    private static final String BASIC_SEARCH_URL = &quot;http://dblp.org/search/publ/api&quot;;
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;    private final ImportFormatPreferences importFormatPreferences;
+<i>32</i>&nbsp;
+<b class="nc"><i>33</i>&nbsp;    public DBLPFetcher(ImportFormatPreferences importFormatPreferences) {</b>
+<b class="nc"><i>34</i>&nbsp;        Objects.requireNonNull(importFormatPreferences);</b>
+<i>35</i>&nbsp;
+<b class="nc"><i>36</i>&nbsp;        this.importFormatPreferences = importFormatPreferences;</b>
+<b class="nc"><i>37</i>&nbsp;    }</b>
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;    @Override
+<i>40</i>&nbsp;    public URL getURLForQuery(String query) throws URISyntaxException, MalformedURLException, FetcherException {
+<b class="nc"><i>41</i>&nbsp;        URIBuilder uriBuilder = new URIBuilder(BASIC_SEARCH_URL);</b>
+<b class="nc"><i>42</i>&nbsp;        uriBuilder.addParameter(&quot;q&quot;, query);</b>
+<b class="nc"><i>43</i>&nbsp;        uriBuilder.addParameter(&quot;h&quot;, String.valueOf(100)); // number of hits</b>
+<b class="nc"><i>44</i>&nbsp;        uriBuilder.addParameter(&quot;c&quot;, String.valueOf(0)); // no need for auto-completion</b>
+<b class="nc"><i>45</i>&nbsp;        uriBuilder.addParameter(&quot;f&quot;, String.valueOf(0)); // &quot;from&quot;, index of first hit to download</b>
+<b class="nc"><i>46</i>&nbsp;        uriBuilder.addParameter(&quot;format&quot;, &quot;bib1&quot;);</b>
+<i>47</i>&nbsp;
+<b class="nc"><i>48</i>&nbsp;        return uriBuilder.build().toURL();</b>
+<i>49</i>&nbsp;    }
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;    @Override
+<i>52</i>&nbsp;    public Parser getParser() {
+<b class="nc"><i>53</i>&nbsp;        return new BibtexParser(importFormatPreferences);</b>
+<i>54</i>&nbsp;    }
+<i>55</i>&nbsp;
+<i>56</i>&nbsp;    @Override
+<i>57</i>&nbsp;    public void doPostCleanup(BibEntry entry) {
+<b class="nc"><i>58</i>&nbsp;        DoiCleanup doiCleaner = new DoiCleanup();</b>
+<i>59</i>&nbsp;
+<b class="nc"><i>60</i>&nbsp;        FieldFormatterCleanup clearTimestampFormatter = new FieldFormatterCleanup(FieldName.TIMESTAMP,</b>
+<i>61</i>&nbsp;                new ClearFormatter());
+<i>62</i>&nbsp;
+<b class="nc"><i>63</i>&nbsp;        doiCleaner.cleanup(entry);</b>
+<b class="nc"><i>64</i>&nbsp;        clearTimestampFormatter.cleanup(entry);</b>
+<i>65</i>&nbsp;
+<b class="nc"><i>66</i>&nbsp;    }</b>
+<i>67</i>&nbsp;
+<i>68</i>&nbsp;    @Override
+<i>69</i>&nbsp;    public String getName() {
+<b class="nc"><i>70</i>&nbsp;        return &quot;DBLP&quot;;</b>
+<i>71</i>&nbsp;    }
+<i>72</i>&nbsp;
+<i>73</i>&nbsp;    @Override
+<i>74</i>&nbsp;    public HelpFile getHelpPage() {
+<b class="nc"><i>75</i>&nbsp;        return HelpFile.FETCHER_DBLP;</b>
+<i>76</i>&nbsp;    }
+<i>77</i>&nbsp;
+<i>78</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

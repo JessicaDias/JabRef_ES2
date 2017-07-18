@@ -1,0 +1,329 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: FieldContentSelector</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.contentselector</a> ]
+</div>
+
+<h1>Coverage Summary for Class: FieldContentSelector (net.sf.jabref.gui.contentselector)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">FieldContentSelector</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 59)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">FieldContentSelector$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">FieldContentSelector$2</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 68)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.contentselector;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.Dimension;
+<i>4</i>&nbsp;import java.awt.GridBagConstraints;
+<i>5</i>&nbsp;import java.awt.GridBagLayout;
+<i>6</i>&nbsp;import java.awt.Window;
+<i>7</i>&nbsp;import java.awt.event.ActionEvent;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;import javax.swing.AbstractAction;
+<i>10</i>&nbsp;import javax.swing.Box;
+<i>11</i>&nbsp;import javax.swing.JButton;
+<i>12</i>&nbsp;import javax.swing.JComboBox;
+<i>13</i>&nbsp;import javax.swing.JComponent;
+<i>14</i>&nbsp;import javax.swing.KeyStroke;
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;import net.sf.jabref.gui.BasePanel;
+<i>17</i>&nbsp;import net.sf.jabref.gui.JabRefFrame;
+<i>18</i>&nbsp;import net.sf.jabref.gui.fieldeditors.FieldEditor;
+<i>19</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>20</i>&nbsp;import net.sf.jabref.model.entry.Keyword;
+<i>21</i>&nbsp;import net.sf.jabref.model.entry.KeywordList;
+<i>22</i>&nbsp;import net.sf.jabref.model.metadata.MetaData;
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;import com.jgoodies.forms.layout.Sizes;
+<i>25</i>&nbsp;import com.jgoodies.looks.Options;
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;/**
+<i>28</i>&nbsp; * A combo-box and a manage button that will add selected strings to an
+<i>29</i>&nbsp; * associated entry editor.
+<i>30</i>&nbsp; *
+<i>31</i>&nbsp; * Used to manage keywords and authors for instance.
+<i>32</i>&nbsp; */
+<i>33</i>&nbsp;public class FieldContentSelector extends JComponent {
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    private static final int MAX_CONTENT_SELECTOR_WIDTH = 240; // The max width of the combobox for content selectors.
+<i>36</i>&nbsp;    private final JComboBox&lt;String&gt; comboBox;
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;    private final FieldEditor editor;
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;    private final MetaData metaData;
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;    private final AbstractAction action;
+<i>43</i>&nbsp;    private final String delimiter;
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;    /**
+<i>47</i>&nbsp;     *
+<i>48</i>&nbsp;     * Create a new FieldContentSelector.
+<i>49</i>&nbsp;     *
+<i>50</i>&nbsp;     * @param frame
+<i>51</i>&nbsp;     *            The one JabRef-Frame.
+<i>52</i>&nbsp;     * @param panel
+<i>53</i>&nbsp;     *            The basepanel the entry-editor is on.
+<i>54</i>&nbsp;     * @param owner
+<i>55</i>&nbsp;     *            The window/frame/dialog which should be the owner of the
+<i>56</i>&nbsp;     *            content selector dialog.
+<i>57</i>&nbsp;     * @param editor
+<i>58</i>&nbsp;     *            The entry editor which will be appended by the text selected
+<i>59</i>&nbsp;     *            by the user from the combobox.
+<i>60</i>&nbsp;     * @param action
+<i>61</i>&nbsp;     *            The action that will be performed to after an item from the
+<i>62</i>&nbsp;     *            combobox has been appended to the text in the entryeditor.
+<i>63</i>&nbsp;     * @param horizontalLayout
+<i>64</i>&nbsp;     *            Whether to put a 2 pixel horizontal strut between combobox and
+<i>65</i>&nbsp;     *            button.
+<i>66</i>&nbsp;     */
+<i>67</i>&nbsp;    public FieldContentSelector(JabRefFrame frame, final BasePanel panel, Window owner, final FieldEditor editor,
+<b class="nc"><i>68</i>&nbsp;                                final AbstractAction action, boolean horizontalLayout, String delimiter) {</b>
+<i>69</i>&nbsp;
+<i>70</i>&nbsp;
+<b class="nc"><i>71</i>&nbsp;        this.editor = editor;</b>
+<b class="nc"><i>72</i>&nbsp;        this.metaData = panel.getBibDatabaseContext().getMetaData();</b>
+<b class="nc"><i>73</i>&nbsp;        this.action = action;</b>
+<b class="nc"><i>74</i>&nbsp;        this.delimiter = delimiter;</b>
+<i>75</i>&nbsp;
+<b class="nc"><i>76</i>&nbsp;        comboBox = new JComboBox&lt;String&gt;() {</b>
+<i>77</i>&nbsp;
+<i>78</i>&nbsp;            @Override
+<i>79</i>&nbsp;            public Dimension getPreferredSize() {
+<b class="nc"><i>80</i>&nbsp;                Dimension parents = super.getPreferredSize();</b>
+<b class="nc"><i>81</i>&nbsp;                if (parents.width &gt; MAX_CONTENT_SELECTOR_WIDTH) {</b>
+<b class="nc"><i>82</i>&nbsp;                    parents.width = MAX_CONTENT_SELECTOR_WIDTH;</b>
+<i>83</i>&nbsp;                }
+<b class="nc"><i>84</i>&nbsp;                return parents;</b>
+<i>85</i>&nbsp;            }
+<i>86</i>&nbsp;        };
+<i>87</i>&nbsp;
+<b class="nc"><i>88</i>&nbsp;        GridBagLayout gbl = new GridBagLayout();</b>
+<b class="nc"><i>89</i>&nbsp;        GridBagConstraints con = new GridBagConstraints();</b>
+<i>90</i>&nbsp;
+<b class="nc"><i>91</i>&nbsp;        setLayout(gbl);</b>
+<i>92</i>&nbsp;
+<i>93</i>&nbsp;        // comboBox.setEditable(true);
+<i>94</i>&nbsp;
+<b class="nc"><i>95</i>&nbsp;        comboBox.setMaximumRowCount(35);</b>
+<i>96</i>&nbsp;
+<i>97</i>&nbsp;        // Set the width of the popup independent of the size of th box itself:
+<b class="nc"><i>98</i>&nbsp;        comboBox.putClientProperty(Options.COMBO_POPUP_PROTOTYPE_DISPLAY_VALUE_KEY,</b>
+<i>99</i>&nbsp;                &quot;The longest text in the combo popup menu. And even longer.&quot;);
+<i>100</i>&nbsp;
+<b class="nc"><i>101</i>&nbsp;        rebuildComboBox();</b>
+<i>102</i>&nbsp;
+<b class="nc"><i>103</i>&nbsp;        con.gridwidth = horizontalLayout ? 3 : GridBagConstraints.REMAINDER;</b>
+<b class="nc"><i>104</i>&nbsp;        con.fill = GridBagConstraints.HORIZONTAL;</b>
+<b class="nc"><i>105</i>&nbsp;        con.weightx = 1;</b>
+<b class="nc"><i>106</i>&nbsp;        gbl.setConstraints(comboBox, con);</b>
+<i>107</i>&nbsp;
+<b class="nc"><i>108</i>&nbsp;        comboBox.addActionListener(e -&gt; {</b>
+<i>109</i>&nbsp;            /*
+<i>110</i>&nbsp;             * These conditions signify arrow key navigation in the dropdown
+<i>111</i>&nbsp;             * list, so we should not react to it. I&#39;m not sure if this is
+<i>112</i>&nbsp;             * well defined enough to be guaranteed to work everywhere.
+<i>113</i>&nbsp;             */
+<b class="nc"><i>114</i>&nbsp;            if (&quot;comboBoxChanged&quot;.equals(e.getActionCommand()) &amp;&amp; (e.getModifiers() == 0)) {</b>
+<b class="nc"><i>115</i>&nbsp;                return;</b>
+<i>116</i>&nbsp;            }
+<i>117</i>&nbsp;
+<b class="nc"><i>118</i>&nbsp;            selectionMade();</b>
+<b class="nc"><i>119</i>&nbsp;        });</b>
+<i>120</i>&nbsp;        // Add an action for the Enter key that signals a selection:
+<b class="nc"><i>121</i>&nbsp;        comboBox.getInputMap().put(KeyStroke.getKeyStroke(&quot;ENTER&quot;), &quot;enter&quot;);</b>
+<b class="nc"><i>122</i>&nbsp;        comboBox.getActionMap().put(&quot;enter&quot;, new AbstractAction() {</b>
+<i>123</i>&nbsp;
+<i>124</i>&nbsp;            @Override
+<i>125</i>&nbsp;            public void actionPerformed(ActionEvent actionEvent) {
+<b class="nc"><i>126</i>&nbsp;                selectionMade();</b>
+<b class="nc"><i>127</i>&nbsp;                comboBox.setPopupVisible(false);</b>
+<b class="nc"><i>128</i>&nbsp;            }</b>
+<i>129</i>&nbsp;        });
+<i>130</i>&nbsp;
+<b class="nc"><i>131</i>&nbsp;        add(comboBox);</b>
+<i>132</i>&nbsp;
+<b class="nc"><i>133</i>&nbsp;        if (horizontalLayout) {</b>
+<b class="nc"><i>134</i>&nbsp;            add(Box.createHorizontalStrut(Sizes.dialogUnitXAsPixel(2, this)));</b>
+<i>135</i>&nbsp;        }
+<i>136</i>&nbsp;
+<b class="nc"><i>137</i>&nbsp;        JButton manage = new JButton(Localization.lang(&quot;Manage&quot;));</b>
+<b class="nc"><i>138</i>&nbsp;        gbl.setConstraints(manage, con);</b>
+<b class="nc"><i>139</i>&nbsp;        add(manage);</b>
+<i>140</i>&nbsp;
+<b class="nc"><i>141</i>&nbsp;        manage.addActionListener(e -&gt; {</b>
+<b class="nc"><i>142</i>&nbsp;            ContentSelectorDialog csd = new ContentSelectorDialog(owner, frame, panel, true, editor.getFieldName());</b>
+<b class="nc"><i>143</i>&nbsp;            csd.setLocationRelativeTo(frame);</b>
+<i>144</i>&nbsp;
+<i>145</i>&nbsp;            // Calling setVisible(true) will open the modal dialog and block
+<i>146</i>&nbsp;            // for the dialog to close.
+<b class="nc"><i>147</i>&nbsp;            csd.setVisible(true);</b>
+<i>148</i>&nbsp;
+<i>149</i>&nbsp;            // So we need to rebuild the ComboBox afterwards
+<b class="nc"><i>150</i>&nbsp;            rebuildComboBox();</b>
+<b class="nc"><i>151</i>&nbsp;        });</b>
+<b class="nc"><i>152</i>&nbsp;    }</b>
+<i>153</i>&nbsp;
+<i>154</i>&nbsp;    private void selectionMade() {
+<i>155</i>&nbsp;        // The first element is empty to avoid a preselection
+<b class="nc"><i>156</i>&nbsp;        if (comboBox.getSelectedIndex() == 0) {</b>
+<b class="nc"><i>157</i>&nbsp;            return;</b>
+<i>158</i>&nbsp;        }
+<i>159</i>&nbsp;
+<b class="nc"><i>160</i>&nbsp;        String chosen = (String) comboBox.getSelectedItem();</b>
+<b class="nc"><i>161</i>&nbsp;        if ((chosen == null) || chosen.isEmpty()) {</b>
+<b class="nc"><i>162</i>&nbsp;            return;</b>
+<i>163</i>&nbsp;        }
+<i>164</i>&nbsp;
+<i>165</i>&nbsp;
+<b class="nc"><i>166</i>&nbsp;        String currentText = editor.getText();</b>
+<b class="nc"><i>167</i>&nbsp;        KeywordList words = KeywordList.parse(currentText, this.delimiter.charAt(0));</b>
+<b class="nc"><i>168</i>&nbsp;        boolean alreadyInList = words.contains(new Keyword(chosen));</b>
+<i>169</i>&nbsp;
+<i>170</i>&nbsp;        // not the first word and no duplicate -&gt; we need a comma
+<b class="nc"><i>171</i>&nbsp;        if (!&quot;&quot;.equals(currentText) &amp;&amp; !alreadyInList) {</b>
+<b class="nc"><i>172</i>&nbsp;            editor.append(FieldContentSelector.this.delimiter);</b>
+<i>173</i>&nbsp;        }
+<i>174</i>&nbsp;
+<i>175</i>&nbsp;        // no duplicate -&gt; add it
+<b class="nc"><i>176</i>&nbsp;        if (!alreadyInList) {</b>
+<b class="nc"><i>177</i>&nbsp;            editor.append(chosen);</b>
+<i>178</i>&nbsp;        }
+<i>179</i>&nbsp;
+<b class="nc"><i>180</i>&nbsp;        comboBox.setSelectedIndex(0);</b>
+<i>181</i>&nbsp;
+<i>182</i>&nbsp;        // Fire event that we changed the editor
+<b class="nc"><i>183</i>&nbsp;        if (action != null) {</b>
+<b class="nc"><i>184</i>&nbsp;            action.actionPerformed(new ActionEvent(editor, 0, &quot;&quot;));</b>
+<i>185</i>&nbsp;        }
+<i>186</i>&nbsp;
+<i>187</i>&nbsp;        // Transfer focus to the editor.
+<b class="nc"><i>188</i>&nbsp;        editor.requestFocus();</b>
+<b class="nc"><i>189</i>&nbsp;    }</b>
+<i>190</i>&nbsp;
+<i>191</i>&nbsp;    public void rebuildComboBox() {
+<b class="nc"><i>192</i>&nbsp;        comboBox.removeAllItems();</b>
+<i>193</i>&nbsp;
+<i>194</i>&nbsp;        // To have an empty field as the default for the combobox
+<b class="nc"><i>195</i>&nbsp;        comboBox.addItem(&quot;&quot;);</b>
+<b class="nc"><i>196</i>&nbsp;        for (String item : metaData.getContentSelectorValuesForField(editor.getFieldName())) {</b>
+<b class="nc"><i>197</i>&nbsp;            comboBox.addItem(item);</b>
+<b class="nc"><i>198</i>&nbsp;        }</b>
+<b class="nc"><i>199</i>&nbsp;    }</b>
+<i>200</i>&nbsp;
+<i>201</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

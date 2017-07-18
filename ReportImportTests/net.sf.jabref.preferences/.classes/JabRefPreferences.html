@@ -1,0 +1,1647 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: JabRefPreferences</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.preferences</a> ]
+</div>
+
+<h1>Coverage Summary for Class: JabRefPreferences (net.sf.jabref.preferences)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">JabRefPreferences</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    8.2%
+  </span>
+  <span class="absValue">
+    (7/ 85)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    45.7%
+  </span>
+  <span class="absValue">
+    (287/ 628)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.preferences;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.Color;
+<i>4</i>&nbsp;import java.awt.Font;
+<i>5</i>&nbsp;import java.io.File;
+<i>6</i>&nbsp;import java.io.FileInputStream;
+<i>7</i>&nbsp;import java.io.FileOutputStream;
+<i>8</i>&nbsp;import java.io.IOException;
+<i>9</i>&nbsp;import java.io.InputStream;
+<i>10</i>&nbsp;import java.io.OutputStream;
+<i>11</i>&nbsp;import java.io.Reader;
+<i>12</i>&nbsp;import java.io.StringReader;
+<i>13</i>&nbsp;import java.net.InetAddress;
+<i>14</i>&nbsp;import java.net.UnknownHostException;
+<i>15</i>&nbsp;import java.nio.charset.Charset;
+<i>16</i>&nbsp;import java.nio.charset.StandardCharsets;
+<i>17</i>&nbsp;import java.util.ArrayList;
+<i>18</i>&nbsp;import java.util.Arrays;
+<i>19</i>&nbsp;import java.util.Collections;
+<i>20</i>&nbsp;import java.util.EnumSet;
+<i>21</i>&nbsp;import java.util.HashMap;
+<i>22</i>&nbsp;import java.util.List;
+<i>23</i>&nbsp;import java.util.Locale;
+<i>24</i>&nbsp;import java.util.Map;
+<i>25</i>&nbsp;import java.util.Objects;
+<i>26</i>&nbsp;import java.util.Optional;
+<i>27</i>&nbsp;import java.util.Set;
+<i>28</i>&nbsp;import java.util.prefs.BackingStoreException;
+<i>29</i>&nbsp;import java.util.prefs.InvalidPreferencesFormatException;
+<i>30</i>&nbsp;import java.util.prefs.Preferences;
+<i>31</i>&nbsp;import java.util.stream.Collectors;
+<i>32</i>&nbsp;
+<i>33</i>&nbsp;import javax.swing.JTable;
+<i>34</i>&nbsp;import javax.swing.UIManager;
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;import net.sf.jabref.JabRefException;
+<i>37</i>&nbsp;import net.sf.jabref.JabRefMain;
+<i>38</i>&nbsp;import net.sf.jabref.gui.desktop.JabRefDesktop;
+<i>39</i>&nbsp;import net.sf.jabref.gui.entryeditor.EntryEditorTabList;
+<i>40</i>&nbsp;import net.sf.jabref.gui.preftabs.ImportSettingsTab;
+<i>41</i>&nbsp;import net.sf.jabref.logic.autocompleter.AutoCompletePreferences;
+<i>42</i>&nbsp;import net.sf.jabref.logic.bibtex.FieldContentParserPreferences;
+<i>43</i>&nbsp;import net.sf.jabref.logic.bibtex.LatexFieldFormatterPreferences;
+<i>44</i>&nbsp;import net.sf.jabref.logic.bibtexkeypattern.BibtexKeyPatternPreferences;
+<i>45</i>&nbsp;import net.sf.jabref.logic.citationstyle.CitationStyle;
+<i>46</i>&nbsp;import net.sf.jabref.logic.cleanup.CleanupPreferences;
+<i>47</i>&nbsp;import net.sf.jabref.logic.cleanup.CleanupPreset;
+<i>48</i>&nbsp;import net.sf.jabref.logic.cleanup.Cleanups;
+<i>49</i>&nbsp;import net.sf.jabref.logic.exporter.CustomExportList;
+<i>50</i>&nbsp;import net.sf.jabref.logic.exporter.ExportComparator;
+<i>51</i>&nbsp;import net.sf.jabref.logic.importer.ImportFormatPreferences;
+<i>52</i>&nbsp;import net.sf.jabref.logic.journals.JournalAbbreviationLoader;
+<i>53</i>&nbsp;import net.sf.jabref.logic.journals.JournalAbbreviationPreferences;
+<i>54</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>55</i>&nbsp;import net.sf.jabref.logic.layout.LayoutFormatterPreferences;
+<i>56</i>&nbsp;import net.sf.jabref.logic.layout.format.FileLinkPreferences;
+<i>57</i>&nbsp;import net.sf.jabref.logic.layout.format.NameFormatterPreferences;
+<i>58</i>&nbsp;import net.sf.jabref.logic.net.ProxyPreferences;
+<i>59</i>&nbsp;import net.sf.jabref.logic.openoffice.OpenOfficePreferences;
+<i>60</i>&nbsp;import net.sf.jabref.logic.openoffice.StyleLoader;
+<i>61</i>&nbsp;import net.sf.jabref.logic.protectedterms.ProtectedTermsList;
+<i>62</i>&nbsp;import net.sf.jabref.logic.protectedterms.ProtectedTermsLoader;
+<i>63</i>&nbsp;import net.sf.jabref.logic.protectedterms.ProtectedTermsPreferences;
+<i>64</i>&nbsp;import net.sf.jabref.logic.remote.RemotePreferences;
+<i>65</i>&nbsp;import net.sf.jabref.logic.util.OS;
+<i>66</i>&nbsp;import net.sf.jabref.logic.util.UpdateFieldPreferences;
+<i>67</i>&nbsp;import net.sf.jabref.logic.util.Version;
+<i>68</i>&nbsp;import net.sf.jabref.logic.util.io.FileHistory;
+<i>69</i>&nbsp;import net.sf.jabref.logic.xmp.XMPPreferences;
+<i>70</i>&nbsp;import net.sf.jabref.model.bibtexkeypattern.GlobalBibtexKeyPattern;
+<i>71</i>&nbsp;import net.sf.jabref.model.database.BibDatabaseMode;
+<i>72</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>73</i>&nbsp;import net.sf.jabref.model.entry.CustomEntryType;
+<i>74</i>&nbsp;import net.sf.jabref.model.entry.FieldName;
+<i>75</i>&nbsp;import net.sf.jabref.model.entry.InternalBibtexFields;
+<i>76</i>&nbsp;import net.sf.jabref.model.metadata.FileDirectoryPreferences;
+<i>77</i>&nbsp;import net.sf.jabref.model.metadata.SaveOrderConfig;
+<i>78</i>&nbsp;import net.sf.jabref.model.strings.StringUtil;
+<i>79</i>&nbsp;
+<i>80</i>&nbsp;import org.apache.commons.logging.Log;
+<i>81</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>82</i>&nbsp;
+<i>83</i>&nbsp;public class JabRefPreferences {
+<i>84</i>&nbsp;
+<b class="fc"><i>85</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(JabRefPreferences.class);</b>
+<i>86</i>&nbsp;
+<b class="fc"><i>87</i>&nbsp;    private static final Class PREFS_BASE_CLASS = JabRefMain.class;</b>
+<i>88</i>&nbsp;
+<i>89</i>&nbsp;    /**
+<i>90</i>&nbsp;     * HashMap that contains all preferences which are set by default
+<i>91</i>&nbsp;     */
+<b class="fc"><i>92</i>&nbsp;    public final Map&lt;String, Object&gt; defaults = new HashMap&lt;&gt;();</b>
+<i>93</i>&nbsp;
+<i>94</i>&nbsp;    /* contents of the defaults HashMap that are defined in this class.
+<i>95</i>&nbsp;     * There are more default parameters in this map which belong to separate preference classes.
+<i>96</i>&nbsp;    */
+<i>97</i>&nbsp;
+<i>98</i>&nbsp;    // Push to application preferences
+<i>99</i>&nbsp;    public static final String EMACS_PATH = &quot;emacsPath&quot;;
+<i>100</i>&nbsp;    public static final String EMACS_ADDITIONAL_PARAMETERS = &quot;emacsParameters&quot;;
+<i>101</i>&nbsp;    public static final String LATEX_EDITOR_PATH = &quot;latexEditorPath&quot;;
+<i>102</i>&nbsp;    public static final String TEXSTUDIO_PATH = &quot;TeXstudioPath&quot;;
+<i>103</i>&nbsp;    public static final String WIN_EDT_PATH = &quot;winEdtPath&quot;;
+<i>104</i>&nbsp;    public static final String TEXMAKER_PATH = &quot;texmakerPath&quot;;
+<i>105</i>&nbsp;    public static final String VIM_SERVER = &quot;vimServer&quot;;
+<i>106</i>&nbsp;    public static final String VIM = &quot;vim&quot;;
+<i>107</i>&nbsp;    public static final String LYXPIPE = &quot;lyxpipe&quot;;
+<i>108</i>&nbsp;
+<i>109</i>&nbsp;    public static final String EXTERNAL_FILE_TYPES = &quot;externalFileTypes&quot;;
+<i>110</i>&nbsp;    public static final String FONT_FAMILY = &quot;fontFamily&quot;;
+<i>111</i>&nbsp;    public static final String WIN_LOOK_AND_FEEL = &quot;lookAndFeel&quot;;
+<i>112</i>&nbsp;    public static final String LANGUAGE = &quot;language&quot;;
+<i>113</i>&nbsp;    public static final String NAMES_LAST_ONLY = &quot;namesLastOnly&quot;;
+<i>114</i>&nbsp;    public static final String ABBR_AUTHOR_NAMES = &quot;abbrAuthorNames&quot;;
+<i>115</i>&nbsp;    public static final String NAMES_NATBIB = &quot;namesNatbib&quot;;
+<i>116</i>&nbsp;    public static final String NAMES_FIRST_LAST = &quot;namesFf&quot;;
+<i>117</i>&nbsp;    public static final String BIBLATEX_DEFAULT_MODE = &quot;biblatexMode&quot;;
+<i>118</i>&nbsp;    public static final String NAMES_AS_IS = &quot;namesAsIs&quot;;
+<i>119</i>&nbsp;    public static final String ENTRY_EDITOR_HEIGHT = &quot;entryEditorHeight&quot;;
+<i>120</i>&nbsp;    public static final String AUTO_RESIZE_MODE = &quot;autoResizeMode&quot;;
+<i>121</i>&nbsp;    public static final String WINDOW_MAXIMISED = &quot;windowMaximised&quot;;
+<i>122</i>&nbsp;    public static final String USE_DEFAULT_LOOK_AND_FEEL = &quot;useDefaultLookAndFeel&quot;;
+<i>123</i>&nbsp;    public static final String PROXY_PORT = &quot;proxyPort&quot;;
+<i>124</i>&nbsp;    public static final String PROXY_HOSTNAME = &quot;proxyHostname&quot;;
+<i>125</i>&nbsp;    public static final String PROXY_USE = &quot;useProxy&quot;;
+<i>126</i>&nbsp;    public static final String PROXY_USERNAME = &quot;proxyUsername&quot;;
+<i>127</i>&nbsp;    public static final String PROXY_PASSWORD = &quot;proxyPassword&quot;;
+<i>128</i>&nbsp;    public static final String PROXY_USE_AUTHENTICATION = &quot;useProxyAuthentication&quot;;
+<i>129</i>&nbsp;    public static final String TABLE_PRIMARY_SORT_FIELD = &quot;priSort&quot;;
+<i>130</i>&nbsp;    public static final String TABLE_PRIMARY_SORT_DESCENDING = &quot;priDescending&quot;;
+<i>131</i>&nbsp;    public static final String TABLE_SECONDARY_SORT_FIELD = &quot;secSort&quot;;
+<i>132</i>&nbsp;    public static final String TABLE_SECONDARY_SORT_DESCENDING = &quot;secDescending&quot;;
+<i>133</i>&nbsp;    public static final String TABLE_TERTIARY_SORT_FIELD = &quot;terSort&quot;;
+<i>134</i>&nbsp;    public static final String TABLE_TERTIARY_SORT_DESCENDING = &quot;terDescending&quot;;
+<i>135</i>&nbsp;    public static final String REFORMAT_FILE_ON_SAVE_AND_EXPORT = &quot;reformatFileOnSaveAndExport&quot;;
+<i>136</i>&nbsp;    public static final String EXPORT_IN_ORIGINAL_ORDER = &quot;exportInOriginalOrder&quot;;
+<i>137</i>&nbsp;    public static final String EXPORT_IN_SPECIFIED_ORDER = &quot;exportInSpecifiedOrder&quot;;
+<i>138</i>&nbsp;    public static final String EXPORT_PRIMARY_SORT_FIELD = &quot;exportPriSort&quot;;
+<i>139</i>&nbsp;    public static final String EXPORT_PRIMARY_SORT_DESCENDING = &quot;exportPriDescending&quot;;
+<i>140</i>&nbsp;    public static final String EXPORT_SECONDARY_SORT_FIELD = &quot;exportSecSort&quot;;
+<i>141</i>&nbsp;    public static final String EXPORT_SECONDARY_SORT_DESCENDING = &quot;exportSecDescending&quot;;
+<i>142</i>&nbsp;    public static final String EXPORT_TERTIARY_SORT_FIELD = &quot;exportTerSort&quot;;
+<i>143</i>&nbsp;    public static final String EXPORT_TERTIARY_SORT_DESCENDING = &quot;exportTerDescending&quot;;
+<i>144</i>&nbsp;    public static final String NEWLINE = &quot;newline&quot;;
+<i>145</i>&nbsp;    public static final String COLUMN_WIDTHS = &quot;columnWidths&quot;;
+<i>146</i>&nbsp;    public static final String COLUMN_NAMES = &quot;columnNames&quot;;
+<i>147</i>&nbsp;    public static final String SIDE_PANE_COMPONENT_PREFERRED_POSITIONS = &quot;sidePaneComponentPreferredPositions&quot;;
+<i>148</i>&nbsp;    public static final String SIDE_PANE_COMPONENT_NAMES = &quot;sidePaneComponentNames&quot;;
+<i>149</i>&nbsp;    public static final String XMP_PRIVACY_FILTERS = &quot;xmpPrivacyFilters&quot;;
+<i>150</i>&nbsp;    public static final String USE_XMP_PRIVACY_FILTER = &quot;useXmpPrivacyFilter&quot;;
+<i>151</i>&nbsp;    public static final String DEFAULT_AUTO_SORT = &quot;defaultAutoSort&quot;;
+<i>152</i>&nbsp;    public static final String DEFAULT_SHOW_SOURCE = &quot;defaultShowSource&quot;;
+<i>153</i>&nbsp;
+<i>154</i>&nbsp;    // Window sizes
+<i>155</i>&nbsp;    public static final String SIZE_Y = &quot;mainWindowSizeY&quot;;
+<i>156</i>&nbsp;    public static final String SIZE_X = &quot;mainWindowSizeX&quot;;
+<i>157</i>&nbsp;    public static final String POS_Y = &quot;mainWindowPosY&quot;;
+<i>158</i>&nbsp;    public static final String POS_X = &quot;mainWindowPosX&quot;;
+<i>159</i>&nbsp;    public static final String STRINGS_SIZE_Y = &quot;stringsSizeY&quot;;
+<i>160</i>&nbsp;    public static final String STRINGS_SIZE_X = &quot;stringsSizeX&quot;;
+<i>161</i>&nbsp;    public static final String STRINGS_POS_Y = &quot;stringsPosY&quot;;
+<i>162</i>&nbsp;    public static final String STRINGS_POS_X = &quot;stringsPosX&quot;;
+<i>163</i>&nbsp;    public static final String DUPLICATES_SIZE_Y = &quot;duplicatesSizeY&quot;;
+<i>164</i>&nbsp;    public static final String DUPLICATES_SIZE_X = &quot;duplicatesSizeX&quot;;
+<i>165</i>&nbsp;    public static final String DUPLICATES_POS_Y = &quot;duplicatesPosY&quot;;
+<i>166</i>&nbsp;    public static final String DUPLICATES_POS_X = &quot;duplicatesPosX&quot;;
+<i>167</i>&nbsp;    public static final String MERGEENTRIES_SIZE_Y = &quot;mergeEntriesSizeY&quot;;
+<i>168</i>&nbsp;    public static final String MERGEENTRIES_SIZE_X = &quot;mergeEntriesSizeX&quot;;
+<i>169</i>&nbsp;    public static final String MERGEENTRIES_POS_Y = &quot;mergeEntriesPosY&quot;;
+<i>170</i>&nbsp;    public static final String MERGEENTRIES_POS_X = &quot;mergeEntriesPosX&quot;;
+<i>171</i>&nbsp;    public static final String PREAMBLE_SIZE_Y = &quot;preambleSizeY&quot;;
+<i>172</i>&nbsp;    public static final String PREAMBLE_SIZE_X = &quot;preambleSizeX&quot;;
+<i>173</i>&nbsp;    public static final String PREAMBLE_POS_Y = &quot;preamblePosY&quot;;
+<i>174</i>&nbsp;    public static final String PREAMBLE_POS_X = &quot;preamblePosX&quot;;
+<i>175</i>&nbsp;    public static final String TERMS_SIZE_Y = &quot;termsSizeY&quot;;
+<i>176</i>&nbsp;    public static final String TERMS_SIZE_X = &quot;termsSizeX&quot;;
+<i>177</i>&nbsp;    public static final String TERMS_POS_Y = &quot;termsPosY&quot;;
+<i>178</i>&nbsp;    public static final String TERMS_POS_X = &quot;termsPosX&quot;;
+<i>179</i>&nbsp;    public static final String SEARCH_DIALOG_HEIGHT = &quot;searchDialogHeight&quot;;
+<i>180</i>&nbsp;    public static final String SEARCH_DIALOG_WIDTH = &quot;searchDialogWidth&quot;;
+<i>181</i>&nbsp;    public static final String IMPORT_INSPECTION_DIALOG_HEIGHT = &quot;importInspectionDialogHeight&quot;;
+<i>182</i>&nbsp;    public static final String IMPORT_INSPECTION_DIALOG_WIDTH = &quot;importInspectionDialogWidth&quot;;
+<i>183</i>&nbsp;
+<i>184</i>&nbsp;    public static final String LAST_EDITED = &quot;lastEdited&quot;;
+<i>185</i>&nbsp;    public static final String OPEN_LAST_EDITED = &quot;openLastEdited&quot;;
+<i>186</i>&nbsp;    public static final String LAST_FOCUSED = &quot;lastFocused&quot;;
+<i>187</i>&nbsp;    public static final String BACKUP = &quot;backup&quot;;
+<i>188</i>&nbsp;
+<i>189</i>&nbsp;    public static final String AUTO_OPEN_FORM = &quot;autoOpenForm&quot;;
+<i>190</i>&nbsp;    public static final String IMPORT_WORKING_DIRECTORY = &quot;importWorkingDirectory&quot;;
+<i>191</i>&nbsp;    public static final String EXPORT_WORKING_DIRECTORY = &quot;exportWorkingDirectory&quot;;
+<i>192</i>&nbsp;    public static final String PREFS_EXPORT_PATH = &quot;prefsExportPath&quot;;
+<i>193</i>&nbsp;    public static final String WORKING_DIRECTORY = &quot;workingDirectory&quot;;
+<i>194</i>&nbsp;    public static final String NUMBER_COL_WIDTH = &quot;numberColWidth&quot;;
+<i>195</i>&nbsp;    public static final String AUTO_COMPLETE = &quot;autoComplete&quot;;
+<i>196</i>&nbsp;    public static final String EDITOR_EMACS_KEYBINDINGS = &quot;editorEMACSkeyBindings&quot;;
+<i>197</i>&nbsp;    public static final String EDITOR_EMACS_KEYBINDINGS_REBIND_CA = &quot;editorEMACSkeyBindingsRebindCA&quot;;
+<i>198</i>&nbsp;    public static final String EDITOR_EMACS_KEYBINDINGS_REBIND_CF = &quot;editorEMACSkeyBindingsRebindCF&quot;;
+<i>199</i>&nbsp;    public static final String GROUP_SHOW_NUMBER_OF_ELEMENTS = &quot;groupShowNumberOfElements&quot;;
+<i>200</i>&nbsp;    public static final String GROUP_EXPAND_TREE = &quot;groupExpandTree&quot;;
+<i>201</i>&nbsp;    public static final String GROUP_SHOW_DYNAMIC = &quot;groupShowDynamic&quot;;
+<i>202</i>&nbsp;    public static final String GROUP_SHOW_ICONS = &quot;groupShowIcons&quot;;
+<i>203</i>&nbsp;    public static final String GROUPS_DEFAULT_FIELD = &quot;groupsDefaultField&quot;;
+<i>204</i>&nbsp;    public static final String GROUP_SHOW_OVERLAPPING = &quot;groupShowOverlapping&quot;;
+<i>205</i>&nbsp;    public static final String GROUP_INVERT_SELECTIONS = &quot;groupInvertSelections&quot;;
+<i>206</i>&nbsp;    public static final String GROUP_INTERSECT_SELECTIONS = &quot;groupIntersectSelections&quot;;
+<i>207</i>&nbsp;    public static final String GROUP_FLOAT_SELECTIONS = &quot;groupFloatSelections&quot;;
+<i>208</i>&nbsp;    public static final String EDIT_GROUP_MEMBERSHIP_MODE = &quot;groupEditGroupMembershipMode&quot;;
+<i>209</i>&nbsp;    public static final String KEYWORD_SEPARATOR = &quot;groupKeywordSeparator&quot;;
+<i>210</i>&nbsp;    public static final String AUTO_ASSIGN_GROUP = &quot;autoAssignGroup&quot;;
+<i>211</i>&nbsp;    public static final String LIST_OF_FILE_COLUMNS = &quot;listOfFileColumns&quot;;
+<i>212</i>&nbsp;    public static final String EXTRA_FILE_COLUMNS = &quot;extraFileColumns&quot;;
+<i>213</i>&nbsp;    public static final String ARXIV_COLUMN = &quot;arxivColumn&quot;;
+<i>214</i>&nbsp;    public static final String FILE_COLUMN = &quot;fileColumn&quot;;
+<i>215</i>&nbsp;    public static final String PREFER_URL_DOI = &quot;preferUrlDoi&quot;;
+<i>216</i>&nbsp;    public static final String URL_COLUMN = &quot;urlColumn&quot;;
+<i>217</i>&nbsp;
+<i>218</i>&nbsp;    // Colors
+<i>219</i>&nbsp;    public static final String TABLE_COLOR_CODES_ON = &quot;tableColorCodesOn&quot;;
+<i>220</i>&nbsp;    public static final String TABLE_RESOLVED_COLOR_CODES_ON = &quot;tableResolvedColorCodesOn&quot;;
+<i>221</i>&nbsp;    public static final String INCOMPLETE_ENTRY_BACKGROUND = &quot;incompleteEntryBackground&quot;;
+<i>222</i>&nbsp;    public static final String FIELD_EDITOR_TEXT_COLOR = &quot;fieldEditorTextColor&quot;;
+<i>223</i>&nbsp;    public static final String ACTIVE_FIELD_EDITOR_BACKGROUND_COLOR = &quot;activeFieldEditorBackgroundColor&quot;;
+<i>224</i>&nbsp;    public static final String INVALID_FIELD_BACKGROUND_COLOR = &quot;invalidFieldBackgroundColor&quot;;
+<i>225</i>&nbsp;    public static final String VALID_FIELD_BACKGROUND_COLOR = &quot;validFieldBackgroundColor&quot;;
+<i>226</i>&nbsp;    public static final String MARKED_ENTRY_BACKGROUND5 = &quot;markedEntryBackground5&quot;;
+<i>227</i>&nbsp;    public static final String MARKED_ENTRY_BACKGROUND4 = &quot;markedEntryBackground4&quot;;
+<i>228</i>&nbsp;    public static final String MARKED_ENTRY_BACKGROUND3 = &quot;markedEntryBackground3&quot;;
+<i>229</i>&nbsp;    public static final String MARKED_ENTRY_BACKGROUND2 = &quot;markedEntryBackground2&quot;;
+<i>230</i>&nbsp;    public static final String MARKED_ENTRY_BACKGROUND1 = &quot;markedEntryBackground1&quot;;
+<i>231</i>&nbsp;    public static final String MARKED_ENTRY_BACKGROUND0 = &quot;markedEntryBackground0&quot;;
+<i>232</i>&nbsp;    public static final String VERY_GRAYED_OUT_TEXT = &quot;veryGrayedOutText&quot;;
+<i>233</i>&nbsp;    public static final String VERY_GRAYED_OUT_BACKGROUND = &quot;veryGrayedOutBackground&quot;;
+<i>234</i>&nbsp;    public static final String GRAYED_OUT_TEXT = &quot;grayedOutText&quot;;
+<i>235</i>&nbsp;    public static final String GRAYED_OUT_BACKGROUND = &quot;grayedOutBackground&quot;;
+<i>236</i>&nbsp;    public static final String GRID_COLOR = &quot;gridColor&quot;;
+<i>237</i>&nbsp;    public static final String TABLE_TEXT = &quot;tableText&quot;;
+<i>238</i>&nbsp;    public static final String TABLE_OPT_FIELD_BACKGROUND = &quot;tableOptFieldBackground&quot;;
+<i>239</i>&nbsp;    public static final String TABLE_REQ_FIELD_BACKGROUND = &quot;tableReqFieldBackground&quot;;
+<i>240</i>&nbsp;    public static final String MARKED_ENTRY_BACKGROUND = &quot;markedEntryBackground&quot;;
+<i>241</i>&nbsp;    public static final String TABLE_RESOLVED_FIELD_BACKGROUND = &quot;tableResolvedFieldBackground&quot;;
+<i>242</i>&nbsp;    public static final String TABLE_BACKGROUND = &quot;tableBackground&quot;;
+<i>243</i>&nbsp;
+<i>244</i>&nbsp;    public static final String TABLE_SHOW_GRID = &quot;tableShowGrid&quot;;
+<i>245</i>&nbsp;    public static final String TABLE_ROW_PADDING = &quot;tableRowPadding&quot;;
+<i>246</i>&nbsp;    public static final String MENU_FONT_SIZE = &quot;menuFontSize&quot;;
+<i>247</i>&nbsp;    public static final String OVERRIDE_DEFAULT_FONTS = &quot;overrideDefaultFonts&quot;;
+<i>248</i>&nbsp;    public static final String FONT_SIZE = &quot;fontSize&quot;;
+<i>249</i>&nbsp;    public static final String FONT_STYLE = &quot;fontStyle&quot;;
+<i>250</i>&nbsp;    public static final String RECENT_DATABASES = &quot;recentDatabases&quot;;
+<i>251</i>&nbsp;    public static final String RENAME_ON_MOVE_FILE_TO_FILE_DIR = &quot;renameOnMoveFileToFileDir&quot;;
+<i>252</i>&nbsp;    public static final String MEMORY_STICK_MODE = &quot;memoryStickMode&quot;;
+<i>253</i>&nbsp;    public static final String DEFAULT_OWNER = &quot;defaultOwner&quot;;
+<i>254</i>&nbsp;    public static final String DEFAULT_ENCODING = &quot;defaultEncoding&quot;;
+<i>255</i>&nbsp;    public static final String TOOLBAR_VISIBLE = &quot;toolbarVisible&quot;;
+<i>256</i>&nbsp;    public static final String HIGHLIGHT_GROUPS_MATCHING = &quot;highlightGroupsMatching&quot;;
+<i>257</i>&nbsp;    public static final String UPDATE_TIMESTAMP = &quot;updateTimestamp&quot;;
+<i>258</i>&nbsp;    public static final String TIME_STAMP_FIELD = &quot;timeStampField&quot;;
+<i>259</i>&nbsp;    public static final String TIME_STAMP_FORMAT = &quot;timeStampFormat&quot;;
+<i>260</i>&nbsp;    public static final String OVERWRITE_TIME_STAMP = &quot;overwriteTimeStamp&quot;;
+<i>261</i>&nbsp;    public static final String USE_TIME_STAMP = &quot;useTimeStamp&quot;;
+<i>262</i>&nbsp;    public static final String WARN_ABOUT_DUPLICATES_IN_INSPECTION = &quot;warnAboutDuplicatesInInspection&quot;;
+<i>263</i>&nbsp;    public static final String UNMARK_ALL_ENTRIES_BEFORE_IMPORTING = &quot;unmarkAllEntriesBeforeImporting&quot;;
+<i>264</i>&nbsp;    public static final String MARK_IMPORTED_ENTRIES = &quot;markImportedEntries&quot;;
+<i>265</i>&nbsp;    public static final String GENERATE_KEYS_AFTER_INSPECTION = &quot;generateKeysAfterInspection&quot;;
+<i>266</i>&nbsp;    public static final String NON_WRAPPABLE_FIELDS = &quot;nonWrappableFields&quot;;
+<i>267</i>&nbsp;    public static final String RESOLVE_STRINGS_ALL_FIELDS = &quot;resolveStringsAllFields&quot;;
+<i>268</i>&nbsp;    public static final String DO_NOT_RESOLVE_STRINGS_FOR = &quot;doNotResolveStringsFor&quot;;
+<i>269</i>&nbsp;    public static final String MERGE_ENTRIES_DIFF_MODE = &quot;mergeEntriesDiffMode&quot;;
+<i>270</i>&nbsp;
+<i>271</i>&nbsp;    public static final String CUSTOM_EXPORT_FORMAT = &quot;customExportFormat&quot;;
+<i>272</i>&nbsp;    public static final String CUSTOM_IMPORT_FORMAT = &quot;customImportFormat&quot;;
+<i>273</i>&nbsp;    public static final String BINDINGS = &quot;bindings&quot;;
+<i>274</i>&nbsp;    public static final String BIND_NAMES = &quot;bindNames&quot;;
+<i>275</i>&nbsp;    public static final String KEY_PATTERN_REGEX = &quot;KeyPatternRegex&quot;;
+<i>276</i>&nbsp;    public static final String KEY_PATTERN_REPLACEMENT = &quot;KeyPatternReplacement&quot;;
+<i>277</i>&nbsp;
+<i>278</i>&nbsp;    public static final String CONSOLE_COMMAND = &quot;consoleCommand&quot;;
+<i>279</i>&nbsp;    public static final String USE_DEFAULT_CONSOLE_APPLICATION = &quot;useDefaultConsoleApplication&quot;;
+<i>280</i>&nbsp;
+<i>281</i>&nbsp;    // Currently, it is not possible to specify defaults for specific entry types
+<i>282</i>&nbsp;    // When this should be made possible, the code to inspect is net.sf.jabref.gui.preftabs.BibtexKeyPatternPrefTab.storeSettings() -&gt; LabelPattern keypatterns = getCiteKeyPattern(); etc
+<i>283</i>&nbsp;    public static final String DEFAULT_BIBTEX_KEY_PATTERN = &quot;defaultBibtexKeyPattern&quot;;
+<i>284</i>&nbsp;
+<i>285</i>&nbsp;    public static final String GRAY_OUT_NON_HITS = &quot;grayOutNonHits&quot;;
+<i>286</i>&nbsp;    public static final String CONFIRM_DELETE = &quot;confirmDelete&quot;;
+<i>287</i>&nbsp;    public static final String WARN_BEFORE_OVERWRITING_KEY = &quot;warnBeforeOverwritingKey&quot;;
+<i>288</i>&nbsp;    public static final String AVOID_OVERWRITING_KEY = &quot;avoidOverwritingKey&quot;;
+<i>289</i>&nbsp;    public static final String OVERWRITE_OWNER = &quot;overwriteOwner&quot;;
+<i>290</i>&nbsp;    public static final String USE_OWNER = &quot;useOwner&quot;;
+<i>291</i>&nbsp;    public static final String AUTOLINK_EXACT_KEY_ONLY = &quot;autolinkExactKeyOnly&quot;;
+<i>292</i>&nbsp;    public static final String SHOW_FILE_LINKS_UPGRADE_WARNING = &quot;showFileLinksUpgradeWarning&quot;;
+<i>293</i>&nbsp;    public static final String SIDE_PANE_WIDTH = &quot;sidePaneWidth&quot;;
+<i>294</i>&nbsp;    public static final String LAST_USED_EXPORT = &quot;lastUsedExport&quot;;
+<i>295</i>&nbsp;    public static final String FLOAT_MARKED_ENTRIES = &quot;floatMarkedEntries&quot;;
+<i>296</i>&nbsp;    public static final String CITE_COMMAND = &quot;citeCommand&quot;;
+<i>297</i>&nbsp;    public static final String EXTERNAL_JOURNAL_LISTS = &quot;externalJournalLists&quot;;
+<i>298</i>&nbsp;    public static final String PERSONAL_JOURNAL_LIST = &quot;personalJournalList&quot;;
+<i>299</i>&nbsp;    public static final String GENERATE_KEYS_BEFORE_SAVING = &quot;generateKeysBeforeSaving&quot;;
+<i>300</i>&nbsp;    public static final String EMAIL_SUBJECT = &quot;emailSubject&quot;;
+<i>301</i>&nbsp;    public static final String OPEN_FOLDERS_OF_ATTACHED_FILES = &quot;openFoldersOfAttachedFiles&quot;;
+<i>302</i>&nbsp;    public static final String KEY_GEN_ALWAYS_ADD_LETTER = &quot;keyGenAlwaysAddLetter&quot;;
+<i>303</i>&nbsp;    public static final String KEY_GEN_FIRST_LETTER_A = &quot;keyGenFirstLetterA&quot;;
+<i>304</i>&nbsp;    public static final String ENFORCE_LEGAL_BIBTEX_KEY = &quot;enforceLegalBibtexKey&quot;;
+<i>305</i>&nbsp;    public static final String LOCAL_AUTO_SAVE = &quot;localAutoSave&quot;;
+<i>306</i>&nbsp;    public static final String RUN_AUTOMATIC_FILE_SEARCH = &quot;runAutomaticFileSearch&quot;;
+<i>307</i>&nbsp;    public static final String NUMERIC_FIELDS = &quot;numericFields&quot;;
+<i>308</i>&nbsp;    public static final String REG_EXP_SEARCH_EXPRESSION_KEY = &quot;regExpSearchExpression&quot;;
+<i>309</i>&nbsp;    public static final String AUTOLINK_USE_REG_EXP_SEARCH_KEY = &quot;useRegExpSearch&quot;;
+<i>310</i>&nbsp;    private static final String DB_CONNECT_USERNAME = &quot;dbConnectUsername&quot;;
+<i>311</i>&nbsp;    private static final String DB_CONNECT_DATABASE = &quot;dbConnectDatabase&quot;;
+<i>312</i>&nbsp;    private static final String DB_CONNECT_HOSTNAME = &quot;dbConnectHostname&quot;;
+<i>313</i>&nbsp;    private static final String DB_CONNECT_SERVER_TYPE = &quot;dbConnectServerType&quot;;
+<i>314</i>&nbsp;    public static final String BIB_LOC_AS_PRIMARY_DIR = &quot;bibLocAsPrimaryDir&quot;;
+<i>315</i>&nbsp;    public static final String SELECTED_FETCHER_INDEX = &quot;selectedFetcherIndex&quot;;
+<i>316</i>&nbsp;    public static final String WEB_SEARCH_VISIBLE = &quot;webSearchVisible&quot;;
+<i>317</i>&nbsp;    public static final String GROUP_SIDEPANE_VISIBLE = &quot;groupSidepaneVisible&quot;;
+<i>318</i>&nbsp;    public static final String ALLOW_FILE_AUTO_OPEN_BROWSE = &quot;allowFileAutoOpenBrowse&quot;;
+<i>319</i>&nbsp;    public static final String CUSTOM_TAB_NAME = &quot;customTabName_&quot;;
+<i>320</i>&nbsp;    public static final String CUSTOM_TAB_FIELDS = &quot;customTabFields_&quot;;
+<i>321</i>&nbsp;    public static final String USE_UNIT_FORMATTER_ON_SEARCH = &quot;useUnitFormatterOnSearch&quot;;
+<i>322</i>&nbsp;    public static final String USE_CASE_KEEPER_ON_SEARCH = &quot;useCaseKeeperOnSearch&quot;;
+<i>323</i>&nbsp;    public static final String USE_IEEE_ABRV = &quot;useIEEEAbrv&quot;;
+<i>324</i>&nbsp;
+<i>325</i>&nbsp;    private static final String PROTECTED_TERMS_ENABLED_EXTERNAL = &quot;protectedTermsEnabledExternal&quot;;
+<i>326</i>&nbsp;    private static final String PROTECTED_TERMS_DISABLED_EXTERNAL = &quot;protectedTermsDisabledExternal&quot;;
+<i>327</i>&nbsp;    private static final String PROTECTED_TERMS_ENABLED_INTERNAL = &quot;protectedTermsEnabledInternal&quot;;
+<i>328</i>&nbsp;    private static final String PROTECTED_TERMS_DISABLED_INTERNAL = &quot;protectedTermsDisabledInternal&quot;;
+<i>329</i>&nbsp;
+<i>330</i>&nbsp;    public static final String ASK_AUTO_NAMING_PDFS_AGAIN = &quot;AskAutoNamingPDFsAgain&quot;;
+<i>331</i>&nbsp;    public static final String CLEANUP_DOI = &quot;CleanUpDOI&quot;;
+<i>332</i>&nbsp;    public static final String CLEANUP_ISSN = &quot;CleanUpISSN&quot;;
+<i>333</i>&nbsp;    public static final String CLEANUP_MOVE_PDF = &quot;CleanUpMovePDF&quot;;
+<i>334</i>&nbsp;    public static final String CLEANUP_MAKE_PATHS_RELATIVE = &quot;CleanUpMakePathsRelative&quot;;
+<i>335</i>&nbsp;    public static final String CLEANUP_RENAME_PDF = &quot;CleanUpRenamePDF&quot;;
+<i>336</i>&nbsp;    public static final String CLEANUP_RENAME_PDF_ONLY_RELATIVE_PATHS = &quot;CleanUpRenamePDFonlyRelativePaths&quot;;
+<i>337</i>&nbsp;    public static final String CLEANUP_UPGRADE_EXTERNAL_LINKS = &quot;CleanUpUpgradeExternalLinks&quot;;
+<i>338</i>&nbsp;    public static final String CLEANUP_CONVERT_TO_BIBLATEX = &quot;CleanUpConvertToBiblatex&quot;;
+<i>339</i>&nbsp;    public static final String CLEANUP_FIX_FILE_LINKS = &quot;CleanUpFixFileLinks&quot;;
+<i>340</i>&nbsp;    public static final String CLEANUP_FORMATTERS = &quot;CleanUpFormatters&quot;;
+<i>341</i>&nbsp;
+<i>342</i>&nbsp;    public static final String IMPORT_DEFAULT_PDF_IMPORT_STYLE = &quot;importDefaultPDFimportStyle&quot;;
+<i>343</i>&nbsp;    public static final String IMPORT_ALWAYSUSE = &quot;importAlwaysUsePDFImportStyle&quot;;
+<i>344</i>&nbsp;    public static final String IMPORT_FILENAMEPATTERN = &quot;importFileNamePattern&quot;;
+<i>345</i>&nbsp;    public static final String IMPORT_FILEDIRPATTERN = &quot;importFileDirPattern&quot;;
+<i>346</i>&nbsp;
+<i>347</i>&nbsp;    public static final String NAME_FORMATTER_VALUE = &quot;nameFormatterFormats&quot;;
+<i>348</i>&nbsp;    public static final String NAME_FORMATER_KEY = &quot;nameFormatterNames&quot;;
+<i>349</i>&nbsp;
+<i>350</i>&nbsp;    public static final String PUSH_TO_APPLICATION = &quot;pushToApplication&quot;;
+<i>351</i>&nbsp;
+<i>352</i>&nbsp;    /**
+<i>353</i>&nbsp;     * The OpenOffice/LibreOffice connection preferences are:
+<i>354</i>&nbsp;     * OO_PATH main directory for OO/LO installation, used to detect location on Win/OS X when using manual connect
+<i>355</i>&nbsp;     * OO_EXECUTABLE_PATH path to soffice-file
+<i>356</i>&nbsp;     * OO_JARS_PATH directory that contains juh.jar, jurt.jar, ridl.jar, unoil.jar
+<i>357</i>&nbsp;     * OO_SYNC_WHEN_CITING true if the reference list is updated when adding a new citation
+<i>358</i>&nbsp;     * OO_SHOW_PANEL true if the OO panel is shown on startup
+<i>359</i>&nbsp;     * OO_USE_ALL_OPEN_DATABASES true if all databases should be used when citing
+<i>360</i>&nbsp;     * OO_BIBLIOGRAPHY_STYLE_FILE path to the used style file
+<i>361</i>&nbsp;     * OO_EXTERNAL_STYLE_FILES list with paths to external style files
+<i>362</i>&nbsp;     * STYLES_*_* size and position of &quot;Select style&quot; dialog
+<i>363</i>&nbsp;     */
+<i>364</i>&nbsp;    public static final String OO_EXECUTABLE_PATH = &quot;ooExecutablePath&quot;;
+<i>365</i>&nbsp;    public static final String OO_PATH = &quot;ooPath&quot;;
+<i>366</i>&nbsp;    public static final String OO_JARS_PATH = &quot;ooJarsPath&quot;;
+<i>367</i>&nbsp;    public static final String OO_SHOW_PANEL = &quot;showOOPanel&quot;;
+<i>368</i>&nbsp;    public static final String OO_SYNC_WHEN_CITING = &quot;syncOOWhenCiting&quot;;
+<i>369</i>&nbsp;    public static final String OO_USE_ALL_OPEN_BASES = &quot;useAllOpenBases&quot;;
+<i>370</i>&nbsp;    public static final String OO_BIBLIOGRAPHY_STYLE_FILE = &quot;ooBibliographyStyleFile&quot;;
+<i>371</i>&nbsp;    public static final String OO_EXTERNAL_STYLE_FILES = &quot;ooExternalStyleFiles&quot;;
+<i>372</i>&nbsp;    public static final String STYLES_SIZE_Y = &quot;stylesSizeY&quot;;
+<i>373</i>&nbsp;    public static final String STYLES_SIZE_X = &quot;stylesSizeX&quot;;
+<i>374</i>&nbsp;    public static final String STYLES_POS_Y = &quot;stylesPosY&quot;;
+<i>375</i>&nbsp;    public static final String STYLES_POS_X = &quot;stylesPosX&quot;;
+<i>376</i>&nbsp;
+<i>377</i>&nbsp;    // Special field preferences
+<i>378</i>&nbsp;    public static final String SHOWCOLUMN_RELEVANCE = &quot;showRelevanceColumn&quot;;
+<i>379</i>&nbsp;    public static final String SHOWCOLUMN_READ = &quot;showReadColumn&quot;;
+<i>380</i>&nbsp;    public static final String SHOWCOLUMN_RANKING = &quot;showRankingColumn&quot;;
+<i>381</i>&nbsp;    public static final String SHOWCOLUMN_QUALITY = &quot;showQualityColumn&quot;;
+<i>382</i>&nbsp;    public static final String SHOWCOLUMN_PRIORITY = &quot;showPriorityColumn&quot;;
+<i>383</i>&nbsp;    public static final String SHOWCOLUMN_PRINTED = &quot;showPrintedColumn&quot;;
+<i>384</i>&nbsp;    public static final String SPECIALFIELDSENABLED = &quot;specialFieldsEnabled&quot;;
+<i>385</i>&nbsp;    // The choice between AUTOSYNCSPECIALFIELDSTOKEYWORDS and SERIALIZESPECIALFIELDS is mutually exclusive
+<i>386</i>&nbsp;    public static final String SERIALIZESPECIALFIELDS = &quot;serializeSpecialFields&quot;;
+<i>387</i>&nbsp;    // The choice between AUTOSYNCSPECIALFIELDSTOKEYWORDS and SERIALIZESPECIALFIELDS is mutually exclusive
+<i>388</i>&nbsp;    // At least in the settings, not in the implementation. But having both confused the users, therefore, having activated both options at the same time has been disabled
+<i>389</i>&nbsp;    public static final String AUTOSYNCSPECIALFIELDSTOKEYWORDS = &quot;autoSyncSpecialFieldsToKeywords&quot;;
+<i>390</i>&nbsp;
+<i>391</i>&nbsp;    // Prefs node for BibtexKeyPatterns
+<i>392</i>&nbsp;    public static final String BIBTEX_KEY_PATTERNS_NODE = &quot;bibtexkeypatterns&quot;;
+<i>393</i>&nbsp;
+<i>394</i>&nbsp;    // Prefs node for customized entry types
+<i>395</i>&nbsp;    public static final String CUSTOMIZED_BIBTEX_TYPES = &quot;customizedBibtexTypes&quot;;
+<i>396</i>&nbsp;    public static final String CUSTOMIZED_BIBLATEX_TYPES = &quot;customizedBiblatexTypes&quot;;
+<i>397</i>&nbsp;
+<i>398</i>&nbsp;    // Version
+<i>399</i>&nbsp;    public static final String VERSION_IGNORED_UPDATE = &quot;versionIgnoreUpdate&quot;;
+<i>400</i>&nbsp;
+<i>401</i>&nbsp;    // Dropped file handler
+<i>402</i>&nbsp;    public static final String DROPPEDFILEHANDLER_RENAME = &quot;DroppedFileHandler_RenameFile&quot;;
+<i>403</i>&nbsp;    public static final String DROPPEDFILEHANDLER_MOVE = &quot;DroppedFileHandler_MoveFile&quot;;
+<i>404</i>&nbsp;    public static final String DROPPEDFILEHANDLER_COPY = &quot;DroppedFileHandler_CopyFile&quot;;
+<i>405</i>&nbsp;    public static final String DROPPEDFILEHANDLER_LEAVE = &quot;DroppedFileHandler_LeaveFileInDir&quot;;
+<i>406</i>&nbsp;
+<i>407</i>&nbsp;    // Remote
+<i>408</i>&nbsp;    public static final String USE_REMOTE_SERVER = &quot;useRemoteServer&quot;;
+<i>409</i>&nbsp;    public static final String REMOTE_SERVER_PORT = &quot;remoteServerPort&quot;;
+<i>410</i>&nbsp;
+<i>411</i>&nbsp;    // Preview
+<i>412</i>&nbsp;    private static final String CYCLE_PREVIEW_POS = &quot;cyclePreviewPos&quot;;
+<i>413</i>&nbsp;    private static final String CYCLE_PREVIEW = &quot;cyclePreview&quot;;
+<i>414</i>&nbsp;    private static final String PREVIEW_PANEL_HEIGHT = &quot;previewPanelHeight&quot;;
+<i>415</i>&nbsp;    private static final String PREVIEW_STYLE = &quot;previewStyle&quot;;
+<i>416</i>&nbsp;    private static final String PREVIEW_ENABLED = &quot;previewEnabled&quot;;
+<i>417</i>&nbsp;
+<i>418</i>&nbsp;    public final String MARKING_WITH_NUMBER_PATTERN;
+<i>419</i>&nbsp;
+<i>420</i>&nbsp;    private final Preferences prefs;
+<i>421</i>&nbsp;
+<i>422</i>&nbsp;    private GlobalBibtexKeyPattern keyPattern;
+<i>423</i>&nbsp;
+<i>424</i>&nbsp;    // Object containing custom export formats:
+<i>425</i>&nbsp;    public final CustomExportList customExports;
+<i>426</i>&nbsp;
+<i>427</i>&nbsp;    // Helper string
+<b class="fc"><i>428</i>&nbsp;    private static final String USER_HOME = System.getProperty(&quot;user.home&quot;);</b>
+<i>429</i>&nbsp;
+<i>430</i>&nbsp;    /**
+<i>431</i>&nbsp;     * Set with all custom {@link net.sf.jabref.logic.importer.Importer}s
+<i>432</i>&nbsp;     */
+<i>433</i>&nbsp;    public final CustomImportList customImports;
+<i>434</i>&nbsp;
+<i>435</i>&nbsp;    // Object containing info about customized entry editor tabs.
+<i>436</i>&nbsp;    private EntryEditorTabList tabList;
+<i>437</i>&nbsp;
+<i>438</i>&nbsp;    // The following field is used as a global variable during the export of a database.
+<i>439</i>&nbsp;    // By setting this field to the path of the database&#39;s default file directory, formatters
+<i>440</i>&nbsp;    // that should resolve external file paths can access this field. This is an ugly hack
+<i>441</i>&nbsp;    // to solve the problem of formatters not having access to any context except for the
+<i>442</i>&nbsp;    // string to be formatted and possible formatter arguments.
+<i>443</i>&nbsp;    public List&lt;String&gt; fileDirForDatabase;
+<i>444</i>&nbsp;
+<i>445</i>&nbsp;    // The only instance of this class:
+<i>446</i>&nbsp;    private static JabRefPreferences singleton;
+<i>447</i>&nbsp;
+<i>448</i>&nbsp;
+<i>449</i>&nbsp;    public static JabRefPreferences getInstance() {
+<b class="fc"><i>450</i>&nbsp;        if (JabRefPreferences.singleton == null) {</b>
+<b class="fc"><i>451</i>&nbsp;            JabRefPreferences.singleton = new JabRefPreferences();</b>
+<i>452</i>&nbsp;        }
+<b class="fc"><i>453</i>&nbsp;        return JabRefPreferences.singleton;</b>
+<i>454</i>&nbsp;    }
+<i>455</i>&nbsp;
+<i>456</i>&nbsp;    // The constructor is made private to enforce this as a singleton class:
+<b class="fc"><i>457</i>&nbsp;    private JabRefPreferences() {</b>
+<i>458</i>&nbsp;        try {
+<b class="fc"><i>459</i>&nbsp;            if (new File(&quot;jabref.xml&quot;).exists()) {</b>
+<b class="nc"><i>460</i>&nbsp;                importPreferences(&quot;jabref.xml&quot;);</b>
+<i>461</i>&nbsp;            }
+<b class="nc"><i>462</i>&nbsp;        } catch (JabRefException e) {</b>
+<b class="nc"><i>463</i>&nbsp;            LOGGER.warn(&quot;Could not import preferences from jabref.xml: &quot; + e.getMessage(), e);</b>
+<b class="fc"><i>464</i>&nbsp;        }</b>
+<i>465</i>&nbsp;
+<i>466</i>&nbsp;        // load user preferences
+<b class="fc"><i>467</i>&nbsp;        prefs = Preferences.userNodeForPackage(PREFS_BASE_CLASS);</b>
+<i>468</i>&nbsp;
+<b class="fc"><i>469</i>&nbsp;        SearchPreferences.putDefaults(defaults);</b>
+<i>470</i>&nbsp;
+<b class="fc"><i>471</i>&nbsp;        defaults.put(TEXMAKER_PATH, JabRefDesktop.getNativeDesktop().detectProgramPath(&quot;texmaker&quot;, &quot;Texmaker&quot;));</b>
+<b class="fc"><i>472</i>&nbsp;        defaults.put(WIN_EDT_PATH, JabRefDesktop.getNativeDesktop().detectProgramPath(&quot;WinEdt&quot;, &quot;WinEdt Team\\WinEdt&quot;));</b>
+<b class="fc"><i>473</i>&nbsp;        defaults.put(LATEX_EDITOR_PATH, JabRefDesktop.getNativeDesktop().detectProgramPath(&quot;LEd&quot;, &quot;LEd&quot;));</b>
+<b class="fc"><i>474</i>&nbsp;        defaults.put(TEXSTUDIO_PATH, JabRefDesktop.getNativeDesktop().detectProgramPath(&quot;texstudio&quot;, &quot;TeXstudio&quot;));</b>
+<i>475</i>&nbsp;
+<b class="fc"><i>476</i>&nbsp;        defaults.put(BIBLATEX_DEFAULT_MODE, Boolean.FALSE);</b>
+<i>477</i>&nbsp;
+<b class="fc"><i>478</i>&nbsp;        if (OS.OS_X) {</b>
+<b class="nc"><i>479</i>&nbsp;            defaults.put(FONT_FAMILY, &quot;SansSerif&quot;);</b>
+<b class="nc"><i>480</i>&nbsp;            defaults.put(WIN_LOOK_AND_FEEL, UIManager.getSystemLookAndFeelClassName());</b>
+<b class="nc"><i>481</i>&nbsp;            defaults.put(EMACS_PATH, &quot;emacsclient&quot;);</b>
+<b class="fc"><i>482</i>&nbsp;        } else if (OS.WINDOWS) {</b>
+<b class="nc"><i>483</i>&nbsp;            defaults.put(FONT_FAMILY, &quot;Arial&quot;);</b>
+<b class="nc"><i>484</i>&nbsp;            defaults.put(WIN_LOOK_AND_FEEL, &quot;com.jgoodies.looks.windows.WindowsLookAndFeel&quot;);</b>
+<b class="nc"><i>485</i>&nbsp;            defaults.put(EMACS_PATH, &quot;emacsclient.exe&quot;);</b>
+<i>486</i>&nbsp;        } else {
+<i>487</i>&nbsp;            // Linux
+<b class="fc"><i>488</i>&nbsp;            defaults.put(FONT_FAMILY, &quot;SansSerif&quot;);</b>
+<b class="fc"><i>489</i>&nbsp;            defaults.put(WIN_LOOK_AND_FEEL, &quot;com.jgoodies.plaf.plastic.Plastic3DLookAndFeel&quot;);</b>
+<b class="fc"><i>490</i>&nbsp;            defaults.put(EMACS_PATH, &quot;emacsclient&quot;);</b>
+<i>491</i>&nbsp;        }
+<b class="fc"><i>492</i>&nbsp;        defaults.put(EMACS_ADDITIONAL_PARAMETERS, &quot;-n -e&quot;);</b>
+<i>493</i>&nbsp;
+<b class="fc"><i>494</i>&nbsp;        defaults.put(PUSH_TO_APPLICATION, &quot;TeXstudio&quot;);</b>
+<i>495</i>&nbsp;
+<b class="fc"><i>496</i>&nbsp;        defaults.put(RECENT_DATABASES, &quot;&quot;);</b>
+<b class="fc"><i>497</i>&nbsp;        defaults.put(EXTERNAL_FILE_TYPES, &quot;&quot;);</b>
+<b class="fc"><i>498</i>&nbsp;        defaults.put(KEY_PATTERN_REGEX, &quot;&quot;);</b>
+<b class="fc"><i>499</i>&nbsp;        defaults.put(KEY_PATTERN_REPLACEMENT, &quot;&quot;);</b>
+<i>500</i>&nbsp;
+<i>501</i>&nbsp;        // Proxy
+<b class="fc"><i>502</i>&nbsp;        defaults.put(PROXY_USE, Boolean.FALSE);</b>
+<b class="fc"><i>503</i>&nbsp;        defaults.put(PROXY_HOSTNAME, &quot;&quot;);</b>
+<b class="fc"><i>504</i>&nbsp;        defaults.put(PROXY_PORT, &quot;80&quot;);</b>
+<b class="fc"><i>505</i>&nbsp;        defaults.put(PROXY_USE_AUTHENTICATION, Boolean.FALSE);</b>
+<b class="fc"><i>506</i>&nbsp;        defaults.put(PROXY_USERNAME, &quot;&quot;);</b>
+<b class="fc"><i>507</i>&nbsp;        defaults.put(PROXY_PASSWORD, &quot;&quot;);</b>
+<i>508</i>&nbsp;
+<b class="fc"><i>509</i>&nbsp;        defaults.put(USE_DEFAULT_LOOK_AND_FEEL, Boolean.TRUE);</b>
+<b class="fc"><i>510</i>&nbsp;        defaults.put(LYXPIPE, USER_HOME + File.separator + &quot;.lyx/lyxpipe&quot;);</b>
+<b class="fc"><i>511</i>&nbsp;        defaults.put(VIM, &quot;vim&quot;);</b>
+<b class="fc"><i>512</i>&nbsp;        defaults.put(VIM_SERVER, &quot;vim&quot;);</b>
+<b class="fc"><i>513</i>&nbsp;        defaults.put(POS_X, 0);</b>
+<b class="fc"><i>514</i>&nbsp;        defaults.put(POS_Y, 0);</b>
+<b class="fc"><i>515</i>&nbsp;        defaults.put(SIZE_X, 1024);</b>
+<b class="fc"><i>516</i>&nbsp;        defaults.put(SIZE_Y, 768);</b>
+<b class="fc"><i>517</i>&nbsp;        defaults.put(WINDOW_MAXIMISED, Boolean.FALSE);</b>
+<b class="fc"><i>518</i>&nbsp;        defaults.put(AUTO_RESIZE_MODE, JTable.AUTO_RESIZE_ALL_COLUMNS);</b>
+<b class="fc"><i>519</i>&nbsp;        defaults.put(ENTRY_EDITOR_HEIGHT, 400);</b>
+<b class="fc"><i>520</i>&nbsp;        defaults.put(TABLE_COLOR_CODES_ON, Boolean.FALSE);</b>
+<b class="fc"><i>521</i>&nbsp;        defaults.put(TABLE_RESOLVED_COLOR_CODES_ON, Boolean.FALSE);</b>
+<b class="fc"><i>522</i>&nbsp;        defaults.put(NAMES_AS_IS, Boolean.FALSE); // &quot;Show names unchanged&quot;</b>
+<b class="fc"><i>523</i>&nbsp;        defaults.put(NAMES_FIRST_LAST, Boolean.FALSE); // &quot;Show &#39;Firstname Lastname&#39;&quot;</b>
+<b class="fc"><i>524</i>&nbsp;        defaults.put(NAMES_NATBIB, Boolean.TRUE); // &quot;Natbib style&quot;</b>
+<b class="fc"><i>525</i>&nbsp;        defaults.put(ABBR_AUTHOR_NAMES, Boolean.TRUE); // &quot;Abbreviate names&quot;</b>
+<b class="fc"><i>526</i>&nbsp;        defaults.put(NAMES_LAST_ONLY, Boolean.TRUE); // &quot;Show last names only&quot;</b>
+<i>527</i>&nbsp;        // system locale as default
+<b class="fc"><i>528</i>&nbsp;        defaults.put(LANGUAGE, Locale.getDefault().getLanguage());</b>
+<i>529</i>&nbsp;
+<i>530</i>&nbsp;        // Sorting preferences
+<b class="fc"><i>531</i>&nbsp;        defaults.put(TABLE_PRIMARY_SORT_FIELD, FieldName.AUTHOR);</b>
+<b class="fc"><i>532</i>&nbsp;        defaults.put(TABLE_PRIMARY_SORT_DESCENDING, Boolean.FALSE);</b>
+<b class="fc"><i>533</i>&nbsp;        defaults.put(TABLE_SECONDARY_SORT_FIELD, FieldName.YEAR);</b>
+<b class="fc"><i>534</i>&nbsp;        defaults.put(TABLE_SECONDARY_SORT_DESCENDING, Boolean.TRUE);</b>
+<b class="fc"><i>535</i>&nbsp;        defaults.put(TABLE_TERTIARY_SORT_FIELD, FieldName.TITLE);</b>
+<b class="fc"><i>536</i>&nbsp;        defaults.put(TABLE_TERTIARY_SORT_DESCENDING, Boolean.FALSE);</b>
+<i>537</i>&nbsp;
+<b class="fc"><i>538</i>&nbsp;        defaults.put(REFORMAT_FILE_ON_SAVE_AND_EXPORT, Boolean.FALSE);</b>
+<i>539</i>&nbsp;
+<i>540</i>&nbsp;        // export order
+<b class="fc"><i>541</i>&nbsp;        defaults.put(EXPORT_IN_ORIGINAL_ORDER, Boolean.FALSE);</b>
+<b class="fc"><i>542</i>&nbsp;        defaults.put(EXPORT_IN_SPECIFIED_ORDER, Boolean.FALSE);</b>
+<i>543</i>&nbsp;
+<i>544</i>&nbsp;        // export order: if EXPORT_IN_SPECIFIED_ORDER, then use following criteria
+<b class="fc"><i>545</i>&nbsp;        defaults.put(EXPORT_PRIMARY_SORT_FIELD, BibEntry.KEY_FIELD);</b>
+<b class="fc"><i>546</i>&nbsp;        defaults.put(EXPORT_PRIMARY_SORT_DESCENDING, Boolean.FALSE);</b>
+<b class="fc"><i>547</i>&nbsp;        defaults.put(EXPORT_SECONDARY_SORT_FIELD, FieldName.AUTHOR);</b>
+<b class="fc"><i>548</i>&nbsp;        defaults.put(EXPORT_SECONDARY_SORT_DESCENDING, Boolean.FALSE);</b>
+<b class="fc"><i>549</i>&nbsp;        defaults.put(EXPORT_TERTIARY_SORT_FIELD, FieldName.TITLE);</b>
+<b class="fc"><i>550</i>&nbsp;        defaults.put(EXPORT_TERTIARY_SORT_DESCENDING, Boolean.TRUE);</b>
+<i>551</i>&nbsp;
+<b class="fc"><i>552</i>&nbsp;        defaults.put(NEWLINE, System.lineSeparator());</b>
+<i>553</i>&nbsp;
+<b class="fc"><i>554</i>&nbsp;        defaults.put(SIDE_PANE_COMPONENT_NAMES, &quot;&quot;);</b>
+<b class="fc"><i>555</i>&nbsp;        defaults.put(SIDE_PANE_COMPONENT_PREFERRED_POSITIONS, &quot;&quot;);</b>
+<i>556</i>&nbsp;
+<b class="fc"><i>557</i>&nbsp;        defaults.put(COLUMN_NAMES, &quot;entrytype;author/editor;title;year;journal/booktitle;bibtexkey&quot;);</b>
+<b class="fc"><i>558</i>&nbsp;        defaults.put(COLUMN_WIDTHS, &quot;75;300;470;60;130;100&quot;);</b>
+<b class="fc"><i>559</i>&nbsp;        defaults.put(XMP_PRIVACY_FILTERS, &quot;pdf;timestamp;keywords;owner;note;review&quot;);</b>
+<b class="fc"><i>560</i>&nbsp;        defaults.put(USE_XMP_PRIVACY_FILTER, Boolean.FALSE);</b>
+<b class="fc"><i>561</i>&nbsp;        defaults.put(NUMBER_COL_WIDTH, 32);</b>
+<b class="fc"><i>562</i>&nbsp;        defaults.put(WORKING_DIRECTORY, USER_HOME);</b>
+<b class="fc"><i>563</i>&nbsp;        defaults.put(EXPORT_WORKING_DIRECTORY, USER_HOME);</b>
+<i>564</i>&nbsp;        // Remembers working directory of last import
+<b class="fc"><i>565</i>&nbsp;        defaults.put(IMPORT_WORKING_DIRECTORY, USER_HOME);</b>
+<b class="fc"><i>566</i>&nbsp;        defaults.put(PREFS_EXPORT_PATH, WORKING_DIRECTORY);</b>
+<b class="fc"><i>567</i>&nbsp;        defaults.put(AUTO_OPEN_FORM, Boolean.TRUE);</b>
+<b class="fc"><i>568</i>&nbsp;        defaults.put(BACKUP, Boolean.TRUE);</b>
+<b class="fc"><i>569</i>&nbsp;        defaults.put(OPEN_LAST_EDITED, Boolean.TRUE);</b>
+<b class="fc"><i>570</i>&nbsp;        defaults.put(LAST_EDITED, &quot;&quot;);</b>
+<b class="fc"><i>571</i>&nbsp;        defaults.put(LAST_FOCUSED, &quot;&quot;);</b>
+<b class="fc"><i>572</i>&nbsp;        defaults.put(STRINGS_POS_X, 0);</b>
+<b class="fc"><i>573</i>&nbsp;        defaults.put(STRINGS_POS_Y, 0);</b>
+<b class="fc"><i>574</i>&nbsp;        defaults.put(STRINGS_SIZE_X, 600);</b>
+<b class="fc"><i>575</i>&nbsp;        defaults.put(STRINGS_SIZE_Y, 400);</b>
+<b class="fc"><i>576</i>&nbsp;        defaults.put(DUPLICATES_POS_X, 0);</b>
+<b class="fc"><i>577</i>&nbsp;        defaults.put(DUPLICATES_POS_Y, 0);</b>
+<b class="fc"><i>578</i>&nbsp;        defaults.put(DUPLICATES_SIZE_X, 800);</b>
+<b class="fc"><i>579</i>&nbsp;        defaults.put(DUPLICATES_SIZE_Y, 600);</b>
+<b class="fc"><i>580</i>&nbsp;        defaults.put(MERGEENTRIES_POS_X, 0);</b>
+<b class="fc"><i>581</i>&nbsp;        defaults.put(MERGEENTRIES_POS_Y, 0);</b>
+<b class="fc"><i>582</i>&nbsp;        defaults.put(MERGEENTRIES_SIZE_X, 800);</b>
+<b class="fc"><i>583</i>&nbsp;        defaults.put(MERGEENTRIES_SIZE_Y, 600);</b>
+<b class="fc"><i>584</i>&nbsp;        defaults.put(PREAMBLE_POS_X, 0);</b>
+<b class="fc"><i>585</i>&nbsp;        defaults.put(PREAMBLE_POS_Y, 0);</b>
+<b class="fc"><i>586</i>&nbsp;        defaults.put(PREAMBLE_SIZE_X, 600);</b>
+<b class="fc"><i>587</i>&nbsp;        defaults.put(PREAMBLE_SIZE_Y, 400);</b>
+<b class="fc"><i>588</i>&nbsp;        defaults.put(TERMS_POS_X, 0);</b>
+<b class="fc"><i>589</i>&nbsp;        defaults.put(TERMS_POS_Y, 0);</b>
+<b class="fc"><i>590</i>&nbsp;        defaults.put(TERMS_SIZE_X, 500);</b>
+<b class="fc"><i>591</i>&nbsp;        defaults.put(TERMS_SIZE_Y, 500);</b>
+<b class="fc"><i>592</i>&nbsp;        defaults.put(DEFAULT_SHOW_SOURCE, Boolean.FALSE);</b>
+<i>593</i>&nbsp;
+<b class="fc"><i>594</i>&nbsp;        defaults.put(DEFAULT_AUTO_SORT, Boolean.FALSE);</b>
+<i>595</i>&nbsp;
+<b class="fc"><i>596</i>&nbsp;        defaults.put(MERGE_ENTRIES_DIFF_MODE, 2);</b>
+<i>597</i>&nbsp;
+<b class="fc"><i>598</i>&nbsp;        defaults.put(EDITOR_EMACS_KEYBINDINGS, Boolean.FALSE);</b>
+<b class="fc"><i>599</i>&nbsp;        defaults.put(EDITOR_EMACS_KEYBINDINGS_REBIND_CA, Boolean.TRUE);</b>
+<b class="fc"><i>600</i>&nbsp;        defaults.put(EDITOR_EMACS_KEYBINDINGS_REBIND_CF, Boolean.TRUE);</b>
+<b class="fc"><i>601</i>&nbsp;        defaults.put(AUTO_COMPLETE, Boolean.FALSE);</b>
+<b class="fc"><i>602</i>&nbsp;        AutoCompletePreferences.putDefaults(defaults);</b>
+<b class="fc"><i>603</i>&nbsp;        defaults.put(GROUP_FLOAT_SELECTIONS, Boolean.TRUE);</b>
+<b class="fc"><i>604</i>&nbsp;        defaults.put(GROUP_INTERSECT_SELECTIONS, Boolean.TRUE);</b>
+<b class="fc"><i>605</i>&nbsp;        defaults.put(GROUP_INVERT_SELECTIONS, Boolean.FALSE);</b>
+<b class="fc"><i>606</i>&nbsp;        defaults.put(GROUP_SHOW_OVERLAPPING, Boolean.FALSE);</b>
+<b class="fc"><i>607</i>&nbsp;        defaults.put(GROUPS_DEFAULT_FIELD, FieldName.KEYWORDS);</b>
+<b class="fc"><i>608</i>&nbsp;        defaults.put(GROUP_SHOW_ICONS, Boolean.TRUE);</b>
+<b class="fc"><i>609</i>&nbsp;        defaults.put(GROUP_SHOW_DYNAMIC, Boolean.TRUE);</b>
+<b class="fc"><i>610</i>&nbsp;        defaults.put(GROUP_EXPAND_TREE, Boolean.TRUE);</b>
+<b class="fc"><i>611</i>&nbsp;        defaults.put(GROUP_SHOW_NUMBER_OF_ELEMENTS, Boolean.FALSE);</b>
+<b class="fc"><i>612</i>&nbsp;        defaults.put(AUTO_ASSIGN_GROUP, Boolean.TRUE);</b>
+<b class="fc"><i>613</i>&nbsp;        defaults.put(KEYWORD_SEPARATOR, &quot;, &quot;);</b>
+<b class="fc"><i>614</i>&nbsp;        defaults.put(EDIT_GROUP_MEMBERSHIP_MODE, Boolean.FALSE);</b>
+<b class="fc"><i>615</i>&nbsp;        defaults.put(HIGHLIGHT_GROUPS_MATCHING, &quot;all&quot;);</b>
+<b class="fc"><i>616</i>&nbsp;        defaults.put(TOOLBAR_VISIBLE, Boolean.TRUE);</b>
+<b class="fc"><i>617</i>&nbsp;        defaults.put(DEFAULT_ENCODING, StandardCharsets.UTF_8.name());</b>
+<b class="fc"><i>618</i>&nbsp;        defaults.put(DEFAULT_OWNER, System.getProperty(&quot;user.name&quot;));</b>
+<b class="fc"><i>619</i>&nbsp;        defaults.put(MEMORY_STICK_MODE, Boolean.FALSE);</b>
+<b class="fc"><i>620</i>&nbsp;        defaults.put(RENAME_ON_MOVE_FILE_TO_FILE_DIR, Boolean.TRUE);</b>
+<i>621</i>&nbsp;
+<b class="fc"><i>622</i>&nbsp;        defaults.put(FONT_STYLE, Font.PLAIN);</b>
+<b class="fc"><i>623</i>&nbsp;        defaults.put(FONT_SIZE, 12);</b>
+<b class="fc"><i>624</i>&nbsp;        defaults.put(OVERRIDE_DEFAULT_FONTS, Boolean.FALSE);</b>
+<b class="fc"><i>625</i>&nbsp;        defaults.put(MENU_FONT_SIZE, 11);</b>
+<b class="fc"><i>626</i>&nbsp;        defaults.put(TABLE_ROW_PADDING, 9);</b>
+<b class="fc"><i>627</i>&nbsp;        defaults.put(TABLE_SHOW_GRID, Boolean.FALSE);</b>
+<i>628</i>&nbsp;        // Main table color settings:
+<b class="fc"><i>629</i>&nbsp;        defaults.put(TABLE_BACKGROUND, &quot;255:255:255&quot;);</b>
+<b class="fc"><i>630</i>&nbsp;        defaults.put(TABLE_REQ_FIELD_BACKGROUND, &quot;230:235:255&quot;);</b>
+<b class="fc"><i>631</i>&nbsp;        defaults.put(TABLE_OPT_FIELD_BACKGROUND, &quot;230:255:230&quot;);</b>
+<b class="fc"><i>632</i>&nbsp;        defaults.put(TABLE_RESOLVED_FIELD_BACKGROUND, &quot;240:240:240&quot;);</b>
+<b class="fc"><i>633</i>&nbsp;        defaults.put(TABLE_TEXT, &quot;0:0:0&quot;);</b>
+<b class="fc"><i>634</i>&nbsp;        defaults.put(GRID_COLOR, &quot;210:210:210&quot;);</b>
+<b class="fc"><i>635</i>&nbsp;        defaults.put(GRAYED_OUT_BACKGROUND, &quot;210:210:210&quot;);</b>
+<b class="fc"><i>636</i>&nbsp;        defaults.put(GRAYED_OUT_TEXT, &quot;40:40:40&quot;);</b>
+<b class="fc"><i>637</i>&nbsp;        defaults.put(VERY_GRAYED_OUT_BACKGROUND, &quot;180:180:180&quot;);</b>
+<b class="fc"><i>638</i>&nbsp;        defaults.put(VERY_GRAYED_OUT_TEXT, &quot;40:40:40&quot;);</b>
+<b class="fc"><i>639</i>&nbsp;        defaults.put(MARKED_ENTRY_BACKGROUND0, &quot;255:255:180&quot;);</b>
+<b class="fc"><i>640</i>&nbsp;        defaults.put(MARKED_ENTRY_BACKGROUND1, &quot;255:220:180&quot;);</b>
+<b class="fc"><i>641</i>&nbsp;        defaults.put(MARKED_ENTRY_BACKGROUND2, &quot;255:180:160&quot;);</b>
+<b class="fc"><i>642</i>&nbsp;        defaults.put(MARKED_ENTRY_BACKGROUND3, &quot;255:120:120&quot;);</b>
+<b class="fc"><i>643</i>&nbsp;        defaults.put(MARKED_ENTRY_BACKGROUND4, &quot;255:75:75&quot;);</b>
+<b class="fc"><i>644</i>&nbsp;        defaults.put(MARKED_ENTRY_BACKGROUND5, &quot;220:255:220&quot;);</b>
+<b class="fc"><i>645</i>&nbsp;        defaults.put(VALID_FIELD_BACKGROUND_COLOR, &quot;255:255:255&quot;);</b>
+<b class="fc"><i>646</i>&nbsp;        defaults.put(INVALID_FIELD_BACKGROUND_COLOR, &quot;255:0:0&quot;);</b>
+<b class="fc"><i>647</i>&nbsp;        defaults.put(ACTIVE_FIELD_EDITOR_BACKGROUND_COLOR, &quot;220:220:255&quot;);</b>
+<b class="fc"><i>648</i>&nbsp;        defaults.put(FIELD_EDITOR_TEXT_COLOR, &quot;0:0:0&quot;);</b>
+<i>649</i>&nbsp;
+<b class="fc"><i>650</i>&nbsp;        defaults.put(INCOMPLETE_ENTRY_BACKGROUND, &quot;250:175:175&quot;);</b>
+<i>651</i>&nbsp;
+<b class="fc"><i>652</i>&nbsp;        defaults.put(URL_COLUMN, Boolean.TRUE);</b>
+<b class="fc"><i>653</i>&nbsp;        defaults.put(PREFER_URL_DOI, Boolean.FALSE);</b>
+<b class="fc"><i>654</i>&nbsp;        defaults.put(FILE_COLUMN, Boolean.TRUE);</b>
+<b class="fc"><i>655</i>&nbsp;        defaults.put(ARXIV_COLUMN, Boolean.FALSE);</b>
+<i>656</i>&nbsp;
+<b class="fc"><i>657</i>&nbsp;        defaults.put(EXTRA_FILE_COLUMNS, Boolean.FALSE);</b>
+<b class="fc"><i>658</i>&nbsp;        defaults.put(LIST_OF_FILE_COLUMNS, &quot;&quot;);</b>
+<i>659</i>&nbsp;
+<b class="fc"><i>660</i>&nbsp;        defaults.put(PROTECTED_TERMS_ENABLED_INTERNAL, convertListToString(ProtectedTermsLoader.getInternalLists()));</b>
+<b class="fc"><i>661</i>&nbsp;        defaults.put(PROTECTED_TERMS_DISABLED_INTERNAL, &quot;&quot;);</b>
+<b class="fc"><i>662</i>&nbsp;        defaults.put(PROTECTED_TERMS_ENABLED_EXTERNAL, &quot;&quot;);</b>
+<b class="fc"><i>663</i>&nbsp;        defaults.put(PROTECTED_TERMS_DISABLED_EXTERNAL, &quot;&quot;);</b>
+<i>664</i>&nbsp;
+<i>665</i>&nbsp;        // OpenOffice/LibreOffice
+<b class="fc"><i>666</i>&nbsp;        if (OS.WINDOWS) {</b>
+<b class="nc"><i>667</i>&nbsp;            defaults.put(OO_PATH, OpenOfficePreferences.DEFAULT_WINDOWS_PATH);</b>
+<b class="nc"><i>668</i>&nbsp;            defaults.put(OO_EXECUTABLE_PATH, OpenOfficePreferences.DEFAULT_WINDOWS_PATH</b>
+<i>669</i>&nbsp;                    + OpenOfficePreferences.WINDOWS_EXECUTABLE_SUBPATH + OpenOfficePreferences.WINDOWS_EXECUTABLE);
+<b class="nc"><i>670</i>&nbsp;            defaults.put(OO_JARS_PATH,</b>
+<i>671</i>&nbsp;                    OpenOfficePreferences.DEFAULT_WINDOWS_PATH + OpenOfficePreferences.WINDOWS_JARS_SUBPATH);
+<b class="fc"><i>672</i>&nbsp;        } else if (OS.OS_X) {</b>
+<b class="nc"><i>673</i>&nbsp;            defaults.put(OO_PATH, OpenOfficePreferences.DEFAULT_OSX_PATH);</b>
+<b class="nc"><i>674</i>&nbsp;            defaults.put(OO_EXECUTABLE_PATH, OpenOfficePreferences.DEFAULT_OSX_PATH</b>
+<i>675</i>&nbsp;                    + OpenOfficePreferences.OSX_EXECUTABLE_SUBPATH + OpenOfficePreferences.OSX_EXECUTABLE);
+<b class="nc"><i>676</i>&nbsp;            defaults.put(OO_JARS_PATH, OpenOfficePreferences.DEFAULT_OSX_PATH + OpenOfficePreferences.OSX_JARS_SUBPATH);</b>
+<i>677</i>&nbsp;        } else { // Linux
+<b class="fc"><i>678</i>&nbsp;            defaults.put(OO_PATH, &quot;/opt/openoffice.org3&quot;);</b>
+<b class="fc"><i>679</i>&nbsp;            defaults.put(OO_EXECUTABLE_PATH, &quot;/usr/lib/openoffice/program/soffice&quot;);</b>
+<b class="fc"><i>680</i>&nbsp;            defaults.put(OO_JARS_PATH, &quot;/opt/openoffice.org/basis3.0&quot;);</b>
+<i>681</i>&nbsp;        }
+<i>682</i>&nbsp;
+<b class="fc"><i>683</i>&nbsp;        defaults.put(OO_SYNC_WHEN_CITING, Boolean.FALSE);</b>
+<b class="fc"><i>684</i>&nbsp;        defaults.put(OO_SHOW_PANEL, Boolean.FALSE);</b>
+<b class="fc"><i>685</i>&nbsp;        defaults.put(OO_USE_ALL_OPEN_BASES, Boolean.TRUE);</b>
+<b class="fc"><i>686</i>&nbsp;        defaults.put(OO_BIBLIOGRAPHY_STYLE_FILE, StyleLoader.DEFAULT_AUTHORYEAR_STYLE_PATH);</b>
+<b class="fc"><i>687</i>&nbsp;        defaults.put(OO_EXTERNAL_STYLE_FILES, &quot;&quot;);</b>
+<b class="fc"><i>688</i>&nbsp;        defaults.put(STYLES_POS_X, 0);</b>
+<b class="fc"><i>689</i>&nbsp;        defaults.put(STYLES_POS_Y, 0);</b>
+<b class="fc"><i>690</i>&nbsp;        defaults.put(STYLES_SIZE_X, 600);</b>
+<b class="fc"><i>691</i>&nbsp;        defaults.put(STYLES_SIZE_Y, 400);</b>
+<i>692</i>&nbsp;
+<b class="fc"><i>693</i>&nbsp;        defaults.put(SPECIALFIELDSENABLED, Boolean.TRUE);</b>
+<b class="fc"><i>694</i>&nbsp;        defaults.put(SHOWCOLUMN_PRIORITY, Boolean.FALSE);</b>
+<b class="fc"><i>695</i>&nbsp;        defaults.put(SHOWCOLUMN_QUALITY, Boolean.FALSE);</b>
+<b class="fc"><i>696</i>&nbsp;        defaults.put(SHOWCOLUMN_RANKING, Boolean.TRUE);</b>
+<b class="fc"><i>697</i>&nbsp;        defaults.put(SHOWCOLUMN_RELEVANCE, Boolean.FALSE);</b>
+<b class="fc"><i>698</i>&nbsp;        defaults.put(SHOWCOLUMN_PRINTED, Boolean.FALSE);</b>
+<b class="fc"><i>699</i>&nbsp;        defaults.put(SHOWCOLUMN_READ, Boolean.FALSE);</b>
+<b class="fc"><i>700</i>&nbsp;        defaults.put(AUTOSYNCSPECIALFIELDSTOKEYWORDS, Boolean.TRUE);</b>
+<b class="fc"><i>701</i>&nbsp;        defaults.put(SERIALIZESPECIALFIELDS, Boolean.FALSE);</b>
+<i>702</i>&nbsp;
+<b class="fc"><i>703</i>&nbsp;        defaults.put(USE_OWNER, Boolean.FALSE);</b>
+<b class="fc"><i>704</i>&nbsp;        defaults.put(OVERWRITE_OWNER, Boolean.FALSE);</b>
+<b class="fc"><i>705</i>&nbsp;        defaults.put(AVOID_OVERWRITING_KEY, Boolean.FALSE);</b>
+<b class="fc"><i>706</i>&nbsp;        defaults.put(WARN_BEFORE_OVERWRITING_KEY, Boolean.TRUE);</b>
+<b class="fc"><i>707</i>&nbsp;        defaults.put(CONFIRM_DELETE, Boolean.TRUE);</b>
+<b class="fc"><i>708</i>&nbsp;        defaults.put(GRAY_OUT_NON_HITS, Boolean.TRUE);</b>
+<b class="fc"><i>709</i>&nbsp;        defaults.put(DEFAULT_BIBTEX_KEY_PATTERN, &quot;[auth][year]&quot;);</b>
+<b class="fc"><i>710</i>&nbsp;        defaults.put(DO_NOT_RESOLVE_STRINGS_FOR, FieldName.URL);</b>
+<b class="fc"><i>711</i>&nbsp;        defaults.put(RESOLVE_STRINGS_ALL_FIELDS, Boolean.FALSE);</b>
+<b class="fc"><i>712</i>&nbsp;        defaults.put(NON_WRAPPABLE_FIELDS, &quot;pdf;ps;url;doi;file;isbn;issn&quot;);</b>
+<b class="fc"><i>713</i>&nbsp;        defaults.put(GENERATE_KEYS_AFTER_INSPECTION, Boolean.TRUE);</b>
+<b class="fc"><i>714</i>&nbsp;        defaults.put(MARK_IMPORTED_ENTRIES, Boolean.TRUE);</b>
+<b class="fc"><i>715</i>&nbsp;        defaults.put(UNMARK_ALL_ENTRIES_BEFORE_IMPORTING, Boolean.TRUE);</b>
+<b class="fc"><i>716</i>&nbsp;        defaults.put(WARN_ABOUT_DUPLICATES_IN_INSPECTION, Boolean.TRUE);</b>
+<b class="fc"><i>717</i>&nbsp;        defaults.put(USE_TIME_STAMP, Boolean.FALSE);</b>
+<b class="fc"><i>718</i>&nbsp;        defaults.put(OVERWRITE_TIME_STAMP, Boolean.FALSE);</b>
+<i>719</i>&nbsp;
+<i>720</i>&nbsp;        // default time stamp follows ISO-8601. Reason: https://xkcd.com/1179/
+<b class="fc"><i>721</i>&nbsp;        defaults.put(TIME_STAMP_FORMAT, &quot;yyyy-MM-dd&quot;);</b>
+<i>722</i>&nbsp;
+<b class="fc"><i>723</i>&nbsp;        defaults.put(TIME_STAMP_FIELD, FieldName.TIMESTAMP);</b>
+<b class="fc"><i>724</i>&nbsp;        defaults.put(UPDATE_TIMESTAMP, Boolean.FALSE);</b>
+<i>725</i>&nbsp;
+<b class="fc"><i>726</i>&nbsp;        defaults.put(GENERATE_KEYS_BEFORE_SAVING, Boolean.FALSE);</b>
+<i>727</i>&nbsp;
+<b class="fc"><i>728</i>&nbsp;        defaults.put(USE_REMOTE_SERVER, Boolean.TRUE);</b>
+<b class="fc"><i>729</i>&nbsp;        defaults.put(REMOTE_SERVER_PORT, 6050);</b>
+<i>730</i>&nbsp;
+<b class="fc"><i>731</i>&nbsp;        defaults.put(PERSONAL_JOURNAL_LIST, &quot;&quot;);</b>
+<b class="fc"><i>732</i>&nbsp;        defaults.put(EXTERNAL_JOURNAL_LISTS, &quot;&quot;);</b>
+<b class="fc"><i>733</i>&nbsp;        defaults.put(CITE_COMMAND, &quot;\\cite&quot;); // obsoleted by the app-specific ones (not any more?)</b>
+<b class="fc"><i>734</i>&nbsp;        defaults.put(FLOAT_MARKED_ENTRIES, Boolean.TRUE);</b>
+<i>735</i>&nbsp;
+<b class="fc"><i>736</i>&nbsp;        defaults.put(LAST_USED_EXPORT, &quot;&quot;);</b>
+<b class="fc"><i>737</i>&nbsp;        defaults.put(SIDE_PANE_WIDTH, -1);</b>
+<i>738</i>&nbsp;
+<b class="fc"><i>739</i>&nbsp;        defaults.put(IMPORT_INSPECTION_DIALOG_WIDTH, 650);</b>
+<b class="fc"><i>740</i>&nbsp;        defaults.put(IMPORT_INSPECTION_DIALOG_HEIGHT, 650);</b>
+<b class="fc"><i>741</i>&nbsp;        defaults.put(SHOW_FILE_LINKS_UPGRADE_WARNING, Boolean.TRUE);</b>
+<b class="fc"><i>742</i>&nbsp;        defaults.put(AUTOLINK_EXACT_KEY_ONLY, Boolean.FALSE);</b>
+<b class="fc"><i>743</i>&nbsp;        defaults.put(NUMERIC_FIELDS, &quot;mittnum;author&quot;);</b>
+<b class="fc"><i>744</i>&nbsp;        defaults.put(RUN_AUTOMATIC_FILE_SEARCH, Boolean.FALSE);</b>
+<b class="fc"><i>745</i>&nbsp;        defaults.put(LOCAL_AUTO_SAVE, Boolean.FALSE);</b>
+<b class="fc"><i>746</i>&nbsp;        defaults.put(ENFORCE_LEGAL_BIBTEX_KEY, Boolean.TRUE);</b>
+<i>747</i>&nbsp;        // Curly brackets ({}) are the default delimiters, not quotes (&quot;) as these cause trouble when they appear within the field value:
+<i>748</i>&nbsp;        // Currently, JabRef does not escape them
+<b class="fc"><i>749</i>&nbsp;        defaults.put(KEY_GEN_FIRST_LETTER_A, Boolean.TRUE);</b>
+<b class="fc"><i>750</i>&nbsp;        defaults.put(KEY_GEN_ALWAYS_ADD_LETTER, Boolean.FALSE);</b>
+<b class="fc"><i>751</i>&nbsp;        defaults.put(EMAIL_SUBJECT, Localization.lang(&quot;References&quot;));</b>
+<b class="fc"><i>752</i>&nbsp;        defaults.put(OPEN_FOLDERS_OF_ATTACHED_FILES, Boolean.FALSE);</b>
+<b class="fc"><i>753</i>&nbsp;        defaults.put(ALLOW_FILE_AUTO_OPEN_BROWSE, Boolean.TRUE);</b>
+<b class="fc"><i>754</i>&nbsp;        defaults.put(WEB_SEARCH_VISIBLE, Boolean.FALSE);</b>
+<b class="fc"><i>755</i>&nbsp;        defaults.put(GROUP_SIDEPANE_VISIBLE, Boolean.FALSE);</b>
+<b class="fc"><i>756</i>&nbsp;        defaults.put(SELECTED_FETCHER_INDEX, 0);</b>
+<b class="fc"><i>757</i>&nbsp;        defaults.put(BIB_LOC_AS_PRIMARY_DIR, Boolean.FALSE);</b>
+<b class="fc"><i>758</i>&nbsp;        defaults.put(DB_CONNECT_SERVER_TYPE, &quot;MySQL&quot;);</b>
+<b class="fc"><i>759</i>&nbsp;        defaults.put(DB_CONNECT_HOSTNAME, &quot;localhost&quot;);</b>
+<b class="fc"><i>760</i>&nbsp;        defaults.put(DB_CONNECT_DATABASE, &quot;jabref&quot;);</b>
+<b class="fc"><i>761</i>&nbsp;        defaults.put(DB_CONNECT_USERNAME, &quot;root&quot;);</b>
+<i>762</i>&nbsp;
+<b class="fc"><i>763</i>&nbsp;        defaults.put(ASK_AUTO_NAMING_PDFS_AGAIN, Boolean.TRUE);</b>
+<b class="fc"><i>764</i>&nbsp;        insertDefaultCleanupPreset(defaults);</b>
+<i>765</i>&nbsp;
+<i>766</i>&nbsp;        // defaults for DroppedFileHandler UI
+<b class="fc"><i>767</i>&nbsp;        defaults.put(DROPPEDFILEHANDLER_LEAVE, Boolean.FALSE);</b>
+<b class="fc"><i>768</i>&nbsp;        defaults.put(DROPPEDFILEHANDLER_COPY, Boolean.TRUE);</b>
+<b class="fc"><i>769</i>&nbsp;        defaults.put(DROPPEDFILEHANDLER_MOVE, Boolean.FALSE);</b>
+<b class="fc"><i>770</i>&nbsp;        defaults.put(DROPPEDFILEHANDLER_RENAME, Boolean.FALSE);</b>
+<i>771</i>&nbsp;
+<b class="fc"><i>772</i>&nbsp;        defaults.put(IMPORT_ALWAYSUSE, Boolean.FALSE);</b>
+<b class="fc"><i>773</i>&nbsp;        defaults.put(IMPORT_DEFAULT_PDF_IMPORT_STYLE, ImportSettingsTab.DEFAULT_STYLE);</b>
+<i>774</i>&nbsp;
+<i>775</i>&nbsp;        // use BibTeX key appended with filename as default pattern
+<b class="fc"><i>776</i>&nbsp;        defaults.put(IMPORT_FILENAMEPATTERN, ImportSettingsTab.DEFAULT_FILENAMEPATTERNS[1]);</b>
+<i>777</i>&nbsp;        //Default empty String to be backwards compatible
+<b class="fc"><i>778</i>&nbsp;        defaults.put(IMPORT_FILEDIRPATTERN, &quot;&quot;);</b>
+<i>779</i>&nbsp;
+<b class="fc"><i>780</i>&nbsp;        customExports = new CustomExportList(new ExportComparator());</b>
+<b class="fc"><i>781</i>&nbsp;        customImports = new CustomImportList(this);</b>
+<i>782</i>&nbsp;
+<b class="fc"><i>783</i>&nbsp;        MARKING_WITH_NUMBER_PATTERN = &quot;\\[&quot; + get(DEFAULT_OWNER).replaceAll(&quot;\\\\&quot;, &quot;\\\\\\\\&quot;) + &quot;:(\\d+)\\]&quot;;</b>
+<i>784</i>&nbsp;
+<b class="fc"><i>785</i>&nbsp;        String defaultExpression = &quot;**/.*[bibtexkey].*\\\\.[extension]&quot;;</b>
+<b class="fc"><i>786</i>&nbsp;        defaults.put(REG_EXP_SEARCH_EXPRESSION_KEY, defaultExpression);</b>
+<b class="fc"><i>787</i>&nbsp;        defaults.put(AUTOLINK_USE_REG_EXP_SEARCH_KEY, Boolean.FALSE);</b>
+<b class="fc"><i>788</i>&nbsp;        defaults.put(USE_IEEE_ABRV, Boolean.FALSE);</b>
+<b class="fc"><i>789</i>&nbsp;        defaults.put(USE_CASE_KEEPER_ON_SEARCH, Boolean.TRUE);</b>
+<b class="fc"><i>790</i>&nbsp;        defaults.put(USE_UNIT_FORMATTER_ON_SEARCH, Boolean.TRUE);</b>
+<i>791</i>&nbsp;
+<b class="fc"><i>792</i>&nbsp;        defaults.put(USE_DEFAULT_CONSOLE_APPLICATION, Boolean.TRUE);</b>
+<b class="fc"><i>793</i>&nbsp;        if (OS.WINDOWS) {</b>
+<b class="nc"><i>794</i>&nbsp;            defaults.put(CONSOLE_COMMAND, &quot;C:\\Program Files\\ConEmu\\ConEmu64.exe /single /dir \&quot;%DIR\&quot;&quot;);</b>
+<i>795</i>&nbsp;        } else {
+<b class="fc"><i>796</i>&nbsp;            defaults.put(CONSOLE_COMMAND, &quot;&quot;);</b>
+<i>797</i>&nbsp;        }
+<i>798</i>&nbsp;
+<i>799</i>&nbsp;        //versioncheck defaults
+<b class="fc"><i>800</i>&nbsp;        defaults.put(VERSION_IGNORED_UPDATE, &quot;&quot;);</b>
+<i>801</i>&nbsp;
+<i>802</i>&nbsp;        // preview
+<b class="fc"><i>803</i>&nbsp;        defaults.put(CYCLE_PREVIEW, &quot;Preview;&quot; + CitationStyle.DEFAULT);</b>
+<b class="fc"><i>804</i>&nbsp;        defaults.put(CYCLE_PREVIEW_POS, 0);</b>
+<b class="fc"><i>805</i>&nbsp;        defaults.put(PREVIEW_PANEL_HEIGHT, 200);</b>
+<b class="fc"><i>806</i>&nbsp;        defaults.put(PREVIEW_ENABLED, Boolean.TRUE);</b>
+<b class="fc"><i>807</i>&nbsp;        defaults.put(PREVIEW_STYLE,</b>
+<i>808</i>&nbsp;                &quot;&lt;font face=\&quot;sans-serif\&quot;&gt;&quot;
+<i>809</i>&nbsp;                        + &quot;&lt;b&gt;&lt;i&gt;\\bibtextype&lt;/i&gt;&lt;a name=\&quot;\\bibtexkey\&quot;&gt;\\begin{bibtexkey} (\\bibtexkey)&lt;/a&gt;&quot;
+<i>810</i>&nbsp;                        + &quot;\\end{bibtexkey}&lt;/b&gt;&lt;br&gt;__NEWLINE__&quot;
+<i>811</i>&nbsp;                        + &quot;\\begin{author} \\format[Authors(LastFirst,Initials,Semicolon,Amp),HTMLChars]{\\author}&lt;BR&gt;\\end{author}__NEWLINE__&quot;
+<i>812</i>&nbsp;                        + &quot;\\begin{editor} \\format[Authors(LastFirst,Initials,Semicolon,Amp),HTMLChars]{\\editor} &quot;
+<i>813</i>&nbsp;                        + &quot;&lt;i&gt;(\\format[IfPlural(Eds.,Ed.)]{\\editor})&lt;/i&gt;&lt;BR&gt;\\end{editor}__NEWLINE__&quot;
+<i>814</i>&nbsp;                        + &quot;\\begin{title} \\format[HTMLChars]{\\title} \\end{title}&lt;BR&gt;__NEWLINE__&quot;
+<i>815</i>&nbsp;                        + &quot;\\begin{chapter} \\format[HTMLChars]{\\chapter}&lt;BR&gt;\\end{chapter}__NEWLINE__&quot;
+<i>816</i>&nbsp;                        + &quot;\\begin{journal} &lt;em&gt;\\format[HTMLChars]{\\journal}, &lt;/em&gt;\\end{journal}__NEWLINE__&quot;
+<i>817</i>&nbsp;                        // Include the booktitle field for @inproceedings, @proceedings, etc.
+<i>818</i>&nbsp;                        + &quot;\\begin{booktitle} &lt;em&gt;\\format[HTMLChars]{\\booktitle}, &lt;/em&gt;\\end{booktitle}__NEWLINE__&quot;
+<i>819</i>&nbsp;                        + &quot;\\begin{school} &lt;em&gt;\\format[HTMLChars]{\\school}, &lt;/em&gt;\\end{school}__NEWLINE__&quot;
+<i>820</i>&nbsp;                        + &quot;\\begin{institution} &lt;em&gt;\\format[HTMLChars]{\\institution}, &lt;/em&gt;\\end{institution}__NEWLINE__&quot;
+<i>821</i>&nbsp;                        + &quot;\\begin{publisher} &lt;em&gt;\\format[HTMLChars]{\\publisher}, &lt;/em&gt;\\end{publisher}__NEWLINE__&quot;
+<i>822</i>&nbsp;                        + &quot;\\begin{year}&lt;b&gt;\\year&lt;/b&gt;\\end{year}\\begin{volume}&lt;i&gt;, \\volume&lt;/i&gt;\\end{volume}&quot;
+<i>823</i>&nbsp;                        + &quot;\\begin{pages}, \\format[FormatPagesForHTML]{\\pages} \\end{pages}__NEWLINE__&quot;
+<i>824</i>&nbsp;                        + &quot;\\begin{abstract}&lt;BR&gt;&lt;BR&gt;&lt;b&gt;Abstract: &lt;/b&gt; \\format[HTMLChars]{\\abstract} \\end{abstract}__NEWLINE__&quot;
+<i>825</i>&nbsp;                        + &quot;\\begin{review}&lt;BR&gt;&lt;BR&gt;&lt;b&gt;Review: &lt;/b&gt; \\format[HTMLChars]{\\review} \\end{review}&quot;
+<i>826</i>&nbsp;                        + &quot;&lt;/dd&gt;__NEWLINE__&lt;p&gt;&lt;/p&gt;&lt;/font&gt;&quot;);
+<b class="fc"><i>827</i>&nbsp;    }</b>
+<i>828</i>&nbsp;
+<i>829</i>&nbsp;    public String getUser() {
+<i>830</i>&nbsp;        try {
+<b class="nc"><i>831</i>&nbsp;            return get(DEFAULT_OWNER) + &#39;-&#39; + InetAddress.getLocalHost().getHostName();</b>
+<b class="nc"><i>832</i>&nbsp;        } catch (UnknownHostException ex) {</b>
+<b class="nc"><i>833</i>&nbsp;            LOGGER.debug(&quot;Hostname not found.&quot;, ex);</b>
+<b class="nc"><i>834</i>&nbsp;            return get(DEFAULT_OWNER);</b>
+<i>835</i>&nbsp;        }
+<i>836</i>&nbsp;    }
+<i>837</i>&nbsp;
+<i>838</i>&nbsp;    public List&lt;String&gt; getCustomTabFieldNames() {
+<b class="nc"><i>839</i>&nbsp;        List&lt;String&gt; customFields = new ArrayList&lt;&gt;();</b>
+<i>840</i>&nbsp;
+<b class="nc"><i>841</i>&nbsp;        int defNumber = 0;</b>
+<i>842</i>&nbsp;        while (true) {
+<i>843</i>&nbsp;            // saved as CUSTOMTABNAME_def{number} and ; separated
+<b class="nc"><i>844</i>&nbsp;            String fields = (String) defaults.get(CUSTOM_TAB_FIELDS + &quot;_def&quot; + defNumber);</b>
+<i>845</i>&nbsp;
+<b class="nc"><i>846</i>&nbsp;            if ((fields == null) || fields.isEmpty()) {</b>
+<b class="nc"><i>847</i>&nbsp;                break;</b>
+<i>848</i>&nbsp;            }
+<i>849</i>&nbsp;
+<b class="nc"><i>850</i>&nbsp;            customFields.addAll(Arrays.asList(fields.split(&quot;;&quot;)));</b>
+<b class="nc"><i>851</i>&nbsp;            defNumber++;</b>
+<b class="nc"><i>852</i>&nbsp;        }</b>
+<b class="nc"><i>853</i>&nbsp;        return customFields;</b>
+<i>854</i>&nbsp;    }
+<i>855</i>&nbsp;
+<i>856</i>&nbsp;    public void setLanguageDependentDefaultValues() {
+<i>857</i>&nbsp;        // Entry editor tab 0:
+<b class="nc"><i>858</i>&nbsp;        defaults.put(CUSTOM_TAB_NAME + &quot;_def0&quot;, Localization.lang(&quot;General&quot;));</b>
+<b class="nc"><i>859</i>&nbsp;        String fieldNames = InternalBibtexFields.DEFAULT_GENERAL_FIELDS.stream().collect(Collectors.joining(&quot;;&quot;));</b>
+<b class="nc"><i>860</i>&nbsp;        defaults.put(CUSTOM_TAB_FIELDS + &quot;_def0&quot;, fieldNames);</b>
+<i>861</i>&nbsp;
+<i>862</i>&nbsp;        // Entry editor tab 1:
+<b class="nc"><i>863</i>&nbsp;        defaults.put(CUSTOM_TAB_FIELDS + &quot;_def1&quot;, FieldName.ABSTRACT);</b>
+<b class="nc"><i>864</i>&nbsp;        defaults.put(CUSTOM_TAB_NAME + &quot;_def1&quot;, Localization.lang(&quot;Abstract&quot;));</b>
+<i>865</i>&nbsp;
+<i>866</i>&nbsp;        // Entry editor tab 2: Review Field - used for research comments, etc.
+<b class="nc"><i>867</i>&nbsp;        defaults.put(CUSTOM_TAB_FIELDS + &quot;_def2&quot;, FieldName.REVIEW);</b>
+<b class="nc"><i>868</i>&nbsp;        defaults.put(CUSTOM_TAB_NAME + &quot;_def2&quot;, Localization.lang(&quot;Review&quot;));</b>
+<i>869</i>&nbsp;
+<b class="nc"><i>870</i>&nbsp;        defaults.put(EMAIL_SUBJECT, Localization.lang(&quot;References&quot;));</b>
+<b class="nc"><i>871</i>&nbsp;    }</b>
+<i>872</i>&nbsp;
+<i>873</i>&nbsp;    /**
+<i>874</i>&nbsp;     * Check whether a key is set (differently from null).
+<i>875</i>&nbsp;     *
+<i>876</i>&nbsp;     * @param key The key to check.
+<i>877</i>&nbsp;     * @return true if the key is set, false otherwise.
+<i>878</i>&nbsp;     */
+<i>879</i>&nbsp;    public boolean hasKey(String key) {
+<b class="nc"><i>880</i>&nbsp;        return prefs.get(key, null) != null;</b>
+<i>881</i>&nbsp;    }
+<i>882</i>&nbsp;
+<i>883</i>&nbsp;    public String get(String key) {
+<b class="fc"><i>884</i>&nbsp;        return prefs.get(key, (String) defaults.get(key));</b>
+<i>885</i>&nbsp;    }
+<i>886</i>&nbsp;
+<i>887</i>&nbsp;    public Optional&lt;String&gt; getAsOptional(String key) {
+<b class="nc"><i>888</i>&nbsp;        return Optional.ofNullable(prefs.get(key, (String) defaults.get(key)));</b>
+<i>889</i>&nbsp;    }
+<i>890</i>&nbsp;
+<i>891</i>&nbsp;    public String get(String key, String def) {
+<b class="nc"><i>892</i>&nbsp;        return prefs.get(key, def);</b>
+<i>893</i>&nbsp;    }
+<i>894</i>&nbsp;
+<i>895</i>&nbsp;    public boolean getBoolean(String key) {
+<b class="nc"><i>896</i>&nbsp;        return prefs.getBoolean(key, getBooleanDefault(key));</b>
+<i>897</i>&nbsp;    }
+<i>898</i>&nbsp;
+<i>899</i>&nbsp;    public boolean getBoolean(String key, boolean def) {
+<b class="nc"><i>900</i>&nbsp;        return prefs.getBoolean(key, def);</b>
+<i>901</i>&nbsp;    }
+<i>902</i>&nbsp;
+<i>903</i>&nbsp;    private boolean getBooleanDefault(String key) {
+<b class="nc"><i>904</i>&nbsp;        return (Boolean) defaults.get(key);</b>
+<i>905</i>&nbsp;    }
+<i>906</i>&nbsp;
+<i>907</i>&nbsp;    public int getInt(String key) {
+<b class="nc"><i>908</i>&nbsp;        return prefs.getInt(key, getIntDefault(key));</b>
+<i>909</i>&nbsp;    }
+<i>910</i>&nbsp;
+<i>911</i>&nbsp;    public int getIntDefault(String key) {
+<b class="nc"><i>912</i>&nbsp;        return (Integer) defaults.get(key);</b>
+<i>913</i>&nbsp;    }
+<i>914</i>&nbsp;
+<i>915</i>&nbsp;    public void put(String key, String value) {
+<b class="nc"><i>916</i>&nbsp;        prefs.put(key, value);</b>
+<b class="nc"><i>917</i>&nbsp;    }</b>
+<i>918</i>&nbsp;
+<i>919</i>&nbsp;    public void putBoolean(String key, boolean value) {
+<b class="nc"><i>920</i>&nbsp;        prefs.putBoolean(key, value);</b>
+<b class="nc"><i>921</i>&nbsp;    }</b>
+<i>922</i>&nbsp;
+<i>923</i>&nbsp;    public void putInt(String key, int value) {
+<b class="nc"><i>924</i>&nbsp;        prefs.putInt(key, value);</b>
+<b class="nc"><i>925</i>&nbsp;    }</b>
+<i>926</i>&nbsp;
+<i>927</i>&nbsp;    public void remove(String key) {
+<b class="nc"><i>928</i>&nbsp;        prefs.remove(key);</b>
+<b class="nc"><i>929</i>&nbsp;    }</b>
+<i>930</i>&nbsp;
+<i>931</i>&nbsp;    /**
+<i>932</i>&nbsp;     * Puts a list of strings into the Preferences, by linking its elements with &#39;;&#39; into a single string. Escape
+<i>933</i>&nbsp;     * characters make the process transparent even if strings contain &#39;;&#39;.
+<i>934</i>&nbsp;     */
+<i>935</i>&nbsp;    public void putStringList(String key, List&lt;String&gt; value) {
+<b class="nc"><i>936</i>&nbsp;        if (value == null) {</b>
+<b class="nc"><i>937</i>&nbsp;            remove(key);</b>
+<b class="nc"><i>938</i>&nbsp;            return;</b>
+<i>939</i>&nbsp;        }
+<i>940</i>&nbsp;
+<b class="nc"><i>941</i>&nbsp;        put(key, convertListToString(value));</b>
+<b class="nc"><i>942</i>&nbsp;    }</b>
+<i>943</i>&nbsp;
+<i>944</i>&nbsp;    private static String convertListToString(List&lt;String&gt; value) {
+<b class="fc"><i>945</i>&nbsp;        return value.stream().map(val -&gt; StringUtil.quote(val, &quot;;&quot;, &#39;\\&#39;)).collect(Collectors.joining(&quot;;&quot;));</b>
+<i>946</i>&nbsp;    }
+<i>947</i>&nbsp;
+<i>948</i>&nbsp;    /**
+<i>949</i>&nbsp;     * Returns a List of Strings containing the chosen columns.
+<i>950</i>&nbsp;     */
+<i>951</i>&nbsp;    public List&lt;String&gt; getStringList(String key) {
+<b class="fc"><i>952</i>&nbsp;        String names = get(key);</b>
+<b class="fc"><i>953</i>&nbsp;        if (names == null) {</b>
+<b class="fc"><i>954</i>&nbsp;            return new ArrayList&lt;&gt;();</b>
+<i>955</i>&nbsp;        }
+<i>956</i>&nbsp;
+<b class="nc"><i>957</i>&nbsp;        StringReader rd = new StringReader(names);</b>
+<b class="nc"><i>958</i>&nbsp;        List&lt;String&gt; res = new ArrayList&lt;&gt;();</b>
+<i>959</i>&nbsp;        Optional&lt;String&gt; rs;
+<i>960</i>&nbsp;        try {
+<b class="nc"><i>961</i>&nbsp;            while ((rs = getNextUnit(rd)).isPresent()) {</b>
+<b class="nc"><i>962</i>&nbsp;                res.add(rs.get());</b>
+<i>963</i>&nbsp;            }
+<b class="nc"><i>964</i>&nbsp;        } catch (IOException ignored) {</b>
+<i>965</i>&nbsp;            // Ignored
+<b class="nc"><i>966</i>&nbsp;        }</b>
+<b class="nc"><i>967</i>&nbsp;        return res;</b>
+<i>968</i>&nbsp;    }
+<i>969</i>&nbsp;
+<i>970</i>&nbsp;    /**
+<i>971</i>&nbsp;     * Looks up a color definition in preferences, and returns the Color object.
+<i>972</i>&nbsp;     *
+<i>973</i>&nbsp;     * @param key The key for this setting.
+<i>974</i>&nbsp;     * @return The color corresponding to the setting.
+<i>975</i>&nbsp;     */
+<i>976</i>&nbsp;    public Color getColor(String key) {
+<b class="nc"><i>977</i>&nbsp;        String value = get(key);</b>
+<b class="nc"><i>978</i>&nbsp;        int[] rgb = getRgb(value);</b>
+<b class="nc"><i>979</i>&nbsp;        return new Color(rgb[0], rgb[1], rgb[2]);</b>
+<i>980</i>&nbsp;    }
+<i>981</i>&nbsp;
+<i>982</i>&nbsp;    public Color getDefaultColor(String key) {
+<b class="nc"><i>983</i>&nbsp;        String value = (String) defaults.get(key);</b>
+<b class="nc"><i>984</i>&nbsp;        int[] rgb = getRgb(value);</b>
+<b class="nc"><i>985</i>&nbsp;        return new Color(rgb[0], rgb[1], rgb[2]);</b>
+<i>986</i>&nbsp;    }
+<i>987</i>&nbsp;
+<i>988</i>&nbsp;    /**
+<i>989</i>&nbsp;     * Returns the default BibDatabase mode, which can be either BIBTEX or BIBLATEX.
+<i>990</i>&nbsp;     *
+<i>991</i>&nbsp;     * @return the default BibDatabaseMode
+<i>992</i>&nbsp;     */
+<i>993</i>&nbsp;    public BibDatabaseMode getDefaultBibDatabaseMode() {
+<b class="nc"><i>994</i>&nbsp;        if (getBoolean(BIBLATEX_DEFAULT_MODE)) {</b>
+<b class="nc"><i>995</i>&nbsp;            return BibDatabaseMode.BIBLATEX;</b>
+<i>996</i>&nbsp;        } else {
+<b class="nc"><i>997</i>&nbsp;            return BibDatabaseMode.BIBTEX;</b>
+<i>998</i>&nbsp;        }
+<i>999</i>&nbsp;    }
+<i>1000</i>&nbsp;
+<i>1001</i>&nbsp;    /**
+<i>1002</i>&nbsp;     * Set the default value for a key. This is useful for plugins that need to add default values for the prefs keys
+<i>1003</i>&nbsp;     * they use.
+<i>1004</i>&nbsp;     *
+<i>1005</i>&nbsp;     * @param key The preferences key.
+<i>1006</i>&nbsp;     * @param value The default value.
+<i>1007</i>&nbsp;     */
+<i>1008</i>&nbsp;    public void putDefaultValue(String key, Object value) {
+<b class="nc"><i>1009</i>&nbsp;        defaults.put(key, value);</b>
+<b class="nc"><i>1010</i>&nbsp;    }</b>
+<i>1011</i>&nbsp;
+<i>1012</i>&nbsp;    /**
+<i>1013</i>&nbsp;     * Stores a color in preferences.
+<i>1014</i>&nbsp;     *
+<i>1015</i>&nbsp;     * @param key The key for this setting.
+<i>1016</i>&nbsp;     * @param color The Color to store.
+<i>1017</i>&nbsp;     */
+<i>1018</i>&nbsp;    public void putColor(String key, Color color) {
+<b class="nc"><i>1019</i>&nbsp;        String rgb = String.valueOf(color.getRed()) + &#39;:&#39; + color.getGreen() + &#39;:&#39; + color.getBlue();</b>
+<b class="nc"><i>1020</i>&nbsp;        put(key, rgb);</b>
+<b class="nc"><i>1021</i>&nbsp;    }</b>
+<i>1022</i>&nbsp;
+<i>1023</i>&nbsp;    /**
+<i>1024</i>&nbsp;     * Looks up a color definition in preferences, and returns an array containing the RGB values.
+<i>1025</i>&nbsp;     *
+<i>1026</i>&nbsp;     * @param value The key for this setting.
+<i>1027</i>&nbsp;     * @return The RGB values corresponding to this color setting.
+<i>1028</i>&nbsp;     */
+<i>1029</i>&nbsp;    private static int[] getRgb(String value) {
+<b class="nc"><i>1030</i>&nbsp;        int[] values = new int[3];</b>
+<i>1031</i>&nbsp;
+<b class="nc"><i>1032</i>&nbsp;        if ((value != null) &amp;&amp; !value.isEmpty()) {</b>
+<b class="nc"><i>1033</i>&nbsp;            String[] elements = value.split(&quot;:&quot;);</b>
+<b class="nc"><i>1034</i>&nbsp;            values[0] = Integer.parseInt(elements[0]);</b>
+<b class="nc"><i>1035</i>&nbsp;            values[1] = Integer.parseInt(elements[1]);</b>
+<b class="nc"><i>1036</i>&nbsp;            values[2] = Integer.parseInt(elements[2]);</b>
+<b class="nc"><i>1037</i>&nbsp;        } else {</b>
+<b class="nc"><i>1038</i>&nbsp;            values[0] = 0;</b>
+<b class="nc"><i>1039</i>&nbsp;            values[1] = 0;</b>
+<b class="nc"><i>1040</i>&nbsp;            values[2] = 0;</b>
+<i>1041</i>&nbsp;        }
+<b class="nc"><i>1042</i>&nbsp;        return values;</b>
+<i>1043</i>&nbsp;    }
+<i>1044</i>&nbsp;
+<i>1045</i>&nbsp;    /**
+<i>1046</i>&nbsp;     * Clear all preferences.
+<i>1047</i>&nbsp;     *
+<i>1048</i>&nbsp;     * @throws BackingStoreException
+<i>1049</i>&nbsp;     */
+<i>1050</i>&nbsp;    public void clear() throws BackingStoreException {
+<b class="nc"><i>1051</i>&nbsp;        clearAllCustomEntryTypes();</b>
+<b class="nc"><i>1052</i>&nbsp;        clearKeyPatterns();</b>
+<b class="nc"><i>1053</i>&nbsp;        prefs.clear();</b>
+<b class="nc"><i>1054</i>&nbsp;    }</b>
+<i>1055</i>&nbsp;
+<i>1056</i>&nbsp;    public void clear(String key) {
+<b class="nc"><i>1057</i>&nbsp;        prefs.remove(key);</b>
+<b class="nc"><i>1058</i>&nbsp;    }</b>
+<i>1059</i>&nbsp;
+<i>1060</i>&nbsp;    /**
+<i>1061</i>&nbsp;     * Calling this method will write all preferences into the preference store.
+<i>1062</i>&nbsp;     */
+<i>1063</i>&nbsp;    public void flush() {
+<b class="nc"><i>1064</i>&nbsp;        if (getBoolean(MEMORY_STICK_MODE)) {</b>
+<i>1065</i>&nbsp;            try {
+<b class="nc"><i>1066</i>&nbsp;                exportPreferences(&quot;jabref.xml&quot;);</b>
+<b class="nc"><i>1067</i>&nbsp;            } catch (JabRefException e) {</b>
+<b class="nc"><i>1068</i>&nbsp;                LOGGER.warn(&quot;Could not export preferences for memory stick mode: &quot; + e.getMessage(), e);</b>
+<b class="nc"><i>1069</i>&nbsp;            }</b>
+<i>1070</i>&nbsp;        }
+<i>1071</i>&nbsp;        try {
+<b class="nc"><i>1072</i>&nbsp;            prefs.flush();</b>
+<b class="nc"><i>1073</i>&nbsp;        } catch (BackingStoreException ex) {</b>
+<b class="nc"><i>1074</i>&nbsp;            LOGGER.warn(&quot;Cannot communicate with backing store&quot;, ex);</b>
+<b class="nc"><i>1075</i>&nbsp;        }</b>
+<b class="nc"><i>1076</i>&nbsp;    }</b>
+<i>1077</i>&nbsp;
+<i>1078</i>&nbsp;    /**
+<i>1079</i>&nbsp;     * Fetches key patterns from preferences.
+<i>1080</i>&nbsp;     * The implementation doesn&#39;t cache the results
+<i>1081</i>&nbsp;     *
+<i>1082</i>&nbsp;     * @return LabelPattern containing all keys. Returned LabelPattern has no parent
+<i>1083</i>&nbsp;     */
+<i>1084</i>&nbsp;    public GlobalBibtexKeyPattern getKeyPattern() {
+<b class="nc"><i>1085</i>&nbsp;        keyPattern = GlobalBibtexKeyPattern.fromPattern(get(DEFAULT_BIBTEX_KEY_PATTERN));</b>
+<b class="nc"><i>1086</i>&nbsp;        Preferences pre = Preferences.userNodeForPackage(PREFS_BASE_CLASS).node(BIBTEX_KEY_PATTERNS_NODE);</b>
+<i>1087</i>&nbsp;        try {
+<b class="nc"><i>1088</i>&nbsp;            String[] keys = pre.keys();</b>
+<b class="nc"><i>1089</i>&nbsp;            if (keys.length &gt; 0) {</b>
+<b class="nc"><i>1090</i>&nbsp;                for (String key : keys) {</b>
+<b class="nc"><i>1091</i>&nbsp;                    keyPattern.addBibtexKeyPattern(key, pre.get(key, null));</b>
+<i>1092</i>&nbsp;                }
+<i>1093</i>&nbsp;            }
+<b class="nc"><i>1094</i>&nbsp;        } catch (BackingStoreException ex) {</b>
+<b class="nc"><i>1095</i>&nbsp;            LOGGER.info(&quot;BackingStoreException in JabRefPreferences.getKeyPattern&quot;, ex);</b>
+<b class="nc"><i>1096</i>&nbsp;        }</b>
+<b class="nc"><i>1097</i>&nbsp;        return keyPattern;</b>
+<i>1098</i>&nbsp;    }
+<i>1099</i>&nbsp;
+<i>1100</i>&nbsp;    /**
+<i>1101</i>&nbsp;     * Adds the given key pattern to the preferences
+<i>1102</i>&nbsp;     *
+<i>1103</i>&nbsp;     * @param pattern the pattern to store
+<i>1104</i>&nbsp;     */
+<i>1105</i>&nbsp;    public void putKeyPattern(GlobalBibtexKeyPattern pattern) {
+<b class="nc"><i>1106</i>&nbsp;        keyPattern = pattern;</b>
+<i>1107</i>&nbsp;
+<i>1108</i>&nbsp;        // Store overridden definitions to Preferences.
+<b class="nc"><i>1109</i>&nbsp;        Preferences pre = Preferences.userNodeForPackage(PREFS_BASE_CLASS).node(BIBTEX_KEY_PATTERNS_NODE);</b>
+<i>1110</i>&nbsp;        try {
+<b class="nc"><i>1111</i>&nbsp;            pre.clear(); // We remove all old entries.</b>
+<b class="nc"><i>1112</i>&nbsp;        } catch (BackingStoreException ex) {</b>
+<b class="nc"><i>1113</i>&nbsp;            LOGGER.info(&quot;BackingStoreException in JabRefPreferences.putKeyPattern&quot;, ex);</b>
+<b class="nc"><i>1114</i>&nbsp;        }</b>
+<i>1115</i>&nbsp;
+<b class="nc"><i>1116</i>&nbsp;        Set&lt;String&gt; allKeys = pattern.getAllKeys();</b>
+<b class="nc"><i>1117</i>&nbsp;        for (String key : allKeys) {</b>
+<b class="nc"><i>1118</i>&nbsp;            if (!pattern.isDefaultValue(key)) {</b>
+<i>1119</i>&nbsp;                // no default value
+<i>1120</i>&nbsp;                // the first entry in the array is the full pattern
+<i>1121</i>&nbsp;                // see net.sf.jabref.logic.labelPattern.BibtexKeyPatternUtil.split(String)
+<b class="nc"><i>1122</i>&nbsp;                pre.put(key, pattern.getValue(key).get(0));</b>
+<i>1123</i>&nbsp;            }
+<b class="nc"><i>1124</i>&nbsp;        }</b>
+<b class="nc"><i>1125</i>&nbsp;    }</b>
+<i>1126</i>&nbsp;
+<i>1127</i>&nbsp;    private void clearKeyPatterns() throws BackingStoreException {
+<b class="nc"><i>1128</i>&nbsp;        Preferences pre = Preferences.userNodeForPackage(PREFS_BASE_CLASS).node(BIBTEX_KEY_PATTERNS_NODE);</b>
+<b class="nc"><i>1129</i>&nbsp;        pre.clear();</b>
+<b class="nc"><i>1130</i>&nbsp;    }</b>
+<i>1131</i>&nbsp;
+<i>1132</i>&nbsp;    public void storeCustomEntryTypes(List&lt;CustomEntryType&gt; customEntryTypes, BibDatabaseMode bibDatabaseMode) {
+<b class="nc"><i>1133</i>&nbsp;        Preferences prefsNode = getPrefsNodeForCustomizedEntryTypes(bibDatabaseMode);</b>
+<i>1134</i>&nbsp;
+<i>1135</i>&nbsp;        try {
+<i>1136</i>&nbsp;            // clear old custom types
+<b class="nc"><i>1137</i>&nbsp;            clearCustomEntryTypes(bibDatabaseMode);</b>
+<i>1138</i>&nbsp;
+<i>1139</i>&nbsp;            // store current custom types
+<b class="nc"><i>1140</i>&nbsp;            customEntryTypes.forEach(type -&gt; prefsNode.put(type.getName(), type.getAsString()));</b>
+<i>1141</i>&nbsp;
+<b class="nc"><i>1142</i>&nbsp;            prefsNode.flush();</b>
+<b class="nc"><i>1143</i>&nbsp;        } catch (BackingStoreException e) {</b>
+<b class="nc"><i>1144</i>&nbsp;            LOGGER.info(&quot;Updating stored custom entry types failed.&quot;, e);</b>
+<b class="nc"><i>1145</i>&nbsp;        }</b>
+<b class="nc"><i>1146</i>&nbsp;    }</b>
+<i>1147</i>&nbsp;
+<i>1148</i>&nbsp;    public List&lt;CustomEntryType&gt; loadCustomEntryTypes(BibDatabaseMode bibDatabaseMode) {
+<b class="nc"><i>1149</i>&nbsp;        List&lt;CustomEntryType&gt; storedEntryTypes = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>1150</i>&nbsp;        Preferences prefsNode = getPrefsNodeForCustomizedEntryTypes(bibDatabaseMode);</b>
+<i>1151</i>&nbsp;        try {
+<b class="nc"><i>1152</i>&nbsp;            Arrays.stream(prefsNode.keys())</b>
+<b class="nc"><i>1153</i>&nbsp;                    .map(key -&gt; prefsNode.get(key, null))</b>
+<b class="nc"><i>1154</i>&nbsp;                    .filter(Objects::nonNull)</b>
+<b class="nc"><i>1155</i>&nbsp;                    .forEach(typeString -&gt; CustomEntryType.parse(typeString).ifPresent(storedEntryTypes::add));</b>
+<b class="nc"><i>1156</i>&nbsp;        } catch (BackingStoreException e) {</b>
+<b class="nc"><i>1157</i>&nbsp;            LOGGER.info(&quot;Parsing customized entry types failed.&quot;, e);</b>
+<b class="nc"><i>1158</i>&nbsp;        }</b>
+<b class="nc"><i>1159</i>&nbsp;        return storedEntryTypes;</b>
+<i>1160</i>&nbsp;    }
+<i>1161</i>&nbsp;
+<i>1162</i>&nbsp;    private void clearAllCustomEntryTypes() throws BackingStoreException {
+<b class="nc"><i>1163</i>&nbsp;        for(BibDatabaseMode mode :BibDatabaseMode.values()) {</b>
+<b class="nc"><i>1164</i>&nbsp;            clearCustomEntryTypes(mode);</b>
+<i>1165</i>&nbsp;        }
+<b class="nc"><i>1166</i>&nbsp;    }</b>
+<i>1167</i>&nbsp;
+<i>1168</i>&nbsp;    private void clearCustomEntryTypes(BibDatabaseMode mode) throws BackingStoreException {
+<b class="nc"><i>1169</i>&nbsp;        Preferences prefsNode = getPrefsNodeForCustomizedEntryTypes(mode);</b>
+<b class="nc"><i>1170</i>&nbsp;        prefsNode.clear();</b>
+<b class="nc"><i>1171</i>&nbsp;    }</b>
+<i>1172</i>&nbsp;
+<i>1173</i>&nbsp;    private static Preferences getPrefsNodeForCustomizedEntryTypes(BibDatabaseMode mode) {
+<b class="nc"><i>1174</i>&nbsp;        if (mode == BibDatabaseMode.BIBLATEX) {</b>
+<b class="nc"><i>1175</i>&nbsp;            return Preferences.userNodeForPackage(PREFS_BASE_CLASS).node(CUSTOMIZED_BIBLATEX_TYPES);</b>
+<i>1176</i>&nbsp;        }
+<b class="nc"><i>1177</i>&nbsp;        if (mode == BibDatabaseMode.BIBTEX) {</b>
+<b class="nc"><i>1178</i>&nbsp;            return Preferences.userNodeForPackage(PREFS_BASE_CLASS).node(CUSTOMIZED_BIBTEX_TYPES);</b>
+<i>1179</i>&nbsp;        }
+<i>1180</i>&nbsp;
+<b class="nc"><i>1181</i>&nbsp;        throw new IllegalArgumentException(&quot;Unknown BibDatabaseMode: &quot; + mode);</b>
+<i>1182</i>&nbsp;    }
+<i>1183</i>&nbsp;
+<i>1184</i>&nbsp;    public Map&lt;String, Object&gt; getPreferences() {
+<b class="nc"><i>1185</i>&nbsp;        Map&lt;String, Object&gt; result = new HashMap&lt;&gt;();</b>
+<i>1186</i>&nbsp;        try {
+<b class="nc"><i>1187</i>&nbsp;            for (String key : this.prefs.keys()) {</b>
+<b class="nc"><i>1188</i>&nbsp;                Object value = getObject(key);</b>
+<b class="nc"><i>1189</i>&nbsp;                result.put(key, value);</b>
+<i>1190</i>&nbsp;            }
+<b class="nc"><i>1191</i>&nbsp;        } catch (BackingStoreException e) {</b>
+<b class="nc"><i>1192</i>&nbsp;            LOGGER.info(&quot;could not retrieve preference keys&quot;, e);</b>
+<b class="nc"><i>1193</i>&nbsp;        }</b>
+<b class="nc"><i>1194</i>&nbsp;        return result;</b>
+<i>1195</i>&nbsp;    }
+<i>1196</i>&nbsp;
+<i>1197</i>&nbsp;    private Object getObject(String key) {
+<i>1198</i>&nbsp;        try {
+<b class="nc"><i>1199</i>&nbsp;            return this.get(key);</b>
+<b class="nc"><i>1200</i>&nbsp;        } catch (ClassCastException e) {</b>
+<i>1201</i>&nbsp;            try {
+<b class="nc"><i>1202</i>&nbsp;                return this.getBoolean(key);</b>
+<b class="nc"><i>1203</i>&nbsp;            } catch (ClassCastException e2) {</b>
+<b class="nc"><i>1204</i>&nbsp;                return this.getInt(key);</b>
+<i>1205</i>&nbsp;            }
+<i>1206</i>&nbsp;        }
+<i>1207</i>&nbsp;    }
+<i>1208</i>&nbsp;
+<i>1209</i>&nbsp;    private static Optional&lt;String&gt; getNextUnit(Reader data) throws IOException {
+<i>1210</i>&nbsp;        // character last read
+<i>1211</i>&nbsp;        // -1 if end of stream
+<i>1212</i>&nbsp;        // initialization necessary, because of Java compiler
+<b class="nc"><i>1213</i>&nbsp;        int c = -1;</b>
+<i>1214</i>&nbsp;
+<i>1215</i>&nbsp;        // last character was escape symbol
+<b class="nc"><i>1216</i>&nbsp;        boolean escape = false;</b>
+<i>1217</i>&nbsp;
+<i>1218</i>&nbsp;        // true if a &quot;;&quot; is found
+<b class="nc"><i>1219</i>&nbsp;        boolean done = false;</b>
+<i>1220</i>&nbsp;
+<b class="nc"><i>1221</i>&nbsp;        StringBuilder res = new StringBuilder();</b>
+<b class="nc"><i>1222</i>&nbsp;        while (!done &amp;&amp; ((c = data.read()) != -1)) {</b>
+<b class="nc"><i>1223</i>&nbsp;            if (c == &#39;\\&#39;) {</b>
+<b class="nc"><i>1224</i>&nbsp;                if (escape) {</b>
+<b class="nc"><i>1225</i>&nbsp;                    escape = false;</b>
+<b class="nc"><i>1226</i>&nbsp;                    res.append(&#39;\\&#39;);</b>
+<i>1227</i>&nbsp;                } else {
+<b class="nc"><i>1228</i>&nbsp;                    escape = true;</b>
+<i>1229</i>&nbsp;                }
+<i>1230</i>&nbsp;            } else {
+<b class="nc"><i>1231</i>&nbsp;                if (c == &#39;;&#39;) {</b>
+<b class="nc"><i>1232</i>&nbsp;                    if (escape) {</b>
+<b class="nc"><i>1233</i>&nbsp;                        res.append(&#39;;&#39;);</b>
+<i>1234</i>&nbsp;                    } else {
+<b class="nc"><i>1235</i>&nbsp;                        done = true;</b>
+<i>1236</i>&nbsp;                    }
+<i>1237</i>&nbsp;                } else {
+<b class="nc"><i>1238</i>&nbsp;                    res.append((char) c);</b>
+<i>1239</i>&nbsp;                }
+<b class="nc"><i>1240</i>&nbsp;                escape = false;</b>
+<i>1241</i>&nbsp;            }
+<i>1242</i>&nbsp;        }
+<b class="nc"><i>1243</i>&nbsp;        if (res.length() &gt; 0) {</b>
+<b class="nc"><i>1244</i>&nbsp;            return Optional.of(res.toString());</b>
+<b class="nc"><i>1245</i>&nbsp;        } else if (c == -1) {</b>
+<i>1246</i>&nbsp;            // end of stream
+<b class="nc"><i>1247</i>&nbsp;            return Optional.empty();</b>
+<i>1248</i>&nbsp;        } else {
+<b class="nc"><i>1249</i>&nbsp;            return Optional.of(&quot;&quot;);</b>
+<i>1250</i>&nbsp;        }
+<i>1251</i>&nbsp;    }
+<i>1252</i>&nbsp;
+<i>1253</i>&nbsp;    /**
+<i>1254</i>&nbsp;     * Removes all entries keyed by prefix+number, where number is equal to or higher than the given number.
+<i>1255</i>&nbsp;     *
+<i>1256</i>&nbsp;     * @param number or higher.
+<i>1257</i>&nbsp;     */
+<i>1258</i>&nbsp;    public void purgeSeries(String prefix, int number) {
+<b class="nc"><i>1259</i>&nbsp;        int n = number;</b>
+<b class="nc"><i>1260</i>&nbsp;        while (get(prefix + n) != null) {</b>
+<b class="nc"><i>1261</i>&nbsp;            remove(prefix + n);</b>
+<b class="nc"><i>1262</i>&nbsp;            n++;</b>
+<i>1263</i>&nbsp;        }
+<b class="nc"><i>1264</i>&nbsp;    }</b>
+<i>1265</i>&nbsp;
+<i>1266</i>&nbsp;    public EntryEditorTabList getEntryEditorTabList() {
+<b class="nc"><i>1267</i>&nbsp;        if (tabList == null) {</b>
+<b class="nc"><i>1268</i>&nbsp;            updateEntryEditorTabList();</b>
+<i>1269</i>&nbsp;        }
+<b class="nc"><i>1270</i>&nbsp;        return tabList;</b>
+<i>1271</i>&nbsp;    }
+<i>1272</i>&nbsp;
+<i>1273</i>&nbsp;    public void updateEntryEditorTabList() {
+<b class="nc"><i>1274</i>&nbsp;        tabList = new EntryEditorTabList();</b>
+<b class="nc"><i>1275</i>&nbsp;    }</b>
+<i>1276</i>&nbsp;
+<i>1277</i>&nbsp;    /**
+<i>1278</i>&nbsp;     * Exports Preferences to an XML file.
+<i>1279</i>&nbsp;     *
+<i>1280</i>&nbsp;     * @param filename String File to export to
+<i>1281</i>&nbsp;     */
+<i>1282</i>&nbsp;    public void exportPreferences(String filename) throws JabRefException {
+<b class="nc"><i>1283</i>&nbsp;        File f = new File(filename);</b>
+<b class="nc"><i>1284</i>&nbsp;        try (OutputStream os = new FileOutputStream(f)) {</b>
+<b class="nc"><i>1285</i>&nbsp;            prefs.exportSubtree(os);</b>
+<b class="nc"><i>1286</i>&nbsp;        } catch (BackingStoreException | IOException ex) {</b>
+<b class="nc"><i>1287</i>&nbsp;            throw new JabRefException(&quot;Could not export preferences&quot;, Localization.lang(&quot;Could not export preferences&quot;),</b>
+<i>1288</i>&nbsp;                    ex);
+<b class="nc"><i>1289</i>&nbsp;        }</b>
+<b class="nc"><i>1290</i>&nbsp;    }</b>
+<i>1291</i>&nbsp;
+<i>1292</i>&nbsp;    /**
+<i>1293</i>&nbsp;     * Imports Preferences from an XML file.
+<i>1294</i>&nbsp;     *
+<i>1295</i>&nbsp;     * @param filename String File to import from
+<i>1296</i>&nbsp;     * @throws JabRefException thrown if importing the preferences failed due to an InvalidPreferencesFormatException
+<i>1297</i>&nbsp;     *                         or an IOException
+<i>1298</i>&nbsp;     */
+<i>1299</i>&nbsp;    public void importPreferences(String filename) throws JabRefException {
+<b class="nc"><i>1300</i>&nbsp;        File f = new File(filename);</b>
+<b class="nc"><i>1301</i>&nbsp;        try (InputStream is = new FileInputStream(f)) {</b>
+<b class="nc"><i>1302</i>&nbsp;            Preferences.importPreferences(is);</b>
+<b class="nc"><i>1303</i>&nbsp;        } catch (InvalidPreferencesFormatException | IOException ex) {</b>
+<b class="nc"><i>1304</i>&nbsp;            throw new JabRefException(&quot;Could not import preferences&quot;, Localization.lang(&quot;Could not import preferences&quot;),</b>
+<i>1305</i>&nbsp;                    ex);
+<b class="nc"><i>1306</i>&nbsp;        }</b>
+<b class="nc"><i>1307</i>&nbsp;    }</b>
+<i>1308</i>&nbsp;
+<i>1309</i>&nbsp;    /**
+<i>1310</i>&nbsp;     * ONLY FOR TESTING!
+<i>1311</i>&nbsp;     *
+<i>1312</i>&nbsp;     * Do not use in production code. Otherwise the singleton pattern is broken and preferences might get lost.
+<i>1313</i>&nbsp;     *
+<i>1314</i>&nbsp;     * @param owPrefs
+<i>1315</i>&nbsp;     */
+<i>1316</i>&nbsp;    public void overwritePreferences(JabRefPreferences owPrefs) {
+<b class="nc"><i>1317</i>&nbsp;        singleton = owPrefs;</b>
+<b class="nc"><i>1318</i>&nbsp;    }</b>
+<i>1319</i>&nbsp;
+<i>1320</i>&nbsp;    public String getWrappedUsername() {
+<b class="nc"><i>1321</i>&nbsp;        return &#39;[&#39; + get(DEFAULT_OWNER) + &#39;]&#39;;</b>
+<i>1322</i>&nbsp;    }
+<i>1323</i>&nbsp;
+<i>1324</i>&nbsp;    public Charset getDefaultEncoding() {
+<b class="nc"><i>1325</i>&nbsp;        return Charset.forName(get(DEFAULT_ENCODING));</b>
+<i>1326</i>&nbsp;    }
+<i>1327</i>&nbsp;
+<i>1328</i>&nbsp;    public void setDefaultEncoding(Charset encoding) {
+<b class="nc"><i>1329</i>&nbsp;        put(DEFAULT_ENCODING, encoding.name());</b>
+<b class="nc"><i>1330</i>&nbsp;    }</b>
+<i>1331</i>&nbsp;
+<i>1332</i>&nbsp;    private static void insertDefaultCleanupPreset(Map&lt;String, Object&gt; storage) {
+<b class="fc"><i>1333</i>&nbsp;        EnumSet&lt;CleanupPreset.CleanupStep&gt; deactivedJobs = EnumSet.of(</b>
+<i>1334</i>&nbsp;                CleanupPreset.CleanupStep.CLEAN_UP_UPGRADE_EXTERNAL_LINKS,
+<i>1335</i>&nbsp;                CleanupPreset.CleanupStep.RENAME_PDF_ONLY_RELATIVE_PATHS,
+<i>1336</i>&nbsp;                CleanupPreset.CleanupStep.CONVERT_TO_BIBLATEX);
+<i>1337</i>&nbsp;
+<b class="fc"><i>1338</i>&nbsp;        CleanupPreset preset = new CleanupPreset(EnumSet.complementOf(deactivedJobs), Cleanups.DEFAULT_SAVE_ACTIONS);</b>
+<i>1339</i>&nbsp;
+<b class="fc"><i>1340</i>&nbsp;        storage.put(CLEANUP_DOI, preset.isCleanUpDOI());</b>
+<b class="fc"><i>1341</i>&nbsp;        storage.put(CLEANUP_ISSN, preset.isCleanUpISSN());</b>
+<b class="fc"><i>1342</i>&nbsp;        storage.put(CLEANUP_MOVE_PDF, preset.isMovePDF());</b>
+<b class="fc"><i>1343</i>&nbsp;        storage.put(CLEANUP_MAKE_PATHS_RELATIVE, preset.isMakePathsRelative());</b>
+<b class="fc"><i>1344</i>&nbsp;        storage.put(CLEANUP_RENAME_PDF, preset.isRenamePDF());</b>
+<b class="fc"><i>1345</i>&nbsp;        storage.put(CLEANUP_RENAME_PDF_ONLY_RELATIVE_PATHS, preset.isRenamePdfOnlyRelativePaths());</b>
+<b class="fc"><i>1346</i>&nbsp;        storage.put(CLEANUP_UPGRADE_EXTERNAL_LINKS, preset.isCleanUpUpgradeExternalLinks());</b>
+<b class="fc"><i>1347</i>&nbsp;        storage.put(CLEANUP_CONVERT_TO_BIBLATEX, preset.isConvertToBiblatex());</b>
+<b class="fc"><i>1348</i>&nbsp;        storage.put(CLEANUP_FIX_FILE_LINKS, preset.isFixFileLinks());</b>
+<b class="fc"><i>1349</i>&nbsp;        storage.put(CLEANUP_FORMATTERS, convertListToString(preset.getFormatterCleanups().getAsStringList(OS.NEWLINE)));</b>
+<b class="fc"><i>1350</i>&nbsp;    }</b>
+<i>1351</i>&nbsp;
+<i>1352</i>&nbsp;    public FileHistory getFileHistory() {
+<b class="nc"><i>1353</i>&nbsp;        return new FileHistory(getStringList(RECENT_DATABASES));</b>
+<i>1354</i>&nbsp;    }
+<i>1355</i>&nbsp;
+<i>1356</i>&nbsp;    public void storeFileHistory(FileHistory history) {
+<b class="nc"><i>1357</i>&nbsp;        if (!history.isEmpty()) {</b>
+<b class="nc"><i>1358</i>&nbsp;            putStringList(RECENT_DATABASES, history.getHistory());</b>
+<i>1359</i>&nbsp;        }
+<b class="nc"><i>1360</i>&nbsp;    }</b>
+<i>1361</i>&nbsp;
+<i>1362</i>&nbsp;    public FileDirectoryPreferences getFileDirectoryPreferences() {
+<b class="nc"><i>1363</i>&nbsp;        List&lt;String&gt; fields = Arrays.asList(FieldName.FILE, FieldName.PDF, FieldName.PS);</b>
+<b class="nc"><i>1364</i>&nbsp;        Map&lt;String, String&gt; fieldDirectories = new HashMap&lt;&gt;();</b>
+<b class="nc"><i>1365</i>&nbsp;        fields.stream().forEach(</b>
+<b class="nc"><i>1366</i>&nbsp;                fieldName -&gt; fieldDirectories.put(fieldName, get(fieldName + FileDirectoryPreferences.DIR_SUFFIX)));</b>
+<b class="nc"><i>1367</i>&nbsp;        return new FileDirectoryPreferences(getUser(), fieldDirectories,</b>
+<b class="nc"><i>1368</i>&nbsp;                getBoolean(JabRefPreferences.BIB_LOC_AS_PRIMARY_DIR));</b>
+<i>1369</i>&nbsp;    }
+<i>1370</i>&nbsp;
+<i>1371</i>&nbsp;    public UpdateFieldPreferences getUpdateFieldPreferences() {
+<b class="nc"><i>1372</i>&nbsp;        return new UpdateFieldPreferences(getBoolean(USE_OWNER), getBoolean(OVERWRITE_OWNER), get(DEFAULT_OWNER),</b>
+<b class="nc"><i>1373</i>&nbsp;                getBoolean(USE_TIME_STAMP), getBoolean(OVERWRITE_TIME_STAMP), get(TIME_STAMP_FIELD),</b>
+<b class="nc"><i>1374</i>&nbsp;                get(TIME_STAMP_FORMAT));</b>
+<i>1375</i>&nbsp;    }
+<i>1376</i>&nbsp;
+<i>1377</i>&nbsp;    public LatexFieldFormatterPreferences getLatexFieldFormatterPreferences() {
+<b class="nc"><i>1378</i>&nbsp;        return new LatexFieldFormatterPreferences(getBoolean(RESOLVE_STRINGS_ALL_FIELDS),</b>
+<b class="nc"><i>1379</i>&nbsp;                getStringList(DO_NOT_RESOLVE_STRINGS_FOR), getFieldContentParserPreferences());</b>
+<i>1380</i>&nbsp;    }
+<i>1381</i>&nbsp;
+<i>1382</i>&nbsp;    public FieldContentParserPreferences getFieldContentParserPreferences() {
+<b class="nc"><i>1383</i>&nbsp;        return new FieldContentParserPreferences(getStringList(NON_WRAPPABLE_FIELDS));</b>
+<i>1384</i>&nbsp;    }
+<i>1385</i>&nbsp;
+<i>1386</i>&nbsp;    public boolean isKeywordSyncEnabled() {
+<b class="nc"><i>1387</i>&nbsp;        return getBoolean(JabRefPreferences.SPECIALFIELDSENABLED)</b>
+<b class="nc"><i>1388</i>&nbsp;                &amp;&amp; getBoolean(JabRefPreferences.AUTOSYNCSPECIALFIELDSTOKEYWORDS);</b>
+<i>1389</i>&nbsp;    }
+<i>1390</i>&nbsp;
+<i>1391</i>&nbsp;    public ImportFormatPreferences getImportFormatPreferences() {
+<b class="nc"><i>1392</i>&nbsp;        return new ImportFormatPreferences(customImports, getDefaultEncoding(), getKeywordDelimiter(),</b>
+<b class="nc"><i>1393</i>&nbsp;                getBibtexKeyPatternPreferences(), getFieldContentParserPreferences(),</b>
+<b class="nc"><i>1394</i>&nbsp;                isKeywordSyncEnabled());</b>
+<i>1395</i>&nbsp;    }
+<i>1396</i>&nbsp;
+<i>1397</i>&nbsp;    public BibtexKeyPatternPreferences getBibtexKeyPatternPreferences() {
+<b class="nc"><i>1398</i>&nbsp;        return new BibtexKeyPatternPreferences(get(KEY_PATTERN_REGEX),</b>
+<b class="nc"><i>1399</i>&nbsp;                get(KEY_PATTERN_REPLACEMENT), getBoolean(KEY_GEN_ALWAYS_ADD_LETTER), getBoolean(KEY_GEN_FIRST_LETTER_A),</b>
+<b class="nc"><i>1400</i>&nbsp;                getBoolean(ENFORCE_LEGAL_BIBTEX_KEY), getKeyPattern(), getKeywordDelimiter());</b>
+<i>1401</i>&nbsp;    }
+<i>1402</i>&nbsp;
+<i>1403</i>&nbsp;    public LayoutFormatterPreferences getLayoutFormatterPreferences(
+<i>1404</i>&nbsp;            JournalAbbreviationLoader journalAbbreviationLoader) {
+<b class="nc"><i>1405</i>&nbsp;        Objects.requireNonNull(journalAbbreviationLoader);</b>
+<b class="nc"><i>1406</i>&nbsp;        return new LayoutFormatterPreferences(getNameFormatterPreferences(), getJournalAbbreviationPreferences(),</b>
+<b class="nc"><i>1407</i>&nbsp;                getFileLinkPreferences(), journalAbbreviationLoader);</b>
+<i>1408</i>&nbsp;    }
+<i>1409</i>&nbsp;
+<i>1410</i>&nbsp;    public XMPPreferences getXMPPreferences() {
+<b class="nc"><i>1411</i>&nbsp;        return new XMPPreferences(getBoolean(USE_XMP_PRIVACY_FILTER), getStringList(XMP_PRIVACY_FILTERS),</b>
+<b class="nc"><i>1412</i>&nbsp;                getKeywordDelimiter());</b>
+<i>1413</i>&nbsp;    }
+<i>1414</i>&nbsp;
+<i>1415</i>&nbsp;    private NameFormatterPreferences getNameFormatterPreferences() {
+<b class="nc"><i>1416</i>&nbsp;        return new NameFormatterPreferences(getStringList(NAME_FORMATER_KEY), getStringList(NAME_FORMATTER_VALUE));</b>
+<i>1417</i>&nbsp;    }
+<i>1418</i>&nbsp;
+<i>1419</i>&nbsp;    public FileLinkPreferences getFileLinkPreferences() {
+<b class="nc"><i>1420</i>&nbsp;        return new FileLinkPreferences(</b>
+<b class="nc"><i>1421</i>&nbsp;                Collections.singletonList(get(FieldName.FILE + FileDirectoryPreferences.DIR_SUFFIX)),</b>
+<i>1422</i>&nbsp;                fileDirForDatabase);
+<i>1423</i>&nbsp;    }
+<i>1424</i>&nbsp;
+<i>1425</i>&nbsp;    public JabRefPreferences storeVersionPreferences(VersionPreferences versionPreferences) {
+<b class="nc"><i>1426</i>&nbsp;        put(VERSION_IGNORED_UPDATE, versionPreferences.getIgnoredVersion().toString());</b>
+<b class="nc"><i>1427</i>&nbsp;        return this;</b>
+<i>1428</i>&nbsp;    }
+<i>1429</i>&nbsp;
+<i>1430</i>&nbsp;    public VersionPreferences getVersionPreferences() {
+<b class="nc"><i>1431</i>&nbsp;        Version ignoredVersion = Version.parse(get(VERSION_IGNORED_UPDATE));</b>
+<b class="nc"><i>1432</i>&nbsp;        return new VersionPreferences(ignoredVersion);</b>
+<i>1433</i>&nbsp;    }
+<i>1434</i>&nbsp;
+<i>1435</i>&nbsp;    public JabRefPreferences storePreviewPreferences(PreviewPreferences previewPreferences) {
+<b class="nc"><i>1436</i>&nbsp;        putInt(CYCLE_PREVIEW_POS, previewPreferences.getPreviewCyclePosition());</b>
+<b class="nc"><i>1437</i>&nbsp;        putStringList(CYCLE_PREVIEW, previewPreferences.getPreviewCycle());</b>
+<b class="nc"><i>1438</i>&nbsp;        putInt(PREVIEW_PANEL_HEIGHT, previewPreferences.getPreviewPanelHeight());</b>
+<b class="nc"><i>1439</i>&nbsp;        put(PREVIEW_STYLE, previewPreferences.getPreviewStyle());</b>
+<b class="nc"><i>1440</i>&nbsp;        putBoolean(PREVIEW_ENABLED, previewPreferences.isPreviewPanelEnabled());</b>
+<b class="nc"><i>1441</i>&nbsp;        return this;</b>
+<i>1442</i>&nbsp;    }
+<i>1443</i>&nbsp;
+<i>1444</i>&nbsp;    public PreviewPreferences getPreviewPreferences(){
+<b class="nc"><i>1445</i>&nbsp;        int cyclePos = getInt(CYCLE_PREVIEW_POS);</b>
+<b class="nc"><i>1446</i>&nbsp;        List&lt;String&gt; cycle = getStringList(CYCLE_PREVIEW);</b>
+<b class="nc"><i>1447</i>&nbsp;        int panelHeight = getInt(PREVIEW_PANEL_HEIGHT);</b>
+<b class="nc"><i>1448</i>&nbsp;        String style = get(PREVIEW_STYLE);</b>
+<b class="nc"><i>1449</i>&nbsp;        String styleDefault = (String) defaults.get(PREVIEW_STYLE);</b>
+<b class="nc"><i>1450</i>&nbsp;        boolean enabled = getBoolean(PREVIEW_ENABLED);</b>
+<b class="nc"><i>1451</i>&nbsp;        return new PreviewPreferences(cycle, cyclePos, panelHeight, enabled, style, styleDefault);</b>
+<i>1452</i>&nbsp;    }
+<i>1453</i>&nbsp;
+<i>1454</i>&nbsp;    public void storeProxyPreferences(ProxyPreferences proxyPreferences) {
+<b class="nc"><i>1455</i>&nbsp;        putBoolean(PROXY_USE, proxyPreferences.isUseProxy());</b>
+<b class="nc"><i>1456</i>&nbsp;        put(PROXY_HOSTNAME, proxyPreferences.getHostname());</b>
+<b class="nc"><i>1457</i>&nbsp;        put(PROXY_PORT, proxyPreferences.getPort());</b>
+<b class="nc"><i>1458</i>&nbsp;        putBoolean(PROXY_USE_AUTHENTICATION, proxyPreferences.isUseAuthentication());</b>
+<b class="nc"><i>1459</i>&nbsp;        put(PROXY_USERNAME, proxyPreferences.getUsername());</b>
+<b class="nc"><i>1460</i>&nbsp;        put(PROXY_PASSWORD, proxyPreferences.getPassword());</b>
+<b class="nc"><i>1461</i>&nbsp;    }</b>
+<i>1462</i>&nbsp;
+<i>1463</i>&nbsp;    public ProxyPreferences getProxyPreferences() {
+<b class="nc"><i>1464</i>&nbsp;        Boolean useProxy = getBoolean(PROXY_USE);</b>
+<b class="nc"><i>1465</i>&nbsp;        String hostname = get(PROXY_HOSTNAME);</b>
+<b class="nc"><i>1466</i>&nbsp;        String port = get(PROXY_PORT);</b>
+<b class="nc"><i>1467</i>&nbsp;        Boolean useAuthentication = getBoolean(PROXY_USE_AUTHENTICATION);</b>
+<b class="nc"><i>1468</i>&nbsp;        String username = get(PROXY_USERNAME);</b>
+<b class="nc"><i>1469</i>&nbsp;        String password = get(PROXY_PASSWORD);</b>
+<b class="nc"><i>1470</i>&nbsp;        return new ProxyPreferences(useProxy, hostname, port, useAuthentication, username, password);</b>
+<i>1471</i>&nbsp;    }
+<i>1472</i>&nbsp;
+<i>1473</i>&nbsp;    public ProtectedTermsPreferences getProtectedTermsPreferences() {
+<b class="nc"><i>1474</i>&nbsp;        return new ProtectedTermsPreferences(getStringList(PROTECTED_TERMS_ENABLED_INTERNAL),</b>
+<b class="nc"><i>1475</i>&nbsp;                getStringList(PROTECTED_TERMS_ENABLED_EXTERNAL), getStringList(PROTECTED_TERMS_DISABLED_INTERNAL),</b>
+<b class="nc"><i>1476</i>&nbsp;                getStringList(PROTECTED_TERMS_DISABLED_EXTERNAL));</b>
+<i>1477</i>&nbsp;    }
+<i>1478</i>&nbsp;
+<i>1479</i>&nbsp;    public JournalAbbreviationPreferences getJournalAbbreviationPreferences() {
+<b class="nc"><i>1480</i>&nbsp;        return new JournalAbbreviationPreferences(getStringList(EXTERNAL_JOURNAL_LISTS), get(PERSONAL_JOURNAL_LIST),</b>
+<b class="nc"><i>1481</i>&nbsp;                getBoolean(USE_IEEE_ABRV), getDefaultEncoding());</b>
+<i>1482</i>&nbsp;    }
+<i>1483</i>&nbsp;
+<i>1484</i>&nbsp;    public void setProtectedTermsPreferences(ProtectedTermsLoader loader) {
+<b class="nc"><i>1485</i>&nbsp;        List&lt;String&gt; enabledExternalList = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>1486</i>&nbsp;        List&lt;String&gt; disabledExternalList = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>1487</i>&nbsp;        List&lt;String&gt; enabledInternalList = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>1488</i>&nbsp;        List&lt;String&gt; disabledInternalList = new ArrayList&lt;&gt;();</b>
+<i>1489</i>&nbsp;
+<b class="nc"><i>1490</i>&nbsp;        for (ProtectedTermsList list : loader.getProtectedTermsLists()) {</b>
+<b class="nc"><i>1491</i>&nbsp;            if (list.isInternalList()) {</b>
+<b class="nc"><i>1492</i>&nbsp;                if (list.isEnabled()) {</b>
+<b class="nc"><i>1493</i>&nbsp;                    enabledInternalList.add(list.getLocation());</b>
+<i>1494</i>&nbsp;                } else {
+<b class="nc"><i>1495</i>&nbsp;                    disabledInternalList.add(list.getLocation());</b>
+<i>1496</i>&nbsp;                }
+<i>1497</i>&nbsp;            } else {
+<b class="nc"><i>1498</i>&nbsp;                if (list.isEnabled()) {</b>
+<b class="nc"><i>1499</i>&nbsp;                    enabledExternalList.add(list.getLocation());</b>
+<i>1500</i>&nbsp;                } else {
+<b class="nc"><i>1501</i>&nbsp;                    disabledExternalList.add(list.getLocation());</b>
+<i>1502</i>&nbsp;                }
+<i>1503</i>&nbsp;            }
+<b class="nc"><i>1504</i>&nbsp;        }</b>
+<i>1505</i>&nbsp;
+<b class="nc"><i>1506</i>&nbsp;        putStringList(PROTECTED_TERMS_ENABLED_EXTERNAL, enabledExternalList);</b>
+<b class="nc"><i>1507</i>&nbsp;        putStringList(PROTECTED_TERMS_DISABLED_EXTERNAL, disabledExternalList);</b>
+<b class="nc"><i>1508</i>&nbsp;        putStringList(PROTECTED_TERMS_ENABLED_INTERNAL, enabledInternalList);</b>
+<b class="nc"><i>1509</i>&nbsp;        putStringList(PROTECTED_TERMS_DISABLED_INTERNAL, disabledInternalList);</b>
+<i>1510</i>&nbsp;
+<b class="nc"><i>1511</i>&nbsp;    }</b>
+<i>1512</i>&nbsp;
+<i>1513</i>&nbsp;    public CleanupPreferences getCleanupPreferences(JournalAbbreviationLoader journalAbbreviationLoader) {
+<b class="nc"><i>1514</i>&nbsp;        return new CleanupPreferences(get(IMPORT_FILENAMEPATTERN), get(IMPORT_FILEDIRPATTERN),</b>
+<b class="nc"><i>1515</i>&nbsp;                getLayoutFormatterPreferences(journalAbbreviationLoader), getFileDirectoryPreferences());</b>
+<i>1516</i>&nbsp;    }
+<i>1517</i>&nbsp;
+<i>1518</i>&nbsp;    public RemotePreferences getRemotePreferences() {
+<b class="nc"><i>1519</i>&nbsp;        return new RemotePreferences(getInt(REMOTE_SERVER_PORT), getBoolean(USE_REMOTE_SERVER));</b>
+<i>1520</i>&nbsp;    }
+<i>1521</i>&nbsp;
+<i>1522</i>&nbsp;    public void setRemotePreferences(RemotePreferences remotePreferences) {
+<b class="nc"><i>1523</i>&nbsp;        putInt(REMOTE_SERVER_PORT, remotePreferences.getPort());</b>
+<b class="nc"><i>1524</i>&nbsp;        putBoolean(USE_REMOTE_SERVER, remotePreferences.useRemoteServer());</b>
+<b class="nc"><i>1525</i>&nbsp;    }</b>
+<i>1526</i>&nbsp;
+<i>1527</i>&nbsp;    public void storeExportSaveOrder(SaveOrderConfig config) {
+<b class="nc"><i>1528</i>&nbsp;        putBoolean(EXPORT_PRIMARY_SORT_DESCENDING, config.sortCriteria[0].descending);</b>
+<b class="nc"><i>1529</i>&nbsp;        putBoolean(EXPORT_SECONDARY_SORT_DESCENDING, config.sortCriteria[1].descending);</b>
+<b class="nc"><i>1530</i>&nbsp;        putBoolean(EXPORT_TERTIARY_SORT_DESCENDING, config.sortCriteria[2].descending);</b>
+<i>1531</i>&nbsp;
+<b class="nc"><i>1532</i>&nbsp;        put(EXPORT_PRIMARY_SORT_FIELD, config.sortCriteria[0].field);</b>
+<b class="nc"><i>1533</i>&nbsp;        put(EXPORT_SECONDARY_SORT_FIELD, config.sortCriteria[1].field);</b>
+<b class="nc"><i>1534</i>&nbsp;        put(EXPORT_TERTIARY_SORT_FIELD, config.sortCriteria[2].field);</b>
+<b class="nc"><i>1535</i>&nbsp;    }</b>
+<i>1536</i>&nbsp;
+<i>1537</i>&nbsp;    public SaveOrderConfig loadTableSaveOrder() {
+<b class="nc"><i>1538</i>&nbsp;        SaveOrderConfig config = new SaveOrderConfig();</b>
+<b class="nc"><i>1539</i>&nbsp;        config.sortCriteria[0].field = get(TABLE_PRIMARY_SORT_FIELD);</b>
+<b class="nc"><i>1540</i>&nbsp;        config.sortCriteria[0].descending = getBoolean(TABLE_PRIMARY_SORT_DESCENDING);</b>
+<b class="nc"><i>1541</i>&nbsp;        config.sortCriteria[1].field = get(TABLE_SECONDARY_SORT_FIELD);</b>
+<b class="nc"><i>1542</i>&nbsp;        config.sortCriteria[1].descending = getBoolean(TABLE_SECONDARY_SORT_DESCENDING);</b>
+<b class="nc"><i>1543</i>&nbsp;        config.sortCriteria[2].field = get(TABLE_TERTIARY_SORT_FIELD);</b>
+<b class="nc"><i>1544</i>&nbsp;        config.sortCriteria[2].descending = getBoolean(TABLE_TERTIARY_SORT_DESCENDING);</b>
+<i>1545</i>&nbsp;
+<b class="nc"><i>1546</i>&nbsp;        return config;</b>
+<i>1547</i>&nbsp;    }
+<i>1548</i>&nbsp;
+<i>1549</i>&nbsp;    public SaveOrderConfig loadExportSaveOrder() {
+<b class="nc"><i>1550</i>&nbsp;        SaveOrderConfig config = new SaveOrderConfig();</b>
+<b class="nc"><i>1551</i>&nbsp;        config.sortCriteria[0].field = get(EXPORT_PRIMARY_SORT_FIELD);</b>
+<b class="nc"><i>1552</i>&nbsp;        config.sortCriteria[0].descending = getBoolean(EXPORT_PRIMARY_SORT_DESCENDING);</b>
+<b class="nc"><i>1553</i>&nbsp;        config.sortCriteria[1].field = get(EXPORT_SECONDARY_SORT_FIELD);</b>
+<b class="nc"><i>1554</i>&nbsp;        config.sortCriteria[1].descending = getBoolean(EXPORT_SECONDARY_SORT_DESCENDING);</b>
+<b class="nc"><i>1555</i>&nbsp;        config.sortCriteria[2].field = get(EXPORT_TERTIARY_SORT_FIELD);</b>
+<b class="nc"><i>1556</i>&nbsp;        config.sortCriteria[2].descending = getBoolean(EXPORT_TERTIARY_SORT_DESCENDING);</b>
+<i>1557</i>&nbsp;
+<b class="nc"><i>1558</i>&nbsp;        return config;</b>
+<i>1559</i>&nbsp;    }
+<i>1560</i>&nbsp;
+<i>1561</i>&nbsp;    public Character getKeywordDelimiter() {
+<b class="nc"><i>1562</i>&nbsp;        return get(KEYWORD_SEPARATOR).charAt(0);</b>
+<i>1563</i>&nbsp;    }
+<i>1564</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

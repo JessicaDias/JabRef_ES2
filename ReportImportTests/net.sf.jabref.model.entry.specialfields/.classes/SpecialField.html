@@ -1,0 +1,194 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: SpecialField</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.model.entry.specialfields</a> ]
+</div>
+
+<h1>Coverage Summary for Class: SpecialField (net.sf.jabref.model.entry.specialfields)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SpecialField</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    40%
+  </span>
+  <span class="absValue">
+    (4/ 10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    58.1%
+  </span>
+  <span class="absValue">
+    (18/ 31)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.model.entry.specialfields;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.ArrayList;
+<i>4</i>&nbsp;import java.util.HashMap;
+<i>5</i>&nbsp;import java.util.List;
+<i>6</i>&nbsp;import java.util.Optional;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import net.sf.jabref.model.entry.KeywordList;
+<i>9</i>&nbsp;
+<b class="fc"><i>10</i>&nbsp;public enum SpecialField {</b>
+<i>11</i>&nbsp;
+<b class="fc"><i>12</i>&nbsp;    PRINTED(&quot;printed&quot;,</b>
+<i>13</i>&nbsp;        SpecialFieldValue.PRINTED
+<i>14</i>&nbsp;    ),
+<i>15</i>&nbsp;
+<b class="fc"><i>16</i>&nbsp;    PRIORITY(&quot;priority&quot;,</b>
+<i>17</i>&nbsp;        SpecialFieldValue.CLEAR_PRIORITY,
+<i>18</i>&nbsp;        SpecialFieldValue.PRIORITY_HIGH,
+<i>19</i>&nbsp;        SpecialFieldValue.PRIORITY_MEDIUM,
+<i>20</i>&nbsp;        SpecialFieldValue.PRIORITY_LOW
+<i>21</i>&nbsp;    ),
+<i>22</i>&nbsp;
+<b class="fc"><i>23</i>&nbsp;    QUALITY(&quot;qualityassured&quot;,</b>
+<i>24</i>&nbsp;        SpecialFieldValue.QUALITY_ASSURED
+<i>25</i>&nbsp;    ),
+<i>26</i>&nbsp;
+<b class="fc"><i>27</i>&nbsp;    RANKING(&quot;ranking&quot;,</b>
+<i>28</i>&nbsp;        SpecialFieldValue.CLEAR_RANK,
+<i>29</i>&nbsp;        SpecialFieldValue.RANK_1,
+<i>30</i>&nbsp;        SpecialFieldValue.RANK_2,
+<i>31</i>&nbsp;        SpecialFieldValue.RANK_3,
+<i>32</i>&nbsp;        SpecialFieldValue.RANK_4,
+<i>33</i>&nbsp;        SpecialFieldValue.RANK_5
+<i>34</i>&nbsp;    ),
+<i>35</i>&nbsp;
+<b class="fc"><i>36</i>&nbsp;    READ_STATUS(&quot;readstatus&quot;,</b>
+<i>37</i>&nbsp;        SpecialFieldValue.CLEAR_READ_STATUS,
+<i>38</i>&nbsp;        SpecialFieldValue.READ,
+<i>39</i>&nbsp;        SpecialFieldValue.SKIMMED
+<i>40</i>&nbsp;    ),
+<i>41</i>&nbsp;
+<b class="fc"><i>42</i>&nbsp;    RELEVANCE(&quot;relevance&quot;,</b>
+<i>43</i>&nbsp;        SpecialFieldValue.RELEVANT
+<i>44</i>&nbsp;    );
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;    private List&lt;SpecialFieldValue&gt; values;
+<i>47</i>&nbsp;    private KeywordList keywords;
+<i>48</i>&nbsp;    private HashMap&lt;String, SpecialFieldValue&gt; map;
+<i>49</i>&nbsp;    private String fieldName;
+<i>50</i>&nbsp;
+<b class="fc"><i>51</i>&nbsp;    SpecialField(String fieldName, SpecialFieldValue... values) {</b>
+<b class="fc"><i>52</i>&nbsp;        this.fieldName = fieldName;</b>
+<b class="fc"><i>53</i>&nbsp;        this.values = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i>54</i>&nbsp;        this.keywords = new KeywordList();</b>
+<b class="fc"><i>55</i>&nbsp;        this.map = new HashMap&lt;&gt;();</b>
+<b class="fc"><i>56</i>&nbsp;        for (SpecialFieldValue value : values) {</b>
+<b class="fc"><i>57</i>&nbsp;            this.values.add(value);</b>
+<b class="fc"><i>58</i>&nbsp;            value.getKeyword().ifPresent(keywords::add);</b>
+<b class="fc"><i>59</i>&nbsp;            value.getFieldValue().ifPresent(fieldValue -&gt; map.put(fieldValue, value));</b>
+<i>60</i>&nbsp;        }
+<b class="fc"><i>61</i>&nbsp;    }</b>
+<i>62</i>&nbsp;
+<i>63</i>&nbsp;    public List&lt;SpecialFieldValue&gt; getValues() {
+<b class="nc"><i>64</i>&nbsp;        return this.values;</b>
+<i>65</i>&nbsp;    }
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;    public KeywordList getKeyWords() {
+<b class="nc"><i>68</i>&nbsp;        return this.keywords;</b>
+<i>69</i>&nbsp;    }
+<i>70</i>&nbsp;
+<i>71</i>&nbsp;    public Optional&lt;SpecialFieldValue&gt; parse(String value) {
+<b class="nc"><i>72</i>&nbsp;        return Optional.ofNullable(map.get(value));</b>
+<i>73</i>&nbsp;    }
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;    public String getFieldName() {
+<b class="fc"><i>76</i>&nbsp;        return fieldName;</b>
+<i>77</i>&nbsp;    }
+<i>78</i>&nbsp;
+<i>79</i>&nbsp;    public boolean isSingleValueField() {
+<b class="nc"><i>80</i>&nbsp;        return this.values.size() == 1;</b>
+<i>81</i>&nbsp;    }
+<i>82</i>&nbsp;
+<i>83</i>&nbsp;    public static Optional&lt;SpecialField&gt; getSpecialFieldInstanceFromFieldName(String fieldName) {
+<b class="nc"><i>84</i>&nbsp;        switch (fieldName) {</b>
+<i>85</i>&nbsp;            case &quot;priority&quot;:
+<b class="nc"><i>86</i>&nbsp;                return Optional.of(SpecialField.PRIORITY);</b>
+<i>87</i>&nbsp;            case &quot;qualityassured&quot;:
+<b class="nc"><i>88</i>&nbsp;                return Optional.of(SpecialField.QUALITY);</b>
+<i>89</i>&nbsp;            case &quot;ranking&quot;:
+<b class="nc"><i>90</i>&nbsp;                return Optional.of(SpecialField.RANKING);</b>
+<i>91</i>&nbsp;            case &quot;readstatus&quot;:
+<b class="nc"><i>92</i>&nbsp;                return Optional.of(SpecialField.READ_STATUS);</b>
+<i>93</i>&nbsp;            case &quot;relevance&quot;:
+<b class="nc"><i>94</i>&nbsp;                return Optional.of(SpecialField.RELEVANCE);</b>
+<i>95</i>&nbsp;            case &quot;printed&quot;:
+<b class="nc"><i>96</i>&nbsp;                return Optional.of(SpecialField.PRINTED);</b>
+<i>97</i>&nbsp;            default:
+<b class="nc"><i>98</i>&nbsp;                return Optional.empty();</b>
+<i>99</i>&nbsp;        }
+<i>100</i>&nbsp;    }
+<i>101</i>&nbsp;
+<i>102</i>&nbsp;
+<i>103</i>&nbsp;    /**
+<i>104</i>&nbsp;     * @param fieldName the name of the field to check
+<i>105</i>&nbsp;     * @return true if given field is a special field, false otherwise
+<i>106</i>&nbsp;     */
+<i>107</i>&nbsp;    public static boolean isSpecialField(String fieldName) {
+<b class="nc"><i>108</i>&nbsp;        return SpecialField.getSpecialFieldInstanceFromFieldName(fieldName).isPresent();</b>
+<i>109</i>&nbsp;    }
+<i>110</i>&nbsp;
+<i>111</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

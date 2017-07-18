@@ -1,0 +1,217 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: OpenOfficeDocumentCreator</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.exporter</a> ]
+</div>
+
+<h1>Coverage Summary for Class: OpenOfficeDocumentCreator (net.sf.jabref.logic.exporter)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">OpenOfficeDocumentCreator</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 57)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.exporter;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.BufferedInputStream;
+<i>4</i>&nbsp;import java.io.BufferedOutputStream;
+<i>5</i>&nbsp;import java.io.File;
+<i>6</i>&nbsp;import java.io.FileInputStream;
+<i>7</i>&nbsp;import java.io.FileOutputStream;
+<i>8</i>&nbsp;import java.io.IOException;
+<i>9</i>&nbsp;import java.io.InputStream;
+<i>10</i>&nbsp;import java.io.OutputStream;
+<i>11</i>&nbsp;import java.io.OutputStreamWriter;
+<i>12</i>&nbsp;import java.io.Writer;
+<i>13</i>&nbsp;import java.net.URL;
+<i>14</i>&nbsp;import java.nio.charset.Charset;
+<i>15</i>&nbsp;import java.nio.charset.StandardCharsets;
+<i>16</i>&nbsp;import java.util.List;
+<i>17</i>&nbsp;import java.util.Objects;
+<i>18</i>&nbsp;import java.util.zip.ZipEntry;
+<i>19</i>&nbsp;import java.util.zip.ZipOutputStream;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;import javax.xml.transform.OutputKeys;
+<i>22</i>&nbsp;import javax.xml.transform.Transformer;
+<i>23</i>&nbsp;import javax.xml.transform.TransformerFactory;
+<i>24</i>&nbsp;import javax.xml.transform.dom.DOMSource;
+<i>25</i>&nbsp;import javax.xml.transform.stream.StreamResult;
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;import net.sf.jabref.model.database.BibDatabase;
+<i>28</i>&nbsp;import net.sf.jabref.model.database.BibDatabaseContext;
+<i>29</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;import org.apache.commons.logging.Log;
+<i>32</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;/**
+<i>35</i>&nbsp; * @author alver
+<i>36</i>&nbsp; */
+<i>37</i>&nbsp;public class OpenOfficeDocumentCreator extends ExportFormat {
+<i>38</i>&nbsp;
+<b class="nc"><i>39</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(OpenOfficeDocumentCreator.class);</b>
+<i>40</i>&nbsp;
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;    /**
+<i>43</i>&nbsp;     * Creates a new instance of OpenOfficeDocumentCreator
+<i>44</i>&nbsp;     */
+<i>45</i>&nbsp;    public OpenOfficeDocumentCreator() {
+<b class="nc"><i>46</i>&nbsp;        super(&quot;OpenOffice/LibreOffice Calc&quot;, &quot;oocalc&quot;, null, null, &quot;.sxc&quot;);</b>
+<b class="nc"><i>47</i>&nbsp;    }</b>
+<i>48</i>&nbsp;
+<i>49</i>&nbsp;    @Override
+<i>50</i>&nbsp;    public void performExport(final BibDatabaseContext databaseContext, final String file,
+<i>51</i>&nbsp;            final Charset encoding, List&lt;BibEntry&gt; entries) throws Exception {
+<b class="nc"><i>52</i>&nbsp;        Objects.requireNonNull(databaseContext);</b>
+<b class="nc"><i>53</i>&nbsp;        Objects.requireNonNull(entries);</b>
+<b class="nc"><i>54</i>&nbsp;        if (!entries.isEmpty()) { // Do not export if no entries</b>
+<b class="nc"><i>55</i>&nbsp;            OpenOfficeDocumentCreator.exportOpenOfficeCalc(new File(file), databaseContext.getDatabase(), entries);</b>
+<i>56</i>&nbsp;        }
+<b class="nc"><i>57</i>&nbsp;    }</b>
+<i>58</i>&nbsp;
+<i>59</i>&nbsp;    private static void storeOpenOfficeFile(File file, InputStream source) throws Exception {
+<b class="nc"><i>60</i>&nbsp;        try (ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(file)))) {</b>
+<b class="nc"><i>61</i>&nbsp;            ZipEntry zipEntry = new ZipEntry(&quot;content.xml&quot;);</b>
+<b class="nc"><i>62</i>&nbsp;            out.putNextEntry(zipEntry);</b>
+<i>63</i>&nbsp;            int c;
+<b class="nc"><i>64</i>&nbsp;            while ((c = source.read()) &gt;= 0) {</b>
+<b class="nc"><i>65</i>&nbsp;                out.write(c);</b>
+<i>66</i>&nbsp;            }
+<b class="nc"><i>67</i>&nbsp;            out.closeEntry();</b>
+<i>68</i>&nbsp;
+<i>69</i>&nbsp;            // Add manifest (required for OOo 2.0), &quot;meta.xml&quot;, &quot;mimetype&quot; files. These are in the
+<i>70</i>&nbsp;            // resource/openoffice directory, and are copied verbatim into the zip file.
+<b class="nc"><i>71</i>&nbsp;            OpenOfficeDocumentCreator.addResourceFile(&quot;meta.xml&quot;, &quot;/resource/openoffice/meta.xml&quot;, out);</b>
+<b class="nc"><i>72</i>&nbsp;            OpenOfficeDocumentCreator.addResourceFile(&quot;mimetype&quot;, &quot;/resource/openoffice/mimetype&quot;, out);</b>
+<b class="nc"><i>73</i>&nbsp;            OpenOfficeDocumentCreator.addResourceFile(&quot;META-INF/manifest.xml&quot;, &quot;/resource/openoffice/manifest.xml&quot;,</b>
+<i>74</i>&nbsp;                    out);
+<i>75</i>&nbsp;
+<b class="nc"><i>76</i>&nbsp;        }</b>
+<b class="nc"><i>77</i>&nbsp;    }</b>
+<i>78</i>&nbsp;
+<i>79</i>&nbsp;    private static void exportOpenOfficeCalc(File file, BibDatabase database, List&lt;BibEntry&gt; entries) throws Exception {
+<i>80</i>&nbsp;        // First store the xml formatted content to a temporary file.
+<b class="nc"><i>81</i>&nbsp;        File tmpFile = File.createTempFile(&quot;oocalc&quot;, null);</b>
+<b class="nc"><i>82</i>&nbsp;        OpenOfficeDocumentCreator.exportOpenOfficeCalcXML(tmpFile, database, entries);</b>
+<i>83</i>&nbsp;
+<i>84</i>&nbsp;        // Then add the content to the zip file:
+<b class="nc"><i>85</i>&nbsp;        try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(tmpFile))) {</b>
+<b class="nc"><i>86</i>&nbsp;            OpenOfficeDocumentCreator.storeOpenOfficeFile(file, in);</b>
+<b class="nc"><i>87</i>&nbsp;        }</b>
+<i>88</i>&nbsp;
+<i>89</i>&nbsp;        // Delete the temporary file:
+<b class="nc"><i>90</i>&nbsp;        if (!tmpFile.delete()) {</b>
+<b class="nc"><i>91</i>&nbsp;            LOGGER.info(&quot;Cannot delete temporary export file&quot;);</b>
+<i>92</i>&nbsp;        }
+<b class="nc"><i>93</i>&nbsp;    }</b>
+<i>94</i>&nbsp;
+<i>95</i>&nbsp;    private static void exportOpenOfficeCalcXML(File tmpFile, BibDatabase database, List&lt;BibEntry&gt; entries) {
+<b class="nc"><i>96</i>&nbsp;        OOCalcDatabase od = new OOCalcDatabase(database, entries);</b>
+<i>97</i>&nbsp;
+<b class="nc"><i>98</i>&nbsp;        try (Writer ps = new OutputStreamWriter(new FileOutputStream(tmpFile), StandardCharsets.UTF_8)) {</b>
+<b class="nc"><i>99</i>&nbsp;            DOMSource source = new DOMSource(od.getDOMrepresentation());</b>
+<b class="nc"><i>100</i>&nbsp;            StreamResult result = new StreamResult(ps);</b>
+<b class="nc"><i>101</i>&nbsp;            Transformer trans = TransformerFactory.newInstance().newTransformer();</b>
+<b class="nc"><i>102</i>&nbsp;            trans.setOutputProperty(OutputKeys.INDENT, &quot;yes&quot;);</b>
+<b class="nc"><i>103</i>&nbsp;            trans.transform(source, result);</b>
+<b class="nc"><i>104</i>&nbsp;        } catch (Exception e) {</b>
+<b class="nc"><i>105</i>&nbsp;            throw new Error(e);</b>
+<b class="nc"><i>106</i>&nbsp;        }</b>
+<i>107</i>&nbsp;
+<b class="nc"><i>108</i>&nbsp;    }</b>
+<i>109</i>&nbsp;
+<i>110</i>&nbsp;    private static void addResourceFile(String name, String resource, ZipOutputStream out) throws IOException {
+<b class="nc"><i>111</i>&nbsp;        ZipEntry zipEntry = new ZipEntry(name);</b>
+<b class="nc"><i>112</i>&nbsp;        out.putNextEntry(zipEntry);</b>
+<b class="nc"><i>113</i>&nbsp;        OpenOfficeDocumentCreator.addFromResource(resource, out);</b>
+<b class="nc"><i>114</i>&nbsp;        out.closeEntry();</b>
+<b class="nc"><i>115</i>&nbsp;    }</b>
+<i>116</i>&nbsp;
+<i>117</i>&nbsp;    private static void addFromResource(String resource, OutputStream out) {
+<b class="nc"><i>118</i>&nbsp;        URL url = OpenOfficeDocumentCreator.class.getResource(resource);</b>
+<b class="nc"><i>119</i>&nbsp;        try (InputStream in = url.openStream()) {</b>
+<b class="nc"><i>120</i>&nbsp;            byte[] buffer = new byte[256];</b>
+<b class="nc"><i>121</i>&nbsp;            synchronized (out) {</b>
+<i>122</i>&nbsp;                while (true) {
+<b class="nc"><i>123</i>&nbsp;                    int bytesRead = in.read(buffer);</b>
+<b class="nc"><i>124</i>&nbsp;                    if (bytesRead == -1) {</b>
+<b class="nc"><i>125</i>&nbsp;                        break;</b>
+<i>126</i>&nbsp;                    }
+<b class="nc"><i>127</i>&nbsp;                    out.write(buffer, 0, bytesRead);</b>
+<b class="nc"><i>128</i>&nbsp;                }</b>
+<b class="nc"><i>129</i>&nbsp;            }</b>
+<b class="nc"><i>130</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i>131</i>&nbsp;            LOGGER.warn(&quot;Cannot get resource&quot;, e);</b>
+<b class="nc"><i>132</i>&nbsp;        }</b>
+<b class="nc"><i>133</i>&nbsp;    }</b>
+<i>134</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

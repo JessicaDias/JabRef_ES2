@@ -1,0 +1,358 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: EntryEditorPrefsTab</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.preftabs</a> ]
+</div>
+
+<h1>Coverage Summary for Class: EntryEditorPrefsTab (net.sf.jabref.gui.preftabs)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">EntryEditorPrefsTab</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 131)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">EntryEditorPrefsTab$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 132)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.preftabs;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.BorderLayout;
+<i>4</i>&nbsp;import java.awt.Insets;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import javax.swing.BorderFactory;
+<i>7</i>&nbsp;import javax.swing.ButtonGroup;
+<i>8</i>&nbsp;import javax.swing.JCheckBox;
+<i>9</i>&nbsp;import javax.swing.JLabel;
+<i>10</i>&nbsp;import javax.swing.JPanel;
+<i>11</i>&nbsp;import javax.swing.JRadioButton;
+<i>12</i>&nbsp;import javax.swing.JSpinner;
+<i>13</i>&nbsp;import javax.swing.JTextField;
+<i>14</i>&nbsp;import javax.swing.SpinnerNumberModel;
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;import net.sf.jabref.gui.keyboard.EmacsKeyBindings;
+<i>17</i>&nbsp;import net.sf.jabref.logic.autocompleter.AutoCompleteFirstNameMode;
+<i>18</i>&nbsp;import net.sf.jabref.logic.autocompleter.AutoCompletePreferences;
+<i>19</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>20</i>&nbsp;import net.sf.jabref.preferences.JabRefPreferences;
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;import com.jgoodies.forms.builder.DefaultFormBuilder;
+<i>23</i>&nbsp;import com.jgoodies.forms.layout.CellConstraints;
+<i>24</i>&nbsp;import com.jgoodies.forms.layout.FormLayout;
+<i>25</i>&nbsp;
+<b class="nc"><i>26</i>&nbsp;class EntryEditorPrefsTab extends JPanel implements PrefsTab {</b>
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;    private final JCheckBox autoOpenForm;
+<i>29</i>&nbsp;    private final JCheckBox defSource;
+<i>30</i>&nbsp;    private final JCheckBox emacsMode;
+<i>31</i>&nbsp;    private final JCheckBox emacsRebindCtrlA;
+<i>32</i>&nbsp;    private final JCheckBox emacsRebindCtrlF;
+<i>33</i>&nbsp;    private final JCheckBox autoComplete;
+<i>34</i>&nbsp;    private final JRadioButton autoCompBoth;
+<i>35</i>&nbsp;    private final JRadioButton autoCompFF;
+<i>36</i>&nbsp;    private final JRadioButton autoCompLF;
+<i>37</i>&nbsp;    private final JRadioButton firstNameModeFull;
+<i>38</i>&nbsp;    private final JRadioButton firstNameModeAbbr;
+<i>39</i>&nbsp;    private final JRadioButton firstNameModeBoth;
+<i>40</i>&nbsp;    private final JSpinner shortestToComplete;
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;    private final JTextField autoCompFields;
+<i>43</i>&nbsp;    private final JabRefPreferences prefs;
+<i>44</i>&nbsp;    private final AutoCompletePreferences autoCompletePreferences;
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;
+<b class="nc"><i>47</i>&nbsp;    public EntryEditorPrefsTab(JabRefPreferences prefs) {</b>
+<b class="nc"><i>48</i>&nbsp;        this.prefs = prefs;</b>
+<b class="nc"><i>49</i>&nbsp;        autoCompletePreferences = new AutoCompletePreferences(prefs);</b>
+<b class="nc"><i>50</i>&nbsp;        setLayout(new BorderLayout());</b>
+<i>51</i>&nbsp;
+<b class="nc"><i>52</i>&nbsp;        autoOpenForm = new JCheckBox(Localization.lang(&quot;Open editor when a new entry is created&quot;));</b>
+<b class="nc"><i>53</i>&nbsp;        defSource = new JCheckBox(Localization.lang(&quot;Show BibTeX source by default&quot;));</b>
+<b class="nc"><i>54</i>&nbsp;        emacsMode = new JCheckBox(Localization.lang(&quot;Use Emacs key bindings&quot;));</b>
+<b class="nc"><i>55</i>&nbsp;        emacsRebindCtrlA = new JCheckBox(Localization.lang(&quot;Rebind C-a, too&quot;));</b>
+<b class="nc"><i>56</i>&nbsp;        emacsRebindCtrlF = new JCheckBox(Localization.lang(&quot;Rebind C-f, too&quot;));</b>
+<b class="nc"><i>57</i>&nbsp;        autoComplete = new JCheckBox(Localization.lang(&quot;Enable word/name autocompletion&quot;));</b>
+<i>58</i>&nbsp;
+<b class="nc"><i>59</i>&nbsp;        shortestToComplete = new JSpinner(</b>
+<b class="nc"><i>60</i>&nbsp;                new SpinnerNumberModel(autoCompletePreferences.getShortestLengthToComplete(), 1, 5, 1));</b>
+<i>61</i>&nbsp;
+<i>62</i>&nbsp;        // allowed name formats
+<b class="nc"><i>63</i>&nbsp;        autoCompFF = new JRadioButton(Localization.lang(&quot;Autocomplete names in &#39;Firstname Lastname&#39; format only&quot;));</b>
+<b class="nc"><i>64</i>&nbsp;        autoCompLF = new JRadioButton(Localization.lang(&quot;Autocomplete names in &#39;Lastname, Firstname&#39; format only&quot;));</b>
+<b class="nc"><i>65</i>&nbsp;        autoCompBoth = new JRadioButton(Localization.lang(&quot;Autocomplete names in both formats&quot;));</b>
+<b class="nc"><i>66</i>&nbsp;        ButtonGroup buttonGroup = new ButtonGroup();</b>
+<b class="nc"><i>67</i>&nbsp;        buttonGroup.add(autoCompLF);</b>
+<b class="nc"><i>68</i>&nbsp;        buttonGroup.add(autoCompFF);</b>
+<b class="nc"><i>69</i>&nbsp;        buttonGroup.add(autoCompBoth);</b>
+<i>70</i>&nbsp;
+<i>71</i>&nbsp;        // treatment of first name
+<b class="nc"><i>72</i>&nbsp;        firstNameModeFull = new JRadioButton(Localization.lang(&quot;Use full firstname whenever possible&quot;));</b>
+<b class="nc"><i>73</i>&nbsp;        firstNameModeAbbr = new JRadioButton(Localization.lang(&quot;Use abbreviated firstname whenever possible&quot;));</b>
+<b class="nc"><i>74</i>&nbsp;        firstNameModeBoth = new JRadioButton(Localization.lang(&quot;Use abbreviated and full firstname&quot;));</b>
+<b class="nc"><i>75</i>&nbsp;        ButtonGroup firstNameModeButtonGroup = new ButtonGroup();</b>
+<b class="nc"><i>76</i>&nbsp;        firstNameModeButtonGroup.add(firstNameModeFull);</b>
+<b class="nc"><i>77</i>&nbsp;        firstNameModeButtonGroup.add(firstNameModeAbbr);</b>
+<b class="nc"><i>78</i>&nbsp;        firstNameModeButtonGroup.add(firstNameModeBoth);</b>
+<i>79</i>&nbsp;
+<b class="nc"><i>80</i>&nbsp;        Insets marg = new Insets(0, 20, 3, 0);</b>
+<i>81</i>&nbsp;
+<b class="nc"><i>82</i>&nbsp;        emacsRebindCtrlA.setMargin(marg);</b>
+<i>83</i>&nbsp;        // We need a listener on showSource to enable and disable the source panel-related choices:
+<b class="nc"><i>84</i>&nbsp;        emacsMode.addChangeListener(event -&gt; emacsRebindCtrlA.setEnabled(emacsMode.isSelected()));</b>
+<i>85</i>&nbsp;
+<b class="nc"><i>86</i>&nbsp;        emacsRebindCtrlF.setMargin(marg);</b>
+<i>87</i>&nbsp;        // We need a listener on showSource to enable and disable the source panel-related choices:
+<b class="nc"><i>88</i>&nbsp;        emacsMode.addChangeListener(event -&gt; emacsRebindCtrlF.setEnabled(emacsMode.isSelected()));</b>
+<i>89</i>&nbsp;
+<i>90</i>&nbsp;
+<b class="nc"><i>91</i>&nbsp;        autoCompFields = new JTextField(40);</b>
+<i>92</i>&nbsp;        // We need a listener on autoComplete to enable and disable the
+<i>93</i>&nbsp;        // autoCompFields text field:
+<b class="nc"><i>94</i>&nbsp;        autoComplete.addChangeListener(event -&gt; setAutoCompleteElementsEnabled(autoComplete.isSelected()));</b>
+<i>95</i>&nbsp;
+<b class="nc"><i>96</i>&nbsp;        FormLayout layout = new FormLayout</b>
+<i>97</i>&nbsp;                (// columns
+<i>98</i>&nbsp;                 &quot;8dlu, left:pref, 8dlu, fill:150dlu, 4dlu, fill:pref&quot;, // 4dlu, left:pref, 4dlu&quot;,
+<i>99</i>&nbsp;                 // rows  1 to 10
+<i>100</i>&nbsp;                 &quot;pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, &quot; +
+<i>101</i>&nbsp;                // rows 11 to 16
+<i>102</i>&nbsp;                        &quot;pref, 6dlu, pref, 6dlu, pref, 6dlu, &quot; +
+<i>103</i>&nbsp;                        // rows 17 to 27
+<i>104</i>&nbsp;                 &quot;pref, 6dlu, pref, pref, pref, pref, 6dlu, pref, pref, pref, pref&quot;);
+<b class="nc"><i>105</i>&nbsp;        DefaultFormBuilder builder = new DefaultFormBuilder(layout);</b>
+<b class="nc"><i>106</i>&nbsp;        CellConstraints cc = new CellConstraints();</b>
+<b class="nc"><i>107</i>&nbsp;        builder.addSeparator(Localization.lang(&quot;Editor options&quot;), cc.xyw(1, 1, 5));</b>
+<b class="nc"><i>108</i>&nbsp;        builder.add(autoOpenForm, cc.xy(2, 3));</b>
+<b class="nc"><i>109</i>&nbsp;        builder.add(defSource, cc.xy(2, 5));</b>
+<b class="nc"><i>110</i>&nbsp;        builder.add(emacsMode, cc.xy(2, 7));</b>
+<b class="nc"><i>111</i>&nbsp;        builder.add(emacsRebindCtrlA, cc.xy(2, 9));</b>
+<b class="nc"><i>112</i>&nbsp;        builder.add(emacsRebindCtrlF, cc.xy(2, 11));</b>
+<i>113</i>&nbsp;
+<b class="nc"><i>114</i>&nbsp;        builder.addSeparator(Localization.lang(&quot;Autocompletion options&quot;), cc.xyw(1, 13, 5));</b>
+<b class="nc"><i>115</i>&nbsp;        builder.add(autoComplete, cc.xy(2, 15));</b>
+<i>116</i>&nbsp;
+<b class="nc"><i>117</i>&nbsp;        DefaultFormBuilder builder3 = new DefaultFormBuilder(new FormLayout(&quot;left:pref, 4dlu, fill:150dlu&quot;,&quot;&quot;));</b>
+<b class="nc"><i>118</i>&nbsp;        JLabel label = new JLabel(Localization.lang(&quot;Use autocompletion for the following fields&quot;)+&quot;:&quot;);</b>
+<i>119</i>&nbsp;
+<b class="nc"><i>120</i>&nbsp;        builder3.append(label);</b>
+<b class="nc"><i>121</i>&nbsp;        builder3.append(autoCompFields);</b>
+<b class="nc"><i>122</i>&nbsp;        JLabel label2 = new JLabel(Localization.lang(&quot;Autocomplete after following number of characters&quot;) + &quot;:&quot;);</b>
+<b class="nc"><i>123</i>&nbsp;        builder3.append(label2);</b>
+<b class="nc"><i>124</i>&nbsp;        builder3.append(shortestToComplete);</b>
+<b class="nc"><i>125</i>&nbsp;        builder.add(builder3.getPanel(), cc.xyw(2, 17, 3));</b>
+<i>126</i>&nbsp;
+<b class="nc"><i>127</i>&nbsp;        builder.addSeparator(Localization.lang(&quot;Name format used for autocompletion&quot;), cc.xyw(2, 19, 4));</b>
+<b class="nc"><i>128</i>&nbsp;        builder.add(autoCompFF, cc.xy(2, 20));</b>
+<b class="nc"><i>129</i>&nbsp;        builder.add(autoCompLF, cc.xy(2, 21));</b>
+<b class="nc"><i>130</i>&nbsp;        builder.add(autoCompBoth, cc.xy(2, 22));</b>
+<i>131</i>&nbsp;
+<b class="nc"><i>132</i>&nbsp;        builder.addSeparator(Localization.lang(&quot;Treatment of first names&quot;), cc.xyw(2, 24, 4));</b>
+<b class="nc"><i>133</i>&nbsp;        builder.add(firstNameModeAbbr, cc.xy(2, 25));</b>
+<b class="nc"><i>134</i>&nbsp;        builder.add(firstNameModeFull, cc.xy(2, 26));</b>
+<b class="nc"><i>135</i>&nbsp;        builder.add(firstNameModeBoth, cc.xy(2, 27));</b>
+<i>136</i>&nbsp;
+<b class="nc"><i>137</i>&nbsp;        JPanel pan = builder.getPanel();</b>
+<b class="nc"><i>138</i>&nbsp;        pan.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));</b>
+<b class="nc"><i>139</i>&nbsp;        add(pan, BorderLayout.CENTER);</b>
+<b class="nc"><i>140</i>&nbsp;    }</b>
+<i>141</i>&nbsp;
+<i>142</i>&nbsp;    private void setAutoCompleteElementsEnabled(boolean enabled) {
+<b class="nc"><i>143</i>&nbsp;        autoCompFields.setEnabled(enabled);</b>
+<b class="nc"><i>144</i>&nbsp;        autoCompLF.setEnabled(enabled);</b>
+<b class="nc"><i>145</i>&nbsp;        autoCompFF.setEnabled(enabled);</b>
+<b class="nc"><i>146</i>&nbsp;        autoCompBoth.setEnabled(enabled);</b>
+<b class="nc"><i>147</i>&nbsp;        firstNameModeAbbr.setEnabled(enabled);</b>
+<b class="nc"><i>148</i>&nbsp;        firstNameModeFull.setEnabled(enabled);</b>
+<b class="nc"><i>149</i>&nbsp;        firstNameModeBoth.setEnabled(enabled);</b>
+<b class="nc"><i>150</i>&nbsp;        shortestToComplete.setEnabled(enabled);</b>
+<b class="nc"><i>151</i>&nbsp;    }</b>
+<i>152</i>&nbsp;
+<i>153</i>&nbsp;    @Override
+<i>154</i>&nbsp;    public void setValues() {
+<b class="nc"><i>155</i>&nbsp;        autoOpenForm.setSelected(prefs.getBoolean(JabRefPreferences.AUTO_OPEN_FORM));</b>
+<b class="nc"><i>156</i>&nbsp;        defSource.setSelected(prefs.getBoolean(JabRefPreferences.DEFAULT_SHOW_SOURCE));</b>
+<b class="nc"><i>157</i>&nbsp;        emacsMode.setSelected(prefs.getBoolean(JabRefPreferences.EDITOR_EMACS_KEYBINDINGS));</b>
+<b class="nc"><i>158</i>&nbsp;        emacsRebindCtrlA.setSelected(prefs.getBoolean(JabRefPreferences.EDITOR_EMACS_KEYBINDINGS_REBIND_CA));</b>
+<b class="nc"><i>159</i>&nbsp;        emacsRebindCtrlF.setSelected(prefs.getBoolean(JabRefPreferences.EDITOR_EMACS_KEYBINDINGS_REBIND_CF));</b>
+<b class="nc"><i>160</i>&nbsp;        autoComplete.setSelected(prefs.getBoolean(JabRefPreferences.AUTO_COMPLETE));</b>
+<b class="nc"><i>161</i>&nbsp;        autoCompFields.setText(autoCompletePreferences.getCompleteNamesAsString());</b>
+<b class="nc"><i>162</i>&nbsp;        shortestToComplete.setValue(autoCompletePreferences.getShortestLengthToComplete());</b>
+<i>163</i>&nbsp;
+<b class="nc"><i>164</i>&nbsp;        if (autoCompletePreferences.getOnlyCompleteFirstLast()) {</b>
+<b class="nc"><i>165</i>&nbsp;            autoCompFF.setSelected(true);</b>
+<b class="nc"><i>166</i>&nbsp;        } else if (autoCompletePreferences.getOnlyCompleteLastFirst()) {</b>
+<b class="nc"><i>167</i>&nbsp;            autoCompLF.setSelected(true);</b>
+<i>168</i>&nbsp;        } else {
+<b class="nc"><i>169</i>&nbsp;            autoCompBoth.setSelected(true);</b>
+<i>170</i>&nbsp;        }
+<i>171</i>&nbsp;
+<b class="nc"><i>172</i>&nbsp;        switch (autoCompletePreferences.getFirstnameMode()) {</b>
+<i>173</i>&nbsp;        case ONLY_ABBREVIATED:
+<b class="nc"><i>174</i>&nbsp;            firstNameModeAbbr.setSelected(true);</b>
+<b class="nc"><i>175</i>&nbsp;            break;</b>
+<i>176</i>&nbsp;        case ONLY_FULL:
+<b class="nc"><i>177</i>&nbsp;            firstNameModeFull.setSelected(true);</b>
+<b class="nc"><i>178</i>&nbsp;            break;</b>
+<i>179</i>&nbsp;        default:
+<b class="nc"><i>180</i>&nbsp;            firstNameModeBoth.setSelected(true);</b>
+<i>181</i>&nbsp;            break;
+<i>182</i>&nbsp;        }
+<i>183</i>&nbsp;
+<i>184</i>&nbsp;        // similar for emacs CTRL-a and emacs mode
+<b class="nc"><i>185</i>&nbsp;        emacsRebindCtrlA.setEnabled(emacsMode.isSelected());</b>
+<i>186</i>&nbsp;        // Autocomplete fields is only enabled when autocompletion is selected
+<b class="nc"><i>187</i>&nbsp;        setAutoCompleteElementsEnabled(autoComplete.isSelected());</b>
+<b class="nc"><i>188</i>&nbsp;    }</b>
+<i>189</i>&nbsp;
+<i>190</i>&nbsp;    @Override
+<i>191</i>&nbsp;    public void storeSettings() {
+<b class="nc"><i>192</i>&nbsp;        prefs.putBoolean(JabRefPreferences.AUTO_OPEN_FORM, autoOpenForm.isSelected());</b>
+<b class="nc"><i>193</i>&nbsp;        prefs.putBoolean(JabRefPreferences.DEFAULT_SHOW_SOURCE, defSource.isSelected());</b>
+<b class="nc"><i>194</i>&nbsp;        boolean emacsModeChanged = prefs.getBoolean(JabRefPreferences.EDITOR_EMACS_KEYBINDINGS) != emacsMode.isSelected();</b>
+<b class="nc"><i>195</i>&nbsp;        boolean emacsRebindCtrlAChanged = prefs.getBoolean(JabRefPreferences.EDITOR_EMACS_KEYBINDINGS_REBIND_CA) != emacsRebindCtrlA.isSelected();</b>
+<b class="nc"><i>196</i>&nbsp;        boolean emacsRebindCtrlFChanged = prefs.getBoolean(JabRefPreferences.EDITOR_EMACS_KEYBINDINGS_REBIND_CF) != emacsRebindCtrlF.isSelected();</b>
+<b class="nc"><i>197</i>&nbsp;        if (emacsModeChanged || emacsRebindCtrlAChanged || emacsRebindCtrlFChanged) {</b>
+<b class="nc"><i>198</i>&nbsp;            prefs.putBoolean(JabRefPreferences.EDITOR_EMACS_KEYBINDINGS, emacsMode.isSelected());</b>
+<b class="nc"><i>199</i>&nbsp;            prefs.putBoolean(JabRefPreferences.EDITOR_EMACS_KEYBINDINGS_REBIND_CA, emacsRebindCtrlA.isSelected());</b>
+<b class="nc"><i>200</i>&nbsp;            prefs.putBoolean(JabRefPreferences.EDITOR_EMACS_KEYBINDINGS_REBIND_CF, emacsRebindCtrlF.isSelected());</b>
+<i>201</i>&nbsp;            // immediately apply the change
+<b class="nc"><i>202</i>&nbsp;            if (emacsModeChanged) {</b>
+<b class="nc"><i>203</i>&nbsp;                if (emacsMode.isSelected()) {</b>
+<b class="nc"><i>204</i>&nbsp;                    EmacsKeyBindings.load();</b>
+<i>205</i>&nbsp;                } else {
+<b class="nc"><i>206</i>&nbsp;                    EmacsKeyBindings.unload();</b>
+<i>207</i>&nbsp;                }
+<i>208</i>&nbsp;            } else {
+<i>209</i>&nbsp;                // only rebinding of CTRL+a or CTRL+f changed
+<b class="nc"><i>210</i>&nbsp;                assert emacsMode.isSelected();</b>
+<i>211</i>&nbsp;                // we simply reload the emacs mode to activate the CTRL+a/CTRL+f change
+<b class="nc"><i>212</i>&nbsp;                EmacsKeyBindings.unload();</b>
+<b class="nc"><i>213</i>&nbsp;                EmacsKeyBindings.load();</b>
+<i>214</i>&nbsp;            }
+<i>215</i>&nbsp;        }
+<b class="nc"><i>216</i>&nbsp;        autoCompletePreferences.setShortestLengthToComplete((Integer) shortestToComplete.getValue());</b>
+<b class="nc"><i>217</i>&nbsp;        prefs.putBoolean(JabRefPreferences.AUTO_COMPLETE, autoComplete.isSelected());</b>
+<b class="nc"><i>218</i>&nbsp;        autoCompletePreferences.setCompleteNames(autoCompFields.getText());</b>
+<b class="nc"><i>219</i>&nbsp;        if (autoCompBoth.isSelected()) {</b>
+<b class="nc"><i>220</i>&nbsp;            autoCompletePreferences.setOnlyCompleteFirstLast(false);</b>
+<b class="nc"><i>221</i>&nbsp;            autoCompletePreferences.setOnlyCompleteLastFirst(false);</b>
+<i>222</i>&nbsp;        }
+<b class="nc"><i>223</i>&nbsp;        else if (autoCompFF.isSelected()) {</b>
+<b class="nc"><i>224</i>&nbsp;            autoCompletePreferences.setOnlyCompleteFirstLast(true);</b>
+<b class="nc"><i>225</i>&nbsp;            autoCompletePreferences.setOnlyCompleteLastFirst(false);</b>
+<i>226</i>&nbsp;        }
+<i>227</i>&nbsp;        else {
+<b class="nc"><i>228</i>&nbsp;            autoCompletePreferences.setOnlyCompleteFirstLast(false);</b>
+<b class="nc"><i>229</i>&nbsp;            autoCompletePreferences.setOnlyCompleteLastFirst(true);</b>
+<i>230</i>&nbsp;        }
+<b class="nc"><i>231</i>&nbsp;        if (firstNameModeAbbr.isSelected()) {</b>
+<b class="nc"><i>232</i>&nbsp;            autoCompletePreferences.setFirstnameMode(AutoCompleteFirstNameMode.ONLY_ABBREVIATED);</b>
+<b class="nc"><i>233</i>&nbsp;        } else if (firstNameModeFull.isSelected()) {</b>
+<b class="nc"><i>234</i>&nbsp;            autoCompletePreferences.setFirstnameMode(AutoCompleteFirstNameMode.ONLY_FULL);</b>
+<i>235</i>&nbsp;        } else {
+<b class="nc"><i>236</i>&nbsp;            autoCompletePreferences.setFirstnameMode(AutoCompleteFirstNameMode.BOTH);</b>
+<i>237</i>&nbsp;        }
+<b class="nc"><i>238</i>&nbsp;    }</b>
+<i>239</i>&nbsp;
+<i>240</i>&nbsp;    @Override
+<i>241</i>&nbsp;    public boolean validateSettings() {
+<b class="nc"><i>242</i>&nbsp;        return true;</b>
+<i>243</i>&nbsp;    }
+<i>244</i>&nbsp;
+<i>245</i>&nbsp;    @Override
+<i>246</i>&nbsp;    public String getTabName() {
+<b class="nc"><i>247</i>&nbsp;        return Localization.lang(&quot;Entry editor&quot;);</b>
+<i>248</i>&nbsp;    }
+<i>249</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

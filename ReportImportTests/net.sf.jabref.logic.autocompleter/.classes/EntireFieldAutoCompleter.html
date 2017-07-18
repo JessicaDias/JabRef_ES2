@@ -1,0 +1,126 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: EntireFieldAutoCompleter</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.autocompleter</a> ]
+</div>
+
+<h1>Coverage Summary for Class: EntireFieldAutoCompleter (net.sf.jabref.logic.autocompleter)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">EntireFieldAutoCompleter</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 8)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.autocompleter;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.Objects;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;/**
+<i>8</i>&nbsp; * Delivers possible completions for a given string.
+<i>9</i>&nbsp; * Stores the full original value of one field of the given BibtexEntries.
+<i>10</i>&nbsp; *
+<i>11</i>&nbsp; * @author kahlert, cordes
+<i>12</i>&nbsp; */
+<i>13</i>&nbsp;class EntireFieldAutoCompleter extends AbstractAutoCompleter {
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;    private final String fieldName;
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;    /**
+<i>18</i>&nbsp;     * @see AutoCompleterFactory
+<i>19</i>&nbsp;     */
+<i>20</i>&nbsp;    EntireFieldAutoCompleter(String fieldName, AutoCompletePreferences preferences) {
+<b class="nc"><i>21</i>&nbsp;        super(preferences);</b>
+<i>22</i>&nbsp;
+<b class="nc"><i>23</i>&nbsp;        this.fieldName = Objects.requireNonNull(fieldName);</b>
+<b class="nc"><i>24</i>&nbsp;    }</b>
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    @Override
+<i>27</i>&nbsp;    public boolean isSingleUnitField() {
+<b class="nc"><i>28</i>&nbsp;        return true;</b>
+<i>29</i>&nbsp;    }
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;    /**
+<i>32</i>&nbsp;     * {@inheritDoc}
+<i>33</i>&nbsp;     * Stores the full original value of the given field.
+<i>34</i>&nbsp;     */
+<i>35</i>&nbsp;    @Override
+<i>36</i>&nbsp;    public void addBibtexEntry(BibEntry entry) {
+<b class="nc"><i>37</i>&nbsp;        if (entry == null) {</b>
+<b class="nc"><i>38</i>&nbsp;            return;</b>
+<i>39</i>&nbsp;        }
+<i>40</i>&nbsp;
+<b class="nc"><i>41</i>&nbsp;        entry.getField(fieldName).ifPresent(fieldValue -&gt; addItemToIndex(fieldValue.trim()));</b>
+<b class="nc"><i>42</i>&nbsp;    }</b>
+<i>43</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

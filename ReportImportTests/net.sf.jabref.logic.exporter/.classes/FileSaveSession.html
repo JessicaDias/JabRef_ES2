@@ -1,0 +1,210 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: FileSaveSession</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.exporter</a> ]
+</div>
+
+<h1>Coverage Summary for Class: FileSaveSession (net.sf.jabref.logic.exporter)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">FileSaveSession</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 47)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.exporter;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.IOException;
+<i>4</i>&nbsp;import java.nio.charset.Charset;
+<i>5</i>&nbsp;import java.nio.file.Files;
+<i>6</i>&nbsp;import java.nio.file.Path;
+<i>7</i>&nbsp;import java.nio.file.attribute.PosixFilePermission;
+<i>8</i>&nbsp;import java.util.EnumSet;
+<i>9</i>&nbsp;import java.util.Set;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;import net.sf.jabref.logic.util.io.FileBasedLock;
+<i>12</i>&nbsp;import net.sf.jabref.logic.util.io.FileUtil;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;import org.apache.commons.logging.Log;
+<i>15</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;/**
+<i>18</i>&nbsp; * Class used to handle safe storage to disk.
+<i>19</i>&nbsp; * &lt;p&gt;
+<i>20</i>&nbsp; * Usage: create a SaveSession giving the file to save to, the encoding, and whether to make a backup. The SaveSession
+<i>21</i>&nbsp; * will provide a Writer to store to, which actually goes to a temporary file. The Writer keeps track of whether all
+<i>22</i>&nbsp; * characters could be saved, and if not, which characters were not encodable.
+<i>23</i>&nbsp; * &lt;p&gt;
+<i>24</i>&nbsp; * After saving is finished, the client should close the Writer. If the save should be put into effect, call commit(),
+<i>25</i>&nbsp; * otherwise call cancel(). When canceling, the temporary file is simply deleted and the target file remains unchanged.
+<i>26</i>&nbsp; * When committing, the temporary file is copied to the target file after making a backup if requested and if the target
+<i>27</i>&nbsp; * file already existed, and finally the temporary file is deleted.
+<i>28</i>&nbsp; * &lt;p&gt;
+<i>29</i>&nbsp; * If committing fails, the temporary file will not be deleted.
+<i>30</i>&nbsp; */
+<i>31</i>&nbsp;public class FileSaveSession extends SaveSession {
+<i>32</i>&nbsp;
+<b class="nc"><i>33</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(FileSaveSession.class);</b>
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    // Filenames.
+<i>36</i>&nbsp;    private static final String BACKUP_EXTENSION = &quot;.bak&quot;;
+<i>37</i>&nbsp;    private static final String TEMP_PREFIX = &quot;jabref&quot;;
+<i>38</i>&nbsp;    private static final String TEMP_SUFFIX = &quot;save.bib&quot;;
+<i>39</i>&nbsp;    private final Path temporaryFile;
+<i>40</i>&nbsp;
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;    public FileSaveSession(Charset encoding, boolean backup) throws SaveException {
+<b class="nc"><i>43</i>&nbsp;        this(encoding, backup, createTemporaryFile());</b>
+<b class="nc"><i>44</i>&nbsp;    }</b>
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;    public FileSaveSession(Charset encoding, boolean backup, Path temporaryFile) throws SaveException {
+<b class="nc"><i>47</i>&nbsp;        super(encoding, backup, getWriterForFile(encoding, temporaryFile));</b>
+<b class="nc"><i>48</i>&nbsp;        this.temporaryFile = temporaryFile;</b>
+<b class="nc"><i>49</i>&nbsp;    }</b>
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;    private static VerifyingWriter getWriterForFile(Charset encoding, Path file) throws SaveException {
+<i>52</i>&nbsp;        try {
+<b class="nc"><i>53</i>&nbsp;            return new VerifyingWriter(Files.newOutputStream(file), encoding);</b>
+<b class="nc"><i>54</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i>55</i>&nbsp;            throw new SaveException(e);</b>
+<i>56</i>&nbsp;        }
+<i>57</i>&nbsp;    }
+<i>58</i>&nbsp;
+<i>59</i>&nbsp;    private static Path createTemporaryFile() throws SaveException {
+<i>60</i>&nbsp;        try {
+<b class="nc"><i>61</i>&nbsp;            return Files.createTempFile(FileSaveSession.TEMP_PREFIX, FileSaveSession.TEMP_SUFFIX);</b>
+<b class="nc"><i>62</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i>63</i>&nbsp;            throw new SaveException(e);</b>
+<i>64</i>&nbsp;        }
+<i>65</i>&nbsp;    }
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;    @Override
+<i>68</i>&nbsp;    public void commit(Path file) throws SaveException {
+<b class="nc"><i>69</i>&nbsp;        if (file == null) {</b>
+<b class="nc"><i>70</i>&nbsp;            return;</b>
+<i>71</i>&nbsp;        }
+<b class="nc"><i>72</i>&nbsp;        if (backup &amp;&amp; Files.exists(file)) {</b>
+<b class="nc"><i>73</i>&nbsp;            Path backupFile = FileUtil.addExtension(file, BACKUP_EXTENSION);</b>
+<b class="nc"><i>74</i>&nbsp;            FileUtil.copyFile(file, backupFile, true);</b>
+<i>75</i>&nbsp;        }
+<i>76</i>&nbsp;        try {
+<i>77</i>&nbsp;            // Always use a lock file
+<i>78</i>&nbsp;            try {
+<b class="nc"><i>79</i>&nbsp;                if (FileBasedLock.createLockFile(file)) {</b>
+<i>80</i>&nbsp;                    // Oops, the lock file already existed. Try to wait it out:
+<b class="nc"><i>81</i>&nbsp;                    if (!FileBasedLock.waitForFileLock(file)) {</b>
+<b class="nc"><i>82</i>&nbsp;                        throw SaveException.FILE_LOCKED;</b>
+<i>83</i>&nbsp;                    }
+<i>84</i>&nbsp;                }
+<b class="nc"><i>85</i>&nbsp;            } catch (IOException ex) {</b>
+<b class="nc"><i>86</i>&nbsp;                LOGGER.error(&quot;Error when creating lock file.&quot;, ex);</b>
+<b class="nc"><i>87</i>&nbsp;            }</b>
+<i>88</i>&nbsp;
+<i>89</i>&nbsp;            // Try to save file permissions to restore them later (by default: allow everything)
+<b class="nc"><i>90</i>&nbsp;            Set&lt;PosixFilePermission&gt; oldFilePermissions = EnumSet.allOf(PosixFilePermission.class);</b>
+<b class="nc"><i>91</i>&nbsp;            if (FileUtil.isPosixCompilant &amp;&amp; Files.exists(file)) {</b>
+<i>92</i>&nbsp;                try {
+<b class="nc"><i>93</i>&nbsp;                    oldFilePermissions = Files.getPosixFilePermissions(file);</b>
+<b class="nc"><i>94</i>&nbsp;                } catch (IOException exception) {</b>
+<b class="nc"><i>95</i>&nbsp;                    LOGGER.warn(&quot;Error getting file permissions.&quot;, exception);</b>
+<b class="nc"><i>96</i>&nbsp;                }</b>
+<i>97</i>&nbsp;            }
+<i>98</i>&nbsp;
+<b class="nc"><i>99</i>&nbsp;            FileUtil.copyFile(temporaryFile, file, true);</b>
+<i>100</i>&nbsp;
+<i>101</i>&nbsp;            // Restore file permissions
+<b class="nc"><i>102</i>&nbsp;            if (FileUtil.isPosixCompilant) {</b>
+<i>103</i>&nbsp;                try {
+<b class="nc"><i>104</i>&nbsp;                    Files.setPosixFilePermissions(file, oldFilePermissions);</b>
+<b class="nc"><i>105</i>&nbsp;                } catch (IOException exception) {</b>
+<b class="nc"><i>106</i>&nbsp;                    throw new SaveException(exception);</b>
+<b class="nc"><i>107</i>&nbsp;                }</b>
+<i>108</i>&nbsp;            }
+<i>109</i>&nbsp;        } finally {
+<b class="nc"><i>110</i>&nbsp;            FileBasedLock.deleteLockFile(file);</b>
+<b class="nc"><i>111</i>&nbsp;        }</b>
+<i>112</i>&nbsp;        try {
+<b class="nc"><i>113</i>&nbsp;            Files.deleteIfExists(temporaryFile);</b>
+<b class="nc"><i>114</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i>115</i>&nbsp;            LOGGER.warn(&quot;Cannot delete temporary file&quot;, e);</b>
+<b class="nc"><i>116</i>&nbsp;        }</b>
+<b class="nc"><i>117</i>&nbsp;    }</b>
+<i>118</i>&nbsp;
+<i>119</i>&nbsp;    @Override
+<i>120</i>&nbsp;    public void cancel() {
+<i>121</i>&nbsp;        try {
+<b class="nc"><i>122</i>&nbsp;            Files.deleteIfExists(temporaryFile);</b>
+<b class="nc"><i>123</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i>124</i>&nbsp;            LOGGER.warn(&quot;Cannot delete temporary file&quot;, e);</b>
+<b class="nc"><i>125</i>&nbsp;        }</b>
+<b class="nc"><i>126</i>&nbsp;    }</b>
+<i>127</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,243 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: MainTableColumn</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.maintable</a> ]
+</div>
+
+<h1>Coverage Summary for Class: MainTableColumn (net.sf.jabref.gui.maintable)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MainTableColumn</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 66)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.maintable;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.Collections;
+<i>4</i>&nbsp;import java.util.List;
+<i>5</i>&nbsp;import java.util.Optional;
+<i>6</i>&nbsp;import java.util.StringJoiner;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import javax.swing.JLabel;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;import net.sf.jabref.logic.layout.LayoutFormatter;
+<i>11</i>&nbsp;import net.sf.jabref.logic.layout.format.LatexToUnicodeFormatter;
+<i>12</i>&nbsp;import net.sf.jabref.model.database.BibDatabase;
+<i>13</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>14</i>&nbsp;import net.sf.jabref.model.entry.FieldName;
+<i>15</i>&nbsp;import net.sf.jabref.model.entry.FieldProperty;
+<i>16</i>&nbsp;import net.sf.jabref.model.entry.InternalBibtexFields;
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;public class MainTableColumn {
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;    private final String columnName;
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;    private final List&lt;String&gt; bibtexFields;
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;    private final boolean isIconColumn;
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    private final Optional&lt;JLabel&gt; iconLabel;
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;    private final Optional&lt;BibDatabase&gt; database;
+<i>29</i>&nbsp;
+<b class="nc"><i>30</i>&nbsp;    private final LayoutFormatter toUnicode = new LatexToUnicodeFormatter();</b>
+<i>31</i>&nbsp;
+<b class="nc"><i>32</i>&nbsp;    public MainTableColumn(String columnName) {</b>
+<b class="nc"><i>33</i>&nbsp;        this.columnName = columnName;</b>
+<b class="nc"><i>34</i>&nbsp;        this.bibtexFields = Collections.emptyList();</b>
+<b class="nc"><i>35</i>&nbsp;        this.isIconColumn = false;</b>
+<b class="nc"><i>36</i>&nbsp;        this.iconLabel = Optional.empty();</b>
+<b class="nc"><i>37</i>&nbsp;        this.database = Optional.empty();</b>
+<b class="nc"><i>38</i>&nbsp;    }</b>
+<i>39</i>&nbsp;
+<b class="nc"><i>40</i>&nbsp;    public MainTableColumn(String columnName, List&lt;String&gt; bibtexFields, BibDatabase database) {</b>
+<b class="nc"><i>41</i>&nbsp;        this.columnName = columnName;</b>
+<b class="nc"><i>42</i>&nbsp;        this.bibtexFields = Collections.unmodifiableList(bibtexFields);</b>
+<b class="nc"><i>43</i>&nbsp;        this.isIconColumn = false;</b>
+<b class="nc"><i>44</i>&nbsp;        this.iconLabel = Optional.empty();</b>
+<b class="nc"><i>45</i>&nbsp;        this.database = Optional.of(database);</b>
+<b class="nc"><i>46</i>&nbsp;    }</b>
+<i>47</i>&nbsp;
+<b class="nc"><i>48</i>&nbsp;    public MainTableColumn(String columnName, List&lt;String&gt; bibtexFields, JLabel iconLabel) {</b>
+<b class="nc"><i>49</i>&nbsp;        this.columnName = columnName;</b>
+<b class="nc"><i>50</i>&nbsp;        this.bibtexFields = Collections.unmodifiableList(bibtexFields);</b>
+<b class="nc"><i>51</i>&nbsp;        this.isIconColumn = true;</b>
+<b class="nc"><i>52</i>&nbsp;        this.iconLabel = Optional.of(iconLabel);</b>
+<b class="nc"><i>53</i>&nbsp;        this.database = Optional.empty();</b>
+<b class="nc"><i>54</i>&nbsp;    }</b>
+<i>55</i>&nbsp;
+<i>56</i>&nbsp;    /**
+<i>57</i>&nbsp;     * Get the table column name to be displayed in the UI
+<i>58</i>&nbsp;     *
+<i>59</i>&nbsp;     * @return name to be displayed. null if field is empty.
+<i>60</i>&nbsp;     */
+<i>61</i>&nbsp;    public String getDisplayName() {
+<b class="nc"><i>62</i>&nbsp;        if (bibtexFields.isEmpty()) {</b>
+<b class="nc"><i>63</i>&nbsp;            return null;</b>
+<i>64</i>&nbsp;        }
+<i>65</i>&nbsp;
+<b class="nc"><i>66</i>&nbsp;        StringJoiner joiner = new StringJoiner(FieldName.FIELD_SEPARATOR);</b>
+<b class="nc"><i>67</i>&nbsp;        for (String field : bibtexFields) {</b>
+<b class="nc"><i>68</i>&nbsp;            joiner.add(field);</b>
+<b class="nc"><i>69</i>&nbsp;        }</b>
+<b class="nc"><i>70</i>&nbsp;        return joiner.toString();</b>
+<i>71</i>&nbsp;    }
+<i>72</i>&nbsp;
+<i>73</i>&nbsp;    public String getColumnName() {
+<b class="nc"><i>74</i>&nbsp;        return columnName;</b>
+<i>75</i>&nbsp;    }
+<i>76</i>&nbsp;
+<i>77</i>&nbsp;    public List&lt;String&gt; getBibtexFields() {
+<b class="nc"><i>78</i>&nbsp;        return bibtexFields;</b>
+<i>79</i>&nbsp;    }
+<i>80</i>&nbsp;
+<i>81</i>&nbsp;    public boolean isIconColumn() {
+<b class="nc"><i>82</i>&nbsp;        return isIconColumn;</b>
+<i>83</i>&nbsp;    }
+<i>84</i>&nbsp;
+<i>85</i>&nbsp;    public boolean isFileFilter() {
+<b class="nc"><i>86</i>&nbsp;        return false; // Overridden in SpecialMainTableColumns for file filter columns</b>
+<i>87</i>&nbsp;    }
+<i>88</i>&nbsp;
+<i>89</i>&nbsp;    public Object getColumnValue(BibEntry entry) {
+<b class="nc"><i>90</i>&nbsp;        if (bibtexFields.isEmpty()) {</b>
+<b class="nc"><i>91</i>&nbsp;            return null;</b>
+<i>92</i>&nbsp;        }
+<b class="nc"><i>93</i>&nbsp;        boolean isNameColumn = false;</b>
+<i>94</i>&nbsp;
+<b class="nc"><i>95</i>&nbsp;        Optional&lt;String&gt; content = Optional.empty();</b>
+<b class="nc"><i>96</i>&nbsp;        for (String field : bibtexFields) {</b>
+<b class="nc"><i>97</i>&nbsp;            content = entry.getResolvedFieldOrAlias(field, database.orElse(null));</b>
+<b class="nc"><i>98</i>&nbsp;            if (content.isPresent()) {</b>
+<b class="nc"><i>99</i>&nbsp;                isNameColumn = InternalBibtexFields.getFieldProperties(field).contains(FieldProperty.PERSON_NAMES);</b>
+<b class="nc"><i>100</i>&nbsp;                break;</b>
+<i>101</i>&nbsp;            }
+<b class="nc"><i>102</i>&nbsp;        }</b>
+<i>103</i>&nbsp;
+<b class="nc"><i>104</i>&nbsp;        String result = content.orElse(null);</b>
+<i>105</i>&nbsp;
+<b class="nc"><i>106</i>&nbsp;        if (isNameColumn) {</b>
+<b class="nc"><i>107</i>&nbsp;            result = MainTableNameFormatter.formatName(toUnicode.format(result));</b>
+<i>108</i>&nbsp;        }
+<i>109</i>&nbsp;
+<b class="nc"><i>110</i>&nbsp;        if (result != null) {</b>
+<b class="nc"><i>111</i>&nbsp;            result = toUnicode.format(result).trim();</b>
+<i>112</i>&nbsp;        }
+<i>113</i>&nbsp;
+<b class="nc"><i>114</i>&nbsp;        return result;</b>
+<i>115</i>&nbsp;    }
+<i>116</i>&nbsp;
+<i>117</i>&nbsp;    public JLabel getHeaderLabel() {
+<b class="nc"><i>118</i>&nbsp;        if (isIconColumn) {</b>
+<b class="nc"><i>119</i>&nbsp;            return iconLabel.get();</b>
+<i>120</i>&nbsp;        } else {
+<b class="nc"><i>121</i>&nbsp;            return new JLabel(getDisplayName());</b>
+<i>122</i>&nbsp;        }
+<i>123</i>&nbsp;    }
+<i>124</i>&nbsp;
+<i>125</i>&nbsp;    /**
+<i>126</i>&nbsp;     * Check if the value returned by getColumnValue() is the same as a simple check of the entry&#39;s field(s) would give
+<i>127</i>&nbsp;     * The reasons for being different are (combinations may also happen):
+<i>128</i>&nbsp;     * - The entry has a crossref where the field content is obtained from
+<i>129</i>&nbsp;     * - The field has a string in it (which getColumnValue() resolves)
+<i>130</i>&nbsp;     * - There are some alias fields. For example, if the entry has a date field but no year field,
+<i>131</i>&nbsp;     *   {@link BibEntry#getResolvedFieldOrAlias(String, BibDatabase)} will return the year value from the date field
+<i>132</i>&nbsp;     *   when queried for year
+<i>133</i>&nbsp;     *
+<i>134</i>&nbsp;     * @param entry the BibEntry
+<i>135</i>&nbsp;     * @return true if the value returned by getColumnValue() is resolved as outlined above
+<i>136</i>&nbsp;     */
+<i>137</i>&nbsp;    public boolean isResolved(BibEntry entry) {
+<b class="nc"><i>138</i>&nbsp;        if (bibtexFields.isEmpty()) {</b>
+<b class="nc"><i>139</i>&nbsp;            return false;</b>
+<i>140</i>&nbsp;        }
+<i>141</i>&nbsp;
+<b class="nc"><i>142</i>&nbsp;        Optional&lt;String&gt; resolvedFieldContent = Optional.empty();</b>
+<b class="nc"><i>143</i>&nbsp;        Optional&lt;String&gt; plainFieldContent = Optional.empty();</b>
+<b class="nc"><i>144</i>&nbsp;        for (String field : bibtexFields) {</b>
+<i>145</i>&nbsp;            // entry type or bibtex key will never be resolved
+<b class="nc"><i>146</i>&nbsp;            if (BibEntry.TYPE_HEADER.equals(field) || BibEntry.OBSOLETE_TYPE_HEADER.equals(field)</b>
+<b class="nc"><i>147</i>&nbsp;                    || BibEntry.KEY_FIELD.equals(field)) {</b>
+<b class="nc"><i>148</i>&nbsp;                return false;</b>
+<i>149</i>&nbsp;            } else {
+<b class="nc"><i>150</i>&nbsp;                plainFieldContent = entry.getField(field);</b>
+<b class="nc"><i>151</i>&nbsp;                resolvedFieldContent = entry.getResolvedFieldOrAlias(field, database.orElse(null));</b>
+<i>152</i>&nbsp;            }
+<i>153</i>&nbsp;
+<b class="nc"><i>154</i>&nbsp;            if (resolvedFieldContent.isPresent()) {</b>
+<b class="nc"><i>155</i>&nbsp;                break;</b>
+<i>156</i>&nbsp;            }
+<b class="nc"><i>157</i>&nbsp;        }</b>
+<b class="nc"><i>158</i>&nbsp;        return (!resolvedFieldContent.equals(plainFieldContent));</b>
+<i>159</i>&nbsp;    }
+<i>160</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

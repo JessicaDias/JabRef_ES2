@@ -1,0 +1,745 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: FileListEditor</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.fieldeditors</a> ]
+</div>
+
+<h1>Coverage Summary for Class: FileListEditor (net.sf.jabref.gui.fieldeditors)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">FileListEditor</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 42)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 230)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">FileListEditor$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 7)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">FileListEditor$2</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">FileListEditor$3</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">FileListEditor$4</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">FileListEditor$TableClickListener</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 20)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 55)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 266)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.fieldeditors;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.BorderLayout;
+<i>4</i>&nbsp;import java.awt.Color;
+<i>5</i>&nbsp;import java.awt.Component;
+<i>6</i>&nbsp;import java.awt.Insets;
+<i>7</i>&nbsp;import java.awt.event.ActionEvent;
+<i>8</i>&nbsp;import java.awt.event.ActionListener;
+<i>9</i>&nbsp;import java.awt.event.MouseAdapter;
+<i>10</i>&nbsp;import java.awt.event.MouseEvent;
+<i>11</i>&nbsp;import java.io.File;
+<i>12</i>&nbsp;import java.io.IOException;
+<i>13</i>&nbsp;import java.nio.file.Files;
+<i>14</i>&nbsp;import java.nio.file.Path;
+<i>15</i>&nbsp;import java.nio.file.Paths;
+<i>16</i>&nbsp;import java.util.ArrayList;
+<i>17</i>&nbsp;import java.util.List;
+<i>18</i>&nbsp;import java.util.Optional;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;import javax.swing.AbstractAction;
+<i>21</i>&nbsp;import javax.swing.JButton;
+<i>22</i>&nbsp;import javax.swing.JComponent;
+<i>23</i>&nbsp;import javax.swing.JDialog;
+<i>24</i>&nbsp;import javax.swing.JLabel;
+<i>25</i>&nbsp;import javax.swing.JMenuItem;
+<i>26</i>&nbsp;import javax.swing.JOptionPane;
+<i>27</i>&nbsp;import javax.swing.JPanel;
+<i>28</i>&nbsp;import javax.swing.JPopupMenu;
+<i>29</i>&nbsp;import javax.swing.JScrollPane;
+<i>30</i>&nbsp;import javax.swing.JTable;
+<i>31</i>&nbsp;import javax.swing.KeyStroke;
+<i>32</i>&nbsp;import javax.swing.TransferHandler;
+<i>33</i>&nbsp;import javax.swing.table.TableCellRenderer;
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;import net.sf.jabref.Globals;
+<i>36</i>&nbsp;import net.sf.jabref.JabRefExecutorService;
+<i>37</i>&nbsp;import net.sf.jabref.gui.IconTheme;
+<i>38</i>&nbsp;import net.sf.jabref.gui.JabRefFrame;
+<i>39</i>&nbsp;import net.sf.jabref.gui.actions.Actions;
+<i>40</i>&nbsp;import net.sf.jabref.gui.autocompleter.AutoCompleteListener;
+<i>41</i>&nbsp;import net.sf.jabref.gui.desktop.JabRefDesktop;
+<i>42</i>&nbsp;import net.sf.jabref.gui.entryeditor.EntryEditor;
+<i>43</i>&nbsp;import net.sf.jabref.gui.externalfiles.AutoSetLinks;
+<i>44</i>&nbsp;import net.sf.jabref.gui.externalfiles.DownloadExternalFile;
+<i>45</i>&nbsp;import net.sf.jabref.gui.externalfiles.MoveFileAction;
+<i>46</i>&nbsp;import net.sf.jabref.gui.externalfiletype.ExternalFileType;
+<i>47</i>&nbsp;import net.sf.jabref.gui.externalfiletype.ExternalFileTypes;
+<i>48</i>&nbsp;import net.sf.jabref.gui.filelist.FileListEntry;
+<i>49</i>&nbsp;import net.sf.jabref.gui.filelist.FileListEntryEditor;
+<i>50</i>&nbsp;import net.sf.jabref.gui.filelist.FileListTableModel;
+<i>51</i>&nbsp;import net.sf.jabref.gui.keyboard.KeyBinding;
+<i>52</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>53</i>&nbsp;import net.sf.jabref.logic.util.io.FileUtil;
+<i>54</i>&nbsp;import net.sf.jabref.model.database.BibDatabaseContext;
+<i>55</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>56</i>&nbsp;
+<i>57</i>&nbsp;import com.jgoodies.forms.builder.FormBuilder;
+<i>58</i>&nbsp;import com.jgoodies.forms.layout.FormLayout;
+<i>59</i>&nbsp;import org.apache.commons.logging.Log;
+<i>60</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>61</i>&nbsp;
+<i>62</i>&nbsp;public class FileListEditor extends JTable implements FieldEditor, DownloadExternalFile.DownloadCallback {
+<b class="nc"><i>63</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(FileListEditor.class);</b>
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;    private final FieldNameLabel label;
+<i>66</i>&nbsp;    private FileListEntryEditor editor;
+<i>67</i>&nbsp;    private final JabRefFrame frame;
+<i>68</i>&nbsp;    private final BibDatabaseContext databaseContext;
+<i>69</i>&nbsp;    private final String fieldName;
+<i>70</i>&nbsp;    private final EntryEditor entryEditor;
+<i>71</i>&nbsp;    private final JPanel panel;
+<i>72</i>&nbsp;    private final FileListTableModel tableModel;
+<i>73</i>&nbsp;    private final JButton auto;
+<b class="nc"><i>74</i>&nbsp;    private final JPopupMenu menu = new JPopupMenu();</b>
+<i>75</i>&nbsp;
+<i>76</i>&nbsp;    public FileListEditor(JabRefFrame frame, BibDatabaseContext databaseContext, String fieldName, String content,
+<b class="nc"><i>77</i>&nbsp;                          EntryEditor entryEditor) {</b>
+<b class="nc"><i>78</i>&nbsp;        this.frame = frame;</b>
+<b class="nc"><i>79</i>&nbsp;        this.databaseContext = databaseContext;</b>
+<b class="nc"><i>80</i>&nbsp;        this.fieldName = fieldName;</b>
+<b class="nc"><i>81</i>&nbsp;        this.entryEditor = entryEditor;</b>
+<b class="nc"><i>82</i>&nbsp;        label = new FieldNameLabel(fieldName);</b>
+<b class="nc"><i>83</i>&nbsp;        tableModel = new FileListTableModel();</b>
+<b class="nc"><i>84</i>&nbsp;        setText(content);</b>
+<b class="nc"><i>85</i>&nbsp;        setModel(tableModel);</b>
+<b class="nc"><i>86</i>&nbsp;        JScrollPane sPane = new JScrollPane(this);</b>
+<b class="nc"><i>87</i>&nbsp;        setTableHeader(null);</b>
+<b class="nc"><i>88</i>&nbsp;        addMouseListener(new TableClickListener());</b>
+<i>89</i>&nbsp;
+<b class="nc"><i>90</i>&nbsp;        JButton add = new JButton(IconTheme.JabRefIcon.ADD_NOBOX.getSmallIcon());</b>
+<b class="nc"><i>91</i>&nbsp;        add.setToolTipText(Localization.lang(&quot;New file link (INSERT)&quot;));</b>
+<b class="nc"><i>92</i>&nbsp;        JButton remove = new JButton(IconTheme.JabRefIcon.REMOVE_NOBOX.getSmallIcon());</b>
+<b class="nc"><i>93</i>&nbsp;        remove.setToolTipText(Localization.lang(&quot;Remove file link (DELETE)&quot;));</b>
+<b class="nc"><i>94</i>&nbsp;        JButton up = new JButton(IconTheme.JabRefIcon.UP.getSmallIcon());</b>
+<i>95</i>&nbsp;
+<b class="nc"><i>96</i>&nbsp;        JButton down = new JButton(IconTheme.JabRefIcon.DOWN.getSmallIcon());</b>
+<b class="nc"><i>97</i>&nbsp;        auto = new JButton(Localization.lang(&quot;Get fulltext&quot;));</b>
+<b class="nc"><i>98</i>&nbsp;        JButton download = new JButton(Localization.lang(&quot;Download from URL&quot;));</b>
+<b class="nc"><i>99</i>&nbsp;        add.setMargin(new Insets(0, 0, 0, 0));</b>
+<b class="nc"><i>100</i>&nbsp;        remove.setMargin(new Insets(0, 0, 0, 0));</b>
+<b class="nc"><i>101</i>&nbsp;        up.setMargin(new Insets(0, 0, 0, 0));</b>
+<b class="nc"><i>102</i>&nbsp;        down.setMargin(new Insets(0, 0, 0, 0));</b>
+<b class="nc"><i>103</i>&nbsp;        add.addActionListener(e -&gt; addEntry());</b>
+<b class="nc"><i>104</i>&nbsp;        remove.addActionListener(e -&gt; removeEntries());</b>
+<b class="nc"><i>105</i>&nbsp;        up.addActionListener(e -&gt; moveEntry(-1));</b>
+<b class="nc"><i>106</i>&nbsp;        down.addActionListener(e -&gt; moveEntry(1));</b>
+<b class="nc"><i>107</i>&nbsp;        auto.addActionListener(e -&gt; autoSetLinks());</b>
+<b class="nc"><i>108</i>&nbsp;        download.addActionListener(e -&gt; downloadFile());</b>
+<i>109</i>&nbsp;
+<b class="nc"><i>110</i>&nbsp;        FormBuilder builder = FormBuilder.create()</b>
+<b class="nc"><i>111</i>&nbsp;                .layout(new FormLayout</b>
+<i>112</i>&nbsp;                (&quot;fill:pref,1dlu,fill:pref,1dlu,fill:pref&quot;, &quot;fill:pref,fill:pref&quot;));
+<b class="nc"><i>113</i>&nbsp;        builder.add(up).xy(1, 1);</b>
+<b class="nc"><i>114</i>&nbsp;        builder.add(add).xy(3, 1);</b>
+<b class="nc"><i>115</i>&nbsp;        builder.add(auto).xy(5, 1);</b>
+<b class="nc"><i>116</i>&nbsp;        builder.add(down).xy(1, 2);</b>
+<b class="nc"><i>117</i>&nbsp;        builder.add(remove).xy(3, 2);</b>
+<b class="nc"><i>118</i>&nbsp;        builder.add(download).xy(5, 2);</b>
+<b class="nc"><i>119</i>&nbsp;        panel = new JPanel();</b>
+<b class="nc"><i>120</i>&nbsp;        panel.setLayout(new BorderLayout());</b>
+<b class="nc"><i>121</i>&nbsp;        panel.add(sPane, BorderLayout.CENTER);</b>
+<b class="nc"><i>122</i>&nbsp;        panel.add(builder.getPanel(), BorderLayout.EAST);</b>
+<i>123</i>&nbsp;
+<b class="nc"><i>124</i>&nbsp;        TransferHandler transferHandler = new FileListEditorTransferHandler(frame, entryEditor, null);</b>
+<b class="nc"><i>125</i>&nbsp;        setTransferHandler(transferHandler);</b>
+<b class="nc"><i>126</i>&nbsp;        panel.setTransferHandler(transferHandler);</b>
+<i>127</i>&nbsp;
+<i>128</i>&nbsp;        // Add an input/action pair for deleting entries:
+<b class="nc"><i>129</i>&nbsp;        getInputMap().put(KeyStroke.getKeyStroke(&quot;DELETE&quot;), &quot;delete&quot;);</b>
+<b class="nc"><i>130</i>&nbsp;        getActionMap().put(&quot;delete&quot;, new AbstractAction() {</b>
+<i>131</i>&nbsp;
+<i>132</i>&nbsp;            @Override
+<i>133</i>&nbsp;            public void actionPerformed(ActionEvent actionEvent) {
+<b class="nc"><i>134</i>&nbsp;                int row = getSelectedRow();</b>
+<b class="nc"><i>135</i>&nbsp;                removeEntries();</b>
+<b class="nc"><i>136</i>&nbsp;                row = Math.min(row, getRowCount() - 1);</b>
+<b class="nc"><i>137</i>&nbsp;                if (row &gt;= 0) {</b>
+<b class="nc"><i>138</i>&nbsp;                    setRowSelectionInterval(row, row);</b>
+<i>139</i>&nbsp;                }
+<b class="nc"><i>140</i>&nbsp;            }</b>
+<i>141</i>&nbsp;        });
+<i>142</i>&nbsp;
+<i>143</i>&nbsp;        // Add an input/action pair for inserting an entry:
+<b class="nc"><i>144</i>&nbsp;        getInputMap().put(KeyStroke.getKeyStroke(&quot;INSERT&quot;), &quot;insert&quot;);</b>
+<b class="nc"><i>145</i>&nbsp;        getActionMap().put(&quot;insert&quot;, new AbstractAction() {</b>
+<i>146</i>&nbsp;
+<i>147</i>&nbsp;            @Override
+<i>148</i>&nbsp;            public void actionPerformed(ActionEvent actionEvent) {
+<b class="nc"><i>149</i>&nbsp;                addEntry();</b>
+<b class="nc"><i>150</i>&nbsp;            }</b>
+<i>151</i>&nbsp;        });
+<i>152</i>&nbsp;
+<i>153</i>&nbsp;        // Add input/action pair for moving an entry up:
+<b class="nc"><i>154</i>&nbsp;        getInputMap().put(Globals.getKeyPrefs().getKey(KeyBinding.FILE_LIST_EDITOR_MOVE_ENTRY_UP), &quot;move up&quot;);</b>
+<b class="nc"><i>155</i>&nbsp;        getActionMap().put(&quot;move up&quot;, new AbstractAction() {</b>
+<i>156</i>&nbsp;
+<i>157</i>&nbsp;            @Override
+<i>158</i>&nbsp;            public void actionPerformed(ActionEvent actionEvent) {
+<b class="nc"><i>159</i>&nbsp;                moveEntry(-1);</b>
+<b class="nc"><i>160</i>&nbsp;            }</b>
+<i>161</i>&nbsp;        });
+<i>162</i>&nbsp;
+<i>163</i>&nbsp;        // Add input/action pair for moving an entry down:
+<b class="nc"><i>164</i>&nbsp;        getInputMap().put(Globals.getKeyPrefs().getKey(KeyBinding.FILE_LIST_EDITOR_MOVE_ENTRY_DOWN), &quot;move down&quot;);</b>
+<b class="nc"><i>165</i>&nbsp;        getActionMap().put(&quot;move down&quot;, new AbstractAction() {</b>
+<i>166</i>&nbsp;
+<i>167</i>&nbsp;            @Override
+<i>168</i>&nbsp;            public void actionPerformed(ActionEvent actionEvent) {
+<b class="nc"><i>169</i>&nbsp;                moveEntry(1);</b>
+<b class="nc"><i>170</i>&nbsp;            }</b>
+<i>171</i>&nbsp;        });
+<i>172</i>&nbsp;
+<b class="nc"><i>173</i>&nbsp;        JMenuItem openLink = new JMenuItem(Localization.lang(&quot;Open&quot;));</b>
+<b class="nc"><i>174</i>&nbsp;        menu.add(openLink);</b>
+<b class="nc"><i>175</i>&nbsp;        openLink.addActionListener(e -&gt; openSelectedFile());</b>
+<i>176</i>&nbsp;
+<b class="nc"><i>177</i>&nbsp;        JMenuItem openFolder = new JMenuItem(Localization.lang(&quot;Open folder&quot;));</b>
+<b class="nc"><i>178</i>&nbsp;        menu.add(openFolder);</b>
+<b class="nc"><i>179</i>&nbsp;        openFolder.addActionListener(e -&gt; {</b>
+<b class="nc"><i>180</i>&nbsp;            int row = getSelectedRow();</b>
+<b class="nc"><i>181</i>&nbsp;            if (row &gt;= 0) {</b>
+<b class="nc"><i>182</i>&nbsp;                FileListEntry entry = tableModel.getEntry(row);</b>
+<i>183</i>&nbsp;                try {
+<b class="nc"><i>184</i>&nbsp;                    String path = &quot;&quot;;</b>
+<i>185</i>&nbsp;                    // absolute path
+<b class="nc"><i>186</i>&nbsp;                    if (Paths.get(entry.link).isAbsolute()) {</b>
+<b class="nc"><i>187</i>&nbsp;                        path = Paths.get(entry.link).toString();</b>
+<i>188</i>&nbsp;                    } else {
+<i>189</i>&nbsp;                        // relative to file folder
+<b class="nc"><i>190</i>&nbsp;                        for (String folder : databaseContext</b>
+<b class="nc"><i>191</i>&nbsp;                                .getFileDirectories(Globals.prefs.getFileDirectoryPreferences())) {</b>
+<b class="nc"><i>192</i>&nbsp;                            Path file = Paths.get(folder, entry.link);</b>
+<b class="nc"><i>193</i>&nbsp;                            if (Files.exists(file)) {</b>
+<b class="nc"><i>194</i>&nbsp;                                path = file.toString();</b>
+<b class="nc"><i>195</i>&nbsp;                                break;</b>
+<i>196</i>&nbsp;                            }
+<b class="nc"><i>197</i>&nbsp;                        }</b>
+<i>198</i>&nbsp;                    }
+<b class="nc"><i>199</i>&nbsp;                    if (!path.isEmpty()) {</b>
+<b class="nc"><i>200</i>&nbsp;                        JabRefDesktop.openFolderAndSelectFile(path);</b>
+<i>201</i>&nbsp;                    } else {
+<b class="nc"><i>202</i>&nbsp;                        JOptionPane.showMessageDialog(frame,</b>
+<b class="nc"><i>203</i>&nbsp;                                Localization.lang(&quot;File not found&quot;),</b>
+<b class="nc"><i>204</i>&nbsp;                                Localization.lang(&quot;Error&quot;),</b>
+<i>205</i>&nbsp;                                JOptionPane.ERROR_MESSAGE);
+<i>206</i>&nbsp;                    }
+<b class="nc"><i>207</i>&nbsp;                } catch (IOException ex) {</b>
+<b class="nc"><i>208</i>&nbsp;                    LOGGER.debug(&quot;Cannot open folder&quot;, ex);</b>
+<b class="nc"><i>209</i>&nbsp;                }</b>
+<i>210</i>&nbsp;            }
+<b class="nc"><i>211</i>&nbsp;        });</b>
+<i>212</i>&nbsp;
+<b class="nc"><i>213</i>&nbsp;        JMenuItem rename = new JMenuItem(Localization.lang(&quot;Move/Rename file&quot;));</b>
+<b class="nc"><i>214</i>&nbsp;        menu.add(rename);</b>
+<b class="nc"><i>215</i>&nbsp;        rename.addActionListener(new MoveFileAction(frame, entryEditor, this, false));</b>
+<i>216</i>&nbsp;
+<b class="nc"><i>217</i>&nbsp;        JMenuItem moveToFileDir = new JMenuItem(Localization.lang(&quot;Move file to file directory&quot;));</b>
+<b class="nc"><i>218</i>&nbsp;        menu.add(moveToFileDir);</b>
+<b class="nc"><i>219</i>&nbsp;        moveToFileDir.addActionListener(new MoveFileAction(frame, entryEditor, this, true));</b>
+<i>220</i>&nbsp;
+<b class="nc"><i>221</i>&nbsp;        JMenuItem deleteFile = new JMenuItem(Localization.lang(&quot;Delete local file&quot;));</b>
+<b class="nc"><i>222</i>&nbsp;        menu.add(deleteFile);</b>
+<b class="nc"><i>223</i>&nbsp;        deleteFile.addActionListener(e -&gt; {</b>
+<b class="nc"><i>224</i>&nbsp;            int row = getSelectedRow();</b>
+<i>225</i>&nbsp;            // no selection
+<b class="nc"><i>226</i>&nbsp;            if (row != -1) {</b>
+<i>227</i>&nbsp;
+<b class="nc"><i>228</i>&nbsp;                FileListEntry entry = tableModel.getEntry(row);</b>
+<i>229</i>&nbsp;                // null if file does not exist
+<b class="nc"><i>230</i>&nbsp;                Optional&lt;File&gt; file = FileUtil.expandFilename(databaseContext, entry.link,</b>
+<b class="nc"><i>231</i>&nbsp;                        Globals.prefs.getFileDirectoryPreferences());</b>
+<i>232</i>&nbsp;
+<i>233</i>&nbsp;                // transactional delete and unlink
+<i>234</i>&nbsp;                try {
+<b class="nc"><i>235</i>&nbsp;                    if (file.isPresent()) {</b>
+<b class="nc"><i>236</i>&nbsp;                        Files.delete(file.get().toPath());</b>
+<i>237</i>&nbsp;                    }
+<b class="nc"><i>238</i>&nbsp;                    removeEntries();</b>
+<b class="nc"><i>239</i>&nbsp;                } catch (IOException ex) {</b>
+<b class="nc"><i>240</i>&nbsp;                    JOptionPane.showMessageDialog(frame, Localization.lang(&quot;File permission error&quot;),</b>
+<b class="nc"><i>241</i>&nbsp;                            Localization.lang(&quot;Cannot delete file&quot;), JOptionPane.ERROR_MESSAGE);</b>
+<b class="nc"><i>242</i>&nbsp;                    LOGGER.warn(&quot;File permission error while deleting: &quot; + entry.link, ex);</b>
+<b class="nc"><i>243</i>&nbsp;                }</b>
+<i>244</i>&nbsp;            }
+<b class="nc"><i>245</i>&nbsp;        });</b>
+<b class="nc"><i>246</i>&nbsp;        adjustColumnWidth();</b>
+<b class="nc"><i>247</i>&nbsp;    }</b>
+<i>248</i>&nbsp;
+<i>249</i>&nbsp;    public void adjustColumnWidth() {
+<b class="nc"><i>250</i>&nbsp;        for (int column = 0; column &lt; this.getColumnCount(); column++) {</b>
+<b class="nc"><i>251</i>&nbsp;            int width = 0;</b>
+<b class="nc"><i>252</i>&nbsp;            for (int row = 0; row &lt; this.getRowCount(); row++) {</b>
+<b class="nc"><i>253</i>&nbsp;                TableCellRenderer renderer = this.getCellRenderer(row, column);</b>
+<b class="nc"><i>254</i>&nbsp;                Component comp = this.prepareRenderer(renderer, row, column);</b>
+<b class="nc"><i>255</i>&nbsp;                width = Math.max(comp.getPreferredSize().width, width);</b>
+<i>256</i>&nbsp;            }
+<b class="nc"><i>257</i>&nbsp;            this.columnModel.getColumn(column).setPreferredWidth(width);</b>
+<i>258</i>&nbsp;        }
+<b class="nc"><i>259</i>&nbsp;    }</b>
+<i>260</i>&nbsp;
+<i>261</i>&nbsp;    private void openSelectedFile() {
+<b class="nc"><i>262</i>&nbsp;        int row = getSelectedRow();</b>
+<b class="nc"><i>263</i>&nbsp;        if (row &gt;= 0) {</b>
+<b class="nc"><i>264</i>&nbsp;            FileListEntry entry = tableModel.getEntry(row);</b>
+<i>265</i>&nbsp;            try {
+<b class="nc"><i>266</i>&nbsp;                Optional&lt;ExternalFileType&gt; type = ExternalFileTypes.getInstance()</b>
+<b class="nc"><i>267</i>&nbsp;                        .getExternalFileTypeByName(entry.type.get().getName());</b>
+<b class="nc"><i>268</i>&nbsp;                JabRefDesktop.openExternalFileAnyFormat(databaseContext, entry.link, type.isPresent() ? type : entry.type);</b>
+<b class="nc"><i>269</i>&nbsp;            } catch (IOException e) {</b>
+<b class="nc"><i>270</i>&nbsp;                LOGGER.warn(&quot;Cannot open selected file.&quot;, e);</b>
+<b class="nc"><i>271</i>&nbsp;            }</b>
+<i>272</i>&nbsp;        }
+<b class="nc"><i>273</i>&nbsp;    }</b>
+<i>274</i>&nbsp;
+<i>275</i>&nbsp;    public FileListTableModel getTableModel() {
+<b class="nc"><i>276</i>&nbsp;        return tableModel;</b>
+<i>277</i>&nbsp;    }
+<i>278</i>&nbsp;
+<i>279</i>&nbsp;    @Override
+<i>280</i>&nbsp;    public String getFieldName() {
+<b class="nc"><i>281</i>&nbsp;        return fieldName;</b>
+<i>282</i>&nbsp;    }
+<i>283</i>&nbsp;
+<i>284</i>&nbsp;    /*
+<i>285</i>&nbsp;      * Returns the component to be added to a container. Might be a JScrollPane
+<i>286</i>&nbsp;    * or the component itself.
+<i>287</i>&nbsp;    */
+<i>288</i>&nbsp;    @Override
+<i>289</i>&nbsp;    public JComponent getPane() {
+<b class="nc"><i>290</i>&nbsp;        return panel;</b>
+<i>291</i>&nbsp;    }
+<i>292</i>&nbsp;
+<i>293</i>&nbsp;    /*
+<i>294</i>&nbsp;     * Returns the text component itself.
+<i>295</i>&nbsp;    */
+<i>296</i>&nbsp;    @Override
+<i>297</i>&nbsp;    public JComponent getTextComponent() {
+<b class="nc"><i>298</i>&nbsp;        return this;</b>
+<i>299</i>&nbsp;    }
+<i>300</i>&nbsp;
+<i>301</i>&nbsp;    @Override
+<i>302</i>&nbsp;    public JLabel getLabel() {
+<b class="nc"><i>303</i>&nbsp;        return label;</b>
+<i>304</i>&nbsp;    }
+<i>305</i>&nbsp;
+<i>306</i>&nbsp;    @Override
+<i>307</i>&nbsp;    public void setLabelColor(Color color) {
+<b class="nc"><i>308</i>&nbsp;        label.setForeground(color);</b>
+<b class="nc"><i>309</i>&nbsp;    }</b>
+<i>310</i>&nbsp;
+<i>311</i>&nbsp;    @Override
+<i>312</i>&nbsp;    public String getText() {
+<b class="nc"><i>313</i>&nbsp;        return tableModel.getStringRepresentation();</b>
+<i>314</i>&nbsp;    }
+<i>315</i>&nbsp;
+<i>316</i>&nbsp;    @Override
+<i>317</i>&nbsp;    public void setText(String newText) {
+<b class="nc"><i>318</i>&nbsp;        tableModel.setContent(newText);</b>
+<b class="nc"><i>319</i>&nbsp;    }</b>
+<i>320</i>&nbsp;
+<i>321</i>&nbsp;    @Override
+<i>322</i>&nbsp;    public void append(String text) {
+<i>323</i>&nbsp;        // Do nothing
+<b class="nc"><i>324</i>&nbsp;    }</b>
+<i>325</i>&nbsp;
+<i>326</i>&nbsp;    @Override
+<i>327</i>&nbsp;    public void updateFont() {
+<i>328</i>&nbsp;        // Do nothing
+<b class="nc"><i>329</i>&nbsp;    }</b>
+<i>330</i>&nbsp;
+<i>331</i>&nbsp;    @Override
+<i>332</i>&nbsp;    public void paste(String textToInsert) {
+<i>333</i>&nbsp;        // Do nothing
+<b class="nc"><i>334</i>&nbsp;    }</b>
+<i>335</i>&nbsp;
+<i>336</i>&nbsp;    @Override
+<i>337</i>&nbsp;    public String getSelectedText() {
+<b class="nc"><i>338</i>&nbsp;        return null;</b>
+<i>339</i>&nbsp;    }
+<i>340</i>&nbsp;
+<i>341</i>&nbsp;    private void addEntry(String initialLink) {
+<b class="nc"><i>342</i>&nbsp;        int row = getSelectedRow();</b>
+<b class="nc"><i>343</i>&nbsp;        if (row == -1) {</b>
+<b class="nc"><i>344</i>&nbsp;            row = 0;</b>
+<i>345</i>&nbsp;        }
+<b class="nc"><i>346</i>&nbsp;        FileListEntry entry = new FileListEntry(&quot;&quot;, initialLink);</b>
+<b class="nc"><i>347</i>&nbsp;        if (editListEntry(entry, true)) {</b>
+<b class="nc"><i>348</i>&nbsp;            tableModel.addEntry(row, entry);</b>
+<i>349</i>&nbsp;        }
+<b class="nc"><i>350</i>&nbsp;        entryEditor.updateField(this);</b>
+<b class="nc"><i>351</i>&nbsp;        adjustColumnWidth();</b>
+<b class="nc"><i>352</i>&nbsp;    }</b>
+<i>353</i>&nbsp;
+<i>354</i>&nbsp;    private void addEntry() {
+<b class="nc"><i>355</i>&nbsp;        List&lt;String&gt; defaultDirectory = databaseContext.getFileDirectories(Globals.prefs.getFileDirectoryPreferences());</b>
+<b class="nc"><i>356</i>&nbsp;        if (defaultDirectory.isEmpty() || (defaultDirectory.get(0) == null)) {</b>
+<b class="nc"><i>357</i>&nbsp;            addEntry(&quot;&quot;);</b>
+<i>358</i>&nbsp;        } else {
+<b class="nc"><i>359</i>&nbsp;            addEntry(defaultDirectory.get(0));</b>
+<i>360</i>&nbsp;        }
+<b class="nc"><i>361</i>&nbsp;    }</b>
+<i>362</i>&nbsp;
+<i>363</i>&nbsp;    private void removeEntries() {
+<b class="nc"><i>364</i>&nbsp;        int[] rows = getSelectedRows();</b>
+<b class="nc"><i>365</i>&nbsp;        if (rows != null) {</b>
+<b class="nc"><i>366</i>&nbsp;            for (int i = rows.length - 1; i &gt;= 0; i--) {</b>
+<b class="nc"><i>367</i>&nbsp;                tableModel.removeEntry(rows[i]);</b>
+<i>368</i>&nbsp;            }
+<i>369</i>&nbsp;        }
+<b class="nc"><i>370</i>&nbsp;        entryEditor.updateField(this);</b>
+<b class="nc"><i>371</i>&nbsp;        adjustColumnWidth();</b>
+<b class="nc"><i>372</i>&nbsp;    }</b>
+<i>373</i>&nbsp;
+<i>374</i>&nbsp;    private void moveEntry(int i) {
+<b class="nc"><i>375</i>&nbsp;        int[] sel = getSelectedRows();</b>
+<b class="nc"><i>376</i>&nbsp;        if ((sel.length != 1) || (tableModel.getRowCount() &lt; 2)) {</b>
+<b class="nc"><i>377</i>&nbsp;            return;</b>
+<i>378</i>&nbsp;        }
+<b class="nc"><i>379</i>&nbsp;        int toIdx = sel[0] + i;</b>
+<b class="nc"><i>380</i>&nbsp;        if (toIdx &gt;= tableModel.getRowCount()) {</b>
+<b class="nc"><i>381</i>&nbsp;            toIdx -= tableModel.getRowCount();</b>
+<i>382</i>&nbsp;        }
+<b class="nc"><i>383</i>&nbsp;        if (toIdx &lt; 0) {</b>
+<b class="nc"><i>384</i>&nbsp;            toIdx += tableModel.getRowCount();</b>
+<i>385</i>&nbsp;        }
+<b class="nc"><i>386</i>&nbsp;        FileListEntry entry = tableModel.getEntry(sel[0]);</b>
+<b class="nc"><i>387</i>&nbsp;        tableModel.removeEntry(sel[0]);</b>
+<b class="nc"><i>388</i>&nbsp;        tableModel.addEntry(toIdx, entry);</b>
+<b class="nc"><i>389</i>&nbsp;        entryEditor.updateField(this);</b>
+<b class="nc"><i>390</i>&nbsp;        setRowSelectionInterval(toIdx, toIdx);</b>
+<b class="nc"><i>391</i>&nbsp;        adjustColumnWidth();</b>
+<b class="nc"><i>392</i>&nbsp;    }</b>
+<i>393</i>&nbsp;
+<i>394</i>&nbsp;    /**
+<i>395</i>&nbsp;     * Open an editor for this entry.
+<i>396</i>&nbsp;     *
+<i>397</i>&nbsp;     * @param entry      The entry to edit.
+<i>398</i>&nbsp;     * @param openBrowse True to indicate that a Browse dialog should be immediately opened.
+<i>399</i>&nbsp;     * @return true if the edit was accepted, false if it was canceled.
+<i>400</i>&nbsp;     */
+<i>401</i>&nbsp;    private boolean editListEntry(FileListEntry entry, boolean openBrowse) {
+<b class="nc"><i>402</i>&nbsp;        if (editor == null) {</b>
+<b class="nc"><i>403</i>&nbsp;            editor = new FileListEntryEditor(frame, entry, false, true, databaseContext);</b>
+<i>404</i>&nbsp;        } else {
+<b class="nc"><i>405</i>&nbsp;            editor.setEntry(entry);</b>
+<i>406</i>&nbsp;        }
+<b class="nc"><i>407</i>&nbsp;        editor.setVisible(true, openBrowse);</b>
+<b class="nc"><i>408</i>&nbsp;        if (editor.okPressed()) {</b>
+<b class="nc"><i>409</i>&nbsp;            tableModel.fireTableDataChanged();</b>
+<i>410</i>&nbsp;        }
+<b class="nc"><i>411</i>&nbsp;        entryEditor.updateField(this);</b>
+<b class="nc"><i>412</i>&nbsp;        adjustColumnWidth();</b>
+<b class="nc"><i>413</i>&nbsp;        return editor.okPressed();</b>
+<i>414</i>&nbsp;    }
+<i>415</i>&nbsp;
+<i>416</i>&nbsp;    public void autoSetLinks() {
+<b class="nc"><i>417</i>&nbsp;        auto.setEnabled(false);</b>
+<i>418</i>&nbsp;
+<b class="nc"><i>419</i>&nbsp;        List&lt;BibEntry&gt; entries = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>420</i>&nbsp;        entries.add(entryEditor.getEntry());</b>
+<i>421</i>&nbsp;
+<i>422</i>&nbsp;        // filesystem lookup
+<b class="nc"><i>423</i>&nbsp;        JDialog dialog = new JDialog(frame, true);</b>
+<b class="nc"><i>424</i>&nbsp;        JabRefExecutorService.INSTANCE</b>
+<b class="nc"><i>425</i>&nbsp;                .execute(AutoSetLinks.autoSetLinks(entries, null, null, tableModel, databaseContext, e -&gt; {</b>
+<b class="nc"><i>426</i>&nbsp;                    auto.setEnabled(true);</b>
+<i>427</i>&nbsp;
+<b class="nc"><i>428</i>&nbsp;                    if (e.getID() &gt; 0) {</b>
+<b class="nc"><i>429</i>&nbsp;                        entryEditor.updateField(this);</b>
+<b class="nc"><i>430</i>&nbsp;                        adjustColumnWidth();</b>
+<b class="nc"><i>431</i>&nbsp;                        frame.output(Localization.lang(&quot;Finished automatically setting external links.&quot;));</b>
+<i>432</i>&nbsp;                    } else {
+<b class="nc"><i>433</i>&nbsp;                        frame.output(Localization.lang(&quot;Finished automatically setting external links.&quot;) + &quot; &quot;</b>
+<b class="nc"><i>434</i>&nbsp;                                + Localization.lang(&quot;No files found.&quot;));</b>
+<i>435</i>&nbsp;
+<i>436</i>&nbsp;                        // auto download file as no file found before
+<b class="nc"><i>437</i>&nbsp;                        frame.getCurrentBasePanel().runCommand(Actions.DOWNLOAD_FULL_TEXT);</b>
+<i>438</i>&nbsp;                    }
+<i>439</i>&nbsp;                    // reset
+<b class="nc"><i>440</i>&nbsp;                    auto.setEnabled(true);</b>
+<b class="nc"><i>441</i>&nbsp;                } , dialog));</b>
+<b class="nc"><i>442</i>&nbsp;    }</b>
+<i>443</i>&nbsp;
+<i>444</i>&nbsp;    /**
+<i>445</i>&nbsp;     * Run a file download operation.
+<i>446</i>&nbsp;     */
+<i>447</i>&nbsp;    private void downloadFile() {
+<b class="nc"><i>448</i>&nbsp;        Optional&lt;String&gt; bibtexKey = entryEditor.getEntry().getCiteKeyOptional();</b>
+<b class="nc"><i>449</i>&nbsp;        if (!bibtexKey.isPresent()) {</b>
+<b class="nc"><i>450</i>&nbsp;            int answer = JOptionPane.showConfirmDialog(frame,</b>
+<b class="nc"><i>451</i>&nbsp;                    Localization.lang(&quot;This entry has no BibTeX key. Generate key now?&quot;),</b>
+<b class="nc"><i>452</i>&nbsp;                    Localization.lang(&quot;Download file&quot;), JOptionPane.OK_CANCEL_OPTION,</b>
+<i>453</i>&nbsp;                    JOptionPane.QUESTION_MESSAGE);
+<b class="nc"><i>454</i>&nbsp;            if (answer == JOptionPane.OK_OPTION) {</b>
+<b class="nc"><i>455</i>&nbsp;                ActionListener l = entryEditor.getGenerateKeyAction();</b>
+<b class="nc"><i>456</i>&nbsp;                l.actionPerformed(null);</b>
+<b class="nc"><i>457</i>&nbsp;                bibtexKey = entryEditor.getEntry().getCiteKeyOptional();</b>
+<i>458</i>&nbsp;            }
+<i>459</i>&nbsp;        }
+<b class="nc"><i>460</i>&nbsp;        DownloadExternalFile def = new DownloadExternalFile(frame,</b>
+<b class="nc"><i>461</i>&nbsp;                frame.getCurrentBasePanel().getBibDatabaseContext(), entryEditor.getEntry());</b>
+<i>462</i>&nbsp;        try {
+<b class="nc"><i>463</i>&nbsp;            def.download(this);</b>
+<b class="nc"><i>464</i>&nbsp;        } catch (IOException ex) {</b>
+<b class="nc"><i>465</i>&nbsp;            LOGGER.warn(&quot;Cannot download.&quot;, ex);</b>
+<b class="nc"><i>466</i>&nbsp;        }</b>
+<b class="nc"><i>467</i>&nbsp;    }</b>
+<i>468</i>&nbsp;
+<i>469</i>&nbsp;    /**
+<i>470</i>&nbsp;     * This is the callback method that the DownloadExternalFile class uses to report the result
+<i>471</i>&nbsp;     * of a download operation. This call may never come, if the user canceled the operation.
+<i>472</i>&nbsp;     *
+<i>473</i>&nbsp;     * @param file The FileListEntry linking to the resulting local file.
+<i>474</i>&nbsp;     */
+<i>475</i>&nbsp;    @Override
+<i>476</i>&nbsp;    public void downloadComplete(FileListEntry file) {
+<b class="nc"><i>477</i>&nbsp;        tableModel.addEntry(tableModel.getRowCount(), file);</b>
+<b class="nc"><i>478</i>&nbsp;        entryEditor.updateField(this);</b>
+<b class="nc"><i>479</i>&nbsp;        adjustColumnWidth();</b>
+<b class="nc"><i>480</i>&nbsp;    }</b>
+<i>481</i>&nbsp;
+<i>482</i>&nbsp;
+<b class="nc"><i>483</i>&nbsp;    class TableClickListener extends MouseAdapter {</b>
+<i>484</i>&nbsp;
+<i>485</i>&nbsp;        @Override
+<i>486</i>&nbsp;        public void mouseClicked(MouseEvent e) {
+<b class="nc"><i>487</i>&nbsp;            if ((e.getButton() == MouseEvent.BUTTON1) &amp;&amp; (e.getClickCount() == 2)) {</b>
+<b class="nc"><i>488</i>&nbsp;                int row = rowAtPoint(e.getPoint());</b>
+<b class="nc"><i>489</i>&nbsp;                if (row &gt;= 0) {</b>
+<b class="nc"><i>490</i>&nbsp;                    FileListEntry entry = tableModel.getEntry(row);</b>
+<b class="nc"><i>491</i>&nbsp;                    editListEntry(entry, false);</b>
+<i>492</i>&nbsp;                }
+<b class="nc"><i>493</i>&nbsp;            } else if (e.isPopupTrigger()) {</b>
+<b class="nc"><i>494</i>&nbsp;                processPopupTrigger(e);</b>
+<i>495</i>&nbsp;            }
+<b class="nc"><i>496</i>&nbsp;        }</b>
+<i>497</i>&nbsp;
+<i>498</i>&nbsp;        @Override
+<i>499</i>&nbsp;        public void mousePressed(MouseEvent e) {
+<b class="nc"><i>500</i>&nbsp;            if (e.isPopupTrigger()) {</b>
+<b class="nc"><i>501</i>&nbsp;                processPopupTrigger(e);</b>
+<i>502</i>&nbsp;            }
+<b class="nc"><i>503</i>&nbsp;        }</b>
+<i>504</i>&nbsp;
+<i>505</i>&nbsp;        @Override
+<i>506</i>&nbsp;        public void mouseReleased(MouseEvent e) {
+<b class="nc"><i>507</i>&nbsp;            if (e.isPopupTrigger()) {</b>
+<b class="nc"><i>508</i>&nbsp;                processPopupTrigger(e);</b>
+<i>509</i>&nbsp;            }
+<b class="nc"><i>510</i>&nbsp;        }</b>
+<i>511</i>&nbsp;
+<i>512</i>&nbsp;        private void processPopupTrigger(MouseEvent e) {
+<b class="nc"><i>513</i>&nbsp;            int row = rowAtPoint(e.getPoint());</b>
+<b class="nc"><i>514</i>&nbsp;            if (row &gt;= 0) {</b>
+<b class="nc"><i>515</i>&nbsp;                setRowSelectionInterval(row, row);</b>
+<b class="nc"><i>516</i>&nbsp;                menu.show(FileListEditor.this, e.getX(), e.getY());</b>
+<i>517</i>&nbsp;            }
+<b class="nc"><i>518</i>&nbsp;        }</b>
+<i>519</i>&nbsp;    }
+<i>520</i>&nbsp;
+<i>521</i>&nbsp;    @Override
+<i>522</i>&nbsp;    public void undo() {
+<i>523</i>&nbsp;        // Do nothing
+<b class="nc"><i>524</i>&nbsp;    }</b>
+<i>525</i>&nbsp;
+<i>526</i>&nbsp;    @Override
+<i>527</i>&nbsp;    public void redo() {
+<i>528</i>&nbsp;        // Do nothing
+<b class="nc"><i>529</i>&nbsp;    }</b>
+<i>530</i>&nbsp;
+<i>531</i>&nbsp;    @Override
+<i>532</i>&nbsp;    public void setAutoCompleteListener(AutoCompleteListener listener) {
+<i>533</i>&nbsp;        // Do nothing
+<b class="nc"><i>534</i>&nbsp;    }</b>
+<i>535</i>&nbsp;
+<i>536</i>&nbsp;    @Override
+<i>537</i>&nbsp;    public void clearAutoCompleteSuggestion() {
+<i>538</i>&nbsp;        // Do nothing
+<b class="nc"><i>539</i>&nbsp;    }</b>
+<i>540</i>&nbsp;
+<i>541</i>&nbsp;    @Override
+<i>542</i>&nbsp;    public void setActiveBackgroundColor() {
+<i>543</i>&nbsp;        // Do nothing
+<b class="nc"><i>544</i>&nbsp;    }</b>
+<i>545</i>&nbsp;
+<i>546</i>&nbsp;    @Override
+<i>547</i>&nbsp;    public void setValidBackgroundColor() {
+<i>548</i>&nbsp;        // Do nothing
+<b class="nc"><i>549</i>&nbsp;    }</b>
+<i>550</i>&nbsp;
+<i>551</i>&nbsp;    @Override
+<i>552</i>&nbsp;    public void setInvalidBackgroundColor() {
+<i>553</i>&nbsp;        // Do nothing
+<b class="nc"><i>554</i>&nbsp;    }</b>
+<i>555</i>&nbsp;
+<i>556</i>&nbsp;    @Override
+<i>557</i>&nbsp;    public void updateFontColor() {
+<i>558</i>&nbsp;        // Do nothing
+<b class="nc"><i>559</i>&nbsp;    }</b>
+<i>560</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

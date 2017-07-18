@@ -1,0 +1,955 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: BibEntry</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.model.entry</a> ]
+</div>
+
+<h1>Coverage Summary for Class: BibEntry (net.sf.jabref.model.entry)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">BibEntry</td>
+<td class="coverageStat">
+  <span class="percent">
+    25.7%
+  </span>
+  <span class="absValue">
+    (18/ 70)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    23.3%
+  </span>
+  <span class="absValue">
+    (62/ 266)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">BibEntry$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 7)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    24.7%
+  </span>
+  <span class="absValue">
+    (18/ 73)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    22.7%
+  </span>
+  <span class="absValue">
+    (62/ 273)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.model.entry;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.text.DateFormat;
+<i>4</i>&nbsp;import java.text.FieldPosition;
+<i>5</i>&nbsp;import java.text.ParseException;
+<i>6</i>&nbsp;import java.text.ParsePosition;
+<i>7</i>&nbsp;import java.text.SimpleDateFormat;
+<i>8</i>&nbsp;import java.util.Calendar;
+<i>9</i>&nbsp;import java.util.Collection;
+<i>10</i>&nbsp;import java.util.Collections;
+<i>11</i>&nbsp;import java.util.Date;
+<i>12</i>&nbsp;import java.util.HashMap;
+<i>13</i>&nbsp;import java.util.HashSet;
+<i>14</i>&nbsp;import java.util.List;
+<i>15</i>&nbsp;import java.util.Locale;
+<i>16</i>&nbsp;import java.util.Map;
+<i>17</i>&nbsp;import java.util.Objects;
+<i>18</i>&nbsp;import java.util.Optional;
+<i>19</i>&nbsp;import java.util.Set;
+<i>20</i>&nbsp;import java.util.TreeSet;
+<i>21</i>&nbsp;import java.util.concurrent.ConcurrentHashMap;
+<i>22</i>&nbsp;import java.util.regex.Pattern;
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;import net.sf.jabref.model.EntryTypes;
+<i>25</i>&nbsp;import net.sf.jabref.model.FieldChange;
+<i>26</i>&nbsp;import net.sf.jabref.model.database.BibDatabase;
+<i>27</i>&nbsp;import net.sf.jabref.model.database.BibDatabaseMode;
+<i>28</i>&nbsp;import net.sf.jabref.model.entry.event.EntryEventSource;
+<i>29</i>&nbsp;import net.sf.jabref.model.entry.event.FieldChangedEvent;
+<i>30</i>&nbsp;import net.sf.jabref.model.strings.LatexToUnicode;
+<i>31</i>&nbsp;import net.sf.jabref.model.strings.StringUtil;
+<i>32</i>&nbsp;
+<i>33</i>&nbsp;import com.google.common.base.Strings;
+<i>34</i>&nbsp;import com.google.common.eventbus.EventBus;
+<i>35</i>&nbsp;import org.apache.commons.logging.Log;
+<i>36</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;public class BibEntry implements Cloneable {
+<b class="fc"><i>39</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(BibEntry.class);</b>
+<i>40</i>&nbsp;
+<i>41</i>&nbsp;    public static final String TYPE_HEADER = &quot;entrytype&quot;;
+<i>42</i>&nbsp;    public static final String OBSOLETE_TYPE_HEADER = &quot;bibtextype&quot;;
+<i>43</i>&nbsp;    public static final String KEY_FIELD = &quot;bibtexkey&quot;;
+<i>44</i>&nbsp;    protected static final String ID_FIELD = &quot;id&quot;;
+<i>45</i>&nbsp;    public static final String DEFAULT_TYPE = &quot;misc&quot;;
+<i>46</i>&nbsp;
+<b class="fc"><i>47</i>&nbsp;    private static final Pattern REMOVE_TRAILING_WHITESPACE = Pattern.compile(&quot;\\s+$&quot;);</b>
+<i>48</i>&nbsp;
+<i>49</i>&nbsp;    private String id;
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;    private final SharedBibEntryData sharedBibEntryData;
+<i>52</i>&nbsp;
+<i>53</i>&nbsp;    private String type;
+<b class="fc"><i>54</i>&nbsp;    private Map&lt;String, String&gt; fields = new ConcurrentHashMap&lt;&gt;();</b>
+<i>55</i>&nbsp;
+<i>56</i>&nbsp;    /**
+<i>57</i>&nbsp;     * Map to store the words in every field
+<i>58</i>&nbsp;     */
+<b class="fc"><i>59</i>&nbsp;    private final Map&lt;String, Set&lt;String&gt;&gt; fieldsAsWords = new HashMap&lt;&gt;();</b>
+<i>60</i>&nbsp;
+<i>61</i>&nbsp;    /**
+<i>62</i>&nbsp;     * Cache that stores latex free versions of fields.
+<i>63</i>&nbsp;     */
+<b class="fc"><i>64</i>&nbsp;    private final Map&lt;String, String&gt; latexFreeFields = new ConcurrentHashMap&lt;&gt;();</b>
+<i>65</i>&nbsp;
+<i>66</i>&nbsp;    /**
+<i>67</i>&nbsp;     * Used to cleanse field values for internal LaTeX-free storage
+<i>68</i>&nbsp;     */
+<b class="fc"><i>69</i>&nbsp;    private LatexToUnicode unicodeConverter = new LatexToUnicode();</b>
+<i>70</i>&nbsp;
+<i>71</i>&nbsp;    // Search and grouping status is stored in boolean fields for quick reference:
+<i>72</i>&nbsp;    private boolean searchHit;
+<i>73</i>&nbsp;    private boolean groupHit;
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;    private String parsedSerialization;
+<i>76</i>&nbsp;
+<b class="fc"><i>77</i>&nbsp;    private String commentsBeforeEntry = &quot;&quot;;</b>
+<i>78</i>&nbsp;
+<i>79</i>&nbsp;    /**
+<i>80</i>&nbsp;     * Marks whether the complete serialization, which was read from file, should be used.
+<i>81</i>&nbsp;     *
+<i>82</i>&nbsp;     * Is set to false, if parts of the entry change. This causes the entry to be serialized based on the internal state (and not based on the old serialization)
+<i>83</i>&nbsp;     */
+<i>84</i>&nbsp;    private boolean changed;
+<i>85</i>&nbsp;
+<b class="fc"><i>86</i>&nbsp;    private final EventBus eventBus = new EventBus();</b>
+<i>87</i>&nbsp;
+<i>88</i>&nbsp;    /**
+<i>89</i>&nbsp;     * Constructs a new BibEntry. The internal ID is set to IdGenerator.next()
+<i>90</i>&nbsp;     */
+<i>91</i>&nbsp;
+<i>92</i>&nbsp;    public BibEntry() {
+<b class="nc"><i>93</i>&nbsp;        this(IdGenerator.next(), DEFAULT_TYPE);</b>
+<b class="nc"><i>94</i>&nbsp;    }</b>
+<i>95</i>&nbsp;
+<i>96</i>&nbsp;    /**
+<i>97</i>&nbsp;     * Constructs a new BibEntry with the given type
+<i>98</i>&nbsp;     *
+<i>99</i>&nbsp;     * @param type The type to set. May be null or empty. In that case, DEFAULT_TYPE is used.
+<i>100</i>&nbsp;     */
+<i>101</i>&nbsp;    public BibEntry(String type) {
+<b class="fc"><i>102</i>&nbsp;        this(IdGenerator.next(), type);</b>
+<b class="fc"><i>103</i>&nbsp;    }</b>
+<i>104</i>&nbsp;
+<i>105</i>&nbsp;    /**
+<i>106</i>&nbsp;     * Constructs a new BibEntry with the given ID and given type
+<i>107</i>&nbsp;     *
+<i>108</i>&nbsp;     * @param id   The ID to be used
+<i>109</i>&nbsp;     * @param type The type to set. May be null or empty. In that case, DEFAULT_TYPE is used.
+<i>110</i>&nbsp;     */
+<b class="fc"><i>111</i>&nbsp;    private BibEntry(String id, String type) {</b>
+<b class="fc"><i>112</i>&nbsp;        Objects.requireNonNull(id, &quot;Every BibEntry must have an ID&quot;);</b>
+<i>113</i>&nbsp;
+<b class="fc"><i>114</i>&nbsp;        this.id = id;</b>
+<b class="fc"><i>115</i>&nbsp;        setType(type);</b>
+<b class="fc"><i>116</i>&nbsp;        this.sharedBibEntryData = new SharedBibEntryData();</b>
+<b class="fc"><i>117</i>&nbsp;    }</b>
+<i>118</i>&nbsp;
+<i>119</i>&nbsp;    public Optional&lt;FieldChange&gt; replaceKeywords(KeywordList keywordsToReplace, Optional&lt;Keyword&gt; newValue,
+<i>120</i>&nbsp;                                                 Character keywordDelimiter) {
+<b class="nc"><i>121</i>&nbsp;        KeywordList keywordList = getKeywords(keywordDelimiter);</b>
+<b class="nc"><i>122</i>&nbsp;        keywordList.replaceKeywords(keywordsToReplace, newValue);</b>
+<i>123</i>&nbsp;
+<b class="nc"><i>124</i>&nbsp;        return putKeywords(keywordList, keywordDelimiter);</b>
+<i>125</i>&nbsp;    }
+<i>126</i>&nbsp;
+<i>127</i>&nbsp;    /**
+<i>128</i>&nbsp;     * Returns the text stored in the given field of the given bibtex entry
+<i>129</i>&nbsp;     * which belongs to the given database.
+<i>130</i>&nbsp;     * &lt;p&gt;
+<i>131</i>&nbsp;     * If a database is given, this function will try to resolve any string
+<i>132</i>&nbsp;     * references in the field-value.
+<i>133</i>&nbsp;     * Also, if a database is given, this function will try to find values for
+<i>134</i>&nbsp;     * unset fields in the entry linked by the &quot;crossref&quot; field, if any.
+<i>135</i>&nbsp;     *
+<i>136</i>&nbsp;     * @param field    The field to return the value of.
+<i>137</i>&nbsp;     * @param database maybenull
+<i>138</i>&nbsp;     *                 The database of the bibtex entry.
+<i>139</i>&nbsp;     * @return The resolved field value or null if not found.
+<i>140</i>&nbsp;     */
+<i>141</i>&nbsp;    public Optional&lt;String&gt; getResolvedFieldOrAlias(String field, BibDatabase database) {
+<b class="nc"><i>142</i>&nbsp;        Objects.requireNonNull(this, &quot;entry cannot be null&quot;);</b>
+<i>143</i>&nbsp;
+<b class="nc"><i>144</i>&nbsp;        if (TYPE_HEADER.equals(field) || OBSOLETE_TYPE_HEADER.equals(field)) {</b>
+<b class="nc"><i>145</i>&nbsp;            Optional&lt;EntryType&gt; entryType = EntryTypes.getType(getType(), BibDatabaseMode.BIBLATEX);</b>
+<b class="nc"><i>146</i>&nbsp;            if (entryType.isPresent()) {</b>
+<b class="nc"><i>147</i>&nbsp;                return Optional.of(entryType.get().getName());</b>
+<i>148</i>&nbsp;            } else {
+<b class="nc"><i>149</i>&nbsp;                return Optional.of(StringUtil.capitalizeFirst(getType()));</b>
+<i>150</i>&nbsp;            }
+<i>151</i>&nbsp;        }
+<i>152</i>&nbsp;
+<b class="nc"><i>153</i>&nbsp;        if (KEY_FIELD.equals(field)) {</b>
+<b class="nc"><i>154</i>&nbsp;            return getCiteKeyOptional();</b>
+<i>155</i>&nbsp;        }
+<i>156</i>&nbsp;
+<b class="nc"><i>157</i>&nbsp;        Optional&lt;String&gt; result = getFieldOrAlias(field);</b>
+<i>158</i>&nbsp;
+<i>159</i>&nbsp;        // If this field is not set, and the entry has a crossref, try to look up the
+<i>160</i>&nbsp;        // field in the referred entry: Do not do this for the bibtex key.
+<b class="nc"><i>161</i>&nbsp;        if (!result.isPresent() &amp;&amp; (database != null)) {</b>
+<b class="nc"><i>162</i>&nbsp;            Optional&lt;BibEntry&gt; referred = database.getReferencedEntry(this);</b>
+<b class="nc"><i>163</i>&nbsp;            result = referred.flatMap(entry -&gt; entry.getFieldOrAlias(field));</b>
+<i>164</i>&nbsp;        }
+<b class="nc"><i>165</i>&nbsp;        return result.map(resultText -&gt; BibDatabase.getText(resultText, database));</b>
+<i>166</i>&nbsp;    }
+<i>167</i>&nbsp;
+<i>168</i>&nbsp;    /**
+<i>169</i>&nbsp;     * Sets this entry&#39;s ID, provided the database containing it
+<i>170</i>&nbsp;     * doesn&#39;t veto the change.
+<i>171</i>&nbsp;     *
+<i>172</i>&nbsp;     * @param id The ID to be used
+<i>173</i>&nbsp;     */
+<i>174</i>&nbsp;    public void setId(String id) {
+<b class="fc"><i>175</i>&nbsp;        Objects.requireNonNull(id, &quot;Every BibEntry must have an ID&quot;);</b>
+<i>176</i>&nbsp;
+<b class="fc"><i>177</i>&nbsp;        String oldId = this.id;</b>
+<i>178</i>&nbsp;
+<b class="fc"><i>179</i>&nbsp;        eventBus.post(new FieldChangedEvent(this, BibEntry.ID_FIELD, id, oldId));</b>
+<b class="fc"><i>180</i>&nbsp;        this.id = id;</b>
+<b class="fc"><i>181</i>&nbsp;        changed = true;</b>
+<b class="fc"><i>182</i>&nbsp;    }</b>
+<i>183</i>&nbsp;
+<i>184</i>&nbsp;    /**
+<i>185</i>&nbsp;     * Returns this entry&#39;s ID.
+<i>186</i>&nbsp;     */
+<i>187</i>&nbsp;    public String getId() {
+<b class="fc"><i>188</i>&nbsp;        return id;</b>
+<i>189</i>&nbsp;    }
+<i>190</i>&nbsp;
+<i>191</i>&nbsp;    /**
+<i>192</i>&nbsp;     * Sets the cite key AKA citation key AKA BibTeX key.
+<i>193</i>&nbsp;     * Note: This is &lt;emph&gt;not&lt;/emph&gt; the internal Id of this entry. The internal Id is always present, whereas the BibTeX key might not be present.
+<i>194</i>&nbsp;     *
+<i>195</i>&nbsp;     * @param newCiteKey The cite key to set. Must not be null; use {@link #clearCiteKey()} to remove the cite key.
+<i>196</i>&nbsp;     */
+<i>197</i>&nbsp;    public void setCiteKey(String newCiteKey) {
+<b class="fc"><i>198</i>&nbsp;        setField(KEY_FIELD, newCiteKey);</b>
+<b class="fc"><i>199</i>&nbsp;    }</b>
+<i>200</i>&nbsp;
+<i>201</i>&nbsp;    /**
+<i>202</i>&nbsp;     * Returns the cite key AKA citation key AKA BibTeX key, or null if it is not set.
+<i>203</i>&nbsp;     * Note: this is &lt;emph&gt;not&lt;/emph&gt; the internal Id of this entry. The internal Id is always present, whereas the BibTeX key might not be present.
+<i>204</i>&nbsp;     */
+<i>205</i>&nbsp;    @Deprecated
+<i>206</i>&nbsp;    public String getCiteKey() {
+<b class="fc"><i>207</i>&nbsp;        return fields.get(KEY_FIELD);</b>
+<i>208</i>&nbsp;    }
+<i>209</i>&nbsp;
+<i>210</i>&nbsp;    public Optional&lt;String&gt; getCiteKeyOptional() {
+<b class="fc"><i>211</i>&nbsp;        return Optional.ofNullable(fields.get(KEY_FIELD));</b>
+<i>212</i>&nbsp;    }
+<i>213</i>&nbsp;
+<i>214</i>&nbsp;    public boolean hasCiteKey() {
+<b class="nc"><i>215</i>&nbsp;        return !Strings.isNullOrEmpty(getCiteKey());</b>
+<i>216</i>&nbsp;    }
+<i>217</i>&nbsp;
+<i>218</i>&nbsp;    /**
+<i>219</i>&nbsp;     * Returns this entry&#39;s type.
+<i>220</i>&nbsp;     */
+<i>221</i>&nbsp;    public String getType() {
+<b class="nc"><i>222</i>&nbsp;        return type;</b>
+<i>223</i>&nbsp;    }
+<i>224</i>&nbsp;
+<i>225</i>&nbsp;    /**
+<i>226</i>&nbsp;     * Sets this entry&#39;s type.
+<i>227</i>&nbsp;     */
+<i>228</i>&nbsp;    public void setType(String type, EntryEventSource eventSource) {
+<i>229</i>&nbsp;        String newType;
+<b class="fc"><i>230</i>&nbsp;        if (Strings.isNullOrEmpty(type)) {</b>
+<b class="nc"><i>231</i>&nbsp;            newType = DEFAULT_TYPE;</b>
+<i>232</i>&nbsp;        } else {
+<b class="fc"><i>233</i>&nbsp;            newType = type;</b>
+<i>234</i>&nbsp;        }
+<b class="fc"><i>235</i>&nbsp;        String oldType = getField(TYPE_HEADER).orElse(null);</b>
+<i>236</i>&nbsp;
+<i>237</i>&nbsp;        // We set the type before throwing the changeEvent, to enable
+<i>238</i>&nbsp;        // the change listener to access the new value if the change
+<i>239</i>&nbsp;        // sets off a change in database sorting etc.
+<b class="fc"><i>240</i>&nbsp;        this.type = newType.toLowerCase(Locale.ENGLISH);</b>
+<b class="fc"><i>241</i>&nbsp;        changed = true;</b>
+<b class="fc"><i>242</i>&nbsp;        eventBus.post(new FieldChangedEvent(this, TYPE_HEADER, newType, oldType, eventSource));</b>
+<b class="fc"><i>243</i>&nbsp;    }</b>
+<i>244</i>&nbsp;
+<i>245</i>&nbsp;    /**
+<i>246</i>&nbsp;     * Sets this entry&#39;s type.
+<i>247</i>&nbsp;     */
+<i>248</i>&nbsp;    public void setType(String type) {
+<b class="fc"><i>249</i>&nbsp;        setType(type, EntryEventSource.LOCAL);</b>
+<b class="fc"><i>250</i>&nbsp;    }</b>
+<i>251</i>&nbsp;
+<i>252</i>&nbsp;    /**
+<i>253</i>&nbsp;     * Sets this entry&#39;s type.
+<i>254</i>&nbsp;     */
+<i>255</i>&nbsp;    public void setType(EntryType type) {
+<b class="nc"><i>256</i>&nbsp;        this.setType(type.getName());</b>
+<b class="nc"><i>257</i>&nbsp;    }</b>
+<i>258</i>&nbsp;
+<i>259</i>&nbsp;    /**
+<i>260</i>&nbsp;     * Returns an set containing the names of all fields that are
+<i>261</i>&nbsp;     * set for this particular entry.
+<i>262</i>&nbsp;     *
+<i>263</i>&nbsp;     * @return a set of existing field names
+<i>264</i>&nbsp;     */
+<i>265</i>&nbsp;    public Set&lt;String&gt; getFieldNames() {
+<b class="fc"><i>266</i>&nbsp;        return new TreeSet&lt;&gt;(fields.keySet());</b>
+<i>267</i>&nbsp;    }
+<i>268</i>&nbsp;
+<i>269</i>&nbsp;    /**
+<i>270</i>&nbsp;     * Returns the contents of the given field as an Optional.
+<i>271</i>&nbsp;     */
+<i>272</i>&nbsp;    public Optional&lt;String&gt; getField(String name) {
+<b class="fc"><i>273</i>&nbsp;        return Optional.ofNullable(fields.get(toLowerCase(name)));</b>
+<i>274</i>&nbsp;    }
+<i>275</i>&nbsp;
+<i>276</i>&nbsp;    /**
+<i>277</i>&nbsp;     * Returns true if the entry has the given field, or false if it is not set.
+<i>278</i>&nbsp;     */
+<i>279</i>&nbsp;    public boolean hasField(String name) {
+<b class="nc"><i>280</i>&nbsp;        return fields.containsKey(toLowerCase(name));</b>
+<i>281</i>&nbsp;    }
+<i>282</i>&nbsp;
+<i>283</i>&nbsp;    private String toLowerCase(String fieldName) {
+<b class="fc"><i>284</i>&nbsp;        Objects.requireNonNull(fieldName, &quot;field name must not be null&quot;);</b>
+<i>285</i>&nbsp;
+<b class="fc"><i>286</i>&nbsp;        return fieldName.toLowerCase(Locale.ENGLISH);</b>
+<i>287</i>&nbsp;    }
+<i>288</i>&nbsp;
+<i>289</i>&nbsp;    /**
+<i>290</i>&nbsp;     * Internal method used to get the content of a field (or its alias)
+<i>291</i>&nbsp;     *
+<i>292</i>&nbsp;     * Used by {@link #getFieldOrAlias(String)} and {@link #getFieldOrAliasLatexFree(String)}
+<i>293</i>&nbsp;     *
+<i>294</i>&nbsp;     * @param name name of the field
+<i>295</i>&nbsp;     * @param getFieldInterface
+<i>296</i>&nbsp;     *
+<i>297</i>&nbsp;     * @return determined field value
+<i>298</i>&nbsp;     */
+<i>299</i>&nbsp;    private Optional&lt;String&gt; genericGetFieldOrAlias(String name, GetFieldInterface getFieldInterface) {
+<b class="nc"><i>300</i>&nbsp;        Optional&lt;String&gt; fieldValue = getFieldInterface.getValueForField(toLowerCase(name));</b>
+<i>301</i>&nbsp;
+<b class="nc"><i>302</i>&nbsp;        if (fieldValue.isPresent() &amp;&amp; !fieldValue.get().isEmpty()) {</b>
+<b class="nc"><i>303</i>&nbsp;            return fieldValue;</b>
+<i>304</i>&nbsp;        }
+<i>305</i>&nbsp;
+<i>306</i>&nbsp;        // No value of this field found, so look at the alias
+<b class="nc"><i>307</i>&nbsp;        String aliasForField = EntryConverter.FIELD_ALIASES.get(name);</b>
+<i>308</i>&nbsp;
+<b class="nc"><i>309</i>&nbsp;        if (aliasForField != null) {</b>
+<b class="nc"><i>310</i>&nbsp;            return getFieldInterface.getValueForField(aliasForField);</b>
+<i>311</i>&nbsp;        }
+<i>312</i>&nbsp;
+<i>313</i>&nbsp;        // Finally, handle dates
+<b class="nc"><i>314</i>&nbsp;        if (FieldName.DATE.equals(name)) {</b>
+<b class="nc"><i>315</i>&nbsp;            Optional&lt;String&gt; year = getFieldInterface.getValueForField(FieldName.YEAR);</b>
+<b class="nc"><i>316</i>&nbsp;            if (year.isPresent()) {</b>
+<b class="nc"><i>317</i>&nbsp;                MonthUtil.Month month = MonthUtil.getMonth(getFieldInterface.getValueForField(FieldName.MONTH).orElse(&quot;&quot;));</b>
+<b class="nc"><i>318</i>&nbsp;                if (month.isValid()) {</b>
+<b class="nc"><i>319</i>&nbsp;                    return Optional.of(year.get() + &#39;-&#39; + month.twoDigitNumber);</b>
+<i>320</i>&nbsp;                } else {
+<b class="nc"><i>321</i>&nbsp;                    return year;</b>
+<i>322</i>&nbsp;                }
+<i>323</i>&nbsp;            }
+<i>324</i>&nbsp;        }
+<b class="nc"><i>325</i>&nbsp;        if (FieldName.YEAR.equals(name) || FieldName.MONTH.equals(name)) {</b>
+<b class="nc"><i>326</i>&nbsp;            Optional&lt;String&gt; date = getFieldInterface.getValueForField(FieldName.DATE);</b>
+<b class="nc"><i>327</i>&nbsp;            if (!date.isPresent()) {</b>
+<b class="nc"><i>328</i>&nbsp;                return Optional.empty();</b>
+<i>329</i>&nbsp;            }
+<i>330</i>&nbsp;
+<i>331</i>&nbsp;            // Create date format matching dates with year and month
+<b class="nc"><i>332</i>&nbsp;            DateFormat df = new DateFormat() {</b>
+<i>333</i>&nbsp;
+<i>334</i>&nbsp;                static final String FORMAT1 = &quot;yyyy-MM-dd&quot;;
+<i>335</i>&nbsp;                static final String FORMAT2 = &quot;yyyy-MM&quot;;
+<b class="nc"><i>336</i>&nbsp;                final SimpleDateFormat sdf1 = new SimpleDateFormat(FORMAT1);</b>
+<b class="nc"><i>337</i>&nbsp;                final SimpleDateFormat sdf2 = new SimpleDateFormat(FORMAT2);</b>
+<i>338</i>&nbsp;
+<i>339</i>&nbsp;
+<i>340</i>&nbsp;                @Override
+<i>341</i>&nbsp;                public StringBuffer format(Date dDate, StringBuffer toAppendTo, FieldPosition fieldPosition) {
+<b class="nc"><i>342</i>&nbsp;                    throw new UnsupportedOperationException();</b>
+<i>343</i>&nbsp;                }
+<i>344</i>&nbsp;
+<i>345</i>&nbsp;                @Override
+<i>346</i>&nbsp;                public Date parse(String source, ParsePosition pos) {
+<b class="nc"><i>347</i>&nbsp;                    if ((source.length() - pos.getIndex()) == FORMAT1.length()) {</b>
+<b class="nc"><i>348</i>&nbsp;                        return sdf1.parse(source, pos);</b>
+<i>349</i>&nbsp;                    }
+<b class="nc"><i>350</i>&nbsp;                    return sdf2.parse(source, pos);</b>
+<i>351</i>&nbsp;                }
+<i>352</i>&nbsp;            };
+<i>353</i>&nbsp;
+<i>354</i>&nbsp;            try {
+<b class="nc"><i>355</i>&nbsp;                Date parsedDate = df.parse(date.get());</b>
+<b class="nc"><i>356</i>&nbsp;                Calendar calendar = Calendar.getInstance();</b>
+<b class="nc"><i>357</i>&nbsp;                calendar.setTime(parsedDate);</b>
+<b class="nc"><i>358</i>&nbsp;                if (FieldName.YEAR.equals(name)) {</b>
+<b class="nc"><i>359</i>&nbsp;                    return Optional.of(Integer.toString(calendar.get(Calendar.YEAR)));</b>
+<i>360</i>&nbsp;                }
+<b class="nc"><i>361</i>&nbsp;                if (FieldName.MONTH.equals(name)) {</b>
+<b class="nc"><i>362</i>&nbsp;                    return Optional.of(Integer.toString(calendar.get(Calendar.MONTH) + 1)); // Shift by 1 since in this calendar Jan = 0</b>
+<i>363</i>&nbsp;                }
+<b class="nc"><i>364</i>&nbsp;            } catch (ParseException e) {</b>
+<i>365</i>&nbsp;                // So not a date with year and month, try just to parse years
+<b class="nc"><i>366</i>&nbsp;                df = new SimpleDateFormat(&quot;yyyy&quot;);</b>
+<i>367</i>&nbsp;
+<i>368</i>&nbsp;                try {
+<b class="nc"><i>369</i>&nbsp;                    Date parsedDate = df.parse(date.get());</b>
+<b class="nc"><i>370</i>&nbsp;                    Calendar calendar = Calendar.getInstance();</b>
+<b class="nc"><i>371</i>&nbsp;                    calendar.setTime(parsedDate);</b>
+<b class="nc"><i>372</i>&nbsp;                    if (FieldName.YEAR.equals(name)) {</b>
+<b class="nc"><i>373</i>&nbsp;                        return Optional.of(Integer.toString(calendar.get(Calendar.YEAR)));</b>
+<i>374</i>&nbsp;                    }
+<b class="nc"><i>375</i>&nbsp;                } catch (ParseException e2) {</b>
+<b class="nc"><i>376</i>&nbsp;                    LOGGER.warn(&quot;Could not parse entry &quot; + name, e2);</b>
+<b class="nc"><i>377</i>&nbsp;                    return Optional.empty(); // Date field not in valid format</b>
+<b class="nc"><i>378</i>&nbsp;                }</b>
+<b class="nc"><i>379</i>&nbsp;            }</b>
+<i>380</i>&nbsp;        }
+<b class="nc"><i>381</i>&nbsp;        return Optional.empty();</b>
+<i>382</i>&nbsp;    }
+<i>383</i>&nbsp;
+<i>384</i>&nbsp;    private interface GetFieldInterface {
+<i>385</i>&nbsp;        Optional&lt;String&gt; getValueForField(String fieldName);
+<i>386</i>&nbsp;    }
+<i>387</i>&nbsp;
+<i>388</i>&nbsp;    /**
+<i>389</i>&nbsp;     * Return the LaTeX-free contents of the given field or its alias an an Optional
+<i>390</i>&nbsp;     *
+<i>391</i>&nbsp;     * For details see also {@link #getFieldOrAlias(String)}
+<i>392</i>&nbsp;     *
+<i>393</i>&nbsp;     * @param name the name of the field
+<i>394</i>&nbsp;     * @return  the stored latex-free content of the field (or its alias)
+<i>395</i>&nbsp;     */
+<i>396</i>&nbsp;    public Optional&lt;String&gt; getFieldOrAliasLatexFree(String name) {
+<b class="nc"><i>397</i>&nbsp;        return genericGetFieldOrAlias(name, this::getLatexFreeField);</b>
+<i>398</i>&nbsp;    }
+<i>399</i>&nbsp;
+<i>400</i>&nbsp;    /**
+<i>401</i>&nbsp;     * Returns the contents of the given field or its alias as an Optional
+<i>402</i>&nbsp;     * &lt;p&gt;
+<i>403</i>&nbsp;     * The following aliases are considered (old bibtex &lt;-&gt; new biblatex) based
+<i>404</i>&nbsp;     * on the BibLatex documentation, chapter 2.2.5:&lt;br&gt;
+<i>405</i>&nbsp;     * address        &lt;-&gt; location &lt;br&gt;
+<i>406</i>&nbsp;     * annote         &lt;-&gt; annotation &lt;br&gt;
+<i>407</i>&nbsp;     * archiveprefix  &lt;-&gt; eprinttype &lt;br&gt;
+<i>408</i>&nbsp;     * journal        &lt;-&gt; journaltitle &lt;br&gt;
+<i>409</i>&nbsp;     * key            &lt;-&gt; sortkey &lt;br&gt;
+<i>410</i>&nbsp;     * pdf            &lt;-&gt; file &lt;br
+<i>411</i>&nbsp;     * primaryclass   &lt;-&gt; eprintclass &lt;br&gt;
+<i>412</i>&nbsp;     * school         &lt;-&gt; institution &lt;br&gt;
+<i>413</i>&nbsp;     * These work bidirectional. &lt;br&gt;
+<i>414</i>&nbsp;     * &lt;/p&gt;
+<i>415</i>&nbsp;     *
+<i>416</i>&nbsp;     * &lt;p&gt;
+<i>417</i>&nbsp;     * Special attention is paid to dates: (see the BibLatex documentation,
+<i>418</i>&nbsp;     * chapter 2.3.8)
+<i>419</i>&nbsp;     * The fields &#39;year&#39; and &#39;month&#39; are used if the &#39;date&#39;
+<i>420</i>&nbsp;     * field is empty. Conversely, getFieldOrAlias(&quot;year&quot;) also tries to
+<i>421</i>&nbsp;     * extract the year from the &#39;date&#39; field (analogously for &#39;month&#39;).
+<i>422</i>&nbsp;     * &lt;/p&gt;
+<i>423</i>&nbsp;     */
+<i>424</i>&nbsp;    public Optional&lt;String&gt; getFieldOrAlias(String name) {
+<b class="nc"><i>425</i>&nbsp;        return genericGetFieldOrAlias(name, this::getField);</b>
+<i>426</i>&nbsp;    }
+<i>427</i>&nbsp;
+<i>428</i>&nbsp;    /**
+<i>429</i>&nbsp;     * Sets a number of fields simultaneously. The given HashMap contains field
+<i>430</i>&nbsp;     * names as keys, each mapped to the value to set.
+<i>431</i>&nbsp;     */
+<i>432</i>&nbsp;    public void setField(Map&lt;String, String&gt; fields) {
+<b class="fc"><i>433</i>&nbsp;        Objects.requireNonNull(fields, &quot;fields must not be null&quot;);</b>
+<i>434</i>&nbsp;
+<b class="fc"><i>435</i>&nbsp;        fields.forEach(this::setField);</b>
+<b class="fc"><i>436</i>&nbsp;    }</b>
+<i>437</i>&nbsp;
+<i>438</i>&nbsp;    /**
+<i>439</i>&nbsp;     * Set a field, and notify listeners about the change.
+<i>440</i>&nbsp;     *
+<i>441</i>&nbsp;     * @param name        The field to set
+<i>442</i>&nbsp;     * @param value       The value to set
+<i>443</i>&nbsp;     * @param eventSource Source the event is sent from
+<i>444</i>&nbsp;     */
+<i>445</i>&nbsp;    public Optional&lt;FieldChange&gt; setField(String name, String value, EntryEventSource eventSource) {
+<b class="fc"><i>446</i>&nbsp;        Objects.requireNonNull(name, &quot;field name must not be null&quot;);</b>
+<b class="fc"><i>447</i>&nbsp;        Objects.requireNonNull(value, &quot;field value must not be null&quot;);</b>
+<i>448</i>&nbsp;
+<b class="fc"><i>449</i>&nbsp;        String fieldName = toLowerCase(name);</b>
+<i>450</i>&nbsp;
+<b class="fc"><i>451</i>&nbsp;        if (value.isEmpty()) {</b>
+<b class="nc"><i>452</i>&nbsp;            return clearField(fieldName);</b>
+<i>453</i>&nbsp;        }
+<i>454</i>&nbsp;
+<b class="fc"><i>455</i>&nbsp;        String oldValue = getField(fieldName).orElse(null);</b>
+<b class="fc"><i>456</i>&nbsp;        if (value.equals(oldValue)) {</b>
+<b class="nc"><i>457</i>&nbsp;            return Optional.empty();</b>
+<i>458</i>&nbsp;        }
+<i>459</i>&nbsp;
+<b class="fc"><i>460</i>&nbsp;        if (BibEntry.ID_FIELD.equals(fieldName)) {</b>
+<b class="nc"><i>461</i>&nbsp;            throw new IllegalArgumentException(&quot;The field name &#39;&quot; + name + &quot;&#39; is reserved&quot;);</b>
+<i>462</i>&nbsp;        }
+<i>463</i>&nbsp;
+<b class="fc"><i>464</i>&nbsp;        changed = true;</b>
+<i>465</i>&nbsp;
+<b class="fc"><i>466</i>&nbsp;        fields.put(fieldName, value.intern());</b>
+<b class="fc"><i>467</i>&nbsp;        invalidateFieldCache(fieldName);</b>
+<i>468</i>&nbsp;
+<b class="fc"><i>469</i>&nbsp;        FieldChange change = new FieldChange(this, fieldName, oldValue, value);</b>
+<b class="fc"><i>470</i>&nbsp;        eventBus.post(new FieldChangedEvent(change, eventSource));</b>
+<b class="fc"><i>471</i>&nbsp;        return Optional.of(change);</b>
+<i>472</i>&nbsp;    }
+<i>473</i>&nbsp;
+<i>474</i>&nbsp;    public Optional&lt;FieldChange&gt; setField(String name, Optional&lt;String&gt; value, EntryEventSource eventSource) {
+<b class="nc"><i>475</i>&nbsp;        if (value.isPresent()) {</b>
+<b class="nc"><i>476</i>&nbsp;            return setField(name, value.get(), eventSource);</b>
+<i>477</i>&nbsp;        }
+<b class="nc"><i>478</i>&nbsp;        return Optional.empty();</b>
+<i>479</i>&nbsp;    }
+<i>480</i>&nbsp;
+<i>481</i>&nbsp;    /**
+<i>482</i>&nbsp;     * Set a field, and notify listeners about the change.
+<i>483</i>&nbsp;     *
+<i>484</i>&nbsp;     * @param name  The field to set.
+<i>485</i>&nbsp;     * @param value The value to set.
+<i>486</i>&nbsp;     */
+<i>487</i>&nbsp;    public Optional&lt;FieldChange&gt; setField(String name, String value) {
+<b class="fc"><i>488</i>&nbsp;        return setField(name, value, EntryEventSource.LOCAL);</b>
+<i>489</i>&nbsp;    }
+<i>490</i>&nbsp;
+<i>491</i>&nbsp;    /**
+<i>492</i>&nbsp;     * Remove the mapping for the field name, and notify listeners about
+<i>493</i>&nbsp;     * the change.
+<i>494</i>&nbsp;     *
+<i>495</i>&nbsp;     * @param name The field to clear.
+<i>496</i>&nbsp;     */
+<i>497</i>&nbsp;    public Optional&lt;FieldChange&gt; clearField(String name) {
+<b class="nc"><i>498</i>&nbsp;        return clearField(name, EntryEventSource.LOCAL);</b>
+<i>499</i>&nbsp;    }
+<i>500</i>&nbsp;
+<i>501</i>&nbsp;    /**
+<i>502</i>&nbsp;     * Remove the mapping for the field name, and notify listeners about
+<i>503</i>&nbsp;     * the change including the {@link EntryEventSource}.
+<i>504</i>&nbsp;     *
+<i>505</i>&nbsp;     * @param name        The field to clear.
+<i>506</i>&nbsp;     * @param eventSource the source a new {@link FieldChangedEvent} should be posten from.
+<i>507</i>&nbsp;     */
+<i>508</i>&nbsp;    public Optional&lt;FieldChange&gt; clearField(String name, EntryEventSource eventSource) {
+<b class="nc"><i>509</i>&nbsp;        String fieldName = toLowerCase(name);</b>
+<i>510</i>&nbsp;
+<b class="nc"><i>511</i>&nbsp;        if (BibEntry.ID_FIELD.equals(fieldName)) {</b>
+<b class="nc"><i>512</i>&nbsp;            throw new IllegalArgumentException(&quot;The field name &#39;&quot; + name + &quot;&#39; is reserved&quot;);</b>
+<i>513</i>&nbsp;        }
+<i>514</i>&nbsp;
+<b class="nc"><i>515</i>&nbsp;        Optional&lt;String&gt; oldValue = getField(fieldName);</b>
+<b class="nc"><i>516</i>&nbsp;        if (!oldValue.isPresent()) {</b>
+<b class="nc"><i>517</i>&nbsp;            return Optional.empty();</b>
+<i>518</i>&nbsp;        }
+<i>519</i>&nbsp;
+<b class="nc"><i>520</i>&nbsp;        changed = true;</b>
+<i>521</i>&nbsp;
+<b class="nc"><i>522</i>&nbsp;        fields.remove(fieldName);</b>
+<b class="nc"><i>523</i>&nbsp;        invalidateFieldCache(fieldName);</b>
+<i>524</i>&nbsp;
+<b class="nc"><i>525</i>&nbsp;        FieldChange change = new FieldChange(this, fieldName, oldValue.get(), null);</b>
+<b class="nc"><i>526</i>&nbsp;        eventBus.post(new FieldChangedEvent(change, eventSource));</b>
+<b class="nc"><i>527</i>&nbsp;        return Optional.of(change);</b>
+<i>528</i>&nbsp;    }
+<i>529</i>&nbsp;
+<i>530</i>&nbsp;    /**
+<i>531</i>&nbsp;     * Determines whether this entry has all the given fields present. If a non-null
+<i>532</i>&nbsp;     * database argument is given, this method will try to look up missing fields in
+<i>533</i>&nbsp;     * entries linked by the &quot;crossref&quot; field, if any.
+<i>534</i>&nbsp;     *
+<i>535</i>&nbsp;     * @param allFields An array of field names to be checked.
+<i>536</i>&nbsp;     * @param database  The database in which to look up crossref&#39;d entries, if any. This
+<i>537</i>&nbsp;     *                  argument can be null, meaning that no attempt will be made to follow crossrefs.
+<i>538</i>&nbsp;     * @return true if all fields are set or could be resolved, false otherwise.
+<i>539</i>&nbsp;     */
+<i>540</i>&nbsp;    public boolean allFieldsPresent(List&lt;String&gt; allFields, BibDatabase database) {
+<i>541</i>&nbsp;
+<b class="nc"><i>542</i>&nbsp;        for (String field : allFields) {</b>
+<b class="nc"><i>543</i>&nbsp;            String fieldName = toLowerCase(field);</b>
+<i>544</i>&nbsp;            // OR fields
+<b class="nc"><i>545</i>&nbsp;            if (fieldName.contains(FieldName.FIELD_SEPARATOR)) {</b>
+<b class="nc"><i>546</i>&nbsp;                String[] altFields = field.split(FieldName.FIELD_SEPARATOR);</b>
+<i>547</i>&nbsp;
+<b class="nc"><i>548</i>&nbsp;                if (!atLeastOnePresent(altFields, database)) {</b>
+<b class="nc"><i>549</i>&nbsp;                    return false;</b>
+<i>550</i>&nbsp;                }
+<b class="nc"><i>551</i>&nbsp;            } else {</b>
+<b class="nc"><i>552</i>&nbsp;                if (!this.getResolvedFieldOrAlias(fieldName, database).isPresent()) {</b>
+<b class="nc"><i>553</i>&nbsp;                    return false;</b>
+<i>554</i>&nbsp;                }
+<i>555</i>&nbsp;            }
+<b class="nc"><i>556</i>&nbsp;        }</b>
+<b class="nc"><i>557</i>&nbsp;        return true;</b>
+<i>558</i>&nbsp;    }
+<i>559</i>&nbsp;
+<i>560</i>&nbsp;    private boolean atLeastOnePresent(String[] fieldsToCheck, BibDatabase database) {
+<b class="nc"><i>561</i>&nbsp;        for (String field : fieldsToCheck) {</b>
+<b class="nc"><i>562</i>&nbsp;            String fieldName = toLowerCase(field);</b>
+<i>563</i>&nbsp;
+<b class="nc"><i>564</i>&nbsp;            Optional&lt;String&gt; value = this.getResolvedFieldOrAlias(fieldName, database);</b>
+<b class="nc"><i>565</i>&nbsp;            if ((value.isPresent()) &amp;&amp; !value.get().isEmpty()) {</b>
+<b class="nc"><i>566</i>&nbsp;                return true;</b>
+<i>567</i>&nbsp;            }
+<i>568</i>&nbsp;        }
+<b class="nc"><i>569</i>&nbsp;        return false;</b>
+<i>570</i>&nbsp;    }
+<i>571</i>&nbsp;
+<i>572</i>&nbsp;    /**
+<i>573</i>&nbsp;     * Returns a clone of this entry. Useful for copying.
+<i>574</i>&nbsp;     * This will set a new ID for the cloned entry to be able to distinguish both copies.
+<i>575</i>&nbsp;     */
+<i>576</i>&nbsp;    @Override
+<i>577</i>&nbsp;    public Object clone() {
+<b class="nc"><i>578</i>&nbsp;        BibEntry clone = new BibEntry(type);</b>
+<b class="nc"><i>579</i>&nbsp;        clone.fields = new HashMap&lt;&gt;(fields);</b>
+<b class="nc"><i>580</i>&nbsp;        return clone;</b>
+<i>581</i>&nbsp;    }
+<i>582</i>&nbsp;
+<i>583</i>&nbsp;    /**
+<i>584</i>&nbsp;     * This returns a canonical BibTeX serialization. Special characters such as &quot;{&quot; or &quot;&amp;&quot; are NOT escaped, but written
+<i>585</i>&nbsp;     * as is
+<i>586</i>&nbsp;     * &lt;p&gt;
+<i>587</i>&nbsp;     * Serializes all fields, even the JabRef internal ones. Does NOT serialize &quot;KEY_FIELD&quot; as field, but as key
+<i>588</i>&nbsp;     */
+<i>589</i>&nbsp;    @Override
+<i>590</i>&nbsp;    public String toString() {
+<b class="nc"><i>591</i>&nbsp;        return CanonicalBibtexEntry.getCanonicalRepresentation(this);</b>
+<i>592</i>&nbsp;    }
+<i>593</i>&nbsp;
+<i>594</i>&nbsp;    public boolean isSearchHit() {
+<b class="nc"><i>595</i>&nbsp;        return searchHit;</b>
+<i>596</i>&nbsp;    }
+<i>597</i>&nbsp;
+<i>598</i>&nbsp;    public void setSearchHit(boolean searchHit) {
+<b class="nc"><i>599</i>&nbsp;        this.searchHit = searchHit;</b>
+<b class="nc"><i>600</i>&nbsp;    }</b>
+<i>601</i>&nbsp;
+<i>602</i>&nbsp;    public boolean isGroupHit() {
+<b class="nc"><i>603</i>&nbsp;        return groupHit;</b>
+<i>604</i>&nbsp;    }
+<i>605</i>&nbsp;
+<i>606</i>&nbsp;    public void setGroupHit(boolean groupHit) {
+<b class="nc"><i>607</i>&nbsp;        this.groupHit = groupHit;</b>
+<b class="nc"><i>608</i>&nbsp;    }</b>
+<i>609</i>&nbsp;
+<i>610</i>&nbsp;    /**
+<i>611</i>&nbsp;     * @param maxCharacters The maximum number of characters (additional
+<i>612</i>&nbsp;     *                      characters are replaced with &quot;...&quot;). Set to 0 to disable truncation.
+<i>613</i>&nbsp;     * @return A short textual description of the entry in the format:
+<i>614</i>&nbsp;     * Author1, Author2: Title (Year)
+<i>615</i>&nbsp;     */
+<i>616</i>&nbsp;    public String getAuthorTitleYear(int maxCharacters) {
+<b class="nc"><i>617</i>&nbsp;        String[] s = new String[]{getField(FieldName.AUTHOR).orElse(&quot;N/A&quot;), getField(FieldName.TITLE).orElse(&quot;N/A&quot;),</b>
+<b class="nc"><i>618</i>&nbsp;                getField(FieldName.YEAR).orElse(&quot;N/A&quot;)};</b>
+<i>619</i>&nbsp;
+<b class="nc"><i>620</i>&nbsp;        String text = s[0] + &quot;: \&quot;&quot; + s[1] + &quot;\&quot; (&quot; + s[2] + &#39;)&#39;;</b>
+<b class="nc"><i>621</i>&nbsp;        if ((maxCharacters &lt;= 0) || (text.length() &lt;= maxCharacters)) {</b>
+<b class="nc"><i>622</i>&nbsp;            return text;</b>
+<i>623</i>&nbsp;        }
+<b class="nc"><i>624</i>&nbsp;        return text.substring(0, maxCharacters + 1) + &quot;...&quot;;</b>
+<i>625</i>&nbsp;    }
+<i>626</i>&nbsp;
+<i>627</i>&nbsp;    /**
+<i>628</i>&nbsp;     * Will return the publication date of the given bibtex entry conforming to ISO 8601, i.e. either YYYY or YYYY-MM.
+<i>629</i>&nbsp;     *
+<i>630</i>&nbsp;     * @return will return the publication date of the entry or null if no year was found.
+<i>631</i>&nbsp;     */
+<i>632</i>&nbsp;    public Optional&lt;String&gt; getPublicationDate() {
+<b class="nc"><i>633</i>&nbsp;        if (!hasField(FieldName.YEAR)) {</b>
+<b class="nc"><i>634</i>&nbsp;            return Optional.empty();</b>
+<i>635</i>&nbsp;        }
+<i>636</i>&nbsp;
+<b class="nc"><i>637</i>&nbsp;        Optional&lt;String&gt; year = getField(FieldName.YEAR);</b>
+<i>638</i>&nbsp;
+<b class="nc"><i>639</i>&nbsp;        Optional&lt;String&gt; monthString = getField(FieldName.MONTH);</b>
+<b class="nc"><i>640</i>&nbsp;        if (monthString.isPresent()) {</b>
+<b class="nc"><i>641</i>&nbsp;            MonthUtil.Month month = MonthUtil.getMonth(monthString.get());</b>
+<b class="nc"><i>642</i>&nbsp;            if (month.isValid()) {</b>
+<b class="nc"><i>643</i>&nbsp;                return Optional.of(year.orElse(&quot;&quot;) + &quot;-&quot; + month.twoDigitNumber);</b>
+<i>644</i>&nbsp;            }
+<i>645</i>&nbsp;        }
+<b class="nc"><i>646</i>&nbsp;        return year;</b>
+<i>647</i>&nbsp;    }
+<i>648</i>&nbsp;
+<i>649</i>&nbsp;    public void setParsedSerialization(String parsedSerialization) {
+<b class="nc"><i>650</i>&nbsp;        changed = false;</b>
+<b class="nc"><i>651</i>&nbsp;        this.parsedSerialization = parsedSerialization;</b>
+<b class="nc"><i>652</i>&nbsp;    }</b>
+<i>653</i>&nbsp;
+<i>654</i>&nbsp;    public String getParsedSerialization() {
+<b class="nc"><i>655</i>&nbsp;        return parsedSerialization;</b>
+<i>656</i>&nbsp;    }
+<i>657</i>&nbsp;
+<i>658</i>&nbsp;    public void setCommentsBeforeEntry(String parsedComments) {
+<b class="nc"><i>659</i>&nbsp;        this.commentsBeforeEntry = parsedComments;</b>
+<b class="nc"><i>660</i>&nbsp;    }</b>
+<i>661</i>&nbsp;
+<i>662</i>&nbsp;    public boolean hasChanged() {
+<b class="nc"><i>663</i>&nbsp;        return changed;</b>
+<i>664</i>&nbsp;    }
+<i>665</i>&nbsp;
+<i>666</i>&nbsp;    public void setChanged(boolean changed) {
+<b class="nc"><i>667</i>&nbsp;        this.changed = changed;</b>
+<b class="nc"><i>668</i>&nbsp;    }</b>
+<i>669</i>&nbsp;
+<i>670</i>&nbsp;    public Optional&lt;FieldChange&gt; putKeywords(List&lt;String&gt; keywords, Character delimiter) {
+<b class="nc"><i>671</i>&nbsp;        Objects.requireNonNull(delimiter);</b>
+<b class="nc"><i>672</i>&nbsp;        return putKeywords(new KeywordList(keywords), delimiter);</b>
+<i>673</i>&nbsp;    }
+<i>674</i>&nbsp;
+<i>675</i>&nbsp;    public Optional&lt;FieldChange&gt; putKeywords(KeywordList keywords, Character delimiter) {
+<b class="nc"><i>676</i>&nbsp;        Objects.requireNonNull(keywords);</b>
+<b class="nc"><i>677</i>&nbsp;        Optional&lt;String&gt; oldValue = this.getField(FieldName.KEYWORDS);</b>
+<i>678</i>&nbsp;
+<b class="nc"><i>679</i>&nbsp;        if (keywords.isEmpty()) {</b>
+<i>680</i>&nbsp;            // Clear keyword field
+<b class="nc"><i>681</i>&nbsp;            if (oldValue.isPresent()) {</b>
+<b class="nc"><i>682</i>&nbsp;                return this.clearField(FieldName.KEYWORDS);</b>
+<i>683</i>&nbsp;            } else {
+<b class="nc"><i>684</i>&nbsp;                return Optional.empty();</b>
+<i>685</i>&nbsp;            }
+<i>686</i>&nbsp;        }
+<i>687</i>&nbsp;
+<i>688</i>&nbsp;        // Set new keyword field
+<b class="nc"><i>689</i>&nbsp;        String newValue = keywords.getAsString(delimiter);</b>
+<b class="nc"><i>690</i>&nbsp;        return this.setField(FieldName.KEYWORDS, newValue);</b>
+<i>691</i>&nbsp;    }
+<i>692</i>&nbsp;
+<i>693</i>&nbsp;    /**
+<i>694</i>&nbsp;     * Check if a keyword already exists (case insensitive), if not: add it
+<i>695</i>&nbsp;     *
+<i>696</i>&nbsp;     * @param keyword Keyword to add
+<i>697</i>&nbsp;     */
+<i>698</i>&nbsp;    public void addKeyword(String keyword, Character delimiter) {
+<b class="nc"><i>699</i>&nbsp;        Objects.requireNonNull(keyword, &quot;keyword must not be null&quot;);</b>
+<i>700</i>&nbsp;
+<b class="nc"><i>701</i>&nbsp;        if (keyword.isEmpty()) {</b>
+<b class="nc"><i>702</i>&nbsp;            return;</b>
+<i>703</i>&nbsp;        }
+<i>704</i>&nbsp;
+<b class="nc"><i>705</i>&nbsp;        addKeyword(new Keyword(keyword), delimiter);</b>
+<b class="nc"><i>706</i>&nbsp;    }</b>
+<i>707</i>&nbsp;
+<i>708</i>&nbsp;    public void addKeyword(Keyword keyword, Character delimiter) {
+<b class="nc"><i>709</i>&nbsp;        KeywordList keywords = this.getKeywords(delimiter);</b>
+<b class="nc"><i>710</i>&nbsp;        keywords.add(keyword);</b>
+<b class="nc"><i>711</i>&nbsp;        this.putKeywords(keywords, delimiter);</b>
+<b class="nc"><i>712</i>&nbsp;    }</b>
+<i>713</i>&nbsp;
+<i>714</i>&nbsp;    /**
+<i>715</i>&nbsp;     * Add multiple keywords to entry
+<i>716</i>&nbsp;     *
+<i>717</i>&nbsp;     * @param keywords Keywords to add
+<i>718</i>&nbsp;     */
+<i>719</i>&nbsp;    public void addKeywords(Collection&lt;String&gt; keywords, Character delimiter) {
+<b class="nc"><i>720</i>&nbsp;        Objects.requireNonNull(keywords);</b>
+<b class="nc"><i>721</i>&nbsp;        keywords.forEach(keyword -&gt; addKeyword(keyword, delimiter));</b>
+<b class="nc"><i>722</i>&nbsp;    }</b>
+<i>723</i>&nbsp;
+<i>724</i>&nbsp;    public KeywordList getKeywords(Character delimiter) {
+<b class="nc"><i>725</i>&nbsp;        Optional&lt;String&gt; keywordsContent = getField(FieldName.KEYWORDS);</b>
+<b class="nc"><i>726</i>&nbsp;        if (keywordsContent.isPresent()) {</b>
+<b class="nc"><i>727</i>&nbsp;            return KeywordList.parse(keywordsContent.get(), delimiter);</b>
+<i>728</i>&nbsp;        } else {
+<b class="nc"><i>729</i>&nbsp;            return new KeywordList();</b>
+<i>730</i>&nbsp;        }
+<i>731</i>&nbsp;    }
+<i>732</i>&nbsp;
+<i>733</i>&nbsp;    public Collection&lt;String&gt; getFieldValues() {
+<b class="nc"><i>734</i>&nbsp;        return fields.values();</b>
+<i>735</i>&nbsp;    }
+<i>736</i>&nbsp;
+<i>737</i>&nbsp;    public Map&lt;String, String&gt; getFieldMap() {
+<b class="nc"><i>738</i>&nbsp;        return fields;</b>
+<i>739</i>&nbsp;    }
+<i>740</i>&nbsp;
+<i>741</i>&nbsp;    public SharedBibEntryData getSharedBibEntryData() {
+<b class="nc"><i>742</i>&nbsp;        return sharedBibEntryData;</b>
+<i>743</i>&nbsp;    }
+<i>744</i>&nbsp;
+<i>745</i>&nbsp;    @Override
+<i>746</i>&nbsp;    public boolean equals(Object o) {
+<b class="nc"><i>747</i>&nbsp;        if (this == o) {</b>
+<b class="nc"><i>748</i>&nbsp;            return true;</b>
+<i>749</i>&nbsp;        }
+<b class="nc"><i>750</i>&nbsp;        if ((o == null) || (getClass() != o.getClass())) {</b>
+<b class="nc"><i>751</i>&nbsp;            return false;</b>
+<i>752</i>&nbsp;        }
+<b class="nc"><i>753</i>&nbsp;        BibEntry entry = (BibEntry) o;</b>
+<b class="nc"><i>754</i>&nbsp;        return Objects.equals(type, entry.type) &amp;&amp; Objects.equals(fields, entry.fields);</b>
+<i>755</i>&nbsp;    }
+<i>756</i>&nbsp;
+<i>757</i>&nbsp;    @Override
+<i>758</i>&nbsp;    public int hashCode() {
+<b class="nc"><i>759</i>&nbsp;        return Objects.hash(type, fields);</b>
+<i>760</i>&nbsp;    }
+<i>761</i>&nbsp;
+<i>762</i>&nbsp;    public void registerListener(Object object) {
+<b class="fc"><i>763</i>&nbsp;        this.eventBus.register(object);</b>
+<b class="fc"><i>764</i>&nbsp;    }</b>
+<i>765</i>&nbsp;
+<i>766</i>&nbsp;    public void unregisterListener(Object object) {
+<i>767</i>&nbsp;        try {
+<b class="nc"><i>768</i>&nbsp;            this.eventBus.unregister(object);</b>
+<b class="nc"><i>769</i>&nbsp;        } catch (IllegalArgumentException e) {</b>
+<i>770</i>&nbsp;            // occurs if the event source has not been registered, should not prevent shutdown
+<b class="nc"><i>771</i>&nbsp;            LOGGER.debug(e);</b>
+<b class="nc"><i>772</i>&nbsp;        }</b>
+<b class="nc"><i>773</i>&nbsp;    }</b>
+<i>774</i>&nbsp;
+<i>775</i>&nbsp;    public BibEntry withField(String field, String value) {
+<b class="nc"><i>776</i>&nbsp;        setField(field, value);</b>
+<b class="nc"><i>777</i>&nbsp;        return this;</b>
+<i>778</i>&nbsp;    }
+<i>779</i>&nbsp;
+<i>780</i>&nbsp;    /*
+<i>781</i>&nbsp;    * Returns user comments (arbitrary text before the entry), if they exist. If not, returns the empty String
+<i>782</i>&nbsp;     */
+<i>783</i>&nbsp;    public String getUserComments() {
+<i>784</i>&nbsp;        // delete trailing whitespaces (between entry and text) from stored serialization
+<b class="nc"><i>785</i>&nbsp;        return REMOVE_TRAILING_WHITESPACE.matcher(commentsBeforeEntry).replaceFirst(&quot;&quot;);</b>
+<i>786</i>&nbsp;    }
+<i>787</i>&nbsp;
+<i>788</i>&nbsp;    public List&lt;ParsedEntryLink&gt; getEntryLinkList(String fieldName, BibDatabase database) {
+<b class="nc"><i>789</i>&nbsp;        return getField(fieldName).map(fieldValue -&gt; EntryLinkList.parse(fieldValue, database))</b>
+<b class="nc"><i>790</i>&nbsp;                .orElse(Collections.emptyList());</b>
+<i>791</i>&nbsp;    }
+<i>792</i>&nbsp;
+<i>793</i>&nbsp;    public Optional&lt;FieldChange&gt; setEntryLinkList(String fieldName, List&lt;ParsedEntryLink&gt; list) {
+<b class="nc"><i>794</i>&nbsp;        return setField(fieldName, EntryLinkList.serialize(list));</b>
+<i>795</i>&nbsp;    }
+<i>796</i>&nbsp;
+<i>797</i>&nbsp;    public Set&lt;String&gt; getFieldAsWords(String field) {
+<b class="nc"><i>798</i>&nbsp;        String fieldName = toLowerCase(field);</b>
+<b class="nc"><i>799</i>&nbsp;        Set&lt;String&gt; storedList = fieldsAsWords.get(fieldName);</b>
+<b class="nc"><i>800</i>&nbsp;        if (storedList != null) {</b>
+<b class="nc"><i>801</i>&nbsp;            return storedList;</b>
+<i>802</i>&nbsp;        } else {
+<b class="nc"><i>803</i>&nbsp;            String fieldValue = fields.get(fieldName);</b>
+<b class="nc"><i>804</i>&nbsp;            if (fieldValue == null) {</b>
+<b class="nc"><i>805</i>&nbsp;                return Collections.emptySet();</b>
+<i>806</i>&nbsp;            } else {
+<b class="nc"><i>807</i>&nbsp;                HashSet&lt;String&gt; words = new HashSet&lt;&gt;(StringUtil.getStringAsWords(fieldValue));</b>
+<b class="nc"><i>808</i>&nbsp;                fieldsAsWords.put(fieldName, words);</b>
+<b class="nc"><i>809</i>&nbsp;                return words;</b>
+<i>810</i>&nbsp;            }
+<i>811</i>&nbsp;        }
+<i>812</i>&nbsp;    }
+<i>813</i>&nbsp;
+<i>814</i>&nbsp;    public Optional&lt;FieldChange&gt; clearCiteKey() {
+<b class="nc"><i>815</i>&nbsp;        return clearField(KEY_FIELD);</b>
+<i>816</i>&nbsp;    }
+<i>817</i>&nbsp;
+<i>818</i>&nbsp;    private void invalidateFieldCache(String fieldName) {
+<b class="fc"><i>819</i>&nbsp;        latexFreeFields.remove(fieldName);</b>
+<b class="fc"><i>820</i>&nbsp;        fieldsAsWords.remove(fieldName);</b>
+<b class="fc"><i>821</i>&nbsp;    }</b>
+<i>822</i>&nbsp;
+<i>823</i>&nbsp;    public Optional&lt;String&gt; getLatexFreeField(String name) {
+<b class="nc"><i>824</i>&nbsp;        if (!hasField(name)) {</b>
+<b class="nc"><i>825</i>&nbsp;            return Optional.empty();</b>
+<b class="nc"><i>826</i>&nbsp;        } else if (latexFreeFields.containsKey(name)) {</b>
+<b class="nc"><i>827</i>&nbsp;            return Optional.ofNullable(latexFreeFields.get(toLowerCase(name)));</b>
+<i>828</i>&nbsp;        } else {
+<b class="nc"><i>829</i>&nbsp;            String latexFreeField = unicodeConverter.format(getField(name).get()).intern();</b>
+<b class="nc"><i>830</i>&nbsp;            latexFreeFields.put(name, latexFreeField);</b>
+<b class="nc"><i>831</i>&nbsp;            return Optional.of(latexFreeField);</b>
+<i>832</i>&nbsp;        }
+<i>833</i>&nbsp;    }
+<i>834</i>&nbsp;
+<i>835</i>&nbsp;    public Optional&lt;FieldChange&gt; setFiles(List&lt;ParsedFileField&gt; files) {
+<b class="nc"><i>836</i>&nbsp;        Optional&lt;String&gt; oldValue = this.getField(FieldName.FILE);</b>
+<b class="nc"><i>837</i>&nbsp;        String newValue = FileField.getStringRepresentation(files);</b>
+<i>838</i>&nbsp;
+<b class="nc"><i>839</i>&nbsp;        if (oldValue.isPresent() &amp;&amp; oldValue.get().equals(newValue)) {</b>
+<b class="nc"><i>840</i>&nbsp;            return Optional.empty();</b>
+<i>841</i>&nbsp;        }
+<i>842</i>&nbsp;
+<b class="nc"><i>843</i>&nbsp;        return this.setField(FieldName.FILE, newValue);</b>
+<i>844</i>&nbsp;    }
+<i>845</i>&nbsp;
+<i>846</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

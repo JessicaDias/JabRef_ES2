@@ -1,0 +1,150 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Change</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.collab</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Change (net.sf.jabref.collab)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Change</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 14)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.collab;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import javax.swing.JComponent;
+<i>4</i>&nbsp;import javax.swing.tree.DefaultMutableTreeNode;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import net.sf.jabref.gui.BasePanel;
+<i>7</i>&nbsp;import net.sf.jabref.gui.undo.NamedCompound;
+<i>8</i>&nbsp;import net.sf.jabref.model.database.BibDatabase;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;abstract class Change extends DefaultMutableTreeNode {
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;    protected String name;
+<b class="nc"><i>13</i>&nbsp;    private boolean accepted = true;</b>
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;
+<b class="nc"><i>16</i>&nbsp;    Change() {</b>
+<b class="nc"><i>17</i>&nbsp;        name = &quot;&quot;;</b>
+<b class="nc"><i>18</i>&nbsp;    }</b>
+<i>19</i>&nbsp;
+<b class="nc"><i>20</i>&nbsp;    Change(String name) {</b>
+<b class="nc"><i>21</i>&nbsp;        this.name = name;</b>
+<b class="nc"><i>22</i>&nbsp;    }</b>
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;    @Override
+<i>25</i>&nbsp;    public String toString() {
+<b class="nc"><i>26</i>&nbsp;        return name;</b>
+<i>27</i>&nbsp;    }
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;    public boolean isAccepted() {
+<b class="nc"><i>30</i>&nbsp;        return accepted;</b>
+<i>31</i>&nbsp;    }
+<i>32</i>&nbsp;
+<i>33</i>&nbsp;    public void setAccepted(boolean a) {
+<b class="nc"><i>34</i>&nbsp;        accepted = a;</b>
+<b class="nc"><i>35</i>&nbsp;    }</b>
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    /**
+<i>38</i>&nbsp;     * This method is used to disable the &quot;accept&quot; box if the parent has been set to &quot;not accepted&quot;.
+<i>39</i>&nbsp;     * Thus the user can disable e.g. an entry change without having to disable all field changes.
+<i>40</i>&nbsp;     * @return boolean false if the parent overrides by not being accepted.
+<i>41</i>&nbsp;     */
+<i>42</i>&nbsp;    public boolean isAcceptable() {
+<b class="nc"><i>43</i>&nbsp;        if ((getParent() != null) &amp;&amp; (getParent() instanceof Change)) {</b>
+<b class="nc"><i>44</i>&nbsp;            return ((Change) getParent()).isAccepted();</b>
+<i>45</i>&nbsp;        } else {
+<b class="nc"><i>46</i>&nbsp;            return true;</b>
+<i>47</i>&nbsp;        }
+<i>48</i>&nbsp;    }
+<i>49</i>&nbsp;
+<i>50</i>&nbsp;    /**
+<i>51</i>&nbsp;     * This method returns a JComponent detailing the nature of the change.
+<i>52</i>&nbsp;     * @return JComponent
+<i>53</i>&nbsp;     */
+<i>54</i>&nbsp;    public abstract JComponent description();
+<i>55</i>&nbsp;
+<i>56</i>&nbsp;    /**
+<i>57</i>&nbsp;     * Perform the change. This method is responsible for adding a proper undo edit to
+<i>58</i>&nbsp;     * the NamedCompound, so the change can be undone.
+<i>59</i>&nbsp;     * @param panel BasePanel The tab where the database lives.
+<i>60</i>&nbsp;     * @param secondary BibDatabase The &quot;tmp&quot; database for which the change
+<i>61</i>&nbsp;     *   should also be made.
+<i>62</i>&nbsp;     * @param undoEdit NamedCompound The compound to hold the undo edits.
+<i>63</i>&nbsp;     * @return true if all changes were made, false if not all were accepted.
+<i>64</i>&nbsp;     */
+<i>65</i>&nbsp;    public abstract boolean makeChange(BasePanel panel, BibDatabase secondary, NamedCompound undoEdit);
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

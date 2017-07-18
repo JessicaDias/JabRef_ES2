@@ -1,0 +1,130 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: NamedCompound</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.undo</a> ]
+</div>
+
+<h1>Coverage Summary for Class: NamedCompound (net.sf.jabref.gui.undo)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">NamedCompound</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 13)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.undo;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import javax.swing.undo.CompoundEdit;
+<i>4</i>&nbsp;import javax.swing.undo.UndoableEdit;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;public class NamedCompound extends CompoundEdit {
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;    private final String name;
+<i>11</i>&nbsp;    private boolean hasEdits;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;    public NamedCompound(String name) {
+<b class="nc"><i>15</i>&nbsp;        super();</b>
+<b class="nc"><i>16</i>&nbsp;        this.name = name;</b>
+<b class="nc"><i>17</i>&nbsp;    }</b>
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;    @Override
+<i>20</i>&nbsp;    public boolean addEdit(UndoableEdit undoableEdit) {
+<b class="nc"><i>21</i>&nbsp;        hasEdits = true;</b>
+<b class="nc"><i>22</i>&nbsp;        return super.addEdit(undoableEdit);</b>
+<i>23</i>&nbsp;    }
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;    public boolean hasEdits() {
+<b class="nc"><i>26</i>&nbsp;        return hasEdits;</b>
+<i>27</i>&nbsp;    }
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;    @Override
+<i>30</i>&nbsp;    public String getUndoPresentationName() {
+<b class="nc"><i>31</i>&nbsp;        return &quot;&lt;html&gt;&quot; + Localization.lang(&quot;Undo&quot;) + &quot;: &quot; + name + &quot;&lt;ul&gt;&quot; + getPresentationName() + &quot;&lt;/ul&gt;&lt;/html&gt;&quot;;</b>
+<i>32</i>&nbsp;    }
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;    @Override
+<i>35</i>&nbsp;    public String getRedoPresentationName() {
+<b class="nc"><i>36</i>&nbsp;        return &quot;&lt;html&gt;&quot; + Localization.lang(&quot;Redo&quot;) + &quot;: &quot; + name + &quot;&lt;ul&gt;&quot; + getPresentationName() + &quot;&lt;/ul&gt;&lt;/html&gt;&quot;;</b>
+<i>37</i>&nbsp;    }
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;    @Override
+<i>40</i>&nbsp;    public String getPresentationName() {
+<b class="nc"><i>41</i>&nbsp;        StringBuilder sb = new StringBuilder();</b>
+<b class="nc"><i>42</i>&nbsp;        for (UndoableEdit edit : edits) {</b>
+<b class="nc"><i>43</i>&nbsp;            sb.append(&quot;&lt;li&gt;&quot;).append(edit.getPresentationName());</b>
+<b class="nc"><i>44</i>&nbsp;        }</b>
+<b class="nc"><i>45</i>&nbsp;        return sb.toString();</b>
+<i>46</i>&nbsp;    }
+<i>47</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,403 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: PdfImporter</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.pdfimport</a> ]
+</div>
+
+<h1>Coverage Summary for Class: PdfImporter (net.sf.jabref.pdfimport)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PdfImporter</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 118)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">PdfImporter$ImportPdfFilesResult</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 6)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 124)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.pdfimport;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.File;
+<i>4</i>&nbsp;import java.nio.file.Path;
+<i>5</i>&nbsp;import java.nio.file.Paths;
+<i>6</i>&nbsp;import java.util.ArrayList;
+<i>7</i>&nbsp;import java.util.Collections;
+<i>8</i>&nbsp;import java.util.List;
+<i>9</i>&nbsp;import java.util.Optional;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;import javax.swing.JOptionPane;
+<i>12</i>&nbsp;import javax.swing.SwingUtilities;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;import net.sf.jabref.Globals;
+<i>15</i>&nbsp;import net.sf.jabref.gui.BasePanel;
+<i>16</i>&nbsp;import net.sf.jabref.gui.BasePanelMode;
+<i>17</i>&nbsp;import net.sf.jabref.gui.EntryTypeDialog;
+<i>18</i>&nbsp;import net.sf.jabref.gui.JabRefFrame;
+<i>19</i>&nbsp;import net.sf.jabref.gui.entryeditor.EntryEditor;
+<i>20</i>&nbsp;import net.sf.jabref.gui.externalfiles.DroppedFileHandler;
+<i>21</i>&nbsp;import net.sf.jabref.gui.externalfiletype.ExternalFileTypes;
+<i>22</i>&nbsp;import net.sf.jabref.gui.filelist.FileListEntry;
+<i>23</i>&nbsp;import net.sf.jabref.gui.filelist.FileListTableModel;
+<i>24</i>&nbsp;import net.sf.jabref.gui.maintable.MainTable;
+<i>25</i>&nbsp;import net.sf.jabref.gui.undo.UndoableInsertEntry;
+<i>26</i>&nbsp;import net.sf.jabref.logic.bibtexkeypattern.BibtexKeyPatternUtil;
+<i>27</i>&nbsp;import net.sf.jabref.logic.importer.ParserResult;
+<i>28</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.PdfContentImporter;
+<i>29</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.PdfXmpImporter;
+<i>30</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>31</i>&nbsp;import net.sf.jabref.logic.util.UpdateField;
+<i>32</i>&nbsp;import net.sf.jabref.logic.util.io.FileUtil;
+<i>33</i>&nbsp;import net.sf.jabref.logic.xmp.XMPUtil;
+<i>34</i>&nbsp;import net.sf.jabref.model.database.KeyCollisionException;
+<i>35</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>36</i>&nbsp;import net.sf.jabref.model.entry.EntryType;
+<i>37</i>&nbsp;import net.sf.jabref.model.entry.FieldName;
+<i>38</i>&nbsp;import net.sf.jabref.preferences.JabRefPreferences;
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;import org.apache.commons.logging.Log;
+<i>41</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;public class PdfImporter {
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;    private final JabRefFrame frame;
+<i>46</i>&nbsp;    private final BasePanel panel;
+<i>47</i>&nbsp;    private final MainTable entryTable;
+<i>48</i>&nbsp;    private final int dropRow;
+<i>49</i>&nbsp;
+<b class="nc"><i>50</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(PdfImporter.class);</b>
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;    /**
+<i>53</i>&nbsp;     * Creates the PdfImporter
+<i>54</i>&nbsp;     *
+<i>55</i>&nbsp;     * @param frame the JabRef frame
+<i>56</i>&nbsp;     * @param panel the panel to use
+<i>57</i>&nbsp;     * @param entryTable the entry table to work on
+<i>58</i>&nbsp;     * @param dropRow the row the entry is dropped to. May be -1 to indicate that no row is selected.
+<i>59</i>&nbsp;     */
+<b class="nc"><i>60</i>&nbsp;    public PdfImporter(JabRefFrame frame, BasePanel panel, MainTable entryTable, int dropRow) {</b>
+<b class="nc"><i>61</i>&nbsp;        this.frame = frame;</b>
+<b class="nc"><i>62</i>&nbsp;        this.panel = panel;</b>
+<b class="nc"><i>63</i>&nbsp;        this.entryTable = entryTable;</b>
+<b class="nc"><i>64</i>&nbsp;        this.dropRow = dropRow;</b>
+<b class="nc"><i>65</i>&nbsp;    }</b>
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;
+<i>68</i>&nbsp;    public class ImportPdfFilesResult {
+<i>69</i>&nbsp;
+<i>70</i>&nbsp;        private final List&lt;String&gt; noPdfFiles;
+<i>71</i>&nbsp;        private final List&lt;BibEntry&gt; entries;
+<i>72</i>&nbsp;
+<i>73</i>&nbsp;
+<b class="nc"><i>74</i>&nbsp;        public ImportPdfFilesResult(List&lt;String&gt; noPdfFiles, List&lt;BibEntry&gt; entries) {</b>
+<b class="nc"><i>75</i>&nbsp;            this.noPdfFiles = noPdfFiles;</b>
+<b class="nc"><i>76</i>&nbsp;            this.entries = entries;</b>
+<b class="nc"><i>77</i>&nbsp;        }</b>
+<i>78</i>&nbsp;
+<i>79</i>&nbsp;
+<i>80</i>&nbsp;        public List&lt;String&gt; getNoPdfFiles() {
+<b class="nc"><i>81</i>&nbsp;            return noPdfFiles;</b>
+<i>82</i>&nbsp;        }
+<i>83</i>&nbsp;
+<i>84</i>&nbsp;
+<i>85</i>&nbsp;        public List&lt;BibEntry&gt; getEntries() {
+<b class="nc"><i>86</i>&nbsp;            return entries;</b>
+<i>87</i>&nbsp;        }
+<i>88</i>&nbsp;    }
+<i>89</i>&nbsp;
+<i>90</i>&nbsp;
+<i>91</i>&nbsp;    /**
+<i>92</i>&nbsp;     *
+<i>93</i>&nbsp;     * Imports the PDF files given by fileNames
+<i>94</i>&nbsp;     *
+<i>95</i>&nbsp;     * @param fileNames states the names of the files to import
+<i>96</i>&nbsp;     * @return list of successful created BibTeX entries and list of non-PDF files
+<i>97</i>&nbsp;     */
+<i>98</i>&nbsp;    public ImportPdfFilesResult importPdfFiles(List&lt;String&gt; fileNames) {
+<i>99</i>&nbsp;        // sort fileNames in PDFfiles to import and other files
+<i>100</i>&nbsp;        // PDFfiles: variable files
+<i>101</i>&nbsp;        // other files: variable noPdfFiles
+<b class="nc"><i>102</i>&nbsp;        List&lt;String&gt; files = new ArrayList&lt;&gt;(fileNames);</b>
+<b class="nc"><i>103</i>&nbsp;        List&lt;String&gt; noPdfFiles = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>104</i>&nbsp;        for (String file : files) {</b>
+<b class="nc"><i>105</i>&nbsp;            if (!PdfFileFilter.accept(file)) {</b>
+<b class="nc"><i>106</i>&nbsp;                noPdfFiles.add(file);</b>
+<i>107</i>&nbsp;            }
+<b class="nc"><i>108</i>&nbsp;        }</b>
+<b class="nc"><i>109</i>&nbsp;        files.removeAll(noPdfFiles);</b>
+<i>110</i>&nbsp;        // files and noPdfFiles correctly sorted
+<i>111</i>&nbsp;
+<i>112</i>&nbsp;        // import the files
+<b class="nc"><i>113</i>&nbsp;        List&lt;BibEntry&gt; entries = importPdfFilesInternal(files);</b>
+<i>114</i>&nbsp;
+<b class="nc"><i>115</i>&nbsp;        return new ImportPdfFilesResult(noPdfFiles, entries);</b>
+<i>116</i>&nbsp;    }
+<i>117</i>&nbsp;
+<i>118</i>&nbsp;    /**
+<i>119</i>&nbsp;     * @param fileNames - PDF files to import
+<i>120</i>&nbsp;     * @return true if the import succeeded, false otherwise
+<i>121</i>&nbsp;     */
+<i>122</i>&nbsp;    private List&lt;BibEntry&gt; importPdfFilesInternal(List&lt;String&gt; fileNames) {
+<b class="nc"><i>123</i>&nbsp;        if (panel == null) {</b>
+<b class="nc"><i>124</i>&nbsp;            return Collections.emptyList();</b>
+<i>125</i>&nbsp;        }
+<b class="nc"><i>126</i>&nbsp;        ImportDialog importDialog = null;</b>
+<b class="nc"><i>127</i>&nbsp;        boolean doNotShowAgain = false;</b>
+<b class="nc"><i>128</i>&nbsp;        boolean neverShow = Globals.prefs.getBoolean(JabRefPreferences.IMPORT_ALWAYSUSE);</b>
+<b class="nc"><i>129</i>&nbsp;        int globalChoice = Globals.prefs.getInt(JabRefPreferences.IMPORT_DEFAULT_PDF_IMPORT_STYLE);</b>
+<i>130</i>&nbsp;
+<i>131</i>&nbsp;
+<b class="nc"><i>132</i>&nbsp;        List&lt;BibEntry&gt; res = new ArrayList&lt;&gt;();</b>
+<i>133</i>&nbsp;
+<b class="nc"><i>134</i>&nbsp;        for (String fileName : fileNames) {</b>
+<b class="nc"><i>135</i>&nbsp;            if (!neverShow &amp;&amp; !doNotShowAgain) {</b>
+<b class="nc"><i>136</i>&nbsp;                importDialog = new ImportDialog(dropRow &gt;= 0, fileName);</b>
+<b class="nc"><i>137</i>&nbsp;                if (!XMPUtil.hasMetadata(Paths.get(fileName), Globals.prefs.getXMPPreferences())) {</b>
+<b class="nc"><i>138</i>&nbsp;                    importDialog.disableXMPChoice();</b>
+<i>139</i>&nbsp;                }
+<b class="nc"><i>140</i>&nbsp;                importDialog.setLocationRelativeTo(frame);</b>
+<b class="nc"><i>141</i>&nbsp;                importDialog.showDialog();</b>
+<b class="nc"><i>142</i>&nbsp;                doNotShowAgain = importDialog.isDoNotShowAgain();</b>
+<i>143</i>&nbsp;            }
+<b class="nc"><i>144</i>&nbsp;            if (neverShow || (importDialog.getResult() == JOptionPane.OK_OPTION)) {</b>
+<b class="nc"><i>145</i>&nbsp;                int choice = neverShow ? globalChoice : importDialog.getChoice();</b>
+<b class="nc"><i>146</i>&nbsp;                switch (choice) {</b>
+<i>147</i>&nbsp;                case ImportDialog.XMP:
+<b class="nc"><i>148</i>&nbsp;                    doXMPImport(fileName, res);</b>
+<b class="nc"><i>149</i>&nbsp;                    break;</b>
+<i>150</i>&nbsp;
+<i>151</i>&nbsp;                case ImportDialog.CONTENT:
+<b class="nc"><i>152</i>&nbsp;                    doContentImport(fileName, res);</b>
+<b class="nc"><i>153</i>&nbsp;                    break;</b>
+<i>154</i>&nbsp;                case ImportDialog.NOMETA:
+<b class="nc"><i>155</i>&nbsp;                    createNewBlankEntry(fileName).ifPresent(res::add);</b>
+<b class="nc"><i>156</i>&nbsp;                    break;</b>
+<i>157</i>&nbsp;                case ImportDialog.ONLYATTACH:
+<b class="nc"><i>158</i>&nbsp;                    DroppedFileHandler dfh = new DroppedFileHandler(frame, panel);</b>
+<b class="nc"><i>159</i>&nbsp;                    dfh.linkPdfToEntry(fileName, entryTable, dropRow);</b>
+<b class="nc"><i>160</i>&nbsp;                    break;</b>
+<i>161</i>&nbsp;                default:
+<i>162</i>&nbsp;                    break;
+<i>163</i>&nbsp;                }
+<i>164</i>&nbsp;            }
+<i>165</i>&nbsp;
+<b class="nc"><i>166</i>&nbsp;        }</b>
+<b class="nc"><i>167</i>&nbsp;        return res;</b>
+<i>168</i>&nbsp;    }
+<i>169</i>&nbsp;
+<i>170</i>&nbsp;    private void doXMPImport(String fileName, List&lt;BibEntry&gt; res) {
+<b class="nc"><i>171</i>&nbsp;        List&lt;BibEntry&gt; localRes = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>172</i>&nbsp;        PdfXmpImporter importer = new PdfXmpImporter(Globals.prefs.getXMPPreferences());</b>
+<b class="nc"><i>173</i>&nbsp;        Path filePath = Paths.get(fileName);</b>
+<b class="nc"><i>174</i>&nbsp;        ParserResult result = importer.importDatabase(filePath, Globals.prefs.getDefaultEncoding());</b>
+<b class="nc"><i>175</i>&nbsp;        if (result.hasWarnings()) {</b>
+<b class="nc"><i>176</i>&nbsp;            frame.showMessage(result.getErrorMessage());</b>
+<i>177</i>&nbsp;        }
+<b class="nc"><i>178</i>&nbsp;        localRes.addAll(result.getDatabase().getEntries());</b>
+<i>179</i>&nbsp;
+<i>180</i>&nbsp;        BibEntry entry;
+<b class="nc"><i>181</i>&nbsp;        if (localRes.isEmpty()) {</b>
+<i>182</i>&nbsp;            // import failed -&gt; generate default entry
+<b class="nc"><i>183</i>&nbsp;            LOGGER.info(&quot;Import failed&quot;);</b>
+<b class="nc"><i>184</i>&nbsp;            createNewBlankEntry(fileName).ifPresent(res::add);</b>
+<b class="nc"><i>185</i>&nbsp;            return;</b>
+<i>186</i>&nbsp;        }
+<i>187</i>&nbsp;
+<i>188</i>&nbsp;        // only one entry is imported
+<b class="nc"><i>189</i>&nbsp;        entry = localRes.get(0);</b>
+<i>190</i>&nbsp;
+<i>191</i>&nbsp;        // insert entry to database and link file
+<b class="nc"><i>192</i>&nbsp;        panel.getDatabase().insertEntry(entry);</b>
+<b class="nc"><i>193</i>&nbsp;        panel.markBaseChanged();</b>
+<b class="nc"><i>194</i>&nbsp;        FileListTableModel tm = new FileListTableModel();</b>
+<b class="nc"><i>195</i>&nbsp;        File toLink = new File(fileName);</b>
+<i>196</i>&nbsp;        // Get a list of file directories:
+<b class="nc"><i>197</i>&nbsp;        List&lt;String&gt; dirsS = panel.getBibDatabaseContext()</b>
+<b class="nc"><i>198</i>&nbsp;                .getFileDirectories(Globals.prefs.getFileDirectoryPreferences());</b>
+<i>199</i>&nbsp;
+<b class="nc"><i>200</i>&nbsp;        tm.addEntry(0, new FileListEntry(toLink.getName(), FileUtil.shortenFileName(toLink, dirsS).getPath(),</b>
+<b class="nc"><i>201</i>&nbsp;                ExternalFileTypes.getInstance().getExternalFileTypeByName(&quot;PDF&quot;)));</b>
+<b class="nc"><i>202</i>&nbsp;        entry.setField(FieldName.FILE, tm.getStringRepresentation());</b>
+<b class="nc"><i>203</i>&nbsp;        res.add(entry);</b>
+<i>204</i>&nbsp;
+<b class="nc"><i>205</i>&nbsp;    }</b>
+<i>206</i>&nbsp;
+<i>207</i>&nbsp;    private Optional&lt;BibEntry&gt; createNewBlankEntry(String fileName) {
+<b class="nc"><i>208</i>&nbsp;        Optional&lt;BibEntry&gt; newEntry = createNewEntry();</b>
+<b class="nc"><i>209</i>&nbsp;        newEntry.ifPresent(bibEntry -&gt; {</b>
+<b class="nc"><i>210</i>&nbsp;            DroppedFileHandler dfh = new DroppedFileHandler(frame, panel);</b>
+<b class="nc"><i>211</i>&nbsp;            dfh.linkPdfToEntry(fileName, bibEntry);</b>
+<b class="nc"><i>212</i>&nbsp;        });</b>
+<b class="nc"><i>213</i>&nbsp;        return newEntry;</b>
+<i>214</i>&nbsp;    }
+<i>215</i>&nbsp;
+<i>216</i>&nbsp;    private void doContentImport(String fileName, List&lt;BibEntry&gt; res) {
+<i>217</i>&nbsp;
+<b class="nc"><i>218</i>&nbsp;        PdfContentImporter contentImporter = new PdfContentImporter(</b>
+<b class="nc"><i>219</i>&nbsp;                Globals.prefs.getImportFormatPreferences());</b>
+<b class="nc"><i>220</i>&nbsp;        Path filePath = Paths.get(fileName);</b>
+<b class="nc"><i>221</i>&nbsp;        ParserResult result = contentImporter.importDatabase(filePath, Globals.prefs.getDefaultEncoding());</b>
+<b class="nc"><i>222</i>&nbsp;        if (result.hasWarnings()) {</b>
+<b class="nc"><i>223</i>&nbsp;            frame.showMessage(result.getErrorMessage());</b>
+<i>224</i>&nbsp;        }
+<i>225</i>&nbsp;
+<b class="nc"><i>226</i>&nbsp;        if (!result.getDatabase().hasEntries()) {</b>
+<i>227</i>&nbsp;            // import failed -&gt; generate default entry
+<b class="nc"><i>228</i>&nbsp;            createNewBlankEntry(fileName).ifPresent(res::add);</b>
+<b class="nc"><i>229</i>&nbsp;            return;</b>
+<i>230</i>&nbsp;        }
+<i>231</i>&nbsp;
+<i>232</i>&nbsp;        // only one entry is imported
+<b class="nc"><i>233</i>&nbsp;        BibEntry entry = result.getDatabase().getEntries().get(0);</b>
+<i>234</i>&nbsp;
+<i>235</i>&nbsp;        // insert entry to database and link file
+<b class="nc"><i>236</i>&nbsp;        panel.getDatabase().insertEntry(entry);</b>
+<b class="nc"><i>237</i>&nbsp;        panel.markBaseChanged();</b>
+<b class="nc"><i>238</i>&nbsp;        BibtexKeyPatternUtil.makeAndSetLabel(panel.getBibDatabaseContext().getMetaData()</b>
+<b class="nc"><i>239</i>&nbsp;                .getCiteKeyPattern(Globals.prefs.getBibtexKeyPatternPreferences().getKeyPattern()), panel.getDatabase(), entry,</b>
+<b class="nc"><i>240</i>&nbsp;                Globals.prefs.getBibtexKeyPatternPreferences());</b>
+<b class="nc"><i>241</i>&nbsp;        DroppedFileHandler dfh = new DroppedFileHandler(frame, panel);</b>
+<b class="nc"><i>242</i>&nbsp;        dfh.linkPdfToEntry(fileName, entry);</b>
+<b class="nc"><i>243</i>&nbsp;        panel.highlightEntry(entry);</b>
+<b class="nc"><i>244</i>&nbsp;        if (Globals.prefs.getBoolean(JabRefPreferences.AUTO_OPEN_FORM)) {</b>
+<b class="nc"><i>245</i>&nbsp;            EntryEditor editor = panel.getEntryEditor(entry);</b>
+<b class="nc"><i>246</i>&nbsp;            panel.showEntryEditor(editor);</b>
+<i>247</i>&nbsp;        }
+<b class="nc"><i>248</i>&nbsp;        res.add(entry);</b>
+<b class="nc"><i>249</i>&nbsp;    }</b>
+<i>250</i>&nbsp;
+<i>251</i>&nbsp;    private Optional&lt;BibEntry&gt; createNewEntry() {
+<i>252</i>&nbsp;        // Find out what type is desired
+<b class="nc"><i>253</i>&nbsp;        EntryTypeDialog etd = new EntryTypeDialog(frame);</b>
+<i>254</i>&nbsp;        // We want to center the dialog, to make it look nicer.
+<b class="nc"><i>255</i>&nbsp;        etd.setLocationRelativeTo(frame);</b>
+<b class="nc"><i>256</i>&nbsp;        etd.setVisible(true);</b>
+<b class="nc"><i>257</i>&nbsp;        EntryType type = etd.getChoice();</b>
+<i>258</i>&nbsp;
+<b class="nc"><i>259</i>&nbsp;        if (type != null) { // Only if the dialog was not canceled.</b>
+<b class="nc"><i>260</i>&nbsp;            final BibEntry bibEntry = new BibEntry(type.getName());</b>
+<i>261</i>&nbsp;            try {
+<b class="nc"><i>262</i>&nbsp;                panel.getDatabase().insertEntry(bibEntry);</b>
+<i>263</i>&nbsp;
+<i>264</i>&nbsp;                // Set owner/timestamp if options are enabled:
+<b class="nc"><i>265</i>&nbsp;                List&lt;BibEntry&gt; list = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>266</i>&nbsp;                list.add(bibEntry);</b>
+<b class="nc"><i>267</i>&nbsp;                UpdateField.setAutomaticFields(list, true, true, Globals.prefs.getUpdateFieldPreferences());</b>
+<i>268</i>&nbsp;
+<i>269</i>&nbsp;                // Create an UndoableInsertEntry object.
+<b class="nc"><i>270</i>&nbsp;                panel.getUndoManager().addEdit(new UndoableInsertEntry(panel.getDatabase(), bibEntry, panel));</b>
+<b class="nc"><i>271</i>&nbsp;                panel.output(Localization.lang(&quot;Added new&quot;) + &quot; &#39;&quot; + type.getName().toLowerCase() + &quot;&#39; &quot;</b>
+<b class="nc"><i>272</i>&nbsp;                        + Localization.lang(&quot;entry&quot;) + &quot;.&quot;);</b>
+<i>273</i>&nbsp;
+<i>274</i>&nbsp;                // We are going to select the new entry. Before that, make sure that we are in
+<i>275</i>&nbsp;                // show-entry mode. If we aren&#39;t already in that mode, enter the WILL_SHOW_EDITOR
+<i>276</i>&nbsp;                // mode which makes sure the selection will trigger display of the entry editor
+<i>277</i>&nbsp;                // and adjustment of the splitter.
+<b class="nc"><i>278</i>&nbsp;                if (panel.getMode() != BasePanelMode.SHOWING_EDITOR) {</b>
+<b class="nc"><i>279</i>&nbsp;                    panel.setMode(BasePanelMode.WILL_SHOW_EDITOR);</b>
+<i>280</i>&nbsp;                }
+<i>281</i>&nbsp;
+<b class="nc"><i>282</i>&nbsp;                SwingUtilities.invokeLater(() -&gt; panel.showEntry(bibEntry));</b>
+<i>283</i>&nbsp;
+<i>284</i>&nbsp;                // The database just changed.
+<b class="nc"><i>285</i>&nbsp;                panel.markBaseChanged();</b>
+<i>286</i>&nbsp;
+<b class="nc"><i>287</i>&nbsp;                return Optional.of(bibEntry);</b>
+<b class="nc"><i>288</i>&nbsp;            } catch (KeyCollisionException ex) {</b>
+<b class="nc"><i>289</i>&nbsp;                LOGGER.info(&quot;Key collision occurred&quot;, ex);</b>
+<i>290</i>&nbsp;            }
+<i>291</i>&nbsp;        }
+<b class="nc"><i>292</i>&nbsp;        return Optional.empty();</b>
+<i>293</i>&nbsp;    }
+<i>294</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

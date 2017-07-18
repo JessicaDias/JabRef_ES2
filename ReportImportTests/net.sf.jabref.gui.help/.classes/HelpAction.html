@@ -1,0 +1,220 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: HelpAction</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.help</a> ]
+</div>
+
+<h1>Coverage Summary for Class: HelpAction (net.sf.jabref.gui.help)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">HelpAction</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 39)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">HelpAction$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 42)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.help;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.Color;
+<i>4</i>&nbsp;import java.awt.Cursor;
+<i>5</i>&nbsp;import java.awt.Dimension;
+<i>6</i>&nbsp;import java.awt.event.ActionEvent;
+<i>7</i>&nbsp;import java.awt.event.MouseAdapter;
+<i>8</i>&nbsp;import java.awt.event.MouseEvent;
+<i>9</i>&nbsp;import java.util.HashSet;
+<i>10</i>&nbsp;import java.util.Set;
+<i>11</i>&nbsp;import java.util.stream.Collectors;
+<i>12</i>&nbsp;import java.util.stream.Stream;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;import javax.swing.Action;
+<i>15</i>&nbsp;import javax.swing.Icon;
+<i>16</i>&nbsp;import javax.swing.JButton;
+<i>17</i>&nbsp;import javax.swing.JLabel;
+<i>18</i>&nbsp;import javax.swing.KeyStroke;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;import net.sf.jabref.Globals;
+<i>21</i>&nbsp;import net.sf.jabref.gui.IconTheme;
+<i>22</i>&nbsp;import net.sf.jabref.gui.actions.MnemonicAwareAction;
+<i>23</i>&nbsp;import net.sf.jabref.gui.desktop.JabRefDesktop;
+<i>24</i>&nbsp;import net.sf.jabref.logic.help.HelpFile;
+<i>25</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>26</i>&nbsp;import net.sf.jabref.preferences.JabRefPreferences;
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;/**
+<i>29</i>&nbsp; * This Action keeps a reference to a URL. When activated, it shows the help
+<i>30</i>&nbsp; * Dialog unless it is already visible, and shows the URL in it.
+<i>31</i>&nbsp; */
+<i>32</i>&nbsp;public class HelpAction extends MnemonicAwareAction {
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;    /**
+<i>35</i>&nbsp;     * New languages of the help have to be added here
+<i>36</i>&nbsp;     */
+<b class="nc"><i>37</i>&nbsp;    private static final Set&lt;String&gt; avaiableLangFiles = Stream.of(&quot;en&quot;, &quot;de&quot;, &quot;fr&quot;, &quot;in&quot;, &quot;ja&quot;)</b>
+<b class="nc"><i>38</i>&nbsp;            .collect(Collectors.toCollection(HashSet::new));</b>
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;    private HelpFile helpPage;
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;    public HelpAction(String title, String tooltip, HelpFile helpPage, KeyStroke key) {
+<b class="nc"><i>44</i>&nbsp;        this(title, tooltip, helpPage, IconTheme.JabRefIcon.HELP.getSmallIcon());</b>
+<b class="nc"><i>45</i>&nbsp;        putValue(Action.ACCELERATOR_KEY, key);</b>
+<b class="nc"><i>46</i>&nbsp;    }</b>
+<i>47</i>&nbsp;
+<i>48</i>&nbsp;    private HelpAction(String title, String tooltip, HelpFile helpPage, Icon icon) {
+<b class="nc"><i>49</i>&nbsp;        super(icon);</b>
+<b class="nc"><i>50</i>&nbsp;        this.helpPage = helpPage;</b>
+<b class="nc"><i>51</i>&nbsp;        putValue(Action.NAME, title);</b>
+<b class="nc"><i>52</i>&nbsp;        putValue(Action.SHORT_DESCRIPTION, tooltip);</b>
+<b class="nc"><i>53</i>&nbsp;    }</b>
+<i>54</i>&nbsp;
+<i>55</i>&nbsp;    public HelpAction(String tooltip, HelpFile helpPage) {
+<b class="nc"><i>56</i>&nbsp;        this(Localization.lang(&quot;Help&quot;), tooltip, helpPage, IconTheme.JabRefIcon.HELP.getSmallIcon());</b>
+<b class="nc"><i>57</i>&nbsp;    }</b>
+<i>58</i>&nbsp;
+<i>59</i>&nbsp;    public HelpAction(HelpFile helpPage, Icon icon) {
+<b class="nc"><i>60</i>&nbsp;        this(Localization.lang(&quot;Help&quot;), Localization.lang(&quot;Help&quot;), helpPage, icon);</b>
+<b class="nc"><i>61</i>&nbsp;    }</b>
+<i>62</i>&nbsp;
+<i>63</i>&nbsp;    public HelpAction(HelpFile helpPage) {
+<b class="nc"><i>64</i>&nbsp;        this(Localization.lang(&quot;Help&quot;), Localization.lang(&quot;Help&quot;), helpPage, IconTheme.JabRefIcon.HELP.getSmallIcon());</b>
+<b class="nc"><i>65</i>&nbsp;    }</b>
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;    public JButton getHelpButton() {
+<b class="nc"><i>68</i>&nbsp;        JButton button = new JButton(this);</b>
+<b class="nc"><i>69</i>&nbsp;        button.setText(null);</b>
+<b class="nc"><i>70</i>&nbsp;        button.setPreferredSize(new Dimension(24, 24));</b>
+<b class="nc"><i>71</i>&nbsp;        button.setToolTipText(getValue(Action.SHORT_DESCRIPTION).toString());</b>
+<b class="nc"><i>72</i>&nbsp;        return button;</b>
+<i>73</i>&nbsp;    }
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;    public JLabel getHelpLabel(String labelText) {
+<b class="nc"><i>76</i>&nbsp;        JLabel helpLabel = new JLabel(&quot;&lt;html&gt;&lt;u&gt;&quot; + labelText + &quot;&lt;/u&gt;&lt;/html&gt;&quot;);</b>
+<b class="nc"><i>77</i>&nbsp;        helpLabel.setForeground(Color.BLUE);</b>
+<b class="nc"><i>78</i>&nbsp;        helpLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));</b>
+<b class="nc"><i>79</i>&nbsp;        helpLabel.addMouseListener(new MouseAdapter() {</b>
+<i>80</i>&nbsp;
+<i>81</i>&nbsp;            @Override
+<i>82</i>&nbsp;            public void mouseClicked(MouseEvent e) {
+<b class="nc"><i>83</i>&nbsp;                openHelpPage();</b>
+<b class="nc"><i>84</i>&nbsp;            }</b>
+<i>85</i>&nbsp;        });
+<b class="nc"><i>86</i>&nbsp;        return helpLabel;</b>
+<i>87</i>&nbsp;    }
+<i>88</i>&nbsp;
+<i>89</i>&nbsp;    public void setHelpFile(HelpFile urlPart) {
+<b class="nc"><i>90</i>&nbsp;        this.helpPage = urlPart;</b>
+<b class="nc"><i>91</i>&nbsp;    }</b>
+<i>92</i>&nbsp;
+<i>93</i>&nbsp;    @Override
+<i>94</i>&nbsp;    public void actionPerformed(ActionEvent e) {
+<b class="nc"><i>95</i>&nbsp;        openHelpPage();</b>
+<b class="nc"><i>96</i>&nbsp;    }</b>
+<i>97</i>&nbsp;
+<i>98</i>&nbsp;    private void openHelpPage() {
+<b class="nc"><i>99</i>&nbsp;        String lang = Globals.prefs.get(JabRefPreferences.LANGUAGE);</b>
+<b class="nc"><i>100</i>&nbsp;        StringBuilder sb = new StringBuilder(&quot;https://help.jabref.org/&quot;);</b>
+<i>101</i>&nbsp;
+<b class="nc"><i>102</i>&nbsp;        if (avaiableLangFiles.contains(lang)) {</b>
+<b class="nc"><i>103</i>&nbsp;            sb.append(lang);</b>
+<b class="nc"><i>104</i>&nbsp;            sb.append(&quot;/&quot;);</b>
+<i>105</i>&nbsp;        } else {
+<b class="nc"><i>106</i>&nbsp;            sb.append(&quot;en/&quot;);</b>
+<i>107</i>&nbsp;        }
+<b class="nc"><i>108</i>&nbsp;        sb.append(helpPage.getPageName());</b>
+<b class="nc"><i>109</i>&nbsp;        JabRefDesktop.openBrowserShowPopup(sb.toString());</b>
+<b class="nc"><i>110</i>&nbsp;    }</b>
+<i>111</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,154 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: FulltextFetchers</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.importer</a> ]
+</div>
+
+<h1>Coverage Summary for Class: FulltextFetchers (net.sf.jabref.logic.importer)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">FulltextFetchers</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 27)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.importer;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.IOException;
+<i>4</i>&nbsp;import java.net.URL;
+<i>5</i>&nbsp;import java.util.ArrayList;
+<i>6</i>&nbsp;import java.util.List;
+<i>7</i>&nbsp;import java.util.Optional;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;import net.sf.jabref.logic.importer.fetcher.ACS;
+<i>10</i>&nbsp;import net.sf.jabref.logic.importer.fetcher.ArXiv;
+<i>11</i>&nbsp;import net.sf.jabref.logic.importer.fetcher.CrossRef;
+<i>12</i>&nbsp;import net.sf.jabref.logic.importer.fetcher.DoiResolution;
+<i>13</i>&nbsp;import net.sf.jabref.logic.importer.fetcher.GoogleScholar;
+<i>14</i>&nbsp;import net.sf.jabref.logic.importer.fetcher.IEEE;
+<i>15</i>&nbsp;import net.sf.jabref.logic.importer.fetcher.ScienceDirect;
+<i>16</i>&nbsp;import net.sf.jabref.logic.importer.fetcher.SpringerLink;
+<i>17</i>&nbsp;import net.sf.jabref.logic.util.DOI;
+<i>18</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>19</i>&nbsp;import net.sf.jabref.model.entry.FieldName;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;import org.apache.commons.logging.Log;
+<i>22</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;/**
+<i>25</i>&nbsp; * Utility class for trying to resolve URLs to full-text PDF for articles.
+<i>26</i>&nbsp; */
+<i>27</i>&nbsp;public class FulltextFetchers {
+<b class="nc"><i>28</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(FulltextFetchers.class);</b>
+<i>29</i>&nbsp;
+<b class="nc"><i>30</i>&nbsp;    private final List&lt;FulltextFetcher&gt; finders = new ArrayList&lt;&gt;();</b>
+<i>31</i>&nbsp;
+<b class="nc"><i>32</i>&nbsp;    public FulltextFetchers(ImportFormatPreferences importFormatPreferences) {</b>
+<i>33</i>&nbsp;        // Ordering is important, authorities first!
+<i>34</i>&nbsp;        // Publisher
+<b class="nc"><i>35</i>&nbsp;        finders.add(new DoiResolution());</b>
+<b class="nc"><i>36</i>&nbsp;        finders.add(new ScienceDirect());</b>
+<b class="nc"><i>37</i>&nbsp;        finders.add(new SpringerLink());</b>
+<b class="nc"><i>38</i>&nbsp;        finders.add(new ACS());</b>
+<b class="nc"><i>39</i>&nbsp;        finders.add(new ArXiv(importFormatPreferences));</b>
+<b class="nc"><i>40</i>&nbsp;        finders.add(new IEEE());</b>
+<i>41</i>&nbsp;        // Meta search
+<b class="nc"><i>42</i>&nbsp;        finders.add(new GoogleScholar(importFormatPreferences));</b>
+<b class="nc"><i>43</i>&nbsp;    }</b>
+<i>44</i>&nbsp;
+<b class="nc"><i>45</i>&nbsp;    public FulltextFetchers(List&lt;FulltextFetcher&gt; fetcher) {</b>
+<b class="nc"><i>46</i>&nbsp;        finders.addAll(fetcher);</b>
+<b class="nc"><i>47</i>&nbsp;    }</b>
+<i>48</i>&nbsp;
+<i>49</i>&nbsp;    public Optional&lt;URL&gt; findFullTextPDF(BibEntry entry) {
+<i>50</i>&nbsp;        // for accuracy, fetch DOI first but do not modify entry
+<b class="nc"><i>51</i>&nbsp;        BibEntry clonedEntry = (BibEntry) entry.clone();</b>
+<b class="nc"><i>52</i>&nbsp;        Optional&lt;String&gt; doi = clonedEntry.getField(FieldName.DOI);</b>
+<i>53</i>&nbsp;
+<b class="nc"><i>54</i>&nbsp;        if (!doi.isPresent() || !DOI.build(doi.get()).isPresent()) {</b>
+<b class="nc"><i>55</i>&nbsp;            CrossRef.findDOI(clonedEntry).ifPresent(e -&gt; clonedEntry.setField(FieldName.DOI, e.getDOI()));</b>
+<i>56</i>&nbsp;        }
+<i>57</i>&nbsp;
+<b class="nc"><i>58</i>&nbsp;        for (FulltextFetcher finder : finders) {</b>
+<i>59</i>&nbsp;            try {
+<b class="nc"><i>60</i>&nbsp;                Optional&lt;URL&gt; result = finder.findFullText(clonedEntry);</b>
+<i>61</i>&nbsp;
+<b class="nc"><i>62</i>&nbsp;                if (result.isPresent() &amp;&amp; MimeTypeDetector.isPdfContentType(result.get().toString())) {</b>
+<b class="nc"><i>63</i>&nbsp;                    return result;</b>
+<i>64</i>&nbsp;                }
+<b class="nc"><i>65</i>&nbsp;            } catch (IOException | FetcherException e) {</b>
+<b class="nc"><i>66</i>&nbsp;                LOGGER.debug(&quot;Failed to find fulltext PDF at given URL&quot;, e);</b>
+<b class="nc"><i>67</i>&nbsp;            }</b>
+<b class="nc"><i>68</i>&nbsp;        }</b>
+<b class="nc"><i>69</i>&nbsp;        return Optional.empty();</b>
+<i>70</i>&nbsp;    }
+<i>71</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

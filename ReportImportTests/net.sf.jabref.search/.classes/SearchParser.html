@@ -1,0 +1,692 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: SearchParser</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.search</a> ]
+</div>
+
+<h1>Coverage Summary for Class: SearchParser (net.sf.jabref.search)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SearchParser</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 15)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 163)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">SearchParser$AtomExpressionContext</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">SearchParser$BinaryExpressionContext</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 7)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">SearchParser$ComparisonContext</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 12)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">SearchParser$ExpressionContext</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 6)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">SearchParser$NameContext</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 7)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">SearchParser$ParenExpressionContext</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 6)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">SearchParser$StartContext</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 7)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">SearchParser$UnaryExpressionContext</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 57)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 217)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;// Generated from /home/guerra/JabRef_ES2/src/main/antlr4/net/sf/jabref/search/Search.g4 by ANTLR 4.6
+<i>2</i>&nbsp;package net.sf.jabref.search;
+<i>3</i>&nbsp;import org.antlr.v4.runtime.atn.*;
+<i>4</i>&nbsp;import org.antlr.v4.runtime.dfa.DFA;
+<i>5</i>&nbsp;import org.antlr.v4.runtime.*;
+<i>6</i>&nbsp;import org.antlr.v4.runtime.misc.*;
+<i>7</i>&nbsp;import org.antlr.v4.runtime.tree.*;
+<i>8</i>&nbsp;import java.util.List;
+<i>9</i>&nbsp;import java.util.Iterator;
+<i>10</i>&nbsp;import java.util.ArrayList;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;@SuppressWarnings({&quot;all&quot;, &quot;warnings&quot;, &quot;unchecked&quot;, &quot;unused&quot;, &quot;cast&quot;})
+<i>13</i>&nbsp;public class SearchParser extends Parser {
+<b class="nc"><i>14</i>&nbsp;	static { RuntimeMetaData.checkVersion(&quot;4.6&quot;, RuntimeMetaData.VERSION); }</b>
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;	protected static final DFA[] _decisionToDFA;
+<b class="nc"><i>17</i>&nbsp;	protected static final PredictionContextCache _sharedContextCache =</b>
+<i>18</i>&nbsp;		new PredictionContextCache();
+<i>19</i>&nbsp;	public static final int
+<i>20</i>&nbsp;		WS=1, LPAREN=2, RPAREN=3, EQUAL=4, EEQUAL=5, NEQUAL=6, AND=7, OR=8, CONTAINS=9, 
+<i>21</i>&nbsp;		MATCHES=10, NOT=11, STRING=12, QUOTE=13, FIELDTYPE=14;
+<i>22</i>&nbsp;	public static final int
+<i>23</i>&nbsp;		RULE_start = 0, RULE_expression = 1, RULE_comparison = 2, RULE_name = 3;
+<b class="nc"><i>24</i>&nbsp;	public static final String[] ruleNames = {</b>
+<i>25</i>&nbsp;		&quot;start&quot;, &quot;expression&quot;, &quot;comparison&quot;, &quot;name&quot;
+<i>26</i>&nbsp;	};
+<i>27</i>&nbsp;
+<b class="nc"><i>28</i>&nbsp;	private static final String[] _LITERAL_NAMES = {</b>
+<i>29</i>&nbsp;		null, null, &quot;&#39;(&#39;&quot;, &quot;&#39;)&#39;&quot;, &quot;&#39;=&#39;&quot;, &quot;&#39;==&#39;&quot;, &quot;&#39;!=&#39;&quot;, null, null, null, null, 
+<i>30</i>&nbsp;		null, null, &quot;&#39;\&quot;&#39;&quot;
+<i>31</i>&nbsp;	};
+<b class="nc"><i>32</i>&nbsp;	private static final String[] _SYMBOLIC_NAMES = {</b>
+<i>33</i>&nbsp;		null, &quot;WS&quot;, &quot;LPAREN&quot;, &quot;RPAREN&quot;, &quot;EQUAL&quot;, &quot;EEQUAL&quot;, &quot;NEQUAL&quot;, &quot;AND&quot;, &quot;OR&quot;, 
+<i>34</i>&nbsp;		&quot;CONTAINS&quot;, &quot;MATCHES&quot;, &quot;NOT&quot;, &quot;STRING&quot;, &quot;QUOTE&quot;, &quot;FIELDTYPE&quot;
+<i>35</i>&nbsp;	};
+<b class="nc"><i>36</i>&nbsp;	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);</b>
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;	/**
+<i>39</i>&nbsp;	 * @deprecated Use {@link #VOCABULARY} instead.
+<i>40</i>&nbsp;	 */
+<i>41</i>&nbsp;	@Deprecated
+<i>42</i>&nbsp;	public static final String[] tokenNames;
+<i>43</i>&nbsp;	static {
+<b class="nc"><i>44</i>&nbsp;		tokenNames = new String[_SYMBOLIC_NAMES.length];</b>
+<b class="nc"><i>45</i>&nbsp;		for (int i = 0; i &lt; tokenNames.length; i++) {</b>
+<b class="nc"><i>46</i>&nbsp;			tokenNames[i] = VOCABULARY.getLiteralName(i);</b>
+<b class="nc"><i>47</i>&nbsp;			if (tokenNames[i] == null) {</b>
+<b class="nc"><i>48</i>&nbsp;				tokenNames[i] = VOCABULARY.getSymbolicName(i);</b>
+<i>49</i>&nbsp;			}
+<i>50</i>&nbsp;
+<b class="nc"><i>51</i>&nbsp;			if (tokenNames[i] == null) {</b>
+<b class="nc"><i>52</i>&nbsp;				tokenNames[i] = &quot;&lt;INVALID&gt;&quot;;</b>
+<i>53</i>&nbsp;			}
+<i>54</i>&nbsp;		}
+<i>55</i>&nbsp;	}
+<i>56</i>&nbsp;
+<i>57</i>&nbsp;	@Override
+<i>58</i>&nbsp;	@Deprecated
+<i>59</i>&nbsp;	public String[] getTokenNames() {
+<b class="nc"><i>60</i>&nbsp;		return tokenNames;</b>
+<i>61</i>&nbsp;	}
+<i>62</i>&nbsp;
+<i>63</i>&nbsp;	@Override
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;	public Vocabulary getVocabulary() {
+<b class="nc"><i>66</i>&nbsp;		return VOCABULARY;</b>
+<i>67</i>&nbsp;	}
+<i>68</i>&nbsp;
+<i>69</i>&nbsp;	@Override
+<b class="nc"><i>70</i>&nbsp;	public String getGrammarFileName() { return &quot;Search.g4&quot;; }</b>
+<i>71</i>&nbsp;
+<i>72</i>&nbsp;	@Override
+<b class="nc"><i>73</i>&nbsp;	public String[] getRuleNames() { return ruleNames; }</b>
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;	@Override
+<b class="nc"><i>76</i>&nbsp;	public String getSerializedATN() { return _serializedATN; }</b>
+<i>77</i>&nbsp;
+<i>78</i>&nbsp;	@Override
+<b class="nc"><i>79</i>&nbsp;	public ATN getATN() { return _ATN; }</b>
+<i>80</i>&nbsp;
+<i>81</i>&nbsp;	public SearchParser(TokenStream input) {
+<b class="nc"><i>82</i>&nbsp;		super(input);</b>
+<b class="nc"><i>83</i>&nbsp;		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);</b>
+<b class="nc"><i>84</i>&nbsp;	}</b>
+<i>85</i>&nbsp;	public static class StartContext extends ParserRuleContext {
+<i>86</i>&nbsp;		public ExpressionContext expression() {
+<b class="nc"><i>87</i>&nbsp;			return getRuleContext(ExpressionContext.class,0);</b>
+<i>88</i>&nbsp;		}
+<b class="nc"><i>89</i>&nbsp;		public TerminalNode EOF() { return getToken(SearchParser.EOF, 0); }</b>
+<i>90</i>&nbsp;		public StartContext(ParserRuleContext parent, int invokingState) {
+<b class="nc"><i>91</i>&nbsp;			super(parent, invokingState);</b>
+<b class="nc"><i>92</i>&nbsp;		}</b>
+<b class="nc"><i>93</i>&nbsp;		@Override public int getRuleIndex() { return RULE_start; }</b>
+<i>94</i>&nbsp;		@Override
+<i>95</i>&nbsp;		public &lt;T&gt; T accept(ParseTreeVisitor&lt;? extends T&gt; visitor) {
+<b class="nc"><i>96</i>&nbsp;			if ( visitor instanceof SearchVisitor ) return ((SearchVisitor&lt;? extends T&gt;)visitor).visitStart(this);</b>
+<b class="nc"><i>97</i>&nbsp;			else return visitor.visitChildren(this);</b>
+<i>98</i>&nbsp;		}
+<i>99</i>&nbsp;	}
+<i>100</i>&nbsp;
+<i>101</i>&nbsp;	public final StartContext start() throws RecognitionException {
+<b class="nc"><i>102</i>&nbsp;		StartContext _localctx = new StartContext(_ctx, getState());</b>
+<b class="nc"><i>103</i>&nbsp;		enterRule(_localctx, 0, RULE_start);</b>
+<i>104</i>&nbsp;		try {
+<b class="nc"><i>105</i>&nbsp;			enterOuterAlt(_localctx, 1);</b>
+<i>106</i>&nbsp;			{
+<b class="nc"><i>107</i>&nbsp;			setState(8);</b>
+<b class="nc"><i>108</i>&nbsp;			expression(0);</b>
+<b class="nc"><i>109</i>&nbsp;			setState(9);</b>
+<b class="nc"><i>110</i>&nbsp;			match(EOF);</b>
+<i>111</i>&nbsp;			}
+<i>112</i>&nbsp;		}
+<b class="nc"><i>113</i>&nbsp;		catch (RecognitionException re) {</b>
+<b class="nc"><i>114</i>&nbsp;			_localctx.exception = re;</b>
+<b class="nc"><i>115</i>&nbsp;			_errHandler.reportError(this, re);</b>
+<b class="nc"><i>116</i>&nbsp;			_errHandler.recover(this, re);</b>
+<i>117</i>&nbsp;		}
+<i>118</i>&nbsp;		finally {
+<b class="nc"><i>119</i>&nbsp;			exitRule();</b>
+<b class="nc"><i>120</i>&nbsp;		}</b>
+<b class="nc"><i>121</i>&nbsp;		return _localctx;</b>
+<i>122</i>&nbsp;	}
+<i>123</i>&nbsp;
+<i>124</i>&nbsp;	public static class ExpressionContext extends ParserRuleContext {
+<i>125</i>&nbsp;		public ExpressionContext(ParserRuleContext parent, int invokingState) {
+<b class="nc"><i>126</i>&nbsp;			super(parent, invokingState);</b>
+<b class="nc"><i>127</i>&nbsp;		}</b>
+<b class="nc"><i>128</i>&nbsp;		@Override public int getRuleIndex() { return RULE_expression; }</b>
+<i>129</i>&nbsp;	 
+<b class="nc"><i>130</i>&nbsp;		public ExpressionContext() { }</b>
+<i>131</i>&nbsp;		public void copyFrom(ExpressionContext ctx) {
+<b class="nc"><i>132</i>&nbsp;			super.copyFrom(ctx);</b>
+<b class="nc"><i>133</i>&nbsp;		}</b>
+<i>134</i>&nbsp;	}
+<i>135</i>&nbsp;	public static class BinaryExpressionContext extends ExpressionContext {
+<i>136</i>&nbsp;		public ExpressionContext left;
+<i>137</i>&nbsp;		public Token operator;
+<i>138</i>&nbsp;		public ExpressionContext right;
+<i>139</i>&nbsp;		public List&lt;ExpressionContext&gt; expression() {
+<b class="nc"><i>140</i>&nbsp;			return getRuleContexts(ExpressionContext.class);</b>
+<i>141</i>&nbsp;		}
+<i>142</i>&nbsp;		public ExpressionContext expression(int i) {
+<b class="nc"><i>143</i>&nbsp;			return getRuleContext(ExpressionContext.class,i);</b>
+<i>144</i>&nbsp;		}
+<b class="nc"><i>145</i>&nbsp;		public TerminalNode AND() { return getToken(SearchParser.AND, 0); }</b>
+<b class="nc"><i>146</i>&nbsp;		public TerminalNode OR() { return getToken(SearchParser.OR, 0); }</b>
+<b class="nc"><i>147</i>&nbsp;		public BinaryExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }</b>
+<i>148</i>&nbsp;		@Override
+<i>149</i>&nbsp;		public &lt;T&gt; T accept(ParseTreeVisitor&lt;? extends T&gt; visitor) {
+<b class="nc"><i>150</i>&nbsp;			if ( visitor instanceof SearchVisitor ) return ((SearchVisitor&lt;? extends T&gt;)visitor).visitBinaryExpression(this);</b>
+<b class="nc"><i>151</i>&nbsp;			else return visitor.visitChildren(this);</b>
+<i>152</i>&nbsp;		}
+<i>153</i>&nbsp;	}
+<i>154</i>&nbsp;	public static class AtomExpressionContext extends ExpressionContext {
+<i>155</i>&nbsp;		public ComparisonContext comparison() {
+<b class="nc"><i>156</i>&nbsp;			return getRuleContext(ComparisonContext.class,0);</b>
+<i>157</i>&nbsp;		}
+<b class="nc"><i>158</i>&nbsp;		public AtomExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }</b>
+<i>159</i>&nbsp;		@Override
+<i>160</i>&nbsp;		public &lt;T&gt; T accept(ParseTreeVisitor&lt;? extends T&gt; visitor) {
+<b class="nc"><i>161</i>&nbsp;			if ( visitor instanceof SearchVisitor ) return ((SearchVisitor&lt;? extends T&gt;)visitor).visitAtomExpression(this);</b>
+<b class="nc"><i>162</i>&nbsp;			else return visitor.visitChildren(this);</b>
+<i>163</i>&nbsp;		}
+<i>164</i>&nbsp;	}
+<i>165</i>&nbsp;	public static class ParenExpressionContext extends ExpressionContext {
+<b class="nc"><i>166</i>&nbsp;		public TerminalNode LPAREN() { return getToken(SearchParser.LPAREN, 0); }</b>
+<i>167</i>&nbsp;		public ExpressionContext expression() {
+<b class="nc"><i>168</i>&nbsp;			return getRuleContext(ExpressionContext.class,0);</b>
+<i>169</i>&nbsp;		}
+<b class="nc"><i>170</i>&nbsp;		public TerminalNode RPAREN() { return getToken(SearchParser.RPAREN, 0); }</b>
+<b class="nc"><i>171</i>&nbsp;		public ParenExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }</b>
+<i>172</i>&nbsp;		@Override
+<i>173</i>&nbsp;		public &lt;T&gt; T accept(ParseTreeVisitor&lt;? extends T&gt; visitor) {
+<b class="nc"><i>174</i>&nbsp;			if ( visitor instanceof SearchVisitor ) return ((SearchVisitor&lt;? extends T&gt;)visitor).visitParenExpression(this);</b>
+<b class="nc"><i>175</i>&nbsp;			else return visitor.visitChildren(this);</b>
+<i>176</i>&nbsp;		}
+<i>177</i>&nbsp;	}
+<i>178</i>&nbsp;	public static class UnaryExpressionContext extends ExpressionContext {
+<b class="nc"><i>179</i>&nbsp;		public TerminalNode NOT() { return getToken(SearchParser.NOT, 0); }</b>
+<i>180</i>&nbsp;		public ExpressionContext expression() {
+<b class="nc"><i>181</i>&nbsp;			return getRuleContext(ExpressionContext.class,0);</b>
+<i>182</i>&nbsp;		}
+<b class="nc"><i>183</i>&nbsp;		public UnaryExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }</b>
+<i>184</i>&nbsp;		@Override
+<i>185</i>&nbsp;		public &lt;T&gt; T accept(ParseTreeVisitor&lt;? extends T&gt; visitor) {
+<b class="nc"><i>186</i>&nbsp;			if ( visitor instanceof SearchVisitor ) return ((SearchVisitor&lt;? extends T&gt;)visitor).visitUnaryExpression(this);</b>
+<b class="nc"><i>187</i>&nbsp;			else return visitor.visitChildren(this);</b>
+<i>188</i>&nbsp;		}
+<i>189</i>&nbsp;	}
+<i>190</i>&nbsp;
+<i>191</i>&nbsp;	public final ExpressionContext expression() throws RecognitionException {
+<b class="nc"><i>192</i>&nbsp;		return expression(0);</b>
+<i>193</i>&nbsp;	}
+<i>194</i>&nbsp;
+<i>195</i>&nbsp;	private ExpressionContext expression(int _p) throws RecognitionException {
+<b class="nc"><i>196</i>&nbsp;		ParserRuleContext _parentctx = _ctx;</b>
+<b class="nc"><i>197</i>&nbsp;		int _parentState = getState();</b>
+<b class="nc"><i>198</i>&nbsp;		ExpressionContext _localctx = new ExpressionContext(_ctx, _parentState);</b>
+<b class="nc"><i>199</i>&nbsp;		ExpressionContext _prevctx = _localctx;</b>
+<b class="nc"><i>200</i>&nbsp;		int _startState = 2;</b>
+<b class="nc"><i>201</i>&nbsp;		enterRecursionRule(_localctx, 2, RULE_expression, _p);</b>
+<i>202</i>&nbsp;		int _la;
+<i>203</i>&nbsp;		try {
+<i>204</i>&nbsp;			int _alt;
+<b class="nc"><i>205</i>&nbsp;			enterOuterAlt(_localctx, 1);</b>
+<i>206</i>&nbsp;			{
+<b class="nc"><i>207</i>&nbsp;			setState(19);</b>
+<b class="nc"><i>208</i>&nbsp;			_errHandler.sync(this);</b>
+<b class="nc"><i>209</i>&nbsp;			switch (_input.LA(1)) {</b>
+<i>210</i>&nbsp;			case LPAREN:
+<i>211</i>&nbsp;				{
+<b class="nc"><i>212</i>&nbsp;				_localctx = new ParenExpressionContext(_localctx);</b>
+<b class="nc"><i>213</i>&nbsp;				_ctx = _localctx;</b>
+<b class="nc"><i>214</i>&nbsp;				_prevctx = _localctx;</b>
+<i>215</i>&nbsp;
+<b class="nc"><i>216</i>&nbsp;				setState(12);</b>
+<b class="nc"><i>217</i>&nbsp;				match(LPAREN);</b>
+<b class="nc"><i>218</i>&nbsp;				setState(13);</b>
+<b class="nc"><i>219</i>&nbsp;				expression(0);</b>
+<b class="nc"><i>220</i>&nbsp;				setState(14);</b>
+<b class="nc"><i>221</i>&nbsp;				match(RPAREN);</b>
+<i>222</i>&nbsp;				}
+<b class="nc"><i>223</i>&nbsp;				break;</b>
+<i>224</i>&nbsp;			case NOT:
+<i>225</i>&nbsp;				{
+<b class="nc"><i>226</i>&nbsp;				_localctx = new UnaryExpressionContext(_localctx);</b>
+<b class="nc"><i>227</i>&nbsp;				_ctx = _localctx;</b>
+<b class="nc"><i>228</i>&nbsp;				_prevctx = _localctx;</b>
+<b class="nc"><i>229</i>&nbsp;				setState(16);</b>
+<b class="nc"><i>230</i>&nbsp;				match(NOT);</b>
+<b class="nc"><i>231</i>&nbsp;				setState(17);</b>
+<b class="nc"><i>232</i>&nbsp;				expression(2);</b>
+<i>233</i>&nbsp;				}
+<b class="nc"><i>234</i>&nbsp;				break;</b>
+<i>235</i>&nbsp;			case STRING:
+<i>236</i>&nbsp;			case FIELDTYPE:
+<i>237</i>&nbsp;				{
+<b class="nc"><i>238</i>&nbsp;				_localctx = new AtomExpressionContext(_localctx);</b>
+<b class="nc"><i>239</i>&nbsp;				_ctx = _localctx;</b>
+<b class="nc"><i>240</i>&nbsp;				_prevctx = _localctx;</b>
+<b class="nc"><i>241</i>&nbsp;				setState(18);</b>
+<b class="nc"><i>242</i>&nbsp;				comparison();</b>
+<i>243</i>&nbsp;				}
+<b class="nc"><i>244</i>&nbsp;				break;</b>
+<i>245</i>&nbsp;			default:
+<b class="nc"><i>246</i>&nbsp;				throw new NoViableAltException(this);</b>
+<i>247</i>&nbsp;			}
+<b class="nc"><i>248</i>&nbsp;			_ctx.stop = _input.LT(-1);</b>
+<b class="nc"><i>249</i>&nbsp;			setState(26);</b>
+<b class="nc"><i>250</i>&nbsp;			_errHandler.sync(this);</b>
+<b class="nc"><i>251</i>&nbsp;			_alt = getInterpreter().adaptivePredict(_input,1,_ctx);</b>
+<b class="nc"><i>252</i>&nbsp;			while ( _alt!=2 &amp;&amp; _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {</b>
+<b class="nc"><i>253</i>&nbsp;				if ( _alt==1 ) {</b>
+<b class="nc"><i>254</i>&nbsp;					if ( _parseListeners!=null ) triggerExitRuleEvent();</b>
+<b class="nc"><i>255</i>&nbsp;					_prevctx = _localctx;</b>
+<i>256</i>&nbsp;					{
+<i>257</i>&nbsp;					{
+<b class="nc"><i>258</i>&nbsp;					_localctx = new BinaryExpressionContext(new ExpressionContext(_parentctx, _parentState));</b>
+<b class="nc"><i>259</i>&nbsp;					((BinaryExpressionContext)_localctx).left = _prevctx;</b>
+<b class="nc"><i>260</i>&nbsp;					pushNewRecursionContext(_localctx, _startState, RULE_expression);</b>
+<b class="nc"><i>261</i>&nbsp;					setState(21);</b>
+<b class="nc"><i>262</i>&nbsp;					if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, &quot;precpred(_ctx, 3)&quot;);</b>
+<b class="nc"><i>263</i>&nbsp;					setState(22);</b>
+<b class="nc"><i>264</i>&nbsp;					((BinaryExpressionContext)_localctx).operator = _input.LT(1);</b>
+<b class="nc"><i>265</i>&nbsp;					_la = _input.LA(1);</b>
+<b class="nc"><i>266</i>&nbsp;					if ( !(_la==AND || _la==OR) ) {</b>
+<b class="nc"><i>267</i>&nbsp;						((BinaryExpressionContext)_localctx).operator = (Token)_errHandler.recoverInline(this);</b>
+<i>268</i>&nbsp;					}
+<i>269</i>&nbsp;					else {
+<b class="nc"><i>270</i>&nbsp;						if ( _input.LA(1)==Token.EOF ) matchedEOF = true;</b>
+<b class="nc"><i>271</i>&nbsp;						_errHandler.reportMatch(this);</b>
+<b class="nc"><i>272</i>&nbsp;						consume();</b>
+<i>273</i>&nbsp;					}
+<b class="nc"><i>274</i>&nbsp;					setState(23);</b>
+<b class="nc"><i>275</i>&nbsp;					((BinaryExpressionContext)_localctx).right = expression(4);</b>
+<i>276</i>&nbsp;					}
+<i>277</i>&nbsp;					} 
+<i>278</i>&nbsp;				}
+<b class="nc"><i>279</i>&nbsp;				setState(28);</b>
+<b class="nc"><i>280</i>&nbsp;				_errHandler.sync(this);</b>
+<b class="nc"><i>281</i>&nbsp;				_alt = getInterpreter().adaptivePredict(_input,1,_ctx);</b>
+<i>282</i>&nbsp;			}
+<i>283</i>&nbsp;			}
+<i>284</i>&nbsp;		}
+<b class="nc"><i>285</i>&nbsp;		catch (RecognitionException re) {</b>
+<b class="nc"><i>286</i>&nbsp;			_localctx.exception = re;</b>
+<b class="nc"><i>287</i>&nbsp;			_errHandler.reportError(this, re);</b>
+<b class="nc"><i>288</i>&nbsp;			_errHandler.recover(this, re);</b>
+<i>289</i>&nbsp;		}
+<i>290</i>&nbsp;		finally {
+<b class="nc"><i>291</i>&nbsp;			unrollRecursionContexts(_parentctx);</b>
+<b class="nc"><i>292</i>&nbsp;		}</b>
+<b class="nc"><i>293</i>&nbsp;		return _localctx;</b>
+<i>294</i>&nbsp;	}
+<i>295</i>&nbsp;
+<i>296</i>&nbsp;	public static class ComparisonContext extends ParserRuleContext {
+<i>297</i>&nbsp;		public NameContext left;
+<i>298</i>&nbsp;		public Token operator;
+<i>299</i>&nbsp;		public NameContext right;
+<i>300</i>&nbsp;		public List&lt;NameContext&gt; name() {
+<b class="nc"><i>301</i>&nbsp;			return getRuleContexts(NameContext.class);</b>
+<i>302</i>&nbsp;		}
+<i>303</i>&nbsp;		public NameContext name(int i) {
+<b class="nc"><i>304</i>&nbsp;			return getRuleContext(NameContext.class,i);</b>
+<i>305</i>&nbsp;		}
+<b class="nc"><i>306</i>&nbsp;		public TerminalNode CONTAINS() { return getToken(SearchParser.CONTAINS, 0); }</b>
+<b class="nc"><i>307</i>&nbsp;		public TerminalNode MATCHES() { return getToken(SearchParser.MATCHES, 0); }</b>
+<b class="nc"><i>308</i>&nbsp;		public TerminalNode EQUAL() { return getToken(SearchParser.EQUAL, 0); }</b>
+<b class="nc"><i>309</i>&nbsp;		public TerminalNode EEQUAL() { return getToken(SearchParser.EEQUAL, 0); }</b>
+<b class="nc"><i>310</i>&nbsp;		public TerminalNode NEQUAL() { return getToken(SearchParser.NEQUAL, 0); }</b>
+<i>311</i>&nbsp;		public ComparisonContext(ParserRuleContext parent, int invokingState) {
+<b class="nc"><i>312</i>&nbsp;			super(parent, invokingState);</b>
+<b class="nc"><i>313</i>&nbsp;		}</b>
+<b class="nc"><i>314</i>&nbsp;		@Override public int getRuleIndex() { return RULE_comparison; }</b>
+<i>315</i>&nbsp;		@Override
+<i>316</i>&nbsp;		public &lt;T&gt; T accept(ParseTreeVisitor&lt;? extends T&gt; visitor) {
+<b class="nc"><i>317</i>&nbsp;			if ( visitor instanceof SearchVisitor ) return ((SearchVisitor&lt;? extends T&gt;)visitor).visitComparison(this);</b>
+<b class="nc"><i>318</i>&nbsp;			else return visitor.visitChildren(this);</b>
+<i>319</i>&nbsp;		}
+<i>320</i>&nbsp;	}
+<i>321</i>&nbsp;
+<i>322</i>&nbsp;	public final ComparisonContext comparison() throws RecognitionException {
+<b class="nc"><i>323</i>&nbsp;		ComparisonContext _localctx = new ComparisonContext(_ctx, getState());</b>
+<b class="nc"><i>324</i>&nbsp;		enterRule(_localctx, 4, RULE_comparison);</b>
+<i>325</i>&nbsp;		int _la;
+<i>326</i>&nbsp;		try {
+<b class="nc"><i>327</i>&nbsp;			setState(34);</b>
+<b class="nc"><i>328</i>&nbsp;			_errHandler.sync(this);</b>
+<b class="nc"><i>329</i>&nbsp;			switch ( getInterpreter().adaptivePredict(_input,2,_ctx) ) {</b>
+<i>330</i>&nbsp;			case 1:
+<b class="nc"><i>331</i>&nbsp;				enterOuterAlt(_localctx, 1);</b>
+<i>332</i>&nbsp;				{
+<b class="nc"><i>333</i>&nbsp;				setState(29);</b>
+<b class="nc"><i>334</i>&nbsp;				((ComparisonContext)_localctx).left = name();</b>
+<b class="nc"><i>335</i>&nbsp;				setState(30);</b>
+<b class="nc"><i>336</i>&nbsp;				((ComparisonContext)_localctx).operator = _input.LT(1);</b>
+<b class="nc"><i>337</i>&nbsp;				_la = _input.LA(1);</b>
+<b class="nc"><i>338</i>&nbsp;				if ( !((((_la) &amp; ~0x3f) == 0 &amp;&amp; ((1L &lt;&lt; _la) &amp; ((1L &lt;&lt; EQUAL) | (1L &lt;&lt; EEQUAL) | (1L &lt;&lt; NEQUAL) | (1L &lt;&lt; CONTAINS) | (1L &lt;&lt; MATCHES))) != 0)) ) {</b>
+<b class="nc"><i>339</i>&nbsp;					((ComparisonContext)_localctx).operator = (Token)_errHandler.recoverInline(this);</b>
+<i>340</i>&nbsp;				}
+<i>341</i>&nbsp;				else {
+<b class="nc"><i>342</i>&nbsp;					if ( _input.LA(1)==Token.EOF ) matchedEOF = true;</b>
+<b class="nc"><i>343</i>&nbsp;					_errHandler.reportMatch(this);</b>
+<b class="nc"><i>344</i>&nbsp;					consume();</b>
+<i>345</i>&nbsp;				}
+<b class="nc"><i>346</i>&nbsp;				setState(31);</b>
+<b class="nc"><i>347</i>&nbsp;				((ComparisonContext)_localctx).right = name();</b>
+<i>348</i>&nbsp;				}
+<b class="nc"><i>349</i>&nbsp;				break;</b>
+<i>350</i>&nbsp;			case 2:
+<b class="nc"><i>351</i>&nbsp;				enterOuterAlt(_localctx, 2);</b>
+<i>352</i>&nbsp;				{
+<b class="nc"><i>353</i>&nbsp;				setState(33);</b>
+<b class="nc"><i>354</i>&nbsp;				((ComparisonContext)_localctx).right = name();</b>
+<i>355</i>&nbsp;				}
+<i>356</i>&nbsp;				break;
+<i>357</i>&nbsp;			}
+<i>358</i>&nbsp;		}
+<b class="nc"><i>359</i>&nbsp;		catch (RecognitionException re) {</b>
+<b class="nc"><i>360</i>&nbsp;			_localctx.exception = re;</b>
+<b class="nc"><i>361</i>&nbsp;			_errHandler.reportError(this, re);</b>
+<b class="nc"><i>362</i>&nbsp;			_errHandler.recover(this, re);</b>
+<i>363</i>&nbsp;		}
+<i>364</i>&nbsp;		finally {
+<b class="nc"><i>365</i>&nbsp;			exitRule();</b>
+<b class="nc"><i>366</i>&nbsp;		}</b>
+<b class="nc"><i>367</i>&nbsp;		return _localctx;</b>
+<i>368</i>&nbsp;	}
+<i>369</i>&nbsp;
+<i>370</i>&nbsp;	public static class NameContext extends ParserRuleContext {
+<b class="nc"><i>371</i>&nbsp;		public TerminalNode STRING() { return getToken(SearchParser.STRING, 0); }</b>
+<b class="nc"><i>372</i>&nbsp;		public TerminalNode FIELDTYPE() { return getToken(SearchParser.FIELDTYPE, 0); }</b>
+<i>373</i>&nbsp;		public NameContext(ParserRuleContext parent, int invokingState) {
+<b class="nc"><i>374</i>&nbsp;			super(parent, invokingState);</b>
+<b class="nc"><i>375</i>&nbsp;		}</b>
+<b class="nc"><i>376</i>&nbsp;		@Override public int getRuleIndex() { return RULE_name; }</b>
+<i>377</i>&nbsp;		@Override
+<i>378</i>&nbsp;		public &lt;T&gt; T accept(ParseTreeVisitor&lt;? extends T&gt; visitor) {
+<b class="nc"><i>379</i>&nbsp;			if ( visitor instanceof SearchVisitor ) return ((SearchVisitor&lt;? extends T&gt;)visitor).visitName(this);</b>
+<b class="nc"><i>380</i>&nbsp;			else return visitor.visitChildren(this);</b>
+<i>381</i>&nbsp;		}
+<i>382</i>&nbsp;	}
+<i>383</i>&nbsp;
+<i>384</i>&nbsp;	public final NameContext name() throws RecognitionException {
+<b class="nc"><i>385</i>&nbsp;		NameContext _localctx = new NameContext(_ctx, getState());</b>
+<b class="nc"><i>386</i>&nbsp;		enterRule(_localctx, 6, RULE_name);</b>
+<i>387</i>&nbsp;		int _la;
+<i>388</i>&nbsp;		try {
+<b class="nc"><i>389</i>&nbsp;			enterOuterAlt(_localctx, 1);</b>
+<i>390</i>&nbsp;			{
+<b class="nc"><i>391</i>&nbsp;			setState(36);</b>
+<b class="nc"><i>392</i>&nbsp;			_la = _input.LA(1);</b>
+<b class="nc"><i>393</i>&nbsp;			if ( !(_la==STRING || _la==FIELDTYPE) ) {</b>
+<b class="nc"><i>394</i>&nbsp;			_errHandler.recoverInline(this);</b>
+<i>395</i>&nbsp;			}
+<i>396</i>&nbsp;			else {
+<b class="nc"><i>397</i>&nbsp;				if ( _input.LA(1)==Token.EOF ) matchedEOF = true;</b>
+<b class="nc"><i>398</i>&nbsp;				_errHandler.reportMatch(this);</b>
+<b class="nc"><i>399</i>&nbsp;				consume();</b>
+<i>400</i>&nbsp;			}
+<i>401</i>&nbsp;			}
+<i>402</i>&nbsp;		}
+<b class="nc"><i>403</i>&nbsp;		catch (RecognitionException re) {</b>
+<b class="nc"><i>404</i>&nbsp;			_localctx.exception = re;</b>
+<b class="nc"><i>405</i>&nbsp;			_errHandler.reportError(this, re);</b>
+<b class="nc"><i>406</i>&nbsp;			_errHandler.recover(this, re);</b>
+<i>407</i>&nbsp;		}
+<i>408</i>&nbsp;		finally {
+<b class="nc"><i>409</i>&nbsp;			exitRule();</b>
+<b class="nc"><i>410</i>&nbsp;		}</b>
+<b class="nc"><i>411</i>&nbsp;		return _localctx;</b>
+<i>412</i>&nbsp;	}
+<i>413</i>&nbsp;
+<i>414</i>&nbsp;	public boolean sempred(RuleContext _localctx, int ruleIndex, int predIndex) {
+<b class="nc"><i>415</i>&nbsp;		switch (ruleIndex) {</b>
+<i>416</i>&nbsp;		case 1:
+<b class="nc"><i>417</i>&nbsp;			return expression_sempred((ExpressionContext)_localctx, predIndex);</b>
+<i>418</i>&nbsp;		}
+<b class="nc"><i>419</i>&nbsp;		return true;</b>
+<i>420</i>&nbsp;	}
+<i>421</i>&nbsp;	private boolean expression_sempred(ExpressionContext _localctx, int predIndex) {
+<b class="nc"><i>422</i>&nbsp;		switch (predIndex) {</b>
+<i>423</i>&nbsp;		case 0:
+<b class="nc"><i>424</i>&nbsp;			return precpred(_ctx, 3);</b>
+<i>425</i>&nbsp;		}
+<b class="nc"><i>426</i>&nbsp;		return true;</b>
+<i>427</i>&nbsp;	}
+<i>428</i>&nbsp;
+<i>429</i>&nbsp;	public static final String _serializedATN =
+<i>430</i>&nbsp;		&quot;\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\20)\4\2\t\2\4\3\t&quot;+
+<i>431</i>&nbsp;		&quot;\3\4\4\t\4\4\5\t\5\3\2\3\2\3\2\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\5\3\26&quot;+
+<i>432</i>&nbsp;		&quot;\n\3\3\3\3\3\3\3\7\3\33\n\3\f\3\16\3\36\13\3\3\4\3\4\3\4\3\4\3\4\5\4%&quot;+
+<i>433</i>&nbsp;		&quot;\n\4\3\5\3\5\3\5\2\3\4\6\2\4\6\b\2\5\3\2\t\n\4\2\6\b\13\f\4\2\16\16\20&quot;+
+<i>434</i>&nbsp;		&quot;\20(\2\n\3\2\2\2\4\25\3\2\2\2\6$\3\2\2\2\b&amp;\3\2\2\2\n\13\5\4\3\2\13\f&quot;+
+<i>435</i>&nbsp;		&quot;\7\2\2\3\f\3\3\2\2\2\r\16\b\3\1\2\16\17\7\4\2\2\17\20\5\4\3\2\20\21\7&quot;+
+<i>436</i>&nbsp;		&quot;\5\2\2\21\26\3\2\2\2\22\23\7\r\2\2\23\26\5\4\3\4\24\26\5\6\4\2\25\r\3&quot;+
+<i>437</i>&nbsp;		&quot;\2\2\2\25\22\3\2\2\2\25\24\3\2\2\2\26\34\3\2\2\2\27\30\f\5\2\2\30\31\t&quot;+
+<i>438</i>&nbsp;		&quot;\2\2\2\31\33\5\4\3\6\32\27\3\2\2\2\33\36\3\2\2\2\34\32\3\2\2\2\34\35\3&quot;+
+<i>439</i>&nbsp;		&quot;\2\2\2\35\5\3\2\2\2\36\34\3\2\2\2\37 \5\b\5\2 !\t\3\2\2!\&quot;\5\b\5\2\&quot;%&quot;+
+<i>440</i>&nbsp;		&quot;\3\2\2\2#%\5\b\5\2$\37\3\2\2\2$#\3\2\2\2%\7\3\2\2\2&amp;\&#39;\t\4\2\2\&#39;\t\3\2&quot;+
+<i>441</i>&nbsp;		&quot;\2\2\5\25\34$&quot;;
+<b class="nc"><i>442</i>&nbsp;	public static final ATN _ATN =</b>
+<b class="nc"><i>443</i>&nbsp;		new ATNDeserializer().deserialize(_serializedATN.toCharArray());</b>
+<i>444</i>&nbsp;	static {
+<b class="nc"><i>445</i>&nbsp;		_decisionToDFA = new DFA[_ATN.getNumberOfDecisions()];</b>
+<b class="nc"><i>446</i>&nbsp;		for (int i = 0; i &lt; _ATN.getNumberOfDecisions(); i++) {</b>
+<b class="nc"><i>447</i>&nbsp;			_decisionToDFA[i] = new DFA(_ATN.getDecisionState(i), i);</b>
+<i>448</i>&nbsp;		}
+<b class="nc"><i>449</i>&nbsp;	}</b>
+<i>450</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

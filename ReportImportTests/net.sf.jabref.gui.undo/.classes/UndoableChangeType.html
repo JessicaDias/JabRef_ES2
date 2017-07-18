@@ -1,0 +1,123 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: UndoableChangeType</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.undo</a> ]
+</div>
+
+<h1>Coverage Summary for Class: UndoableChangeType (net.sf.jabref.gui.undo)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UndoableChangeType</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 15)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.undo;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>4</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>5</i>&nbsp;import net.sf.jabref.model.strings.StringUtil;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;/**
+<i>8</i>&nbsp; * This class represents the change of type for an entry.
+<i>9</i>&nbsp; */
+<i>10</i>&nbsp;public class UndoableChangeType extends AbstractUndoableJabRefEdit {
+<i>11</i>&nbsp;    private final String oldType;
+<i>12</i>&nbsp;    private final String newType;
+<i>13</i>&nbsp;    private final BibEntry entry;
+<i>14</i>&nbsp;
+<b class="nc"><i>15</i>&nbsp;    public UndoableChangeType(BibEntry entry, String oldType, String newType) {</b>
+<b class="nc"><i>16</i>&nbsp;        this.oldType = oldType;</b>
+<b class="nc"><i>17</i>&nbsp;        this.newType = newType;</b>
+<b class="nc"><i>18</i>&nbsp;        this.entry = entry;</b>
+<b class="nc"><i>19</i>&nbsp;    }</b>
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;    @Override
+<i>22</i>&nbsp;    public String getPresentationName() {
+<b class="nc"><i>23</i>&nbsp;        return Localization.lang(&quot;change type of entry %0 from %1 to %2&quot;,</b>
+<b class="nc"><i>24</i>&nbsp;                StringUtil.boldHTML(entry.getCiteKeyOptional().orElse(Localization.lang(&quot;undefined&quot;))),</b>
+<b class="nc"><i>25</i>&nbsp;                StringUtil.boldHTML(oldType, Localization.lang(&quot;undefined&quot;)),</b>
+<b class="nc"><i>26</i>&nbsp;                StringUtil.boldHTML(newType));</b>
+<i>27</i>&nbsp;    }
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;    @Override
+<i>30</i>&nbsp;    public void undo() {
+<b class="nc"><i>31</i>&nbsp;        super.undo();</b>
+<b class="nc"><i>32</i>&nbsp;        entry.setType(oldType);</b>
+<b class="nc"><i>33</i>&nbsp;    }</b>
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    @Override
+<i>36</i>&nbsp;    public void redo() {
+<b class="nc"><i>37</i>&nbsp;        super.redo();</b>
+<b class="nc"><i>38</i>&nbsp;        entry.setType(newType);</b>
+<b class="nc"><i>39</i>&nbsp;    }</b>
+<i>40</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

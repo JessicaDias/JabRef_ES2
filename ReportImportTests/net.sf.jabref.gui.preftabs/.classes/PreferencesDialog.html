@@ -1,0 +1,455 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: PreferencesDialog</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.preftabs</a> ]
+</div>
+
+<h1>Coverage Summary for Class: PreferencesDialog (net.sf.jabref.gui.preftabs)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PreferencesDialog</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 141)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">PreferencesDialog$CancelAction</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">PreferencesDialog$ExportAction</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 17)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">PreferencesDialog$OkAction</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 19)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 168)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.preftabs;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.BorderLayout;
+<i>4</i>&nbsp;import java.awt.CardLayout;
+<i>5</i>&nbsp;import java.awt.Component;
+<i>6</i>&nbsp;import java.awt.GridLayout;
+<i>7</i>&nbsp;import java.awt.event.ActionEvent;
+<i>8</i>&nbsp;import java.nio.file.Path;
+<i>9</i>&nbsp;import java.util.ArrayList;
+<i>10</i>&nbsp;import java.util.List;
+<i>11</i>&nbsp;import java.util.Map;
+<i>12</i>&nbsp;import java.util.Optional;
+<i>13</i>&nbsp;import java.util.prefs.BackingStoreException;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;import javax.swing.AbstractAction;
+<i>16</i>&nbsp;import javax.swing.BorderFactory;
+<i>17</i>&nbsp;import javax.swing.JButton;
+<i>18</i>&nbsp;import javax.swing.JDialog;
+<i>19</i>&nbsp;import javax.swing.JList;
+<i>20</i>&nbsp;import javax.swing.JOptionPane;
+<i>21</i>&nbsp;import javax.swing.JPanel;
+<i>22</i>&nbsp;import javax.swing.ListSelectionModel;
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;import net.sf.jabref.Globals;
+<i>25</i>&nbsp;import net.sf.jabref.JabRefException;
+<i>26</i>&nbsp;import net.sf.jabref.gui.FileDialog;
+<i>27</i>&nbsp;import net.sf.jabref.gui.GUIGlobals;
+<i>28</i>&nbsp;import net.sf.jabref.gui.JabRefFrame;
+<i>29</i>&nbsp;import net.sf.jabref.gui.keyboard.KeyBinder;
+<i>30</i>&nbsp;import net.sf.jabref.gui.maintable.MainTable;
+<i>31</i>&nbsp;import net.sf.jabref.logic.exporter.ExportFormat;
+<i>32</i>&nbsp;import net.sf.jabref.logic.exporter.ExportFormats;
+<i>33</i>&nbsp;import net.sf.jabref.logic.exporter.SavePreferences;
+<i>34</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>35</i>&nbsp;import net.sf.jabref.logic.layout.LayoutFormatterPreferences;
+<i>36</i>&nbsp;import net.sf.jabref.logic.util.FileExtensions;
+<i>37</i>&nbsp;import net.sf.jabref.preferences.JabRefPreferences;
+<i>38</i>&nbsp;import net.sf.jabref.preferences.JabRefPreferencesFilter;
+<i>39</i>&nbsp;import net.sf.jabref.shared.prefs.SharedDatabasePreferences;
+<i>40</i>&nbsp;
+<i>41</i>&nbsp;import com.jgoodies.forms.builder.ButtonBarBuilder;
+<i>42</i>&nbsp;import org.apache.commons.logging.Log;
+<i>43</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;/**
+<i>47</i>&nbsp; * Preferences dialog. Contains a TabbedPane, and tabs will be defined in
+<i>48</i>&nbsp; * separate classes. Tabs MUST implement the PrefsTab interface, since this
+<i>49</i>&nbsp; * dialog will call the storeSettings() method of all tabs when the user presses
+<i>50</i>&nbsp; * ok.
+<i>51</i>&nbsp; *
+<i>52</i>&nbsp; * With this design, it should be very easy to add new tabs later.
+<i>53</i>&nbsp; *
+<i>54</i>&nbsp; */
+<i>55</i>&nbsp;public class PreferencesDialog extends JDialog {
+<b class="nc"><i>56</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(PreferencesDialog.class);</b>
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;    private final JPanel main;
+<i>59</i>&nbsp;
+<i>60</i>&nbsp;    private final JabRefFrame frame;
+<b class="nc"><i>61</i>&nbsp;    private final JButton importPreferences = new JButton(Localization.lang(&quot;Import preferences&quot;));</b>
+<b class="nc"><i>62</i>&nbsp;    private final JButton exportPreferences = new JButton(Localization.lang(&quot;Export preferences&quot;));</b>
+<b class="nc"><i>63</i>&nbsp;    private final JButton showPreferences = new JButton(Localization.lang(&quot;Show preferences&quot;));</b>
+<i>64</i>&nbsp;
+<b class="nc"><i>65</i>&nbsp;    private final JButton resetPreferences = new JButton(Localization.lang(&quot;Reset preferences&quot;));</b>
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;
+<i>68</i>&nbsp;    public PreferencesDialog(JabRefFrame parent) {
+<b class="nc"><i>69</i>&nbsp;        super(parent, Localization.lang(&quot;JabRef preferences&quot;), false);</b>
+<b class="nc"><i>70</i>&nbsp;        JabRefPreferences prefs = JabRefPreferences.getInstance();</b>
+<b class="nc"><i>71</i>&nbsp;        frame = parent;</b>
+<i>72</i>&nbsp;
+<b class="nc"><i>73</i>&nbsp;        main = new JPanel();</b>
+<b class="nc"><i>74</i>&nbsp;        JPanel mainPanel = new JPanel();</b>
+<b class="nc"><i>75</i>&nbsp;        JPanel lower = new JPanel();</b>
+<i>76</i>&nbsp;
+<b class="nc"><i>77</i>&nbsp;        getContentPane().setLayout(new BorderLayout());</b>
+<b class="nc"><i>78</i>&nbsp;        getContentPane().add(mainPanel, BorderLayout.CENTER);</b>
+<b class="nc"><i>79</i>&nbsp;        getContentPane().add(lower, BorderLayout.SOUTH);</b>
+<i>80</i>&nbsp;
+<b class="nc"><i>81</i>&nbsp;        final CardLayout cardLayout = new CardLayout();</b>
+<b class="nc"><i>82</i>&nbsp;        main.setLayout(cardLayout);</b>
+<i>83</i>&nbsp;
+<b class="nc"><i>84</i>&nbsp;        List&lt;PrefsTab&gt; tabs = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>85</i>&nbsp;        tabs.add(new GeneralTab(prefs));</b>
+<b class="nc"><i>86</i>&nbsp;        tabs.add(new NetworkTab(prefs));</b>
+<b class="nc"><i>87</i>&nbsp;        tabs.add(new FileTab(frame, prefs));</b>
+<b class="nc"><i>88</i>&nbsp;        tabs.add(new FileSortTab(prefs));</b>
+<b class="nc"><i>89</i>&nbsp;        tabs.add(new EntryEditorPrefsTab(prefs));</b>
+<b class="nc"><i>90</i>&nbsp;        tabs.add(new GroupsPrefsTab(prefs));</b>
+<b class="nc"><i>91</i>&nbsp;        tabs.add(new AppearancePrefsTab(prefs));</b>
+<b class="nc"><i>92</i>&nbsp;        tabs.add(new ExternalTab(frame, this, prefs));</b>
+<b class="nc"><i>93</i>&nbsp;        tabs.add(new TablePrefsTab(prefs));</b>
+<b class="nc"><i>94</i>&nbsp;        tabs.add(new TableColumnsTab(prefs, parent));</b>
+<b class="nc"><i>95</i>&nbsp;        tabs.add(new BibtexKeyPatternPrefTab(prefs, parent.getCurrentBasePanel()));</b>
+<b class="nc"><i>96</i>&nbsp;        tabs.add(new PreviewPrefsTab());</b>
+<b class="nc"><i>97</i>&nbsp;        tabs.add(new NameFormatterTab(prefs));</b>
+<b class="nc"><i>98</i>&nbsp;        tabs.add(new ImportSettingsTab(prefs));</b>
+<b class="nc"><i>99</i>&nbsp;        tabs.add(new XmpPrefsTab(prefs));</b>
+<b class="nc"><i>100</i>&nbsp;        tabs.add(new AdvancedTab(prefs));</b>
+<i>101</i>&nbsp;
+<i>102</i>&nbsp;        // add all tabs
+<b class="nc"><i>103</i>&nbsp;        tabs.forEach(tab -&gt; main.add((Component) tab, tab.getTabName()));</b>
+<i>104</i>&nbsp;
+<b class="nc"><i>105</i>&nbsp;        mainPanel.setBorder(BorderFactory.createEtchedBorder());</b>
+<i>106</i>&nbsp;
+<b class="nc"><i>107</i>&nbsp;        String[] tabNames = tabs.stream().map(PrefsTab::getTabName).toArray(String[]::new);</b>
+<b class="nc"><i>108</i>&nbsp;        JList&lt;String&gt; chooser = new JList&lt;&gt;(tabNames);</b>
+<b class="nc"><i>109</i>&nbsp;        chooser.setBorder(BorderFactory.createEtchedBorder());</b>
+<i>110</i>&nbsp;        // Set a prototype value to control the width of the list:
+<b class="nc"><i>111</i>&nbsp;        chooser.setPrototypeCellValue(&quot;This should be wide enough&quot;);</b>
+<b class="nc"><i>112</i>&nbsp;        chooser.setSelectedIndex(0);</b>
+<b class="nc"><i>113</i>&nbsp;        chooser.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);</b>
+<i>114</i>&nbsp;
+<i>115</i>&nbsp;        // Add the selection listener that will show the correct panel when
+<i>116</i>&nbsp;        // selection changes:
+<b class="nc"><i>117</i>&nbsp;        chooser.addListSelectionListener(e -&gt; {</b>
+<b class="nc"><i>118</i>&nbsp;            if (e.getValueIsAdjusting()) {</b>
+<b class="nc"><i>119</i>&nbsp;                return;</b>
+<i>120</i>&nbsp;            }
+<b class="nc"><i>121</i>&nbsp;            String o = chooser.getSelectedValue();</b>
+<b class="nc"><i>122</i>&nbsp;            cardLayout.show(main, o);</b>
+<b class="nc"><i>123</i>&nbsp;        });</b>
+<i>124</i>&nbsp;
+<b class="nc"><i>125</i>&nbsp;        JPanel buttons = new JPanel();</b>
+<b class="nc"><i>126</i>&nbsp;        buttons.setLayout(new GridLayout(4, 1));</b>
+<b class="nc"><i>127</i>&nbsp;        buttons.add(importPreferences, 0);</b>
+<b class="nc"><i>128</i>&nbsp;        buttons.add(exportPreferences, 1);</b>
+<b class="nc"><i>129</i>&nbsp;        buttons.add(showPreferences, 2);</b>
+<b class="nc"><i>130</i>&nbsp;        buttons.add(resetPreferences, 3);</b>
+<i>131</i>&nbsp;
+<b class="nc"><i>132</i>&nbsp;        JPanel westPanel = new JPanel();</b>
+<b class="nc"><i>133</i>&nbsp;        westPanel.setLayout(new BorderLayout());</b>
+<b class="nc"><i>134</i>&nbsp;        westPanel.add(chooser, BorderLayout.CENTER);</b>
+<b class="nc"><i>135</i>&nbsp;        westPanel.add(buttons, BorderLayout.SOUTH);</b>
+<b class="nc"><i>136</i>&nbsp;        mainPanel.setLayout(new BorderLayout());</b>
+<b class="nc"><i>137</i>&nbsp;        mainPanel.add(main, BorderLayout.CENTER);</b>
+<b class="nc"><i>138</i>&nbsp;        mainPanel.add(westPanel, BorderLayout.WEST);</b>
+<i>139</i>&nbsp;
+<b class="nc"><i>140</i>&nbsp;        JButton ok = new JButton(Localization.lang(&quot;OK&quot;));</b>
+<b class="nc"><i>141</i>&nbsp;        JButton cancel = new JButton(Localization.lang(&quot;Cancel&quot;));</b>
+<b class="nc"><i>142</i>&nbsp;        ok.addActionListener(new OkAction());</b>
+<b class="nc"><i>143</i>&nbsp;        CancelAction cancelAction = new CancelAction();</b>
+<b class="nc"><i>144</i>&nbsp;        cancel.addActionListener(cancelAction);</b>
+<b class="nc"><i>145</i>&nbsp;        lower.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));</b>
+<b class="nc"><i>146</i>&nbsp;        ButtonBarBuilder buttonBarBuilder = new ButtonBarBuilder(lower);</b>
+<b class="nc"><i>147</i>&nbsp;        buttonBarBuilder.addGlue();</b>
+<b class="nc"><i>148</i>&nbsp;        buttonBarBuilder.addButton(ok);</b>
+<b class="nc"><i>149</i>&nbsp;        buttonBarBuilder.addButton(cancel);</b>
+<b class="nc"><i>150</i>&nbsp;        buttonBarBuilder.addGlue();</b>
+<i>151</i>&nbsp;
+<i>152</i>&nbsp;        // Key bindings:
+<b class="nc"><i>153</i>&nbsp;        KeyBinder.bindCloseDialogKeyToCancelAction(this.getRootPane(), cancelAction);</b>
+<i>154</i>&nbsp;
+<i>155</i>&nbsp;        // Import and export actions:
+<b class="nc"><i>156</i>&nbsp;        exportPreferences.setToolTipText(Localization.lang(&quot;Export preferences to file&quot;));</b>
+<b class="nc"><i>157</i>&nbsp;        exportPreferences.addActionListener(new ExportAction());</b>
+<i>158</i>&nbsp;
+<b class="nc"><i>159</i>&nbsp;        importPreferences.setToolTipText(Localization.lang(&quot;Import preferences from file&quot;));</b>
+<b class="nc"><i>160</i>&nbsp;        importPreferences.addActionListener(e -&gt; {</b>
+<b class="nc"><i>161</i>&nbsp;            FileDialog dialog = new FileDialog(frame, getPrefsExportPath()).withExtension(FileExtensions.XML);</b>
+<b class="nc"><i>162</i>&nbsp;            dialog.setDefaultExtension(FileExtensions.XML);</b>
+<b class="nc"><i>163</i>&nbsp;            Optional&lt;Path&gt; fileName = dialog.showDialogAndGetSelectedFile();</b>
+<i>164</i>&nbsp;
+<b class="nc"><i>165</i>&nbsp;            if (fileName.isPresent()) {</b>
+<i>166</i>&nbsp;                try {
+<b class="nc"><i>167</i>&nbsp;                    prefs.importPreferences(fileName.get().toString());</b>
+<b class="nc"><i>168</i>&nbsp;                    updateAfterPreferenceChanges();</b>
+<b class="nc"><i>169</i>&nbsp;                    JOptionPane.showMessageDialog(PreferencesDialog.this,</b>
+<b class="nc"><i>170</i>&nbsp;                            Localization.lang(&quot;You must restart JabRef for this to come into effect.&quot;),</b>
+<b class="nc"><i>171</i>&nbsp;                            Localization.lang(&quot;Import preferences&quot;), JOptionPane.WARNING_MESSAGE);</b>
+<b class="nc"><i>172</i>&nbsp;                    this.dispose();</b>
+<b class="nc"><i>173</i>&nbsp;                } catch (JabRefException ex) {</b>
+<b class="nc"><i>174</i>&nbsp;                    LOGGER.warn(ex.getMessage(), ex);</b>
+<b class="nc"><i>175</i>&nbsp;                    JOptionPane.showMessageDialog(PreferencesDialog.this, ex.getLocalizedMessage(),</b>
+<b class="nc"><i>176</i>&nbsp;                            Localization.lang(&quot;Import preferences&quot;), JOptionPane.ERROR_MESSAGE);</b>
+<b class="nc"><i>177</i>&nbsp;                }</b>
+<i>178</i>&nbsp;            }
+<b class="nc"><i>179</i>&nbsp;        });</b>
+<i>180</i>&nbsp;
+<b class="nc"><i>181</i>&nbsp;        showPreferences.addActionListener(</b>
+<b class="nc"><i>182</i>&nbsp;                e -&gt; new PreferencesFilterDialog(new JabRefPreferencesFilter(prefs), frame).setVisible(true));</b>
+<b class="nc"><i>183</i>&nbsp;        resetPreferences.addActionListener(e -&gt; {</b>
+<b class="nc"><i>184</i>&nbsp;            if (JOptionPane.showConfirmDialog(PreferencesDialog.this,</b>
+<b class="nc"><i>185</i>&nbsp;                    Localization.lang(&quot;Are you sure you want to reset all settings to default values?&quot;),</b>
+<b class="nc"><i>186</i>&nbsp;                    Localization.lang(&quot;Reset preferences&quot;), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {</b>
+<i>187</i>&nbsp;                try {
+<b class="nc"><i>188</i>&nbsp;                    prefs.clear();</b>
+<b class="nc"><i>189</i>&nbsp;                    new SharedDatabasePreferences().clear();</b>
+<b class="nc"><i>190</i>&nbsp;                    JOptionPane.showMessageDialog(PreferencesDialog.this,</b>
+<b class="nc"><i>191</i>&nbsp;                            Localization.lang(&quot;You must restart JabRef for this to come into effect.&quot;),</b>
+<b class="nc"><i>192</i>&nbsp;                            Localization.lang(&quot;Reset preferences&quot;), JOptionPane.WARNING_MESSAGE);</b>
+<b class="nc"><i>193</i>&nbsp;                } catch (BackingStoreException ex) {</b>
+<b class="nc"><i>194</i>&nbsp;                    LOGGER.warn(ex.getMessage(), ex);</b>
+<b class="nc"><i>195</i>&nbsp;                    JOptionPane.showMessageDialog(PreferencesDialog.this, ex.getLocalizedMessage(),</b>
+<b class="nc"><i>196</i>&nbsp;                            Localization.lang(&quot;Reset preferences&quot;), JOptionPane.ERROR_MESSAGE);</b>
+<b class="nc"><i>197</i>&nbsp;                }</b>
+<b class="nc"><i>198</i>&nbsp;                updateAfterPreferenceChanges();</b>
+<i>199</i>&nbsp;            }
+<b class="nc"><i>200</i>&nbsp;        });</b>
+<i>201</i>&nbsp;
+<b class="nc"><i>202</i>&nbsp;        setValues();</b>
+<i>203</i>&nbsp;
+<b class="nc"><i>204</i>&nbsp;        pack();</b>
+<i>205</i>&nbsp;
+<b class="nc"><i>206</i>&nbsp;    }</b>
+<i>207</i>&nbsp;
+<i>208</i>&nbsp;    private String getPrefsExportPath() {
+<b class="nc"><i>209</i>&nbsp;        return Globals.prefs.get(JabRefPreferences.PREFS_EXPORT_PATH);</b>
+<i>210</i>&nbsp;    }
+<i>211</i>&nbsp;
+<i>212</i>&nbsp;    private void updateAfterPreferenceChanges() {
+<b class="nc"><i>213</i>&nbsp;        setValues();</b>
+<b class="nc"><i>214</i>&nbsp;        Map&lt;String, ExportFormat&gt; customFormats = Globals.prefs.customExports.getCustomExportFormats(Globals.prefs,</b>
+<i>215</i>&nbsp;                Globals.journalAbbreviationLoader);
+<b class="nc"><i>216</i>&nbsp;        LayoutFormatterPreferences layoutPreferences = Globals.prefs</b>
+<b class="nc"><i>217</i>&nbsp;                .getLayoutFormatterPreferences(Globals.journalAbbreviationLoader);</b>
+<b class="nc"><i>218</i>&nbsp;        SavePreferences savePreferences = SavePreferences.loadForExportFromPreferences(Globals.prefs);</b>
+<b class="nc"><i>219</i>&nbsp;        ExportFormats.initAllExports(customFormats, layoutPreferences, savePreferences);</b>
+<i>220</i>&nbsp;
+<b class="nc"><i>221</i>&nbsp;        Globals.prefs.updateEntryEditorTabList();</b>
+<b class="nc"><i>222</i>&nbsp;    }</b>
+<i>223</i>&nbsp;
+<i>224</i>&nbsp;    private void storeAllSettings(){
+<i>225</i>&nbsp;        // First check that all tabs are ready to close:
+<b class="nc"><i>226</i>&nbsp;        Component[] preferenceTabs = main.getComponents();</b>
+<b class="nc"><i>227</i>&nbsp;        for (Component tab: preferenceTabs) {</b>
+<b class="nc"><i>228</i>&nbsp;            if (!((PrefsTab) tab).validateSettings()) {</b>
+<b class="nc"><i>229</i>&nbsp;                return; // If not, break off.</b>
+<i>230</i>&nbsp;            }
+<i>231</i>&nbsp;        }
+<i>232</i>&nbsp;        // Then store settings and close:
+<b class="nc"><i>233</i>&nbsp;        for (Component tab: preferenceTabs) {</b>
+<b class="nc"><i>234</i>&nbsp;            ((PrefsTab) tab).storeSettings();</b>
+<i>235</i>&nbsp;        }
+<b class="nc"><i>236</i>&nbsp;        Globals.prefs.flush();</b>
+<i>237</i>&nbsp;
+<b class="nc"><i>238</i>&nbsp;        setVisible(false);</b>
+<b class="nc"><i>239</i>&nbsp;        MainTable.updateRenderers();</b>
+<b class="nc"><i>240</i>&nbsp;        GUIGlobals.updateEntryEditorColors();</b>
+<b class="nc"><i>241</i>&nbsp;        frame.setupAllTables();</b>
+<b class="nc"><i>242</i>&nbsp;        frame.getGroupSelector().revalidateGroups(); // icons may have changed</b>
+<b class="nc"><i>243</i>&nbsp;        frame.output(Localization.lang(&quot;Preferences recorded.&quot;));</b>
+<b class="nc"><i>244</i>&nbsp;    }</b>
+<i>245</i>&nbsp;
+<i>246</i>&nbsp;
+<i>247</i>&nbsp;    class OkAction extends AbstractAction {
+<i>248</i>&nbsp;
+<b class="nc"><i>249</i>&nbsp;        public OkAction() {</b>
+<b class="nc"><i>250</i>&nbsp;            super(&quot;OK&quot;);</b>
+<b class="nc"><i>251</i>&nbsp;        }</b>
+<i>252</i>&nbsp;
+<i>253</i>&nbsp;        @Override
+<i>254</i>&nbsp;        public void actionPerformed(ActionEvent e) {
+<b class="nc"><i>255</i>&nbsp;            storeAllSettings();</b>
+<b class="nc"><i>256</i>&nbsp;        }</b>
+<i>257</i>&nbsp;    }
+<i>258</i>&nbsp;
+<i>259</i>&nbsp;    class ExportAction extends AbstractAction {
+<i>260</i>&nbsp;
+<b class="nc"><i>261</i>&nbsp;        public ExportAction() {</b>
+<b class="nc"><i>262</i>&nbsp;            super(&quot;Export&quot;);</b>
+<b class="nc"><i>263</i>&nbsp;        }</b>
+<i>264</i>&nbsp;
+<i>265</i>&nbsp;        @Override
+<i>266</i>&nbsp;        public void actionPerformed(ActionEvent e) {
+<b class="nc"><i>267</i>&nbsp;            FileDialog dialog = new FileDialog(frame).withExtension(FileExtensions.XML);</b>
+<b class="nc"><i>268</i>&nbsp;            dialog.setDefaultExtension(FileExtensions.XML);</b>
+<b class="nc"><i>269</i>&nbsp;            Optional&lt;Path&gt; path = dialog.saveNewFile();</b>
+<i>270</i>&nbsp;
+<b class="nc"><i>271</i>&nbsp;            path.ifPresent(exportFile -&gt; {</b>
+<i>272</i>&nbsp;                try {
+<b class="nc"><i>273</i>&nbsp;                    storeAllSettings();</b>
+<b class="nc"><i>274</i>&nbsp;                    Globals.prefs.exportPreferences(exportFile.toString());</b>
+<b class="nc"><i>275</i>&nbsp;                    Globals.prefs.put(JabRefPreferences.PREFS_EXPORT_PATH, exportFile.toString());</b>
+<b class="nc"><i>276</i>&nbsp;                } catch (JabRefException ex) {</b>
+<b class="nc"><i>277</i>&nbsp;                    LOGGER.warn(ex.getMessage(), ex);</b>
+<b class="nc"><i>278</i>&nbsp;                    JOptionPane.showMessageDialog(PreferencesDialog.this, ex.getLocalizedMessage(),</b>
+<b class="nc"><i>279</i>&nbsp;                            Localization.lang(&quot;Export preferences&quot;), JOptionPane.WARNING_MESSAGE);</b>
+<b class="nc"><i>280</i>&nbsp;                }</b>
+<b class="nc"><i>281</i>&nbsp;            });</b>
+<b class="nc"><i>282</i>&nbsp;        }</b>
+<i>283</i>&nbsp;    }
+<i>284</i>&nbsp;
+<i>285</i>&nbsp;
+<i>286</i>&nbsp;    public void setValues() {
+<i>287</i>&nbsp;        // Update all field values in the tabs:
+<b class="nc"><i>288</i>&nbsp;        int count = main.getComponentCount();</b>
+<b class="nc"><i>289</i>&nbsp;        Component[] comps = main.getComponents();</b>
+<b class="nc"><i>290</i>&nbsp;        for (int i = 0; i &lt; count; i++) {</b>
+<b class="nc"><i>291</i>&nbsp;            ((PrefsTab) comps[i]).setValues();</b>
+<i>292</i>&nbsp;        }
+<b class="nc"><i>293</i>&nbsp;    }</b>
+<i>294</i>&nbsp;
+<i>295</i>&nbsp;
+<i>296</i>&nbsp;    class CancelAction extends AbstractAction {
+<i>297</i>&nbsp;
+<b class="nc"><i>298</i>&nbsp;        public CancelAction() {</b>
+<b class="nc"><i>299</i>&nbsp;            super(&quot;Cancel&quot;);</b>
+<b class="nc"><i>300</i>&nbsp;        }</b>
+<i>301</i>&nbsp;
+<i>302</i>&nbsp;        @Override
+<i>303</i>&nbsp;        public void actionPerformed(ActionEvent e) {
+<b class="nc"><i>304</i>&nbsp;            setVisible(false);</b>
+<b class="nc"><i>305</i>&nbsp;        }</b>
+<i>306</i>&nbsp;    }
+<i>307</i>&nbsp;
+<i>308</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

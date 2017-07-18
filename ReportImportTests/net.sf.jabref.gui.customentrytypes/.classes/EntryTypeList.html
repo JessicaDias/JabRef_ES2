@@ -1,0 +1,216 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: EntryTypeList</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.customentrytypes</a> ]
+</div>
+
+<h1>Coverage Summary for Class: EntryTypeList (net.sf.jabref.gui.customentrytypes)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">EntryTypeList</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 58)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.customentrytypes;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.GridBagConstraints;
+<i>4</i>&nbsp;import java.awt.event.ActionListener;
+<i>5</i>&nbsp;import java.util.List;
+<i>6</i>&nbsp;import java.util.Optional;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import javax.swing.JButton;
+<i>9</i>&nbsp;import javax.swing.JOptionPane;
+<i>10</i>&nbsp;import javax.swing.event.ListSelectionEvent;
+<i>11</i>&nbsp;import javax.swing.event.ListSelectionListener;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;import net.sf.jabref.Globals;
+<i>14</i>&nbsp;import net.sf.jabref.logic.bibtexkeypattern.BibtexKeyPatternUtil;
+<i>15</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>16</i>&nbsp;import net.sf.jabref.model.EntryTypes;
+<i>17</i>&nbsp;import net.sf.jabref.model.database.BibDatabaseMode;
+<i>18</i>&nbsp;import net.sf.jabref.model.entry.CustomEntryType;
+<i>19</i>&nbsp;import net.sf.jabref.model.entry.EntryType;
+<i>20</i>&nbsp;import net.sf.jabref.preferences.JabRefPreferences;
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;/**
+<i>23</i>&nbsp; * This class extends FieldSetComponent to provide some required functionality for the
+<i>24</i>&nbsp; * list of entry types in EntryCustomizationDialog.
+<i>25</i>&nbsp; * @author alver
+<i>26</i>&nbsp; */
+<i>27</i>&nbsp;public class EntryTypeList extends FieldSetComponent implements ListSelectionListener {
+<i>28</i>&nbsp;
+<b class="nc"><i>29</i>&nbsp;    private final JButton def = new JButton(Localization.lang(&quot;Default&quot;));</b>
+<i>30</i>&nbsp;    private final BibDatabaseMode mode;
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;    /** Creates a new instance of EntryTypeList */
+<i>33</i>&nbsp;    public EntryTypeList(List&lt;String&gt; fields, BibDatabaseMode mode) {
+<b class="nc"><i>34</i>&nbsp;        super(Localization.lang(&quot;Entry types&quot;), fields, false, true);</b>
+<b class="nc"><i>35</i>&nbsp;        this.mode = mode;</b>
+<i>36</i>&nbsp;
+<b class="nc"><i>37</i>&nbsp;        con.gridx = 0;</b>
+<b class="nc"><i>38</i>&nbsp;        con.gridy = 2;</b>
+<b class="nc"><i>39</i>&nbsp;        con.fill = GridBagConstraints.VERTICAL;</b>
+<b class="nc"><i>40</i>&nbsp;        con.anchor = GridBagConstraints.EAST;</b>
+<b class="nc"><i>41</i>&nbsp;        gbl.setConstraints(def, con);</b>
+<b class="nc"><i>42</i>&nbsp;        add(def);</b>
+<b class="nc"><i>43</i>&nbsp;        list.addListSelectionListener(this);</b>
+<b class="nc"><i>44</i>&nbsp;        def.addActionListener(e -&gt; def.setEnabled(false));</b>
+<b class="nc"><i>45</i>&nbsp;        def.setEnabled(false);</b>
+<b class="nc"><i>46</i>&nbsp;        remove.setEnabled(false);</b>
+<b class="nc"><i>47</i>&nbsp;    }</b>
+<i>48</i>&nbsp;
+<i>49</i>&nbsp;    @Override
+<i>50</i>&nbsp;    protected void addField(String str) {
+<b class="nc"><i>51</i>&nbsp;        String s = str.trim();</b>
+<b class="nc"><i>52</i>&nbsp;        if (forceLowerCase) {</b>
+<b class="nc"><i>53</i>&nbsp;            s = s.toLowerCase();</b>
+<i>54</i>&nbsp;        }
+<b class="nc"><i>55</i>&nbsp;        if (&quot;&quot;.equals(s) || listModel.contains(s)) {</b>
+<b class="nc"><i>56</i>&nbsp;            return;</b>
+<i>57</i>&nbsp;        }
+<i>58</i>&nbsp;
+<b class="nc"><i>59</i>&nbsp;        String testString = BibtexKeyPatternUtil.checkLegalKey(s,</b>
+<b class="nc"><i>60</i>&nbsp;                Globals.prefs.getBoolean(JabRefPreferences.ENFORCE_LEGAL_BIBTEX_KEY));</b>
+<b class="nc"><i>61</i>&nbsp;        if (!testString.equals(s) || (s.indexOf(&#39;&amp;&#39;) &gt;= 0)) {</b>
+<i>62</i>&nbsp;            // Report error and exit.
+<b class="nc"><i>63</i>&nbsp;            JOptionPane.showMessageDialog(this, Localization.lang(&quot;Entry type names are not allowed to contain white space or the following &quot;</b>
+<i>64</i>&nbsp;                            + &quot;characters&quot;) + &quot;: # { } ~ , ^ &amp;&quot;,
+<b class="nc"><i>65</i>&nbsp;                    Localization.lang(&quot;Error&quot;), JOptionPane.ERROR_MESSAGE);</b>
+<b class="nc"><i>66</i>&nbsp;            return;</b>
+<i>67</i>&nbsp;        }
+<b class="nc"><i>68</i>&nbsp;        else if (&quot;comment&quot;.equalsIgnoreCase(s)) {</b>
+<i>69</i>&nbsp;            // Report error and exit.
+<b class="nc"><i>70</i>&nbsp;            JOptionPane.showMessageDialog(this, Localization.lang(&quot;The name &#39;comment&#39; cannot be used as an entry type name.&quot;),</b>
+<b class="nc"><i>71</i>&nbsp;                    Localization.lang(&quot;Error&quot;), JOptionPane.ERROR_MESSAGE);</b>
+<b class="nc"><i>72</i>&nbsp;            return;</b>
+<i>73</i>&nbsp;        }
+<b class="nc"><i>74</i>&nbsp;        addFieldUncritically(s);</b>
+<b class="nc"><i>75</i>&nbsp;    }</b>
+<i>76</i>&nbsp;
+<i>77</i>&nbsp;    @Override
+<i>78</i>&nbsp;    protected void removeSelected() {
+<i>79</i>&nbsp;        //super.removeSelected();
+<b class="nc"><i>80</i>&nbsp;        int[] selected = list.getSelectedIndices();</b>
+<b class="nc"><i>81</i>&nbsp;        if (selected.length &gt; 0) {</b>
+<b class="nc"><i>82</i>&nbsp;            changesMade = true;</b>
+<i>83</i>&nbsp;        }
+<b class="nc"><i>84</i>&nbsp;        for (int i = 0; i &lt; selected.length; i++) {</b>
+<b class="nc"><i>85</i>&nbsp;            String typeName = listModel.get(selected[selected.length - 1 - i]);</b>
+<b class="nc"><i>86</i>&nbsp;            Optional&lt;EntryType&gt; type = EntryTypes.getType(typeName, this.mode);</b>
+<i>87</i>&nbsp;
+<i>88</i>&nbsp;            // If it is a custom entry type, we can remove it. If type == null, it means
+<i>89</i>&nbsp;            // the user must have added it and not yet applied it, so we can remove it
+<i>90</i>&nbsp;            // in this case as well. If it is a standard type it cannot be removed.
+<b class="nc"><i>91</i>&nbsp;            if (type.isPresent() &amp;&amp; (type.get() instanceof CustomEntryType)) {</b>
+<b class="nc"><i>92</i>&nbsp;                listModel.removeElementAt(selected[selected.length - 1 - i]);</b>
+<i>93</i>&nbsp;            } else {
+<i>94</i>&nbsp;                // This shouldn&#39;t happen, since the Remove button should be disabled.
+<b class="nc"><i>95</i>&nbsp;                JOptionPane.showMessageDialog(null, Localization.lang(&quot;This entry type cannot be removed.&quot;),</b>
+<b class="nc"><i>96</i>&nbsp;                        Localization.lang(&quot;Remove entry type&quot;), JOptionPane.ERROR_MESSAGE);</b>
+<i>97</i>&nbsp;            }
+<i>98</i>&nbsp;        }
+<b class="nc"><i>99</i>&nbsp;    }</b>
+<i>100</i>&nbsp;
+<i>101</i>&nbsp;    @Override
+<i>102</i>&nbsp;    public void valueChanged(ListSelectionEvent e) {
+<i>103</i>&nbsp;        // Do nothing
+<b class="nc"><i>104</i>&nbsp;    }</b>
+<i>105</i>&nbsp;
+<i>106</i>&nbsp;    public void enable(String typeName, boolean isChanged) {
+<i>107</i>&nbsp;        //String s = (String)list.getSelectedValue();
+<i>108</i>&nbsp;
+<b class="nc"><i>109</i>&nbsp;        if (EntryTypes.getStandardType(typeName, mode).isPresent()) {</b>
+<b class="nc"><i>110</i>&nbsp;            Optional&lt;EntryType&gt; entryType = EntryTypes.getType(typeName, mode);</b>
+<b class="nc"><i>111</i>&nbsp;            if (isChanged || (entryType.isPresent() &amp;&amp; (entryType.get() instanceof CustomEntryType))) {</b>
+<b class="nc"><i>112</i>&nbsp;                def.setEnabled(true);</b>
+<i>113</i>&nbsp;            } else {
+<b class="nc"><i>114</i>&nbsp;                def.setEnabled(false);</b>
+<i>115</i>&nbsp;            }
+<i>116</i>&nbsp;
+<b class="nc"><i>117</i>&nbsp;            remove.setEnabled(false);</b>
+<b class="nc"><i>118</i>&nbsp;        } else {</b>
+<b class="nc"><i>119</i>&nbsp;            def.setEnabled(false);</b>
+<b class="nc"><i>120</i>&nbsp;            remove.setEnabled(true);</b>
+<i>121</i>&nbsp;        }
+<b class="nc"><i>122</i>&nbsp;    }</b>
+<i>123</i>&nbsp;
+<i>124</i>&nbsp;    public void addDefaultActionListener(ActionListener l) {
+<b class="nc"><i>125</i>&nbsp;        def.addActionListener(l);</b>
+<b class="nc"><i>126</i>&nbsp;    }</b>
+<i>127</i>&nbsp;
+<i>128</i>&nbsp;    @Override
+<i>129</i>&nbsp;    public void setEnabled(boolean en) {
+<b class="nc"><i>130</i>&nbsp;        super.setEnabled(en);</b>
+<b class="nc"><i>131</i>&nbsp;        def.setEnabled(en);</b>
+<b class="nc"><i>132</i>&nbsp;    }</b>
+<i>133</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

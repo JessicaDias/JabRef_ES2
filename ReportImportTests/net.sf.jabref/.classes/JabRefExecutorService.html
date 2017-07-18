@@ -1,0 +1,261 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: JabRefExecutorService</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref</a> ]
+</div>
+
+<h1>Coverage Summary for Class: JabRefExecutorService (net.sf.jabref)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">JabRefExecutorService</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 58)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">JabRefExecutorService$NamedRunnable</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 10)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 15)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 68)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.Timer;
+<i>4</i>&nbsp;import java.util.TimerTask;
+<i>5</i>&nbsp;import java.util.concurrent.ExecutionException;
+<i>6</i>&nbsp;import java.util.concurrent.Executor;
+<i>7</i>&nbsp;import java.util.concurrent.ExecutorService;
+<i>8</i>&nbsp;import java.util.concurrent.Executors;
+<i>9</i>&nbsp;import java.util.concurrent.Future;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;import org.apache.commons.logging.Log;
+<i>12</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;/**
+<i>15</i>&nbsp; * Responsible for managing of all threads (except Swing threads) in JabRef
+<i>16</i>&nbsp; */
+<i>17</i>&nbsp;public class JabRefExecutorService implements Executor {
+<i>18</i>&nbsp;
+<b class="nc"><i>19</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(JabRefExecutorService.class);</b>
+<i>20</i>&nbsp;
+<b class="nc"><i>21</i>&nbsp;    public static final JabRefExecutorService INSTANCE = new JabRefExecutorService();</b>
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;    private Thread remoteThread;
+<i>24</i>&nbsp;
+<b class="nc"><i>25</i>&nbsp;    private final ExecutorService executorService = Executors.newCachedThreadPool(r -&gt; {</b>
+<b class="nc"><i>26</i>&nbsp;        Thread thread = new Thread(r);</b>
+<b class="nc"><i>27</i>&nbsp;        thread.setName(&quot;JabRef CachedThreadPool&quot;);</b>
+<b class="nc"><i>28</i>&nbsp;        thread.setUncaughtExceptionHandler(new FallbackExceptionHandler());</b>
+<b class="nc"><i>29</i>&nbsp;        return thread;</b>
+<i>30</i>&nbsp;    });
+<i>31</i>&nbsp;
+<b class="nc"><i>32</i>&nbsp;    private final ExecutorService lowPriorityExecutorService = Executors.newCachedThreadPool(r -&gt; {</b>
+<b class="nc"><i>33</i>&nbsp;        Thread thread = new Thread(r);</b>
+<b class="nc"><i>34</i>&nbsp;        thread.setName(&quot;JabRef LowPriorityCachedThreadPool&quot;);</b>
+<b class="nc"><i>35</i>&nbsp;        thread.setUncaughtExceptionHandler(new FallbackExceptionHandler());</b>
+<b class="nc"><i>36</i>&nbsp;        return thread;</b>
+<i>37</i>&nbsp;    });
+<i>38</i>&nbsp;
+<b class="nc"><i>39</i>&nbsp;    private final Timer timer = new Timer(&quot;timer&quot;, true);</b>
+<i>40</i>&nbsp;
+<b class="nc"><i>41</i>&nbsp;    private JabRefExecutorService() {}</b>
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;    @Override
+<i>44</i>&nbsp;    public void execute(Runnable command) {
+<b class="nc"><i>45</i>&nbsp;        if (command == null) {</b>
+<b class="nc"><i>46</i>&nbsp;            LOGGER.debug(&quot;Received null as command for execution&quot;);</b>
+<b class="nc"><i>47</i>&nbsp;            return;</b>
+<i>48</i>&nbsp;        }
+<i>49</i>&nbsp;
+<b class="nc"><i>50</i>&nbsp;        executorService.execute(command);</b>
+<b class="nc"><i>51</i>&nbsp;    }</b>
+<i>52</i>&nbsp;
+<i>53</i>&nbsp;    public void executeAndWait(Runnable command) {
+<b class="nc"><i>54</i>&nbsp;        if (command == null) {</b>
+<b class="nc"><i>55</i>&nbsp;            LOGGER.debug(&quot;Received null as command for execution&quot;);</b>
+<b class="nc"><i>56</i>&nbsp;            return;</b>
+<i>57</i>&nbsp;        }
+<i>58</i>&nbsp;
+<b class="nc"><i>59</i>&nbsp;        Future&lt;?&gt; future = executorService.submit(command);</b>
+<i>60</i>&nbsp;        while (true) {
+<i>61</i>&nbsp;            try {
+<b class="nc"><i>62</i>&nbsp;                future.get();</b>
+<b class="nc"><i>63</i>&nbsp;                return;</b>
+<b class="nc"><i>64</i>&nbsp;            } catch (InterruptedException ignored) {</b>
+<i>65</i>&nbsp;                // Ignored
+<b class="nc"><i>66</i>&nbsp;            } catch (ExecutionException e) {</b>
+<b class="nc"><i>67</i>&nbsp;                LOGGER.error(&quot;Problem executing command&quot;, e);</b>
+<b class="nc"><i>68</i>&nbsp;            }</b>
+<i>69</i>&nbsp;        }
+<i>70</i>&nbsp;    }
+<i>71</i>&nbsp;
+<i>72</i>&nbsp;    public void executeInterruptableTask(final Runnable runnable) {
+<b class="nc"><i>73</i>&nbsp;        this.lowPriorityExecutorService.execute(runnable);</b>
+<b class="nc"><i>74</i>&nbsp;    }</b>
+<i>75</i>&nbsp;
+<i>76</i>&nbsp;    public void executeInterruptableTask(final Runnable runnable, String taskName) {
+<b class="nc"><i>77</i>&nbsp;        this.lowPriorityExecutorService.execute(new NamedRunnable(taskName, runnable));</b>
+<b class="nc"><i>78</i>&nbsp;    }</b>
+<i>79</i>&nbsp;
+<i>80</i>&nbsp;    class NamedRunnable implements Runnable {
+<i>81</i>&nbsp;
+<i>82</i>&nbsp;        private final String name;
+<i>83</i>&nbsp;
+<i>84</i>&nbsp;        private final Runnable task;
+<i>85</i>&nbsp;
+<b class="nc"><i>86</i>&nbsp;        public NamedRunnable(String name, Runnable runnable){</b>
+<b class="nc"><i>87</i>&nbsp;            this.name = name;</b>
+<b class="nc"><i>88</i>&nbsp;            this.task = runnable;</b>
+<b class="nc"><i>89</i>&nbsp;        }</b>
+<i>90</i>&nbsp;
+<i>91</i>&nbsp;        @Override
+<i>92</i>&nbsp;        public void run() {
+<b class="nc"><i>93</i>&nbsp;            final String orgName = Thread.currentThread().getName();</b>
+<b class="nc"><i>94</i>&nbsp;            Thread.currentThread().setName(name);</b>
+<i>95</i>&nbsp;            try {
+<b class="nc"><i>96</i>&nbsp;                task.run();</b>
+<i>97</i>&nbsp;            } finally {
+<b class="nc"><i>98</i>&nbsp;                Thread.currentThread().setName(orgName);</b>
+<b class="nc"><i>99</i>&nbsp;            }</b>
+<b class="nc"><i>100</i>&nbsp;        }</b>
+<i>101</i>&nbsp;    }
+<i>102</i>&nbsp;
+<i>103</i>&nbsp;    public void executeInterruptableTaskAndWait(Runnable runnable) {
+<b class="nc"><i>104</i>&nbsp;        if(runnable == null) {</b>
+<b class="nc"><i>105</i>&nbsp;            LOGGER.debug(&quot;Received null as command for execution&quot;);</b>
+<b class="nc"><i>106</i>&nbsp;            return;</b>
+<i>107</i>&nbsp;        }
+<i>108</i>&nbsp;
+<b class="nc"><i>109</i>&nbsp;        Future&lt;?&gt; future = lowPriorityExecutorService.submit(runnable);</b>
+<i>110</i>&nbsp;        while (true) {
+<i>111</i>&nbsp;            try {
+<b class="nc"><i>112</i>&nbsp;                future.get();</b>
+<b class="nc"><i>113</i>&nbsp;                return;</b>
+<b class="nc"><i>114</i>&nbsp;            } catch (InterruptedException ignored) {</b>
+<i>115</i>&nbsp;                // Ignored
+<b class="nc"><i>116</i>&nbsp;            } catch (ExecutionException e) {</b>
+<b class="nc"><i>117</i>&nbsp;                LOGGER.error(&quot;Problem executing command&quot;, e);</b>
+<b class="nc"><i>118</i>&nbsp;            }</b>
+<i>119</i>&nbsp;        }
+<i>120</i>&nbsp;    }
+<i>121</i>&nbsp;
+<i>122</i>&nbsp;    public void manageRemoteThread(Thread thread) {
+<b class="nc"><i>123</i>&nbsp;        if (this.remoteThread != null){</b>
+<b class="nc"><i>124</i>&nbsp;            throw new IllegalStateException(&quot;Remote thread is already attached&quot;);</b>
+<i>125</i>&nbsp;        } else {
+<b class="nc"><i>126</i>&nbsp;            this.remoteThread = thread;</b>
+<b class="nc"><i>127</i>&nbsp;            remoteThread.start();</b>
+<i>128</i>&nbsp;        }
+<b class="nc"><i>129</i>&nbsp;    }</b>
+<i>130</i>&nbsp;
+<i>131</i>&nbsp;    public void stopRemoteThread() {
+<b class="nc"><i>132</i>&nbsp;        if (remoteThread != null) {</b>
+<b class="nc"><i>133</i>&nbsp;            remoteThread.interrupt();</b>
+<b class="nc"><i>134</i>&nbsp;            remoteThread = null;</b>
+<i>135</i>&nbsp;        }
+<b class="nc"><i>136</i>&nbsp;    }</b>
+<i>137</i>&nbsp;
+<i>138</i>&nbsp;    public void submit(TimerTask timerTask, long millisecondsDelay) {
+<b class="nc"><i>139</i>&nbsp;        timer.schedule(timerTask, millisecondsDelay);</b>
+<b class="nc"><i>140</i>&nbsp;    }</b>
+<i>141</i>&nbsp;
+<i>142</i>&nbsp;    public void shutdownEverything() {
+<i>143</i>&nbsp;        // those threads will be allowed to finish
+<b class="nc"><i>144</i>&nbsp;        this.executorService.shutdown();</b>
+<i>145</i>&nbsp;        //those threads will be interrupted in their current task
+<b class="nc"><i>146</i>&nbsp;        this.lowPriorityExecutorService.shutdownNow();</b>
+<i>147</i>&nbsp;        // kill the remote thread
+<b class="nc"><i>148</i>&nbsp;        stopRemoteThread();</b>
+<i>149</i>&nbsp;        // timer doesn&#39;t need to be canceled as it is run in daemon mode, which ensures that it is stopped if the application is shut down
+<b class="nc"><i>150</i>&nbsp;    }</b>
+<i>151</i>&nbsp;
+<i>152</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

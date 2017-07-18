@@ -1,0 +1,448 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: FontSelectorDialog</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.preftabs</a> ]
+</div>
+
+<h1>Coverage Summary for Class: FontSelectorDialog (net.sf.jabref.gui.preftabs)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">FontSelectorDialog</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 131)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">FontSelectorDialog$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 6)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 137)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.preftabs;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;/*
+<i>4</i>&nbsp;  Taken from JpicEdt
+<i>5</i>&nbsp;modified slightly by nizar batada for JabRef
+<i>6</i>&nbsp;
+<i>7</i>&nbsp; EepicViewFactory.java - February 11, 2002 - jPicEdt, a picture editor for LaTeX.
+<i>8</i>&nbsp; copyright (C) 1999-2002 Sylvain Reynal
+<i>9</i>&nbsp; Portions copyright (C) 2000, 2001 Slava Pestov
+<i>10</i>&nbsp; Portions copyright (C) 1999 Jason Ginchereau
+<i>11</i>&nbsp;
+<i>12</i>&nbsp; D\uFFFDpartement de Physique
+<i>13</i>&nbsp; Ecole Nationale Sup\uFFFDrieure de l&#39;Electronique et de ses Applications (ENSEA)
+<i>14</i>&nbsp; 6, avenue du Ponceau
+<i>15</i>&nbsp; F-95014 CERGY CEDEX
+<i>16</i>&nbsp;
+<i>17</i>&nbsp; Tel : +33 130 736 245
+<i>18</i>&nbsp; Fax : +33 130 736 667
+<i>19</i>&nbsp; e-mail : reynal@ensea.fr
+<i>20</i>&nbsp; jPicEdt web page : http://trashx.ensea.fr/jpicedt/
+<i>21</i>&nbsp;
+<i>22</i>&nbsp; This program is free software; you can redistribute it and/or
+<i>23</i>&nbsp; modify it under the terms of the GNU General Public License
+<i>24</i>&nbsp; as published by the Free Software Foundation; either version 2
+<i>25</i>&nbsp; of the License, or any later version.
+<i>26</i>&nbsp;
+<i>27</i>&nbsp; This program is distributed in the hope that it will be useful,
+<i>28</i>&nbsp; but WITHOUT ANY WARRANTY; without even the implied warranty of
+<i>29</i>&nbsp; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+<i>30</i>&nbsp; GNU General Public License for more details.
+<i>31</i>&nbsp;
+<i>32</i>&nbsp; You should have received a copy of the GNU General Public License
+<i>33</i>&nbsp; along with this program; if not, write to the Free Software
+<i>34</i>&nbsp; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+<i>35</i>&nbsp; */
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;import java.awt.BorderLayout;
+<i>38</i>&nbsp;import java.awt.Component;
+<i>39</i>&nbsp;import java.awt.Dimension;
+<i>40</i>&nbsp;import java.awt.Font;
+<i>41</i>&nbsp;import java.awt.Graphics;
+<i>42</i>&nbsp;import java.awt.Graphics2D;
+<i>43</i>&nbsp;import java.awt.GraphicsEnvironment;
+<i>44</i>&nbsp;import java.awt.GridBagConstraints;
+<i>45</i>&nbsp;import java.awt.GridBagLayout;
+<i>46</i>&nbsp;import java.awt.GridLayout;
+<i>47</i>&nbsp;import java.awt.RenderingHints;
+<i>48</i>&nbsp;import java.util.ArrayList;
+<i>49</i>&nbsp;import java.util.List;
+<i>50</i>&nbsp;import java.util.Optional;
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;import javax.swing.Box;
+<i>53</i>&nbsp;import javax.swing.BoxLayout;
+<i>54</i>&nbsp;import javax.swing.JButton;
+<i>55</i>&nbsp;import javax.swing.JDialog;
+<i>56</i>&nbsp;import javax.swing.JLabel;
+<i>57</i>&nbsp;import javax.swing.JList;
+<i>58</i>&nbsp;import javax.swing.JOptionPane;
+<i>59</i>&nbsp;import javax.swing.JPanel;
+<i>60</i>&nbsp;import javax.swing.JScrollPane;
+<i>61</i>&nbsp;import javax.swing.JTextField;
+<i>62</i>&nbsp;import javax.swing.border.EmptyBorder;
+<i>63</i>&nbsp;import javax.swing.border.TitledBorder;
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;/**
+<i>68</i>&nbsp; * A font chooser widget.
+<i>69</i>&nbsp; * @author Slava Pestov (jEdit), Sylvain Reynal
+<i>70</i>&nbsp; * @since jpicedt 1.3.2.beta-9
+<i>71</i>&nbsp; * @version $Id$
+<i>72</i>&nbsp; * &lt;p&gt;
+<i>73</i>&nbsp; * $Log$
+<i>74</i>&nbsp; * Revision 1.8  2007/07/19 01:35:35  coezbek
+<i>75</i>&nbsp; * JabRef 2.4b1 Plug-In System established. Yeah!
+<i>76</i>&nbsp; *
+<i>77</i>&nbsp; * Revision 1.7  2006/04/26 08:46:57  kiar
+<i>78</i>&nbsp; * fix dialog.show() deprecation messages, change build.xml
+<i>79</i>&nbsp; *
+<i>80</i>&nbsp; * Revision 1.6  2004/02/27 23:28:41  mortenalver
+<i>81</i>&nbsp; * Some code tidying, no effect on behaviour (hopefully)
+<i>82</i>&nbsp; *
+<i>83</i>&nbsp; * Revision 1.5  2004/02/24 23:30:18  mortenalver
+<i>84</i>&nbsp; * Added more translations, and started work on a Replace string feature
+<i>85</i>&nbsp; *
+<i>86</i>&nbsp; * Revision 1.4  2004/02/17 09:14:02  mortenalver
+<i>87</i>&nbsp; * Similar update in Font selection preview.
+<i>88</i>&nbsp; *
+<i>89</i>&nbsp; * Revision 1.3  2004/02/17 07:35:22  mortenalver
+<i>90</i>&nbsp; * Experimenting with antialiasing in table.
+<i>91</i>&nbsp; *
+<i>92</i>&nbsp; * Revision 1.2  2003/12/14 23:48:02  mortenalver
+<i>93</i>&nbsp; * .
+<i>94</i>&nbsp; *
+<i>95</i>&nbsp; * Revision 1.1  2003/11/07 22:18:07  nbatada
+<i>96</i>&nbsp; * modified it slightly from initial version
+<i>97</i>&nbsp; *
+<i>98</i>&nbsp; * Revision 1.1  2003/11/07 22:14:34  nbatada
+<i>99</i>&nbsp; * modified it from initial version
+<i>100</i>&nbsp; *
+<i>101</i>&nbsp; * Revision 1.4  2003/11/02 01:51:06  reynal
+<i>102</i>&nbsp; * Cleaned-up i18n labels
+<i>103</i>&nbsp; *
+<i>104</i>&nbsp; * Revision 1.3  2003/08/31 22:05:40  reynal
+<i>105</i>&nbsp; *
+<i>106</i>&nbsp; * Enhanced class interface for some widgets.
+<i>107</i>&nbsp; *
+<i>108</i>&nbsp;
+<i>109</i>&nbsp; */
+<i>110</i>&nbsp;
+<i>111</i>&nbsp;
+<i>112</i>&nbsp;///////////////////////////////////////////////////////////////////////////////
+<i>113</i>&nbsp;
+<i>114</i>&nbsp;public class FontSelectorDialog extends JDialog {
+<i>115</i>&nbsp;
+<i>116</i>&nbsp;    private static final String PLAIN = &quot;plain&quot;;
+<i>117</i>&nbsp;    private static final String BOLD = &quot;bold&quot;;
+<i>118</i>&nbsp;    private static final String BOLD_ITALIC = &quot;bold-italic&quot;;
+<i>119</i>&nbsp;    private static final String ITALIC = &quot;italic&quot;;
+<i>120</i>&nbsp;
+<b class="nc"><i>121</i>&nbsp;    private static final String[] styles = {PLAIN, BOLD, ITALIC, BOLD_ITALIC};</b>
+<i>122</i>&nbsp;
+<b class="nc"><i>123</i>&nbsp;    private static final String[] sizes = {&quot;9&quot;, &quot;10&quot;, &quot;12&quot;, &quot;14&quot;, &quot;16&quot;, &quot;18&quot;, &quot;24&quot;};</b>
+<i>124</i>&nbsp;
+<i>125</i>&nbsp;    // private members
+<i>126</i>&nbsp;    private boolean isOK;
+<b class="nc"><i>127</i>&nbsp;    private final JTextField familyField = new JTextField();</b>
+<i>128</i>&nbsp;    private final JList&lt;String&gt; familyList;
+<b class="nc"><i>129</i>&nbsp;    private final JTextField sizeField = new JTextField();</b>
+<b class="nc"><i>130</i>&nbsp;    private final JList&lt;String&gt; sizeList = new JList&lt;&gt;(sizes);</b>
+<b class="nc"><i>131</i>&nbsp;    private final JTextField styleField = new JTextField();</b>
+<b class="nc"><i>132</i>&nbsp;    private final JList&lt;String&gt; styleList = new JList&lt;&gt;(styles);</b>
+<i>133</i>&nbsp;    private final JLabel preview;
+<i>134</i>&nbsp;
+<i>135</i>&nbsp;    /**
+<i>136</i>&nbsp;     * For some reason the default Java fonts show up in the
+<i>137</i>&nbsp;     * list with .bold, .bolditalic, and .italic extensions.
+<i>138</i>&nbsp;     */
+<b class="nc"><i>139</i>&nbsp;    private static final String[] HIDEFONTS = {&quot;.bold&quot;, &quot;.italic&quot;};</b>
+<i>140</i>&nbsp;
+<i>141</i>&nbsp;
+<i>142</i>&nbsp;    public FontSelectorDialog(Component comp, Font font) {
+<i>143</i>&nbsp;
+<b class="nc"><i>144</i>&nbsp;        super(JOptionPane.getFrameForComponent(comp), Localization.lang(&quot;Font selection&quot;), true); //</b>
+<b class="nc"><i>145</i>&nbsp;        JPanel content = new JPanel(new BorderLayout());</b>
+<b class="nc"><i>146</i>&nbsp;        content.setBorder(new EmptyBorder(12, 12, 12, 12));</b>
+<b class="nc"><i>147</i>&nbsp;        setContentPane(content);</b>
+<i>148</i>&nbsp;
+<b class="nc"><i>149</i>&nbsp;        JPanel listPanel = new JPanel(new GridLayout(1, 3, 6, 6));</b>
+<i>150</i>&nbsp;
+<b class="nc"><i>151</i>&nbsp;        familyList = new JList&lt;&gt;(getFontList());</b>
+<i>152</i>&nbsp;
+<b class="nc"><i>153</i>&nbsp;        JPanel familyPanel = createTextFieldAndListPanel(Localization.lang(&quot;Font family&quot;), familyField, familyList);</b>
+<b class="nc"><i>154</i>&nbsp;        listPanel.add(familyPanel);</b>
+<i>155</i>&nbsp;
+<b class="nc"><i>156</i>&nbsp;        JPanel sizePanel = createTextFieldAndListPanel(Localization.lang(&quot;Font size&quot;), sizeField, sizeList);</b>
+<b class="nc"><i>157</i>&nbsp;        listPanel.add(sizePanel);</b>
+<i>158</i>&nbsp;
+<b class="nc"><i>159</i>&nbsp;        JPanel stylePanel = createTextFieldAndListPanel(Localization.lang(&quot;Font style&quot;), styleField, styleList);</b>
+<b class="nc"><i>160</i>&nbsp;        styleField.setEditable(false);</b>
+<b class="nc"><i>161</i>&nbsp;        listPanel.add(stylePanel);</b>
+<i>162</i>&nbsp;
+<b class="nc"><i>163</i>&nbsp;        familyList.setSelectedValue(font.getFamily(), true);</b>
+<b class="nc"><i>164</i>&nbsp;        familyField.setText(font.getFamily());</b>
+<b class="nc"><i>165</i>&nbsp;        sizeList.setSelectedValue(String.valueOf(font.getSize()), true);</b>
+<b class="nc"><i>166</i>&nbsp;        sizeField.setText(String.valueOf(font.getSize()));</b>
+<b class="nc"><i>167</i>&nbsp;        styleList.setSelectedIndex(font.getStyle());</b>
+<b class="nc"><i>168</i>&nbsp;        styleField.setText(styleList.getSelectedValue());</b>
+<i>169</i>&nbsp;
+<b class="nc"><i>170</i>&nbsp;        familyList.addListSelectionListener(evt -&gt; {</b>
+<b class="nc"><i>171</i>&nbsp;            String family = familyList.getSelectedValue();</b>
+<b class="nc"><i>172</i>&nbsp;            if (family != null) {</b>
+<b class="nc"><i>173</i>&nbsp;                familyField.setText(family);</b>
+<i>174</i>&nbsp;            }
+<b class="nc"><i>175</i>&nbsp;            updatePreview();</b>
+<b class="nc"><i>176</i>&nbsp;        });</b>
+<b class="nc"><i>177</i>&nbsp;        sizeList.addListSelectionListener(evt -&gt; {</b>
+<b class="nc"><i>178</i>&nbsp;            String size = sizeList.getSelectedValue();</b>
+<b class="nc"><i>179</i>&nbsp;            if (size != null) {</b>
+<b class="nc"><i>180</i>&nbsp;                sizeField.setText(size);</b>
+<i>181</i>&nbsp;            }
+<b class="nc"><i>182</i>&nbsp;            updatePreview();</b>
+<b class="nc"><i>183</i>&nbsp;        });</b>
+<b class="nc"><i>184</i>&nbsp;        styleList.addListSelectionListener(evt -&gt; {</b>
+<b class="nc"><i>185</i>&nbsp;            String style = styleList.getSelectedValue();</b>
+<b class="nc"><i>186</i>&nbsp;            if (style != null) {</b>
+<b class="nc"><i>187</i>&nbsp;                styleField.setText(style);</b>
+<i>188</i>&nbsp;            }
+<b class="nc"><i>189</i>&nbsp;            updatePreview();</b>
+<b class="nc"><i>190</i>&nbsp;        });</b>
+<i>191</i>&nbsp;
+<b class="nc"><i>192</i>&nbsp;        content.add(BorderLayout.NORTH, listPanel);</b>
+<i>193</i>&nbsp;
+<i>194</i>&nbsp;        /* --------------------------------------------------------
+<i>195</i>&nbsp;           |  Experimental addition by Morten Alver. I want to    |
+<i>196</i>&nbsp;           |  enable antialiasing in the preview field, since I&#39;m |
+<i>197</i>&nbsp;           |  working on introducing this in the table view.      |
+<i>198</i>&nbsp;           -------------------------------------------------------- */
+<b class="nc"><i>199</i>&nbsp;        preview = new JLabel(Localization.lang(&quot;Font preview&quot;)) {</b>
+<i>200</i>&nbsp;            @Override
+<i>201</i>&nbsp;            public void paint(Graphics g) {
+<b class="nc"><i>202</i>&nbsp;                Graphics2D g2 = (Graphics2D) g;</b>
+<b class="nc"><i>203</i>&nbsp;                g2.setRenderingHint</b>
+<b class="nc"><i>204</i>&nbsp;                (RenderingHints.KEY_ANTIALIASING,</b>
+<i>205</i>&nbsp;                        RenderingHints.VALUE_ANTIALIAS_ON);
+<b class="nc"><i>206</i>&nbsp;                super.paint(g2);</b>
+<b class="nc"><i>207</i>&nbsp;            }</b>
+<i>208</i>&nbsp;
+<i>209</i>&nbsp;        };
+<i>210</i>&nbsp;
+<b class="nc"><i>211</i>&nbsp;        preview.setBorder(new TitledBorder(Localization.lang(&quot;Font preview&quot;)));</b>
+<i>212</i>&nbsp;
+<b class="nc"><i>213</i>&nbsp;        updatePreview();</b>
+<i>214</i>&nbsp;
+<b class="nc"><i>215</i>&nbsp;        Dimension prefSize = preview.getPreferredSize();</b>
+<b class="nc"><i>216</i>&nbsp;        prefSize.height = 50;</b>
+<b class="nc"><i>217</i>&nbsp;        preview.setPreferredSize(prefSize);</b>
+<i>218</i>&nbsp;
+<b class="nc"><i>219</i>&nbsp;        content.add(BorderLayout.CENTER, preview);</b>
+<i>220</i>&nbsp;
+<b class="nc"><i>221</i>&nbsp;        JPanel buttons = new JPanel();</b>
+<b class="nc"><i>222</i>&nbsp;        buttons.setLayout(new BoxLayout(buttons, BoxLayout.X_AXIS));</b>
+<b class="nc"><i>223</i>&nbsp;        buttons.setBorder(new EmptyBorder(12, 0, 0, 0));</b>
+<b class="nc"><i>224</i>&nbsp;        buttons.add(Box.createGlue());</b>
+<i>225</i>&nbsp;
+<b class="nc"><i>226</i>&nbsp;        JButton ok = new JButton(Localization.lang(&quot;OK&quot;));</b>
+<b class="nc"><i>227</i>&nbsp;        ok.addActionListener(e -&gt; {</b>
+<b class="nc"><i>228</i>&nbsp;            isOK = true;</b>
+<b class="nc"><i>229</i>&nbsp;            dispose();</b>
+<b class="nc"><i>230</i>&nbsp;        });</b>
+<b class="nc"><i>231</i>&nbsp;        getRootPane().setDefaultButton(ok);</b>
+<b class="nc"><i>232</i>&nbsp;        buttons.add(ok);</b>
+<i>233</i>&nbsp;
+<b class="nc"><i>234</i>&nbsp;        buttons.add(Box.createHorizontalStrut(6));</b>
+<i>235</i>&nbsp;
+<b class="nc"><i>236</i>&nbsp;        JButton cancel = new JButton(Localization.lang(&quot;Cancel&quot;));</b>
+<b class="nc"><i>237</i>&nbsp;        cancel.addActionListener(e -&gt; dispose());</b>
+<b class="nc"><i>238</i>&nbsp;        buttons.add(cancel);</b>
+<i>239</i>&nbsp;
+<b class="nc"><i>240</i>&nbsp;        buttons.add(Box.createGlue());</b>
+<i>241</i>&nbsp;
+<b class="nc"><i>242</i>&nbsp;        content.add(BorderLayout.SOUTH, buttons);</b>
+<i>243</i>&nbsp;
+<b class="nc"><i>244</i>&nbsp;        pack();</b>
+<b class="nc"><i>245</i>&nbsp;        setLocationRelativeTo(JOptionPane.getFrameForComponent(comp));</b>
+<b class="nc"><i>246</i>&nbsp;        setVisible(true);</b>
+<b class="nc"><i>247</i>&nbsp;    }</b>
+<i>248</i>&nbsp;
+<i>249</i>&nbsp;    public Optional&lt;Font&gt; getSelectedFont() {
+<b class="nc"><i>250</i>&nbsp;        if (!isOK) {</b>
+<b class="nc"><i>251</i>&nbsp;            return Optional.empty();</b>
+<i>252</i>&nbsp;        }
+<i>253</i>&nbsp;
+<i>254</i>&nbsp;        int size;
+<i>255</i>&nbsp;        try {
+<b class="nc"><i>256</i>&nbsp;            size = Integer.parseInt(sizeField.getText());</b>
+<b class="nc"><i>257</i>&nbsp;        } catch (NumberFormatException e) {</b>
+<b class="nc"><i>258</i>&nbsp;            size = 14;</b>
+<b class="nc"><i>259</i>&nbsp;        }</b>
+<i>260</i>&nbsp;
+<b class="nc"><i>261</i>&nbsp;        return Optional.of(new Font(familyField.getText(), styleList.getSelectedIndex(), size));</b>
+<i>262</i>&nbsp;    }
+<i>263</i>&nbsp;
+<i>264</i>&nbsp;
+<i>265</i>&nbsp;
+<i>266</i>&nbsp;    private static String[] getFontList() {
+<i>267</i>&nbsp;        try {
+<b class="nc"><i>268</i>&nbsp;            String[] nameArray = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();</b>
+<b class="nc"><i>269</i>&nbsp;            List&lt;String&gt; nameList = new ArrayList&lt;&gt;(nameArray.length);</b>
+<b class="nc"><i>270</i>&nbsp;            for (String fontName : nameArray) {</b>
+<b class="nc"><i>271</i>&nbsp;                boolean hidden = false;</b>
+<b class="nc"><i>272</i>&nbsp;                for (String hiddenName : FontSelectorDialog.HIDEFONTS) {</b>
+<b class="nc"><i>273</i>&nbsp;                    if (fontName.contains(hiddenName)) {</b>
+<b class="nc"><i>274</i>&nbsp;                        hidden = true;</b>
+<b class="nc"><i>275</i>&nbsp;                        break;</b>
+<i>276</i>&nbsp;                    }
+<i>277</i>&nbsp;                }
+<i>278</i>&nbsp;
+<b class="nc"><i>279</i>&nbsp;                if (!hidden) {</b>
+<b class="nc"><i>280</i>&nbsp;                    nameList.add(fontName);</b>
+<i>281</i>&nbsp;                }
+<i>282</i>&nbsp;            }
+<b class="nc"><i>283</i>&nbsp;            String[] resultArray = new String[nameList.size()];</b>
+<b class="nc"><i>284</i>&nbsp;            return nameList.toArray(resultArray);</b>
+<b class="nc"><i>285</i>&nbsp;        } catch (SecurityException | IllegalArgumentException ex) {</b>
+<b class="nc"><i>286</i>&nbsp;            return new String[0];</b>
+<i>287</i>&nbsp;        }
+<i>288</i>&nbsp;    }
+<i>289</i>&nbsp;
+<i>290</i>&nbsp;    private static JPanel createTextFieldAndListPanel(String labelString, JTextField textField, JList&lt;String&gt; list) {
+<b class="nc"><i>291</i>&nbsp;        GridBagLayout layout = new GridBagLayout();</b>
+<b class="nc"><i>292</i>&nbsp;        JPanel panel = new JPanel(layout);</b>
+<i>293</i>&nbsp;
+<b class="nc"><i>294</i>&nbsp;        GridBagConstraints cons = new GridBagConstraints();</b>
+<b class="nc"><i>295</i>&nbsp;        cons.gridx = cons.gridy = 0;</b>
+<b class="nc"><i>296</i>&nbsp;        cons.gridwidth = cons.gridheight = 1;</b>
+<b class="nc"><i>297</i>&nbsp;        cons.fill = GridBagConstraints.BOTH;</b>
+<b class="nc"><i>298</i>&nbsp;        cons.weightx = 1.0f;</b>
+<i>299</i>&nbsp;
+<b class="nc"><i>300</i>&nbsp;        JLabel label = new JLabel(labelString);</b>
+<b class="nc"><i>301</i>&nbsp;        layout.setConstraints(label, cons);</b>
+<b class="nc"><i>302</i>&nbsp;        panel.add(label);</b>
+<i>303</i>&nbsp;
+<b class="nc"><i>304</i>&nbsp;        cons.gridy = 1;</b>
+<b class="nc"><i>305</i>&nbsp;        Component vs = Box.createVerticalStrut(6);</b>
+<b class="nc"><i>306</i>&nbsp;        layout.setConstraints(vs, cons);</b>
+<b class="nc"><i>307</i>&nbsp;        panel.add(vs);</b>
+<i>308</i>&nbsp;
+<b class="nc"><i>309</i>&nbsp;        cons.gridy = 2;</b>
+<b class="nc"><i>310</i>&nbsp;        layout.setConstraints(textField, cons);</b>
+<b class="nc"><i>311</i>&nbsp;        panel.add(textField);</b>
+<i>312</i>&nbsp;
+<b class="nc"><i>313</i>&nbsp;        cons.gridy = 3;</b>
+<b class="nc"><i>314</i>&nbsp;        vs = Box.createVerticalStrut(6);</b>
+<b class="nc"><i>315</i>&nbsp;        layout.setConstraints(vs, cons);</b>
+<b class="nc"><i>316</i>&nbsp;        panel.add(vs);</b>
+<i>317</i>&nbsp;
+<b class="nc"><i>318</i>&nbsp;        cons.gridy = 4;</b>
+<b class="nc"><i>319</i>&nbsp;        cons.gridheight = GridBagConstraints.REMAINDER;</b>
+<b class="nc"><i>320</i>&nbsp;        cons.weighty = 1.0f;</b>
+<b class="nc"><i>321</i>&nbsp;        JScrollPane scroller = new JScrollPane(list);</b>
+<b class="nc"><i>322</i>&nbsp;        layout.setConstraints(scroller, cons);</b>
+<b class="nc"><i>323</i>&nbsp;        panel.add(scroller);</b>
+<i>324</i>&nbsp;
+<b class="nc"><i>325</i>&nbsp;        return panel;</b>
+<i>326</i>&nbsp;    }
+<i>327</i>&nbsp;
+<i>328</i>&nbsp;    private void updatePreview() {
+<b class="nc"><i>329</i>&nbsp;        String family = familyField.getText();</b>
+<i>330</i>&nbsp;        int size;
+<i>331</i>&nbsp;        try {
+<b class="nc"><i>332</i>&nbsp;            size = Integer.parseInt(sizeField.getText());</b>
+<b class="nc"><i>333</i>&nbsp;        } catch (NumberFormatException e) {</b>
+<b class="nc"><i>334</i>&nbsp;            size = 14;</b>
+<b class="nc"><i>335</i>&nbsp;        }</b>
+<b class="nc"><i>336</i>&nbsp;        int style = styleList.getSelectedIndex();</b>
+<b class="nc"><i>337</i>&nbsp;        preview.setFont(new Font(family, style, size));</b>
+<b class="nc"><i>338</i>&nbsp;    }</b>
+<i>339</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

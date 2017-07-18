@@ -1,0 +1,135 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: OpenOfficeSidePanel</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.openoffice</a> ]
+</div>
+
+<h1>Coverage Summary for Class: OpenOfficeSidePanel (net.sf.jabref.gui.openoffice)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">OpenOfficeSidePanel</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 15)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.openoffice;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import javax.swing.Icon;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;import net.sf.jabref.Globals;
+<i>6</i>&nbsp;import net.sf.jabref.gui.SidePaneComponent;
+<i>7</i>&nbsp;import net.sf.jabref.gui.SidePaneManager;
+<i>8</i>&nbsp;import net.sf.jabref.gui.keyboard.KeyBinding;
+<i>9</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>10</i>&nbsp;import net.sf.jabref.logic.openoffice.OpenOfficePreferences;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;public class OpenOfficeSidePanel extends SidePaneComponent {
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;    private OpenOfficePreferences preferences;
+<i>15</i>&nbsp;    private final ToggleAction toggleAction;
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;    public OpenOfficeSidePanel(SidePaneManager sidePaneManager, Icon icon, String title, OpenOfficePreferences preferences) {
+<b class="nc"><i>19</i>&nbsp;        super(sidePaneManager, icon, title);</b>
+<b class="nc"><i>20</i>&nbsp;        this.preferences = preferences;</b>
+<b class="nc"><i>21</i>&nbsp;        sidePaneManager.register(this);</b>
+<b class="nc"><i>22</i>&nbsp;        if (preferences.showPanel()) {</b>
+<b class="nc"><i>23</i>&nbsp;            manager.show(OpenOfficeSidePanel.class);</b>
+<i>24</i>&nbsp;        }
+<i>25</i>&nbsp;
+<b class="nc"><i>26</i>&nbsp;        toggleAction = new ToggleAction(Localization.lang(&quot;OpenOffice/LibreOffice connection&quot;),</b>
+<b class="nc"><i>27</i>&nbsp;                Localization.lang(&quot;OpenOffice/LibreOffice connection&quot;),</b>
+<b class="nc"><i>28</i>&nbsp;                Globals.getKeyPrefs().getKey(KeyBinding.OPEN_OPEN_OFFICE_LIBRE_OFFICE_CONNECTION),</b>
+<i>29</i>&nbsp;                icon);
+<b class="nc"><i>30</i>&nbsp;    }</b>
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;    @Override
+<i>33</i>&nbsp;    public void componentClosing() {
+<b class="nc"><i>34</i>&nbsp;        preferences.setShowPanel(false);</b>
+<b class="nc"><i>35</i>&nbsp;    }</b>
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    @Override
+<i>38</i>&nbsp;    public void componentOpening() {
+<b class="nc"><i>39</i>&nbsp;        preferences.setShowPanel(true);</b>
+<b class="nc"><i>40</i>&nbsp;    }</b>
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;    @Override
+<i>43</i>&nbsp;    public int getRescalingWeight() {
+<b class="nc"><i>44</i>&nbsp;        return 0;</b>
+<i>45</i>&nbsp;    }
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;    @Override
+<i>48</i>&nbsp;    public ToggleAction getToggleAction() {
+<b class="nc"><i>49</i>&nbsp;        return toggleAction;</b>
+<i>50</i>&nbsp;    }
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

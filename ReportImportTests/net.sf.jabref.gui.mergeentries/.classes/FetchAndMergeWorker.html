@@ -1,0 +1,160 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: FetchAndMergeWorker</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.mergeentries</a> ]
+</div>
+
+<h1>Coverage Summary for Class: FetchAndMergeWorker (net.sf.jabref.gui.mergeentries)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">FetchAndMergeWorker</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 28)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.mergeentries;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.Objects;
+<i>4</i>&nbsp;import java.util.Optional;
+<i>5</i>&nbsp;import java.util.concurrent.ExecutionException;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import javax.swing.SwingWorker;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;import net.sf.jabref.Globals;
+<i>10</i>&nbsp;import net.sf.jabref.gui.BasePanel;
+<i>11</i>&nbsp;import net.sf.jabref.logic.importer.FetcherException;
+<i>12</i>&nbsp;import net.sf.jabref.logic.importer.IdBasedFetcher;
+<i>13</i>&nbsp;import net.sf.jabref.logic.importer.WebFetchers;
+<i>14</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>15</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>16</i>&nbsp;import net.sf.jabref.model.entry.FieldName;
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;import org.apache.commons.logging.Log;
+<i>19</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;public class FetchAndMergeWorker extends SwingWorker&lt;Optional&lt;BibEntry&gt;, Void&gt; {
+<i>23</i>&nbsp;
+<b class="nc"><i>24</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(FetchAndMergeWorker.class);</b>
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    private final BasePanel panel;
+<i>27</i>&nbsp;    private final BibEntry entry;
+<i>28</i>&nbsp;    private final String field;
+<i>29</i>&nbsp;    private final Optional&lt;String&gt; fieldContent;
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;
+<b class="nc"><i>32</i>&nbsp;    public FetchAndMergeWorker(BasePanel panel, BibEntry entry, String field) {</b>
+<b class="nc"><i>33</i>&nbsp;        this.panel = Objects.requireNonNull(panel);</b>
+<b class="nc"><i>34</i>&nbsp;        this.entry = Objects.requireNonNull(entry);</b>
+<b class="nc"><i>35</i>&nbsp;        this.field = Objects.requireNonNull(field);</b>
+<i>36</i>&nbsp;
+<b class="nc"><i>37</i>&nbsp;        this.fieldContent = entry.getField(field);</b>
+<b class="nc"><i>38</i>&nbsp;    }</b>
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;    @Override
+<i>41</i>&nbsp;    protected Optional&lt;BibEntry&gt; doInBackground() throws Exception {
+<b class="nc"><i>42</i>&nbsp;        Optional&lt;IdBasedFetcher&gt; fetcher = WebFetchers.getIdBasedFetcherForField(field, Globals.prefs.getImportFormatPreferences());</b>
+<i>43</i>&nbsp;
+<i>44</i>&nbsp;        try {
+<b class="nc"><i>45</i>&nbsp;            Optional&lt;String&gt; fieldContentValue = fieldContent;</b>
+<b class="nc"><i>46</i>&nbsp;            if (fieldContentValue.isPresent() &amp;&amp; fetcher.isPresent()) {</b>
+<b class="nc"><i>47</i>&nbsp;                return fetcher.get().performSearchById(fieldContentValue.get());</b>
+<i>48</i>&nbsp;            } else {
+<b class="nc"><i>49</i>&nbsp;                return Optional.empty();</b>
+<i>50</i>&nbsp;            }
+<b class="nc"><i>51</i>&nbsp;        } catch (FetcherException e) {</b>
+<b class="nc"><i>52</i>&nbsp;            LOGGER.error(&quot;Info cannot be found&quot;, e);</b>
+<b class="nc"><i>53</i>&nbsp;            return Optional.empty();</b>
+<i>54</i>&nbsp;        }
+<i>55</i>&nbsp;    }
+<i>56</i>&nbsp;
+<i>57</i>&nbsp;    @Override
+<i>58</i>&nbsp;    protected void done() {
+<b class="nc"><i>59</i>&nbsp;        if (isCancelled()) {</b>
+<b class="nc"><i>60</i>&nbsp;            return;</b>
+<i>61</i>&nbsp;        }
+<i>62</i>&nbsp;
+<i>63</i>&nbsp;        try {
+<b class="nc"><i>64</i>&nbsp;            String type = FieldName.getDisplayName(field);</b>
+<b class="nc"><i>65</i>&nbsp;            Optional&lt;BibEntry&gt; fetchedEntry = get();</b>
+<b class="nc"><i>66</i>&nbsp;            if (fetchedEntry.isPresent()) {</b>
+<b class="nc"><i>67</i>&nbsp;                MergeFetchedEntryDialog dialog = new MergeFetchedEntryDialog(panel, entry, fetchedEntry.get(), type);</b>
+<b class="nc"><i>68</i>&nbsp;                dialog.setVisible(true);</b>
+<b class="nc"><i>69</i>&nbsp;            } else {</b>
+<b class="nc"><i>70</i>&nbsp;                panel.frame().setStatus(Localization.lang(&quot;Cannot get info based on given %0: %1&quot;, type, fieldContent.get()));</b>
+<i>71</i>&nbsp;            }
+<b class="nc"><i>72</i>&nbsp;        } catch (InterruptedException | ExecutionException e) {</b>
+<b class="nc"><i>73</i>&nbsp;            LOGGER.error(&quot;Error while fetching Entry&quot;, e);</b>
+<b class="nc"><i>74</i>&nbsp;        }</b>
+<b class="nc"><i>75</i>&nbsp;    }</b>
+<i>76</i>&nbsp;
+<i>77</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

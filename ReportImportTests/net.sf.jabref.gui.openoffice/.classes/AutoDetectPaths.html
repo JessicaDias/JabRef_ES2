@@ -1,0 +1,378 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: AutoDetectPaths</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.openoffice</a> ]
+</div>
+
+<h1>Coverage Summary for Class: AutoDetectPaths (net.sf.jabref.gui.openoffice)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AutoDetectPaths</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 142)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">AutoDetectPaths$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 15)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 145)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.openoffice;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.BorderLayout;
+<i>4</i>&nbsp;import java.io.File;
+<i>5</i>&nbsp;import java.util.ArrayList;
+<i>6</i>&nbsp;import java.util.List;
+<i>7</i>&nbsp;import java.util.Optional;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;import javax.swing.BorderFactory;
+<i>10</i>&nbsp;import javax.swing.ButtonGroup;
+<i>11</i>&nbsp;import javax.swing.DefaultListModel;
+<i>12</i>&nbsp;import javax.swing.JButton;
+<i>13</i>&nbsp;import javax.swing.JDialog;
+<i>14</i>&nbsp;import javax.swing.JFileChooser;
+<i>15</i>&nbsp;import javax.swing.JLabel;
+<i>16</i>&nbsp;import javax.swing.JList;
+<i>17</i>&nbsp;import javax.swing.JOptionPane;
+<i>18</i>&nbsp;import javax.swing.JProgressBar;
+<i>19</i>&nbsp;import javax.swing.JRadioButton;
+<i>20</i>&nbsp;import javax.swing.ListSelectionModel;
+<i>21</i>&nbsp;import javax.swing.SwingConstants;
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;import net.sf.jabref.gui.worker.AbstractWorker;
+<i>24</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>25</i>&nbsp;import net.sf.jabref.logic.openoffice.OpenOfficeFileSearch;
+<i>26</i>&nbsp;import net.sf.jabref.logic.openoffice.OpenOfficePreferences;
+<i>27</i>&nbsp;import net.sf.jabref.logic.util.OS;
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;import com.jgoodies.forms.builder.FormBuilder;
+<i>30</i>&nbsp;import com.jgoodies.forms.layout.FormLayout;
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;/**
+<i>33</i>&nbsp; * Tools for automatically detecting JAR and executable paths to OpenOffice and/or LibreOffice.
+<i>34</i>&nbsp; */
+<i>35</i>&nbsp;public class AutoDetectPaths extends AbstractWorker {
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    private final OpenOfficePreferences preferences;
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;    private boolean foundPaths;
+<i>40</i>&nbsp;    private boolean fileSearchCanceled;
+<i>41</i>&nbsp;    private JDialog prog;
+<i>42</i>&nbsp;    private final JDialog parent;
+<i>43</i>&nbsp;
+<i>44</i>&nbsp;
+<b class="nc"><i>45</i>&nbsp;    private final OpenOfficeFileSearch fileSearch = new OpenOfficeFileSearch();</b>
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;
+<b class="nc"><i>48</i>&nbsp;    public AutoDetectPaths(JDialog parent, OpenOfficePreferences preferences) {</b>
+<b class="nc"><i>49</i>&nbsp;        this.parent = parent;</b>
+<b class="nc"><i>50</i>&nbsp;        this.preferences = preferences;</b>
+<b class="nc"><i>51</i>&nbsp;    }</b>
+<i>52</i>&nbsp;
+<i>53</i>&nbsp;    public boolean runAutodetection() {
+<b class="nc"><i>54</i>&nbsp;        foundPaths = false;</b>
+<b class="nc"><i>55</i>&nbsp;        if (preferences.checkAutoDetectedPaths()) {</b>
+<b class="nc"><i>56</i>&nbsp;            return true;</b>
+<i>57</i>&nbsp;        }
+<b class="nc"><i>58</i>&nbsp;        init();</b>
+<b class="nc"><i>59</i>&nbsp;        getWorker().run();</b>
+<b class="nc"><i>60</i>&nbsp;        update();</b>
+<b class="nc"><i>61</i>&nbsp;        return foundPaths;</b>
+<i>62</i>&nbsp;    }
+<i>63</i>&nbsp;
+<i>64</i>&nbsp;    @Override
+<i>65</i>&nbsp;    public void run() {
+<b class="nc"><i>66</i>&nbsp;        foundPaths = autoDetectPaths();</b>
+<b class="nc"><i>67</i>&nbsp;    }</b>
+<i>68</i>&nbsp;
+<i>69</i>&nbsp;    public boolean canceled() {
+<b class="nc"><i>70</i>&nbsp;        return fileSearchCanceled;</b>
+<i>71</i>&nbsp;    }
+<i>72</i>&nbsp;
+<i>73</i>&nbsp;    @Override
+<i>74</i>&nbsp;    public void init() {
+<b class="nc"><i>75</i>&nbsp;        prog = showProgressDialog(parent, Localization.lang(&quot;Autodetecting paths...&quot;),</b>
+<b class="nc"><i>76</i>&nbsp;                Localization.lang(&quot;Please wait...&quot;), true);</b>
+<b class="nc"><i>77</i>&nbsp;    }</b>
+<i>78</i>&nbsp;
+<i>79</i>&nbsp;    @Override
+<i>80</i>&nbsp;    public void update() {
+<b class="nc"><i>81</i>&nbsp;        prog.dispose();</b>
+<b class="nc"><i>82</i>&nbsp;    }</b>
+<i>83</i>&nbsp;
+<i>84</i>&nbsp;    private boolean autoDetectPaths() {
+<b class="nc"><i>85</i>&nbsp;        fileSearch.resetFileSearch();</b>
+<b class="nc"><i>86</i>&nbsp;        if (OS.WINDOWS) {</b>
+<b class="nc"><i>87</i>&nbsp;            List&lt;File&gt; progFiles = fileSearch.findWindowsProgramFilesDir();</b>
+<b class="nc"><i>88</i>&nbsp;            List&lt;File&gt; sofficeFiles = new ArrayList&lt;&gt;(</b>
+<b class="nc"><i>89</i>&nbsp;                    fileSearch.findFileInDirs(progFiles, OpenOfficePreferences.WINDOWS_EXECUTABLE));</b>
+<b class="nc"><i>90</i>&nbsp;            if (fileSearchCanceled) {</b>
+<b class="nc"><i>91</i>&nbsp;                return false;</b>
+<i>92</i>&nbsp;            }
+<b class="nc"><i>93</i>&nbsp;            if (sofficeFiles.isEmpty()) {</b>
+<b class="nc"><i>94</i>&nbsp;                JOptionPane.showMessageDialog(parent,</b>
+<i>95</i>&nbsp;                        Localization
+<b class="nc"><i>96</i>&nbsp;                                .lang(&quot;Unable to autodetect OpenOffice/LibreOffice installation. Please choose the installation directory manually.&quot;),</b>
+<b class="nc"><i>97</i>&nbsp;                        Localization.lang(&quot;Could not find OpenOffice/LibreOffice installation&quot;),</b>
+<i>98</i>&nbsp;                        JOptionPane.INFORMATION_MESSAGE);
+<b class="nc"><i>99</i>&nbsp;                JFileChooser fileChooser = new JFileChooser(new File(System.getenv(&quot;ProgramFiles&quot;)));</b>
+<b class="nc"><i>100</i>&nbsp;                fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);</b>
+<b class="nc"><i>101</i>&nbsp;                fileChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {</b>
+<i>102</i>&nbsp;
+<i>103</i>&nbsp;                    @Override
+<i>104</i>&nbsp;                    public boolean accept(File file) {
+<b class="nc"><i>105</i>&nbsp;                        return file.isDirectory();</b>
+<i>106</i>&nbsp;                    }
+<i>107</i>&nbsp;
+<i>108</i>&nbsp;                    @Override
+<i>109</i>&nbsp;                    public String getDescription() {
+<b class="nc"><i>110</i>&nbsp;                        return Localization.lang(&quot;Directories&quot;);</b>
+<i>111</i>&nbsp;                    }
+<i>112</i>&nbsp;                });
+<b class="nc"><i>113</i>&nbsp;                fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);</b>
+<b class="nc"><i>114</i>&nbsp;                fileChooser.showOpenDialog(parent);</b>
+<b class="nc"><i>115</i>&nbsp;                if (fileChooser.getSelectedFile() != null) {</b>
+<b class="nc"><i>116</i>&nbsp;                    sofficeFiles.add(fileChooser.getSelectedFile());</b>
+<i>117</i>&nbsp;                }
+<i>118</i>&nbsp;            }
+<b class="nc"><i>119</i>&nbsp;            Optional&lt;File&gt; actualFile = checkAndSelectAmongMultipleInstalls(sofficeFiles);</b>
+<b class="nc"><i>120</i>&nbsp;            if (actualFile.isPresent()) {</b>
+<b class="nc"><i>121</i>&nbsp;                return setupPreferencesForOO(actualFile.get().getParentFile(), actualFile.get(),</b>
+<i>122</i>&nbsp;                        OpenOfficePreferences.WINDOWS_EXECUTABLE);
+<i>123</i>&nbsp;            } else {
+<b class="nc"><i>124</i>&nbsp;                return false;</b>
+<i>125</i>&nbsp;            }
+<b class="nc"><i>126</i>&nbsp;        } else if (OS.OS_X) {</b>
+<b class="nc"><i>127</i>&nbsp;            List&lt;File&gt; dirList = fileSearch.findOSXProgramFilesDir();</b>
+<b class="nc"><i>128</i>&nbsp;            List&lt;File&gt; sofficeFiles = new ArrayList&lt;&gt;(</b>
+<b class="nc"><i>129</i>&nbsp;                    fileSearch.findFileInDirs(dirList, OpenOfficePreferences.OSX_EXECUTABLE));</b>
+<i>130</i>&nbsp;
+<b class="nc"><i>131</i>&nbsp;            if (fileSearchCanceled) {</b>
+<b class="nc"><i>132</i>&nbsp;                return false;</b>
+<i>133</i>&nbsp;            }
+<b class="nc"><i>134</i>&nbsp;            Optional&lt;File&gt; actualFile = checkAndSelectAmongMultipleInstalls(sofficeFiles);</b>
+<b class="nc"><i>135</i>&nbsp;            if (actualFile.isPresent()) {</b>
+<b class="nc"><i>136</i>&nbsp;                for (File rootdir : dirList) {</b>
+<b class="nc"><i>137</i>&nbsp;                    if (actualFile.get().getPath().startsWith(rootdir.getPath())) {</b>
+<b class="nc"><i>138</i>&nbsp;                        return setupPreferencesForOO(rootdir, actualFile.get(), OpenOfficePreferences.OSX_EXECUTABLE);</b>
+<i>139</i>&nbsp;                    }
+<b class="nc"><i>140</i>&nbsp;                }</b>
+<i>141</i>&nbsp;            }
+<b class="nc"><i>142</i>&nbsp;            return false;</b>
+<i>143</i>&nbsp;        } else {
+<i>144</i>&nbsp;            // Linux:
+<b class="nc"><i>145</i>&nbsp;            String usrRoot = &quot;/usr/lib&quot;;</b>
+<b class="nc"><i>146</i>&nbsp;            Optional&lt;File&gt; inUsr = fileSearch.findFileInDir(new File(usrRoot), OpenOfficePreferences.LINUX_EXECUTABLE);</b>
+<b class="nc"><i>147</i>&nbsp;            if (fileSearchCanceled) {</b>
+<b class="nc"><i>148</i>&nbsp;                return false;</b>
+<i>149</i>&nbsp;            }
+<b class="nc"><i>150</i>&nbsp;            if (!inUsr.isPresent()) {</b>
+<b class="nc"><i>151</i>&nbsp;                inUsr = fileSearch.findFileInDir(new File(&quot;/usr/lib64&quot;), OpenOfficePreferences.LINUX_EXECUTABLE);</b>
+<b class="nc"><i>152</i>&nbsp;                if (inUsr.isPresent()) {</b>
+<b class="nc"><i>153</i>&nbsp;                    usrRoot = &quot;/usr/lib64&quot;;</b>
+<i>154</i>&nbsp;                }
+<i>155</i>&nbsp;            }
+<i>156</i>&nbsp;
+<b class="nc"><i>157</i>&nbsp;            if (fileSearchCanceled) {</b>
+<b class="nc"><i>158</i>&nbsp;                return false;</b>
+<i>159</i>&nbsp;            }
+<b class="nc"><i>160</i>&nbsp;            Optional&lt;File&gt; inOpt = fileSearch.findFileInDir(new File(&quot;/opt&quot;), OpenOfficePreferences.LINUX_EXECUTABLE);</b>
+<b class="nc"><i>161</i>&nbsp;            if (fileSearchCanceled) {</b>
+<b class="nc"><i>162</i>&nbsp;                return false;</b>
+<i>163</i>&nbsp;            }
+<b class="nc"><i>164</i>&nbsp;            if ((inUsr.isPresent()) &amp;&amp; (!inOpt.isPresent())) {</b>
+<b class="nc"><i>165</i>&nbsp;                return setupPreferencesForOO(usrRoot, inUsr.get(), OpenOfficePreferences.LINUX_EXECUTABLE);</b>
+<b class="nc"><i>166</i>&nbsp;            } else if (inOpt.isPresent()) {</b>
+<b class="nc"><i>167</i>&nbsp;                if (!inUsr.isPresent()) {</b>
+<b class="nc"><i>168</i>&nbsp;                    return setupPreferencesForOO(&quot;/opt&quot;, inOpt.get(), OpenOfficePreferences.LINUX_EXECUTABLE);</b>
+<i>169</i>&nbsp;                } else { // Found both
+<b class="nc"><i>170</i>&nbsp;                    JRadioButton optRB = new JRadioButton(inOpt.get().getPath(), true);</b>
+<b class="nc"><i>171</i>&nbsp;                    JRadioButton usrRB = new JRadioButton(inUsr.get().getPath(), false);</b>
+<b class="nc"><i>172</i>&nbsp;                    ButtonGroup bg = new ButtonGroup();</b>
+<b class="nc"><i>173</i>&nbsp;                    bg.add(optRB);</b>
+<b class="nc"><i>174</i>&nbsp;                    bg.add(usrRB);</b>
+<b class="nc"><i>175</i>&nbsp;                    FormBuilder b = FormBuilder.create()</b>
+<b class="nc"><i>176</i>&nbsp;                            .layout(new FormLayout(&quot;left:pref&quot;, &quot;pref, 2dlu, pref, 2dlu, pref &quot;));</b>
+<b class="nc"><i>177</i>&nbsp;                    b.add(Localization</b>
+<b class="nc"><i>178</i>&nbsp;                            .lang(&quot;Found more than one OpenOffice/LibreOffice executable.&quot;) + &quot; &quot;</b>
+<b class="nc"><i>179</i>&nbsp;                            + Localization.lang(&quot;Please choose which one to connect to:&quot;))</b>
+<b class="nc"><i>180</i>&nbsp;                            .xy(1, 1);</b>
+<b class="nc"><i>181</i>&nbsp;                    b.add(optRB).xy(1, 3);</b>
+<b class="nc"><i>182</i>&nbsp;                    b.add(usrRB).xy(1, 5);</b>
+<b class="nc"><i>183</i>&nbsp;                    int answer = JOptionPane.showConfirmDialog(null, b.getPanel(),</b>
+<b class="nc"><i>184</i>&nbsp;                            Localization.lang(&quot;Choose OpenOffice/LibreOffice executable&quot;),</b>
+<i>185</i>&nbsp;                            JOptionPane.OK_CANCEL_OPTION);
+<b class="nc"><i>186</i>&nbsp;                    if (answer == JOptionPane.CANCEL_OPTION) {</b>
+<b class="nc"><i>187</i>&nbsp;                        return false;</b>
+<i>188</i>&nbsp;                    }
+<b class="nc"><i>189</i>&nbsp;                    if (optRB.isSelected()) {</b>
+<b class="nc"><i>190</i>&nbsp;                        return setupPreferencesForOO(&quot;/opt&quot;, inOpt.get(), OpenOfficePreferences.LINUX_EXECUTABLE);</b>
+<i>191</i>&nbsp;                    } else {
+<b class="nc"><i>192</i>&nbsp;                        return setupPreferencesForOO(usrRoot, inUsr.get(), OpenOfficePreferences.LINUX_EXECUTABLE);</b>
+<i>193</i>&nbsp;                    }
+<i>194</i>&nbsp;                }
+<i>195</i>&nbsp;            }
+<i>196</i>&nbsp;        }
+<b class="nc"><i>197</i>&nbsp;        return false;</b>
+<i>198</i>&nbsp;    }
+<i>199</i>&nbsp;
+<i>200</i>&nbsp;    private boolean setupPreferencesForOO(String usrRoot, File inUsr, String sofficeName) {
+<b class="nc"><i>201</i>&nbsp;        return setupPreferencesForOO(new File(usrRoot), inUsr, sofficeName);</b>
+<i>202</i>&nbsp;    }
+<i>203</i>&nbsp;
+<i>204</i>&nbsp;    private boolean setupPreferencesForOO(File rootDir, File inUsr, String sofficeName) {
+<b class="nc"><i>205</i>&nbsp;        preferences.setExecutablePath(new File(inUsr, sofficeName).getPath());</b>
+<b class="nc"><i>206</i>&nbsp;        Optional&lt;File&gt; jurt = fileSearch.findFileInDir(rootDir, &quot;jurt.jar&quot;);</b>
+<b class="nc"><i>207</i>&nbsp;        if (fileSearchCanceled) {</b>
+<b class="nc"><i>208</i>&nbsp;            return false;</b>
+<i>209</i>&nbsp;        }
+<b class="nc"><i>210</i>&nbsp;        if (jurt.isPresent()) {</b>
+<b class="nc"><i>211</i>&nbsp;            preferences.setJarsPath(jurt.get().getPath());</b>
+<b class="nc"><i>212</i>&nbsp;            return true;</b>
+<i>213</i>&nbsp;        } else {
+<b class="nc"><i>214</i>&nbsp;            return false;</b>
+<i>215</i>&nbsp;        }
+<i>216</i>&nbsp;    }
+<i>217</i>&nbsp;
+<i>218</i>&nbsp;    private Optional&lt;File&gt; checkAndSelectAmongMultipleInstalls(List&lt;File&gt; sofficeFiles) {
+<b class="nc"><i>219</i>&nbsp;        if (sofficeFiles.isEmpty()) {</b>
+<b class="nc"><i>220</i>&nbsp;            return Optional.empty();</b>
+<b class="nc"><i>221</i>&nbsp;        } else if (sofficeFiles.size() == 1) {</b>
+<b class="nc"><i>222</i>&nbsp;            return Optional.of(sofficeFiles.get(0));</b>
+<i>223</i>&nbsp;        }
+<i>224</i>&nbsp;        // Otherwise more than one file found, select among them
+<b class="nc"><i>225</i>&nbsp;        DefaultListModel&lt;File&gt; mod = new DefaultListModel&lt;&gt;();</b>
+<b class="nc"><i>226</i>&nbsp;        for (File tmpfile : sofficeFiles) {</b>
+<b class="nc"><i>227</i>&nbsp;            mod.addElement(tmpfile);</b>
+<b class="nc"><i>228</i>&nbsp;        }</b>
+<b class="nc"><i>229</i>&nbsp;        JList&lt;File&gt; fileList = new JList&lt;&gt;(mod);</b>
+<b class="nc"><i>230</i>&nbsp;        fileList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);</b>
+<b class="nc"><i>231</i>&nbsp;        fileList.setSelectedIndex(0);</b>
+<b class="nc"><i>232</i>&nbsp;        FormBuilder builder = FormBuilder.create().layout(new FormLayout(&quot;left:pref&quot;, &quot;pref, 2dlu, pref, 4dlu, pref&quot;));</b>
+<b class="nc"><i>233</i>&nbsp;        builder.add(Localization.lang(&quot;Found more than one OpenOffice/LibreOffice executable.&quot;)).xy(1, 1);</b>
+<b class="nc"><i>234</i>&nbsp;        builder.add(Localization.lang(&quot;Please choose which one to connect to:&quot;)).xy(1, 3);</b>
+<b class="nc"><i>235</i>&nbsp;        builder.add(fileList).xy(1, 5);</b>
+<b class="nc"><i>236</i>&nbsp;        int answer = JOptionPane.showConfirmDialog(null, builder.getPanel(),</b>
+<b class="nc"><i>237</i>&nbsp;                Localization.lang(&quot;Choose OpenOffice/LibreOffice executable&quot;), JOptionPane.OK_CANCEL_OPTION);</b>
+<b class="nc"><i>238</i>&nbsp;        if (answer == JOptionPane.CANCEL_OPTION) {</b>
+<b class="nc"><i>239</i>&nbsp;            return Optional.empty();</b>
+<i>240</i>&nbsp;        } else {
+<b class="nc"><i>241</i>&nbsp;            return Optional.of(fileList.getSelectedValue());</b>
+<i>242</i>&nbsp;        }
+<i>243</i>&nbsp;
+<i>244</i>&nbsp;    }
+<i>245</i>&nbsp;
+<i>246</i>&nbsp;
+<i>247</i>&nbsp;    public JDialog showProgressDialog(JDialog progressParent, String title, String message, boolean includeCancelButton) {
+<b class="nc"><i>248</i>&nbsp;        fileSearchCanceled = false;</b>
+<b class="nc"><i>249</i>&nbsp;        JProgressBar bar = new JProgressBar(SwingConstants.HORIZONTAL);</b>
+<b class="nc"><i>250</i>&nbsp;        final JDialog progressDialog = new JDialog(progressParent, title, false);</b>
+<b class="nc"><i>251</i>&nbsp;        bar.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));</b>
+<b class="nc"><i>252</i>&nbsp;        bar.setIndeterminate(true);</b>
+<b class="nc"><i>253</i>&nbsp;        if (includeCancelButton) {</b>
+<b class="nc"><i>254</i>&nbsp;            JButton cancel = new JButton(Localization.lang(&quot;Cancel&quot;));</b>
+<b class="nc"><i>255</i>&nbsp;            cancel.addActionListener(event -&gt; {</b>
+<b class="nc"><i>256</i>&nbsp;                fileSearchCanceled = true;</b>
+<b class="nc"><i>257</i>&nbsp;                fileSearch.cancelFileSearch();</b>
+<b class="nc"><i>258</i>&nbsp;                ((JButton) event.getSource()).setEnabled(false);</b>
+<b class="nc"><i>259</i>&nbsp;            });</b>
+<b class="nc"><i>260</i>&nbsp;            progressDialog.add(cancel, BorderLayout.SOUTH);</b>
+<i>261</i>&nbsp;        }
+<b class="nc"><i>262</i>&nbsp;        progressDialog.add(new JLabel(message), BorderLayout.NORTH);</b>
+<b class="nc"><i>263</i>&nbsp;        progressDialog.add(bar, BorderLayout.CENTER);</b>
+<b class="nc"><i>264</i>&nbsp;        progressDialog.pack();</b>
+<b class="nc"><i>265</i>&nbsp;        progressDialog.setLocationRelativeTo(null);</b>
+<b class="nc"><i>266</i>&nbsp;        progressDialog.setVisible(true);</b>
+<b class="nc"><i>267</i>&nbsp;        return progressDialog;</b>
+<i>268</i>&nbsp;    }
+<i>269</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

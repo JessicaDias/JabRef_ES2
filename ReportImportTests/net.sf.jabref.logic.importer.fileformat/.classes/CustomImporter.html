@@ -1,0 +1,196 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: CustomImporter</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.importer.fileformat</a> ]
+</div>
+
+<h1>Coverage Summary for Class: CustomImporter (net.sf.jabref.logic.importer.fileformat)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CustomImporter</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 29)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.importer.fileformat;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.BufferedReader;
+<i>4</i>&nbsp;import java.io.IOException;
+<i>5</i>&nbsp;import java.net.URL;
+<i>6</i>&nbsp;import java.net.URLClassLoader;
+<i>7</i>&nbsp;import java.nio.file.Path;
+<i>8</i>&nbsp;import java.nio.file.Paths;
+<i>9</i>&nbsp;import java.util.Arrays;
+<i>10</i>&nbsp;import java.util.List;
+<i>11</i>&nbsp;import java.util.Objects;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;import net.sf.jabref.logic.importer.Importer;
+<i>14</i>&nbsp;import net.sf.jabref.logic.importer.ParserResult;
+<i>15</i>&nbsp;import net.sf.jabref.logic.util.FileExtensions;
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;/**
+<i>18</i>&nbsp; * Object with data for a custom csv_importer.
+<i>19</i>&nbsp; *
+<i>20</i>&nbsp; * &lt;p&gt;Is also responsible for instantiating the class loader.&lt;/p&gt;
+<i>21</i>&nbsp; */
+<i>22</i>&nbsp;public class CustomImporter extends Importer {
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;    private final String className;
+<i>25</i>&nbsp;    private final Path basePath;
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    private Importer importer;
+<i>28</i>&nbsp;
+<b class="nc"><i>29</i>&nbsp;    public CustomImporter(String basePath, String className) throws ClassNotFoundException {</b>
+<b class="nc"><i>30</i>&nbsp;        this.basePath = Paths.get(basePath);</b>
+<b class="nc"><i>31</i>&nbsp;        this.className = className;</b>
+<i>32</i>&nbsp;        try {
+<b class="nc"><i>33</i>&nbsp;            importer = load(this.basePath.toUri().toURL(), this.className);</b>
+<b class="nc"><i>34</i>&nbsp;        } catch (IOException | InstantiationException | IllegalAccessException exception) {</b>
+<b class="nc"><i>35</i>&nbsp;            throw new ClassNotFoundException(&quot;&quot;, exception);</b>
+<b class="nc"><i>36</i>&nbsp;        }</b>
+<b class="nc"><i>37</i>&nbsp;    }</b>
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;    private static Importer load(URL basePathURL, String className)
+<i>40</i>&nbsp;            throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+<b class="nc"><i>41</i>&nbsp;        try (URLClassLoader cl = new URLClassLoader(new URL[] {basePathURL})) {</b>
+<b class="nc"><i>42</i>&nbsp;            Class&lt;?&gt; clazz = Class.forName(className, true, cl);</b>
+<b class="nc"><i>43</i>&nbsp;            return (Importer) clazz.newInstance();</b>
+<b class="nc"><i>44</i>&nbsp;        }</b>
+<i>45</i>&nbsp;    }
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;    public List&lt;String&gt; getAsStringList() {
+<b class="nc"><i>48</i>&nbsp;        return Arrays.asList(basePath.toString().replace(&#39;\\&#39;, &#39;/&#39;), className);</b>
+<i>49</i>&nbsp;    }
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;    public String getClassName() {
+<b class="nc"><i>52</i>&nbsp;        return className;</b>
+<i>53</i>&nbsp;    }
+<i>54</i>&nbsp;
+<i>55</i>&nbsp;    public Path getBasePath() {
+<b class="nc"><i>56</i>&nbsp;        return basePath;</b>
+<i>57</i>&nbsp;    }
+<i>58</i>&nbsp;
+<i>59</i>&nbsp;    @Override
+<i>60</i>&nbsp;    public boolean equals(Object other) {
+<i>61</i>&nbsp;
+<b class="nc"><i>62</i>&nbsp;        if (this == other) {</b>
+<b class="nc"><i>63</i>&nbsp;            return true;</b>
+<i>64</i>&nbsp;        }
+<i>65</i>&nbsp;
+<b class="nc"><i>66</i>&nbsp;        if (!(other instanceof CustomImporter)) {</b>
+<b class="nc"><i>67</i>&nbsp;            return false;</b>
+<i>68</i>&nbsp;        }
+<i>69</i>&nbsp;
+<b class="nc"><i>70</i>&nbsp;        CustomImporter otherImporter = (CustomImporter) other;</b>
+<b class="nc"><i>71</i>&nbsp;        return Objects.equals(className, otherImporter.className) &amp;&amp; Objects.equals(basePath, otherImporter.basePath);</b>
+<i>72</i>&nbsp;    }
+<i>73</i>&nbsp;
+<i>74</i>&nbsp;    @Override
+<i>75</i>&nbsp;    public boolean isRecognizedFormat(BufferedReader input) throws IOException {
+<b class="nc"><i>76</i>&nbsp;        return importer.isRecognizedFormat(input);</b>
+<i>77</i>&nbsp;    }
+<i>78</i>&nbsp;
+<i>79</i>&nbsp;    @Override
+<i>80</i>&nbsp;    public ParserResult importDatabase(BufferedReader input) throws IOException {
+<b class="nc"><i>81</i>&nbsp;        return importer.importDatabase(input);</b>
+<i>82</i>&nbsp;    }
+<i>83</i>&nbsp;
+<i>84</i>&nbsp;    @Override
+<i>85</i>&nbsp;    public String getName() {
+<b class="nc"><i>86</i>&nbsp;        return importer.getName();</b>
+<i>87</i>&nbsp;    }
+<i>88</i>&nbsp;
+<i>89</i>&nbsp;    @Override
+<i>90</i>&nbsp;    public FileExtensions getExtensions() {
+<b class="nc"><i>91</i>&nbsp;        return importer.getExtensions();</b>
+<i>92</i>&nbsp;    }
+<i>93</i>&nbsp;
+<i>94</i>&nbsp;    @Override
+<i>95</i>&nbsp;    public String getId() {
+<b class="nc"><i>96</i>&nbsp;        return importer.getId();</b>
+<i>97</i>&nbsp;    }
+<i>98</i>&nbsp;
+<i>99</i>&nbsp;    @Override
+<i>100</i>&nbsp;    public String getDescription() {
+<b class="nc"><i>101</i>&nbsp;        return importer.getDescription();</b>
+<i>102</i>&nbsp;    }
+<i>103</i>&nbsp;
+<i>104</i>&nbsp;    @Override
+<i>105</i>&nbsp;    public int hashCode() {
+<b class="nc"><i>106</i>&nbsp;        return Objects.hash(className, basePath);</b>
+<i>107</i>&nbsp;    }
+<i>108</i>&nbsp;
+<i>109</i>&nbsp;    @Override
+<i>110</i>&nbsp;    public String toString() {
+<b class="nc"><i>111</i>&nbsp;        return this.getName();</b>
+<i>112</i>&nbsp;    }
+<i>113</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

@@ -1,5 +1,5 @@
 package net.sf.jabref.gui.importer;
-
+import net.sf.jabref.gui.importer.ImportMenuItem;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -10,7 +10,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -22,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-
+import java.io.PrintWriter;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ActionMap;
@@ -130,10 +132,10 @@ import org.apache.commons.logging.LogFactory;
  * <li>Call entryListComplete() after all entries have been fetched</li>
  * </ul>
  * <p>
- * If the importer wants to cancel the import, it should call the dispose()
+ * If the csv_importer wants to cancel the import, it should call the dispose()
  * method.
  * <p>
- * If the importer receives the stopFetching-call, it should stop fetching as
+ * If the csv_importer receives the stopFetching-call, it should stop fetching as
  * soon as possible (it is not really critical, but good style to not contribute
  * any more results via addEntry, call entryListComplete() or dispose(), after
  * receiving this call).
@@ -622,6 +624,18 @@ public class ImportInspectionDialog extends JDialog implements ImportInspector, 
             // see if there
             // are unresolved duplicates, and warn if yes.
             if (Globals.prefs.getBoolean(JabRefPreferences.WARN_ABOUT_DUPLICATES_IN_INSPECTION)) {
+
+                PrintWriter newFile = null;
+                try {
+                    newFile = new PrintWriter("bin/tmp/temporaryNewDatabase", "UTF-8");
+                    for (BibEntry entry : entries) {
+                        newFile.println(entry);
+                        newFile.print("\n");
+                    }
+                    newFile.close();
+                } catch (FileNotFoundException | UnsupportedEncodingException e) {
+                }
+
                 for (BibEntry entry : entries) {
 
                     // Only check entries that are to be imported. Keep status
@@ -636,8 +650,7 @@ public class ImportInspectionDialog extends JDialog implements ImportInspector, 
                     // is indicated by the entry's group hit status:
                     if (entry.isGroupHit()) {
                         CheckBoxMessage cbm = new CheckBoxMessage(
-                                Localization
-                                        .lang("There are possible duplicates (marked with an icon) that haven't been resolved. Continue?"),
+                                Localization.lang("There are possible duplicates (marked with an icon) that haven't been resolved. Do you want to proceed (yes) or add them to a new database (no)?"),
                                 Localization.lang("Disable this confirmation dialog"), false);
                         int answer = JOptionPane.showConfirmDialog(ImportInspectionDialog.this, cbm,
                                 Localization.lang("Duplicates found"), JOptionPane.YES_NO_OPTION);
@@ -645,6 +658,14 @@ public class ImportInspectionDialog extends JDialog implements ImportInspector, 
                             Globals.prefs.putBoolean(JabRefPreferences.WARN_ABOUT_DUPLICATES_IN_INSPECTION, false);
                         }
                         if (answer == JOptionPane.NO_OPTION) {
+                            // neste ponto chamaremos novo database
+                            ImportMenuItem imi = new ImportMenuItem(frame, true, null);
+                            imi.automatedImport(Collections.singletonList("bin/tmp/temporaryNewDatabase"));
+                            BasePanel newPanel = (BasePanel) frame.getTabbedPane().getSelectedComponent();
+                            newPanel.getBibDatabaseContext().setDatabaseFile(null);
+                            newPanel.markBaseChanged();
+
+                            dispose();
                             return;
                         }
                         break;

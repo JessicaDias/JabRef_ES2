@@ -1,0 +1,19 @@
+% Encoding: UTF-8
+@article{small,
+  author = {Guerra, B. D.},
+  journal = {O journal do Auri},
+  note = {to appear},
+  title = {ES2 é Amor},
+  volume = {-1},
+  year = {2017}
+}
+
+@article{big,
+  author = {Marx, Karl},
+  journal = {The journal of big communist papers},
+  title = {A big communist paper},
+  volume = {MCMXCVII},
+  year = {1994}
+}
+
+@Comment{jabref-meta: databaseType:bibtex;}

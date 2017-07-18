@@ -1,0 +1,1392 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: BibtexKeyPatternUtil</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.bibtexkeypattern</a> ]
+</div>
+
+<h1>Coverage Summary for Class: BibtexKeyPatternUtil (net.sf.jabref.logic.bibtexkeypattern)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">BibtexKeyPatternUtil</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 39)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 548)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.bibtexkeypattern;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.ArrayList;
+<i>4</i>&nbsp;import java.util.Arrays;
+<i>5</i>&nbsp;import java.util.Collections;
+<i>6</i>&nbsp;import java.util.List;
+<i>7</i>&nbsp;import java.util.Locale;
+<i>8</i>&nbsp;import java.util.Objects;
+<i>9</i>&nbsp;import java.util.Optional;
+<i>10</i>&nbsp;import java.util.regex.Matcher;
+<i>11</i>&nbsp;import java.util.regex.Pattern;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;import net.sf.jabref.logic.formatter.Formatters;
+<i>14</i>&nbsp;import net.sf.jabref.logic.formatter.casechanger.Word;
+<i>15</i>&nbsp;import net.sf.jabref.logic.layout.format.RemoveLatexCommandsFormatter;
+<i>16</i>&nbsp;import net.sf.jabref.model.bibtexkeypattern.AbstractBibtexKeyPattern;
+<i>17</i>&nbsp;import net.sf.jabref.model.cleanup.Formatter;
+<i>18</i>&nbsp;import net.sf.jabref.model.database.BibDatabase;
+<i>19</i>&nbsp;import net.sf.jabref.model.database.BibDatabaseContext;
+<i>20</i>&nbsp;import net.sf.jabref.model.entry.AuthorList;
+<i>21</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>22</i>&nbsp;import net.sf.jabref.model.entry.FieldName;
+<i>23</i>&nbsp;import net.sf.jabref.model.entry.Keyword;
+<i>24</i>&nbsp;import net.sf.jabref.model.entry.KeywordList;
+<i>25</i>&nbsp;import net.sf.jabref.model.strings.StringUtil;
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;import org.apache.commons.logging.Log;
+<i>28</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;/**
+<i>32</i>&nbsp; * This is the utility class of the LabelPattern package.
+<i>33</i>&nbsp; */
+<b class="nc"><i>34</i>&nbsp;public class BibtexKeyPatternUtil {</b>
+<b class="nc"><i>35</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(BibtexKeyPatternUtil.class);</b>
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    private static final String STARTING_CAPITAL_PATTERN = &quot;[^A-Z]&quot;;
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;    // All single characters that we can use for extending a key to make it unique:
+<i>40</i>&nbsp;    private static final String CHARS = &quot;abcdefghijklmnopqrstuvwxyz&quot;;
+<i>41</i>&nbsp;
+<b class="nc"><i>42</i>&nbsp;    private static final Pattern REGEX_PATTERN = Pattern.compile(&quot;.*\\(\\{([A-Z]+)\\}\\).*&quot;);</b>
+<i>43</i>&nbsp;
+<i>44</i>&nbsp;    private static final int CHARS_OF_FIRST = 5;
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;    private static String normalize(String content) {
+<b class="nc"><i>47</i>&nbsp;        List&lt;String&gt; tokens = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>48</i>&nbsp;        int b = 0;</b>
+<b class="nc"><i>49</i>&nbsp;        StringBuilder and = new StringBuilder();</b>
+<b class="nc"><i>50</i>&nbsp;        StringBuilder token = new StringBuilder();</b>
+<b class="nc"><i>51</i>&nbsp;        for (int p = 0; p &lt; content.length(); p++) {</b>
+<b class="nc"><i>52</i>&nbsp;            if (b == 0) {</b>
+<b class="nc"><i>53</i>&nbsp;                String andString = and.toString(); // Avoid lots of calls</b>
+<b class="nc"><i>54</i>&nbsp;                if (((andString.isEmpty()) &amp;&amp; (content.charAt(p) == &#39; &#39;))</b>
+<b class="nc"><i>55</i>&nbsp;                        || (&quot; &quot;.equals(andString) &amp;&amp; (content.charAt(p) == &#39;a&#39;))</b>
+<b class="nc"><i>56</i>&nbsp;                        || (&quot; a&quot;.equals(andString) &amp;&amp; (content.charAt(p) == &#39;n&#39;))</b>
+<b class="nc"><i>57</i>&nbsp;                        || (&quot; an&quot;.equals(andString) &amp;&amp; (content.charAt(p) == &#39;d&#39;))) {</b>
+<b class="nc"><i>58</i>&nbsp;                    and.append(content.charAt(p));</b>
+<b class="nc"><i>59</i>&nbsp;                } else if (&quot; and&quot;.equals(and.toString()) &amp;&amp; (content.charAt(p) == &#39; &#39;)) {</b>
+<b class="nc"><i>60</i>&nbsp;                    and = new StringBuilder();</b>
+<b class="nc"><i>61</i>&nbsp;                    tokens.add(token.toString().trim());</b>
+<b class="nc"><i>62</i>&nbsp;                    token = new StringBuilder();</b>
+<i>63</i>&nbsp;                } else {
+<b class="nc"><i>64</i>&nbsp;                    if (content.charAt(p) == &#39;{&#39;) {</b>
+<b class="nc"><i>65</i>&nbsp;                        b++;</b>
+<i>66</i>&nbsp;                    }
+<b class="nc"><i>67</i>&nbsp;                    if (content.charAt(p) == &#39;}&#39;) {</b>
+<b class="nc"><i>68</i>&nbsp;                        b--;</b>
+<i>69</i>&nbsp;                    }
+<b class="nc"><i>70</i>&nbsp;                    token.append(and);</b>
+<b class="nc"><i>71</i>&nbsp;                    and = new StringBuilder();</b>
+<b class="nc"><i>72</i>&nbsp;                    token.append(content.charAt(p));</b>
+<i>73</i>&nbsp;                }
+<b class="nc"><i>74</i>&nbsp;            } else {</b>
+<b class="nc"><i>75</i>&nbsp;                token.append(content.charAt(p));</b>
+<i>76</i>&nbsp;            }
+<i>77</i>&nbsp;        }
+<b class="nc"><i>78</i>&nbsp;        tokens.add(token.toString());</b>
+<b class="nc"><i>79</i>&nbsp;        StringBuilder normalized = new StringBuilder(&quot;&quot;);</b>
+<i>80</i>&nbsp;
+<b class="nc"><i>81</i>&nbsp;        for (int i = 0; i &lt; tokens.size(); i++) {</b>
+<b class="nc"><i>82</i>&nbsp;            if (i &gt; 0) {</b>
+<b class="nc"><i>83</i>&nbsp;                normalized.append(&quot; and &quot;);</b>
+<i>84</i>&nbsp;            }
+<i>85</i>&nbsp;
+<b class="nc"><i>86</i>&nbsp;            normalized.append(isInstitution(tokens.get(i)) ? generateInstitutionKey(tokens.get(i)) : removeDiacritics(</b>
+<b class="nc"><i>87</i>&nbsp;                    tokens.get(i)));</b>
+<i>88</i>&nbsp;        }
+<b class="nc"><i>89</i>&nbsp;        return normalized.toString();</b>
+<i>90</i>&nbsp;    }
+<i>91</i>&nbsp;
+<i>92</i>&nbsp;    /**
+<i>93</i>&nbsp;     * Will remove diacritics from the content.
+<i>94</i>&nbsp;     *
+<i>95</i>&nbsp;     * Replaces umlaut: \&quot;x with xe, e.g. \&quot;o -&gt; oe, \&quot;u -&gt; ue, etc.
+<i>96</i>&nbsp;     * Removes all other diacritics: \?x -&gt; x, e.g. \&#39;a -&gt; a, etc.
+<i>97</i>&nbsp;     *
+<i>98</i>&nbsp;     * @param content The content.
+<i>99</i>&nbsp;     * @return The content without diacritics.
+<i>100</i>&nbsp;     */
+<i>101</i>&nbsp;    private static String removeDiacritics(String content) {
+<b class="nc"><i>102</i>&nbsp;        if (content.isEmpty()) {</b>
+<b class="nc"><i>103</i>&nbsp;            return content;</b>
+<i>104</i>&nbsp;        }
+<i>105</i>&nbsp;
+<b class="nc"><i>106</i>&nbsp;        String result = content;</b>
+<i>107</i>&nbsp;        // Replace umlaut with &#39;?e&#39;
+<b class="nc"><i>108</i>&nbsp;        result = result.replaceAll(&quot;\\{\\\\\&quot;([a-zA-Z])\\}&quot;, &quot;$1e&quot;);</b>
+<b class="nc"><i>109</i>&nbsp;        result = result.replaceAll(&quot;\\\\\&quot;\\{([a-zA-Z])\\}&quot;, &quot;$1e&quot;);</b>
+<b class="nc"><i>110</i>&nbsp;        result = result.replaceAll(&quot;\\\\\&quot;([a-zA-Z])&quot;, &quot;$1e&quot;);</b>
+<i>111</i>&nbsp;        // Remove diacritics
+<b class="nc"><i>112</i>&nbsp;        result = result.replaceAll(&quot;\\{\\\\.([a-zA-Z])\\}&quot;, &quot;$1&quot;);</b>
+<b class="nc"><i>113</i>&nbsp;        result = result.replaceAll(&quot;\\\\.\\{([a-zA-Z])\\}&quot;, &quot;$1&quot;);</b>
+<b class="nc"><i>114</i>&nbsp;        result = result.replaceAll(&quot;\\\\.([a-zA-Z])&quot;, &quot;$1&quot;);</b>
+<b class="nc"><i>115</i>&nbsp;        return result;</b>
+<i>116</i>&nbsp;    }
+<i>117</i>&nbsp;
+<i>118</i>&nbsp;    /**
+<i>119</i>&nbsp;     * Unifies umlauts.
+<i>120</i>&nbsp;     *
+<i>121</i>&nbsp;     * Replaces: $\ddot{\mathrm{X}}$ (an alternative umlaut) with: {\&quot;X}
+<i>122</i>&nbsp;     * Replaces: \?{X} and \?X with {\?X}, where ? is a diacritic symbol
+<i>123</i>&nbsp;     *
+<i>124</i>&nbsp;     * @param content The content.
+<i>125</i>&nbsp;     * @return The content with unified diacritics.
+<i>126</i>&nbsp;     */
+<i>127</i>&nbsp;    private static String unifyDiacritics(String content) {
+<b class="nc"><i>128</i>&nbsp;        return content.replaceAll(</b>
+<i>129</i>&nbsp;                &quot;\\$\\\\ddot\\{\\\\mathrm\\{([^\\}])\\}\\}\\$&quot;,
+<b class="nc"><i>130</i>&nbsp;                &quot;{\\\&quot;$1}&quot;).replaceAll(</b>
+<i>131</i>&nbsp;                &quot;(\\\\[^\\-a-zA-Z])\\{?([a-zA-Z])\\}?&quot;,
+<i>132</i>&nbsp;                &quot;{$1$2}&quot;);
+<i>133</i>&nbsp;    }
+<i>134</i>&nbsp;
+<i>135</i>&nbsp;    /**
+<i>136</i>&nbsp;     * Check if a value is institution.
+<i>137</i>&nbsp;     *
+<i>138</i>&nbsp;     * This is usable for distinguishing between persons and institutions in
+<i>139</i>&nbsp;     * the author or editor fields.
+<i>140</i>&nbsp;     *
+<i>141</i>&nbsp;     * A person:
+<i>142</i>&nbsp;     *   - &quot;John Doe&quot;
+<i>143</i>&nbsp;     *   - &quot;Doe, John&quot;
+<i>144</i>&nbsp;     *
+<i>145</i>&nbsp;     * An institution:
+<i>146</i>&nbsp;     *   - &quot;{The Big Company or Institution Inc.}&quot;
+<i>147</i>&nbsp;     *   - &quot;{The Big Company or Institution Inc. (BCI)}&quot;
+<i>148</i>&nbsp;     *
+<i>149</i>&nbsp;     * @param author Author or editor.
+<i>150</i>&nbsp;     * @return True if the author or editor is an institution.
+<i>151</i>&nbsp;     */
+<i>152</i>&nbsp;    private static boolean isInstitution(String author) {
+<b class="nc"><i>153</i>&nbsp;        return StringUtil.isInCurlyBrackets(author);</b>
+<i>154</i>&nbsp;    }
+<i>155</i>&nbsp;
+<i>156</i>&nbsp;    /**
+<i>157</i>&nbsp;     * &lt;p&gt;
+<i>158</i>&nbsp;     * An author or editor may be and institution not a person. In that case the
+<i>159</i>&nbsp;     * key generator builds very long keys, e.g.: for &amp;ldquo;The Attributed
+<i>160</i>&nbsp;     * Graph Grammar System (AGG)&amp;rdquo; -&gt;
+<i>161</i>&nbsp;     * &amp;ldquo;TheAttributedGraphGrammarSystemAGG&amp;rdquo;.
+<i>162</i>&nbsp;     * &lt;/p&gt;
+<i>163</i>&nbsp;     *
+<i>164</i>&nbsp;     * &lt;p&gt;
+<i>165</i>&nbsp;     * An institution name should be inside &lt;code&gt;{}&lt;/code&gt; brackets. If the
+<i>166</i>&nbsp;     * institution name also includes its abbreviation this abbreviation should
+<i>167</i>&nbsp;     * be also in &lt;code&gt;{}&lt;/code&gt; brackets. For the previous example the value
+<i>168</i>&nbsp;     * should look like:
+<i>169</i>&nbsp;     * &lt;code&gt;{The Attributed Graph Grammar System ({AGG})}&lt;/code&gt;.
+<i>170</i>&nbsp;     * &lt;/p&gt;
+<i>171</i>&nbsp;     *
+<i>172</i>&nbsp;     * &lt;p&gt;
+<i>173</i>&nbsp;     * If an institution includes its abbreviation, i.e. &quot;...({XYZ})&quot;, first
+<i>174</i>&nbsp;     * such abbreviation should be used as the key value part of such author.
+<i>175</i>&nbsp;     * &lt;/p&gt;
+<i>176</i>&nbsp;     *
+<i>177</i>&nbsp;     * &lt;p&gt;
+<i>178</i>&nbsp;     * If an institution does not include its abbreviation the key should be
+<i>179</i>&nbsp;     * generated form its name in the following way:
+<i>180</i>&nbsp;     * &lt;/p&gt;
+<i>181</i>&nbsp;     *
+<i>182</i>&nbsp;     * &lt;p&gt;
+<i>183</i>&nbsp;     * The institution value can contain: institution name, part of the
+<i>184</i>&nbsp;     * institution, address, etc. Those information should be separated by
+<i>185</i>&nbsp;     * comma. Name of the institution and possible part of the institution
+<i>186</i>&nbsp;     * should be on the beginning, while address and secondary information
+<i>187</i>&nbsp;     * should be on the end.
+<i>188</i>&nbsp;     * &lt;/p&gt;
+<i>189</i>&nbsp;     *
+<i>190</i>&nbsp;     * Each part is examined separately:
+<i>191</i>&nbsp;     * &lt;ol&gt;
+<i>192</i>&nbsp;     * &lt;li&gt;We remove all tokens of a part which are one of the defined ignore
+<i>193</i>&nbsp;     * words (the, press), which end with a dot (ltd., co., ...) and which first
+<i>194</i>&nbsp;     * character is lowercase (of, on, di, ...).&lt;/li&gt;
+<i>195</i>&nbsp;     * &lt;li&gt;We detect a type of the part: university, technology institute,
+<i>196</i>&nbsp;     * department, school, rest
+<i>197</i>&nbsp;     * &lt;ul&gt;
+<i>198</i>&nbsp;     * &lt;li&gt;University: &lt;code&gt;&quot;Uni[NameOfTheUniversity]&quot;&lt;/code&gt;&lt;/li&gt;
+<i>199</i>&nbsp;     * &lt;li&gt;Department: will be an abbreviation of all words beginning with the
+<i>200</i>&nbsp;     * uppercase letter except of words: &lt;code&gt;d[ei]p.*&lt;/code&gt;, school,
+<i>201</i>&nbsp;     * faculty&lt;/li&gt;
+<i>202</i>&nbsp;     * &lt;li&gt;School: same as department&lt;/li&gt;
+<i>203</i>&nbsp;     * &lt;li&gt;Rest: If there are less than 3 tokens in such part than the result
+<i>204</i>&nbsp;     * will be by concatenating those tokens, otherwise the result will be build
+<i>205</i>&nbsp;     * from the first letters of words starting with and uppercase letter.&lt;/li&gt;
+<i>206</i>&nbsp;     * &lt;/ul&gt;
+<i>207</i>&nbsp;     * &lt;/ol&gt;
+<i>208</i>&nbsp;     *
+<i>209</i>&nbsp;     * Parts are concatenated together in the following way:
+<i>210</i>&nbsp;     * &lt;ul&gt;
+<i>211</i>&nbsp;     * &lt;li&gt;If there is a university part use it otherwise use the rest part.&lt;/li&gt;
+<i>212</i>&nbsp;     * &lt;li&gt;If there is a school part append it.&lt;/li&gt;
+<i>213</i>&nbsp;     * &lt;li&gt;If there is a department part and it is not same as school part
+<i>214</i>&nbsp;     * append it.&lt;/li&gt;
+<i>215</i>&nbsp;     * &lt;/ul&gt;
+<i>216</i>&nbsp;     *
+<i>217</i>&nbsp;     * Rest part is only the first part which do not match any other type. All
+<i>218</i>&nbsp;     * other parts (address, ...) are ignored.
+<i>219</i>&nbsp;     *
+<i>220</i>&nbsp;     * @param content the institution to generate a Bibtex key for
+<i>221</i>&nbsp;     * @return &lt;ul&gt;
+<i>222</i>&nbsp;     *         &lt;li&gt;the institution key&lt;/li&gt;
+<i>223</i>&nbsp;     *         &lt;li&gt;&quot;&quot; in the case of a failure&lt;/li&gt;
+<i>224</i>&nbsp;     *         &lt;li&gt;null if content is null&lt;/li&gt;
+<i>225</i>&nbsp;     *         &lt;/ul&gt;
+<i>226</i>&nbsp;     */
+<i>227</i>&nbsp;    private static String generateInstitutionKey(String content) {
+<b class="nc"><i>228</i>&nbsp;        if (content.isEmpty()) {</b>
+<b class="nc"><i>229</i>&nbsp;            return content;</b>
+<i>230</i>&nbsp;        }
+<i>231</i>&nbsp;
+<b class="nc"><i>232</i>&nbsp;        String result = content;</b>
+<b class="nc"><i>233</i>&nbsp;        result = unifyDiacritics(result);</b>
+<b class="nc"><i>234</i>&nbsp;        result = result.replaceAll(&quot;^\\{&quot;, &quot;&quot;).replaceAll(&quot;\\}$&quot;, &quot;&quot;);</b>
+<b class="nc"><i>235</i>&nbsp;        Matcher matcher = REGEX_PATTERN.matcher(result);</b>
+<b class="nc"><i>236</i>&nbsp;        if (matcher.matches()) {</b>
+<b class="nc"><i>237</i>&nbsp;            return matcher.group(1);</b>
+<i>238</i>&nbsp;        }
+<i>239</i>&nbsp;
+<b class="nc"><i>240</i>&nbsp;        result = removeDiacritics(result);</b>
+<b class="nc"><i>241</i>&nbsp;        String[] parts = result.split(&quot;,&quot;);</b>
+<i>242</i>&nbsp;
+<i>243</i>&nbsp;        // Key parts
+<b class="nc"><i>244</i>&nbsp;        String university = null;</b>
+<b class="nc"><i>245</i>&nbsp;        String department = null;</b>
+<b class="nc"><i>246</i>&nbsp;        String school = null;</b>
+<b class="nc"><i>247</i>&nbsp;        String rest = null;</b>
+<i>248</i>&nbsp;
+<b class="nc"><i>249</i>&nbsp;        List&lt;String&gt; ignore = Arrays.asList(&quot;press&quot;, &quot;the&quot;);</b>
+<b class="nc"><i>250</i>&nbsp;        for (int index = 0; index &lt; parts.length; index++) {</b>
+<b class="nc"><i>251</i>&nbsp;            List&lt;String&gt; part = new ArrayList&lt;&gt;();</b>
+<i>252</i>&nbsp;
+<i>253</i>&nbsp;            // Cleanup: remove unnecessary words.
+<b class="nc"><i>254</i>&nbsp;            for (String k : parts[index].replaceAll(&quot;\\{[A-Z]+\\}&quot;, &quot;&quot;).split(&quot;[ \\-_]&quot;)) {</b>
+<b class="nc"><i>255</i>&nbsp;                if ((!(k.isEmpty()) // remove empty</b>
+<b class="nc"><i>256</i>&nbsp;                        &amp;&amp; !ignore.contains(k.toLowerCase(Locale.ENGLISH)) // remove ignored words</b>
+<b class="nc"><i>257</i>&nbsp;                        &amp;&amp; (k.charAt(k.length() - 1) != &#39;.&#39;)</b>
+<b class="nc"><i>258</i>&nbsp;                        &amp;&amp; (String.valueOf(k.charAt(0))).matches(&quot;[A-Z]&quot;))</b>
+<b class="nc"><i>259</i>&nbsp;                        || ((k.length() &gt;= 3) &amp;&amp; &quot;uni&quot;.equalsIgnoreCase(k.substring(0, 2)))) {</b>
+<b class="nc"><i>260</i>&nbsp;                    part.add(k);</b>
+<i>261</i>&nbsp;                }
+<i>262</i>&nbsp;            }
+<i>263</i>&nbsp;
+<b class="nc"><i>264</i>&nbsp;            boolean isUniversity = false; // university</b>
+<b class="nc"><i>265</i>&nbsp;            boolean isTechnology = false; // technology institute</b>
+<b class="nc"><i>266</i>&nbsp;            boolean isDepartment = false; // departments</b>
+<b class="nc"><i>267</i>&nbsp;            boolean isSchool = false; // schools</b>
+<i>268</i>&nbsp;
+<i>269</i>&nbsp;            // Deciding about a part type...
+<b class="nc"><i>270</i>&nbsp;            for (String k : part) {</b>
+<b class="nc"><i>271</i>&nbsp;                if (k.matches(&quot;^[Uu][Nn][Ii].*&quot;)) { // Starts with &quot;uni&quot; case and locale independent</b>
+<b class="nc"><i>272</i>&nbsp;                    isUniversity = true;</b>
+<i>273</i>&nbsp;                }
+<b class="nc"><i>274</i>&nbsp;                if (k.matches(&quot;^[Tt][Ee][Cc][Hh].*&quot;)) { // Starts with &quot;tech&quot; case and locale independent</b>
+<b class="nc"><i>275</i>&nbsp;                    isTechnology = true;</b>
+<i>276</i>&nbsp;                }
+<b class="nc"><i>277</i>&nbsp;                if (FieldName.SCHOOL.equalsIgnoreCase(k)) {</b>
+<b class="nc"><i>278</i>&nbsp;                    isSchool = true;</b>
+<i>279</i>&nbsp;                }
+<b class="nc"><i>280</i>&nbsp;                if (k.matches(&quot;^[Dd][EeIi][Pp].*&quot;) || k.matches(&quot;^[Ll][Aa][Bb].*&quot;)) { // Starts with &quot;dep&quot;/&quot;dip&quot;/&quot;lab&quot;, case and locale independent</b>
+<b class="nc"><i>281</i>&nbsp;                    isDepartment = true;</b>
+<i>282</i>&nbsp;                }
+<b class="nc"><i>283</i>&nbsp;            }</b>
+<b class="nc"><i>284</i>&nbsp;            if (isTechnology) {</b>
+<b class="nc"><i>285</i>&nbsp;                isUniversity = false; // technology institute isn&#39;t university :-)</b>
+<i>286</i>&nbsp;            }
+<i>287</i>&nbsp;
+<i>288</i>&nbsp;            // University part looks like: Uni[NameOfTheUniversity]
+<i>289</i>&nbsp;            //
+<i>290</i>&nbsp;            // If university is detected than the previous part is suggested
+<i>291</i>&nbsp;            // as department
+<b class="nc"><i>292</i>&nbsp;            if (isUniversity) {</b>
+<b class="nc"><i>293</i>&nbsp;                StringBuilder universitySB = new StringBuilder();</b>
+<b class="nc"><i>294</i>&nbsp;                universitySB.append(&quot;Uni&quot;);</b>
+<b class="nc"><i>295</i>&nbsp;                for (String k : part) {</b>
+<b class="nc"><i>296</i>&nbsp;                    if (!k.matches(&quot;^[Uu][Nn][Ii].*&quot;)) {</b>
+<b class="nc"><i>297</i>&nbsp;                        universitySB.append(k);</b>
+<i>298</i>&nbsp;                    }
+<b class="nc"><i>299</i>&nbsp;                }</b>
+<b class="nc"><i>300</i>&nbsp;                university = universitySB.toString();</b>
+<b class="nc"><i>301</i>&nbsp;                if ((index &gt; 0) &amp;&amp; (department == null)) {</b>
+<b class="nc"><i>302</i>&nbsp;                    department = parts[index - 1];</b>
+<i>303</i>&nbsp;                }
+<i>304</i>&nbsp;
+<i>305</i>&nbsp;                // School is an abbreviation of all the words beginning with a
+<i>306</i>&nbsp;                // capital letter excluding: department, school and faculty words.
+<i>307</i>&nbsp;                //
+<i>308</i>&nbsp;                // Explicitly defined department part is build the same way as
+<i>309</i>&nbsp;                // school
+<b class="nc"><i>310</i>&nbsp;            } else if (isSchool || isDepartment) {</b>
+<b class="nc"><i>311</i>&nbsp;                StringBuilder schoolSB = new StringBuilder();</b>
+<b class="nc"><i>312</i>&nbsp;                StringBuilder departmentSB = new StringBuilder();</b>
+<b class="nc"><i>313</i>&nbsp;                for (String k : part) {</b>
+<b class="nc"><i>314</i>&nbsp;                    if (!k.matches(&quot;^[Dd][EeIi][Pp].*&quot;) &amp;&amp; !FieldName.SCHOOL.equalsIgnoreCase(k)</b>
+<b class="nc"><i>315</i>&nbsp;                            &amp;&amp; !&quot;faculty&quot;.equalsIgnoreCase(k)</b>
+<b class="nc"><i>316</i>&nbsp;                            &amp;&amp; !(k.replaceAll(STARTING_CAPITAL_PATTERN, &quot;&quot;).isEmpty())) {</b>
+<b class="nc"><i>317</i>&nbsp;                        if (isSchool) {</b>
+<b class="nc"><i>318</i>&nbsp;                            schoolSB.append(k.replaceAll(STARTING_CAPITAL_PATTERN, &quot;&quot;));</b>
+<i>319</i>&nbsp;                        }
+<b class="nc"><i>320</i>&nbsp;                        if (isDepartment) {</b>
+<b class="nc"><i>321</i>&nbsp;                            departmentSB.append(k.replaceAll(STARTING_CAPITAL_PATTERN, &quot;&quot;));</b>
+<i>322</i>&nbsp;                        }
+<i>323</i>&nbsp;                    }
+<b class="nc"><i>324</i>&nbsp;                }</b>
+<b class="nc"><i>325</i>&nbsp;                if (isSchool) {</b>
+<b class="nc"><i>326</i>&nbsp;                    school = schoolSB.toString();</b>
+<i>327</i>&nbsp;                }
+<b class="nc"><i>328</i>&nbsp;                if (isDepartment) {</b>
+<b class="nc"><i>329</i>&nbsp;                    department = departmentSB.toString();</b>
+<i>330</i>&nbsp;                }
+<i>331</i>&nbsp;                // A part not matching university, department nor school.
+<b class="nc"><i>332</i>&nbsp;            } else if (rest == null) {</b>
+<b class="nc"><i>333</i>&nbsp;                StringBuilder restSB = new StringBuilder();</b>
+<i>334</i>&nbsp;                // Less than 3 parts -&gt; concatenate those
+<b class="nc"><i>335</i>&nbsp;                if (part.size() &lt; 3) {</b>
+<b class="nc"><i>336</i>&nbsp;                    for (String k : part) {</b>
+<b class="nc"><i>337</i>&nbsp;                        restSB.append(k);</b>
+<i>338</i>&nbsp;                    // More than 3 parts -&gt; use 1st letter abbreviation
+<b class="nc"><i>339</i>&nbsp;                    }</b>
+<i>340</i>&nbsp;                } else {
+<b class="nc"><i>341</i>&nbsp;                    for (String k : part) {</b>
+<b class="nc"><i>342</i>&nbsp;                        k = k.replaceAll(STARTING_CAPITAL_PATTERN, &quot;&quot;);</b>
+<b class="nc"><i>343</i>&nbsp;                        if (!(k.isEmpty())) {</b>
+<b class="nc"><i>344</i>&nbsp;                            restSB.append(k);</b>
+<i>345</i>&nbsp;                        }
+<b class="nc"><i>346</i>&nbsp;                    }</b>
+<i>347</i>&nbsp;                }
+<b class="nc"><i>348</i>&nbsp;                rest = restSB.toString();</b>
+<i>349</i>&nbsp;            }
+<i>350</i>&nbsp;        }
+<i>351</i>&nbsp;
+<i>352</i>&nbsp;        // Putting parts together.
+<b class="nc"><i>353</i>&nbsp;        return (university == null ? rest : university)</b>
+<i>354</i>&nbsp;                + (school == null ? &quot;&quot; : school)
+<i>355</i>&nbsp;                + ((department == null)
+<b class="nc"><i>356</i>&nbsp;                || ((school != null) &amp;&amp; department.equals(school)) ?</b>
+<i>357</i>&nbsp;                        &quot;&quot; : department);
+<i>358</i>&nbsp;    }
+<i>359</i>&nbsp;
+<i>360</i>&nbsp;    /**
+<i>361</i>&nbsp;     * Generates a BibTeX label according to the pattern for a given entry type, and saves the unique label in the
+<i>362</i>&nbsp;     * &lt;code&gt;Bibtexentry&lt;/code&gt;.
+<i>363</i>&nbsp;     *
+<i>364</i>&nbsp;     * The given database is used to avoid duplicate keys.
+<i>365</i>&nbsp;     *
+<i>366</i>&nbsp;     * @param citeKeyPattern
+<i>367</i>&nbsp;     * @param database a &lt;code&gt;BibDatabase&lt;/code&gt;
+<i>368</i>&nbsp;     * @param entry a &lt;code&gt;BibEntry&lt;/code&gt;
+<i>369</i>&nbsp;     * @return modified BibEntry
+<i>370</i>&nbsp;     */
+<i>371</i>&nbsp;    public static void makeAndSetLabel(AbstractBibtexKeyPattern citeKeyPattern, BibDatabase database, BibEntry entry,
+<i>372</i>&nbsp;            BibtexKeyPatternPreferences bibtexKeyPatternPreferences) {
+<b class="nc"><i>373</i>&nbsp;        String newKey = makeLabel(citeKeyPattern, database, entry, bibtexKeyPatternPreferences);</b>
+<b class="nc"><i>374</i>&nbsp;        entry.setCiteKey(newKey);</b>
+<b class="nc"><i>375</i>&nbsp;    }</b>
+<i>376</i>&nbsp;
+<i>377</i>&nbsp;    private static String makeLabel(AbstractBibtexKeyPattern citeKeyPattern, BibDatabase database, BibEntry entry, BibtexKeyPatternPreferences bibtexKeyPatternPreferences) {
+<i>378</i>&nbsp;        String key;
+<b class="nc"><i>379</i>&nbsp;        StringBuilder stringBuilder = new StringBuilder();</b>
+<i>380</i>&nbsp;        try {
+<i>381</i>&nbsp;            // get the type of entry
+<b class="nc"><i>382</i>&nbsp;            String entryType = entry.getType();</b>
+<i>383</i>&nbsp;            // Get the arrayList corresponding to the type
+<b class="nc"><i>384</i>&nbsp;            List&lt;String&gt; typeList = new ArrayList&lt;&gt;(citeKeyPattern.getValue(entryType));</b>
+<b class="nc"><i>385</i>&nbsp;            if (!typeList.isEmpty()) {</b>
+<b class="nc"><i>386</i>&nbsp;                typeList.remove(0);</b>
+<i>387</i>&nbsp;            }
+<b class="nc"><i>388</i>&nbsp;            boolean field = false;</b>
+<b class="nc"><i>389</i>&nbsp;            for (String typeListEntry : typeList) {</b>
+<b class="nc"><i>390</i>&nbsp;                if (&quot;[&quot;.equals(typeListEntry)) {</b>
+<b class="nc"><i>391</i>&nbsp;                    field = true;</b>
+<b class="nc"><i>392</i>&nbsp;                } else if (&quot;]&quot;.equals(typeListEntry)) {</b>
+<b class="nc"><i>393</i>&nbsp;                    field = false;</b>
+<b class="nc"><i>394</i>&nbsp;                } else if (field) {</b>
+<i>395</i>&nbsp;                    // check whether there is a modifier on the end such as
+<i>396</i>&nbsp;                    // &quot;:lower&quot;
+<b class="nc"><i>397</i>&nbsp;                    List&lt;String&gt; parts = parseFieldMarker(typeListEntry);</b>
+<b class="nc"><i>398</i>&nbsp;                    String label = makeLabel(entry, parts.get(0), bibtexKeyPatternPreferences.getKeywordDelimiter(), database);</b>
+<i>399</i>&nbsp;
+<i>400</i>&nbsp;                    // apply modifier if present
+<b class="nc"><i>401</i>&nbsp;                    if (parts.size() &gt; 1) {</b>
+<b class="nc"><i>402</i>&nbsp;                        label = applyModifiers(label, parts, 1);</b>
+<i>403</i>&nbsp;                    }
+<i>404</i>&nbsp;
+<b class="nc"><i>405</i>&nbsp;                    stringBuilder.append(label);</b>
+<i>406</i>&nbsp;
+<b class="nc"><i>407</i>&nbsp;                } else {</b>
+<b class="nc"><i>408</i>&nbsp;                    stringBuilder.append(typeListEntry);</b>
+<i>409</i>&nbsp;                }
+<b class="nc"><i>410</i>&nbsp;            }</b>
+<b class="nc"><i>411</i>&nbsp;        } catch (Exception e) {</b>
+<b class="nc"><i>412</i>&nbsp;            LOGGER.warn(&quot;Cannot make label&quot;, e);</b>
+<b class="nc"><i>413</i>&nbsp;        }</b>
+<i>414</i>&nbsp;
+<i>415</i>&nbsp;        // Remove all illegal characters from the key.
+<b class="nc"><i>416</i>&nbsp;        key = checkLegalKey(stringBuilder.toString(), bibtexKeyPatternPreferences.isEnforceLegalKey());</b>
+<i>417</i>&nbsp;
+<i>418</i>&nbsp;        // Remove Regular Expressions while generating Keys
+<b class="nc"><i>419</i>&nbsp;        String regex = bibtexKeyPatternPreferences.getKeyPatternRegex();</b>
+<b class="nc"><i>420</i>&nbsp;        if ((regex != null) &amp;&amp; !regex.trim().isEmpty()) {</b>
+<b class="nc"><i>421</i>&nbsp;            String replacement = bibtexKeyPatternPreferences.getKeyPatternReplacement();</b>
+<b class="nc"><i>422</i>&nbsp;            key = key.replaceAll(regex, replacement);</b>
+<i>423</i>&nbsp;        }
+<i>424</i>&nbsp;
+<b class="nc"><i>425</i>&nbsp;        String oldKey = entry.getCiteKeyOptional().orElse(null);</b>
+<b class="nc"><i>426</i>&nbsp;        int occurrences = database.getDuplicationChecker().getNumberOfKeyOccurrences(key);</b>
+<i>427</i>&nbsp;
+<b class="nc"><i>428</i>&nbsp;        if (Objects.equals(oldKey, key)) {</b>
+<b class="nc"><i>429</i>&nbsp;            occurrences--; // No change, so we can accept one dupe.</b>
+<i>430</i>&nbsp;        }
+<i>431</i>&nbsp;
+<b class="nc"><i>432</i>&nbsp;        boolean alwaysAddLetter = bibtexKeyPatternPreferences.isAlwaysAddLetter();</b>
+<b class="nc"><i>433</i>&nbsp;        boolean firstLetterA = bibtexKeyPatternPreferences.isFirstLetterA();</b>
+<i>434</i>&nbsp;
+<i>435</i>&nbsp;        String newKey;
+<b class="nc"><i>436</i>&nbsp;        if (!alwaysAddLetter &amp;&amp; (occurrences == 0)) {</b>
+<b class="nc"><i>437</i>&nbsp;            newKey = key;</b>
+<i>438</i>&nbsp;        } else {
+<i>439</i>&nbsp;            // The key is already in use, so we must modify it.
+<b class="nc"><i>440</i>&nbsp;            int number = !alwaysAddLetter &amp;&amp; !firstLetterA ? 1 : 0;</b>
+<i>441</i>&nbsp;            String moddedKey;
+<i>442</i>&nbsp;
+<i>443</i>&nbsp;            do {
+<b class="nc"><i>444</i>&nbsp;                moddedKey = key + getAddition(number);</b>
+<b class="nc"><i>445</i>&nbsp;                number++;</b>
+<i>446</i>&nbsp;
+<b class="nc"><i>447</i>&nbsp;                occurrences = database.getDuplicationChecker().getNumberOfKeyOccurrences(moddedKey);</b>
+<i>448</i>&nbsp;                // only happens if #getAddition() is buggy
+<b class="nc"><i>449</i>&nbsp;                if (Objects.equals(oldKey, moddedKey)) {</b>
+<b class="nc"><i>450</i>&nbsp;                    occurrences--;</b>
+<i>451</i>&nbsp;                }
+<b class="nc"><i>452</i>&nbsp;            } while (occurrences &gt; 0);</b>
+<i>453</i>&nbsp;
+<b class="nc"><i>454</i>&nbsp;            newKey = moddedKey;</b>
+<i>455</i>&nbsp;        }
+<b class="nc"><i>456</i>&nbsp;        return newKey;</b>
+<i>457</i>&nbsp;    }
+<i>458</i>&nbsp;
+<i>459</i>&nbsp;    /**
+<i>460</i>&nbsp;     * Applies modifiers to a label generated based on a field marker.
+<i>461</i>&nbsp;     * @param label The generated label.
+<i>462</i>&nbsp;     * @param parts String array containing the modifiers.
+<i>463</i>&nbsp;     * @param offset The number of initial items in the modifiers array to skip.
+<i>464</i>&nbsp;     * @return The modified label.
+<i>465</i>&nbsp;     */
+<i>466</i>&nbsp;    public static String applyModifiers(final String label, final List&lt;String&gt; parts, final int offset) {
+<b class="nc"><i>467</i>&nbsp;        String resultingLabel = label;</b>
+<b class="nc"><i>468</i>&nbsp;        if (parts.size() &gt; offset) {</b>
+<b class="nc"><i>469</i>&nbsp;            for (int j = offset; j &lt; parts.size(); j++) {</b>
+<b class="nc"><i>470</i>&nbsp;                String modifier = parts.get(j);</b>
+<i>471</i>&nbsp;
+<b class="nc"><i>472</i>&nbsp;                if (&quot;abbr&quot;.equals(modifier)) {</b>
+<i>473</i>&nbsp;                    // Abbreviate - that is,
+<b class="nc"><i>474</i>&nbsp;                    StringBuilder abbreviateSB = new StringBuilder();</b>
+<b class="nc"><i>475</i>&nbsp;                    String[] words = resultingLabel.replaceAll(&quot;[\\{\\}&#39;]&quot;, &quot;&quot;)</b>
+<b class="nc"><i>476</i>&nbsp;                            .split(&quot;[\\(\\) \r\n\&quot;]&quot;);</b>
+<b class="nc"><i>477</i>&nbsp;                    for (String word : words) {</b>
+<b class="nc"><i>478</i>&nbsp;                        if (!word.isEmpty()) {</b>
+<b class="nc"><i>479</i>&nbsp;                            abbreviateSB.append(word.charAt(0));</b>
+<i>480</i>&nbsp;                        }
+<i>481</i>&nbsp;                    }
+<b class="nc"><i>482</i>&nbsp;                    resultingLabel =  abbreviateSB.toString();</b>
+<b class="nc"><i>483</i>&nbsp;                } else {</b>
+<b class="nc"><i>484</i>&nbsp;                    Optional&lt;Formatter&gt; formatter = Formatters.getFormatterForModifier(modifier);</b>
+<b class="nc"><i>485</i>&nbsp;                    if (formatter.isPresent()) {</b>
+<b class="nc"><i>486</i>&nbsp;                        resultingLabel = formatter.get().format(label);</b>
+<b class="nc"><i>487</i>&nbsp;                    } else if (!modifier.isEmpty() &amp;&amp; modifier.length()&gt;= 2 &amp;&amp; (modifier.charAt(0) == &#39;(&#39;) &amp;&amp; modifier.endsWith(&quot;)&quot;)) {</b>
+<i>488</i>&nbsp;                        // Alternate text modifier in parentheses. Should be inserted if
+<i>489</i>&nbsp;                        // the label is empty:
+<b class="nc"><i>490</i>&nbsp;                        if (label.isEmpty() &amp;&amp; (modifier.length() &gt; 2)) {</b>
+<b class="nc"><i>491</i>&nbsp;                            resultingLabel = modifier.substring(1, modifier.length() - 1);</b>
+<i>492</i>&nbsp;                        } else {
+<b class="nc"><i>493</i>&nbsp;                            resultingLabel = label;</b>
+<i>494</i>&nbsp;                        }
+<i>495</i>&nbsp;                    } else {
+<b class="nc"><i>496</i>&nbsp;                        LOGGER.info(&quot;Key generator warning: unknown modifier &#39;&quot;</b>
+<i>497</i>&nbsp;                                + modifier + &quot;&#39;.&quot;);
+<b class="nc"><i>498</i>&nbsp;                        resultingLabel = label;</b>
+<i>499</i>&nbsp;                    }
+<i>500</i>&nbsp;                }
+<i>501</i>&nbsp;            }
+<i>502</i>&nbsp;        }
+<i>503</i>&nbsp;
+<b class="nc"><i>504</i>&nbsp;        return resultingLabel;</b>
+<i>505</i>&nbsp;    }
+<i>506</i>&nbsp;
+<i>507</i>&nbsp;    public static String makeLabel(BibEntry entry, String value, Character keywordDelimiter, BibDatabase database) {
+<b class="nc"><i>508</i>&nbsp;        String val = value;</b>
+<i>509</i>&nbsp;        try {
+<b class="nc"><i>510</i>&nbsp;            if (val.startsWith(&quot;auth&quot;) || val.startsWith(&quot;pureauth&quot;)) {</b>
+<i>511</i>&nbsp;
+<i>512</i>&nbsp;                /*
+<i>513</i>&nbsp;                 * For label code &quot;auth...&quot;: if there is no author, but there
+<i>514</i>&nbsp;                 * are editor(s) (e.g. for an Edited Book), use the editor(s)
+<i>515</i>&nbsp;                 * instead. (saw27@mrao.cam.ac.uk). This is what most people
+<i>516</i>&nbsp;                 * want, but in case somebody really needs a field which expands
+<i>517</i>&nbsp;                 * to nothing if there is no author (e.g. someone who uses both
+<i>518</i>&nbsp;                 * &quot;auth&quot; and &quot;ed&quot; in the same label), we provide an alternative
+<i>519</i>&nbsp;                 * form &quot;pureauth...&quot; which does not do this fallback
+<i>520</i>&nbsp;                 * substitution of editor.
+<i>521</i>&nbsp;                 */
+<b class="nc"><i>522</i>&nbsp;                String authString = entry.getField(FieldName.AUTHOR)</b>
+<b class="nc"><i>523</i>&nbsp;                        .map(authorString -&gt; normalize(database.resolveForStrings(authorString))).orElse(&quot;&quot;);</b>
+<i>524</i>&nbsp;
+<b class="nc"><i>525</i>&nbsp;                if (val.startsWith(&quot;pure&quot;)) {</b>
+<i>526</i>&nbsp;                    // remove the &quot;pure&quot; prefix so the remaining
+<i>527</i>&nbsp;                    // code in this section functions correctly
+<b class="nc"><i>528</i>&nbsp;                    val = val.substring(4);</b>
+<i>529</i>&nbsp;                }
+<i>530</i>&nbsp;
+<b class="nc"><i>531</i>&nbsp;                if (authString.isEmpty()) {</b>
+<b class="nc"><i>532</i>&nbsp;                    authString = entry.getField(FieldName.EDITOR)</b>
+<b class="nc"><i>533</i>&nbsp;                            .map(authorString -&gt; normalize(database.resolveForStrings(authorString))).orElse(&quot;&quot;);</b>
+<i>534</i>&nbsp;                }
+<i>535</i>&nbsp;
+<i>536</i>&nbsp;                // Gather all author-related checks, so we don&#39;t
+<i>537</i>&nbsp;                // have to check all the time.
+<b class="nc"><i>538</i>&nbsp;                if (&quot;auth&quot;.equals(val)) {</b>
+<b class="nc"><i>539</i>&nbsp;                    return firstAuthor(authString);</b>
+<b class="nc"><i>540</i>&nbsp;                } else if (&quot;authForeIni&quot;.equals(val)) {</b>
+<b class="nc"><i>541</i>&nbsp;                    return firstAuthorForenameInitials(authString);</b>
+<b class="nc"><i>542</i>&nbsp;                } else if (&quot;authFirstFull&quot;.equals(val)) {</b>
+<b class="nc"><i>543</i>&nbsp;                    return firstAuthorVonAndLast(authString);</b>
+<b class="nc"><i>544</i>&nbsp;                } else if (&quot;authors&quot;.equals(val)) {</b>
+<b class="nc"><i>545</i>&nbsp;                    return allAuthors(authString);</b>
+<b class="nc"><i>546</i>&nbsp;                } else if (&quot;authorsAlpha&quot;.equals(val)) {</b>
+<b class="nc"><i>547</i>&nbsp;                    return authorsAlpha(authString);</b>
+<i>548</i>&nbsp;                }
+<i>549</i>&nbsp;                // Last author&#39;s last name
+<b class="nc"><i>550</i>&nbsp;                else if (&quot;authorLast&quot;.equals(val)) {</b>
+<b class="nc"><i>551</i>&nbsp;                    return lastAuthor(authString);</b>
+<b class="nc"><i>552</i>&nbsp;                } else if (&quot;authorLastForeIni&quot;.equals(val)) {</b>
+<b class="nc"><i>553</i>&nbsp;                    return lastAuthorForenameInitials(authString);</b>
+<b class="nc"><i>554</i>&nbsp;                } else if (&quot;authorIni&quot;.equals(val)) {</b>
+<b class="nc"><i>555</i>&nbsp;                    return oneAuthorPlusIni(authString);</b>
+<b class="nc"><i>556</i>&nbsp;                } else if (val.matches(&quot;authIni[\\d]+&quot;)) {</b>
+<b class="nc"><i>557</i>&nbsp;                    int num = Integer.parseInt(val.substring(7));</b>
+<b class="nc"><i>558</i>&nbsp;                    return authIniN(authString, num);</b>
+<b class="nc"><i>559</i>&nbsp;                } else if (&quot;auth.auth.ea&quot;.equals(val)) {</b>
+<b class="nc"><i>560</i>&nbsp;                    return authAuthEa(authString);</b>
+<b class="nc"><i>561</i>&nbsp;                } else if (&quot;auth.etal&quot;.equals(val)) {</b>
+<b class="nc"><i>562</i>&nbsp;                    return authEtal(authString, &quot;.&quot;, &quot;.etal&quot;);</b>
+<b class="nc"><i>563</i>&nbsp;                } else if (&quot;authEtAl&quot;.equals(val)) {</b>
+<b class="nc"><i>564</i>&nbsp;                    return authEtal(authString, &quot;&quot;, &quot;EtAl&quot;);</b>
+<b class="nc"><i>565</i>&nbsp;                } else if (&quot;authshort&quot;.equals(val)) {</b>
+<b class="nc"><i>566</i>&nbsp;                    return authshort(authString);</b>
+<b class="nc"><i>567</i>&nbsp;                } else if (val.matches(&quot;auth[\\d]+_[\\d]+&quot;)) {</b>
+<b class="nc"><i>568</i>&nbsp;                    String[] nums = val.substring(4).split(&quot;_&quot;);</b>
+<b class="nc"><i>569</i>&nbsp;                    return authNofMth(authString, Integer.parseInt(nums[0]),</b>
+<b class="nc"><i>570</i>&nbsp;                            Integer.parseInt(nums[1]));</b>
+<b class="nc"><i>571</i>&nbsp;                } else if (val.matches(&quot;auth\\d+&quot;)) {</b>
+<i>572</i>&nbsp;                    // authN. First N chars of the first author&#39;s last
+<i>573</i>&nbsp;                    // name.
+<i>574</i>&nbsp;
+<b class="nc"><i>575</i>&nbsp;                    String fa = firstAuthor(authString);</b>
+<b class="nc"><i>576</i>&nbsp;                    int num = Integer.parseInt(val.substring(4));</b>
+<b class="nc"><i>577</i>&nbsp;                    if (num &gt; fa.length()) {</b>
+<b class="nc"><i>578</i>&nbsp;                        num = fa.length();</b>
+<i>579</i>&nbsp;                    }
+<b class="nc"><i>580</i>&nbsp;                    return fa.substring(0, num);</b>
+<b class="nc"><i>581</i>&nbsp;                } else if (val.matches(&quot;authors\\d+&quot;)) {</b>
+<b class="nc"><i>582</i>&nbsp;                    return nAuthors(authString, Integer.parseInt(val.substring(7)));</b>
+<i>583</i>&nbsp;                } else {
+<i>584</i>&nbsp;                    // This &quot;auth&quot; business was a dead end, so just
+<i>585</i>&nbsp;                    // use it literally:
+<b class="nc"><i>586</i>&nbsp;                    return entry.getFieldOrAlias(val).orElse(&quot;&quot;);</b>
+<i>587</i>&nbsp;                }
+<b class="nc"><i>588</i>&nbsp;            } else if (val.startsWith(&quot;ed&quot;)) {</b>
+<i>589</i>&nbsp;                // Gather all markers starting with &quot;ed&quot; here, so we
+<i>590</i>&nbsp;                // don&#39;t have to check all the time.
+<b class="nc"><i>591</i>&nbsp;                if (&quot;edtr&quot;.equals(val)) {</b>
+<b class="nc"><i>592</i>&nbsp;                    return firstAuthor(entry.getField(FieldName.EDITOR).orElse(&quot;&quot;));</b>
+<b class="nc"><i>593</i>&nbsp;                } else if (&quot;edtrForeIni&quot;.equals(val)) {</b>
+<b class="nc"><i>594</i>&nbsp;                    return firstAuthorForenameInitials(entry.getField(FieldName.EDITOR).orElse(&quot;&quot;));</b>
+<b class="nc"><i>595</i>&nbsp;                } else if (&quot;editors&quot;.equals(val)) {</b>
+<b class="nc"><i>596</i>&nbsp;                    return allAuthors(entry.getField(FieldName.EDITOR).orElse(&quot;&quot;));</b>
+<i>597</i>&nbsp;                    // Last author&#39;s last name
+<b class="nc"><i>598</i>&nbsp;                } else if (&quot;editorLast&quot;.equals(val)) {</b>
+<b class="nc"><i>599</i>&nbsp;                    return lastAuthor(entry.getField(FieldName.EDITOR).orElse(&quot;&quot;));</b>
+<b class="nc"><i>600</i>&nbsp;                } else if (&quot;editorLastForeIni&quot;.equals(val)) {</b>
+<b class="nc"><i>601</i>&nbsp;                    return lastAuthorForenameInitials(entry.getField(FieldName.EDITOR).orElse(&quot;&quot;));</b>
+<b class="nc"><i>602</i>&nbsp;                } else if (&quot;editorIni&quot;.equals(val)) {</b>
+<b class="nc"><i>603</i>&nbsp;                    return oneAuthorPlusIni(entry.getField(FieldName.EDITOR).orElse(&quot;&quot;));</b>
+<b class="nc"><i>604</i>&nbsp;                } else if (val.matches(&quot;edtrIni[\\d]+&quot;)) {</b>
+<b class="nc"><i>605</i>&nbsp;                    int num = Integer.parseInt(val.substring(7));</b>
+<b class="nc"><i>606</i>&nbsp;                    return authIniN(entry.getField(FieldName.EDITOR).orElse(&quot;&quot;), num);</b>
+<b class="nc"><i>607</i>&nbsp;                } else if (val.matches(&quot;edtr[\\d]+_[\\d]+&quot;)) {</b>
+<b class="nc"><i>608</i>&nbsp;                    String[] nums = val.substring(4).split(&quot;_&quot;);</b>
+<b class="nc"><i>609</i>&nbsp;                    return authNofMth(entry.getField(FieldName.EDITOR).orElse(&quot;&quot;),</b>
+<b class="nc"><i>610</i>&nbsp;                            Integer.parseInt(nums[0]),</b>
+<b class="nc"><i>611</i>&nbsp;                            Integer.parseInt(nums[1]) - 1);</b>
+<b class="nc"><i>612</i>&nbsp;                } else if (&quot;edtr.edtr.ea&quot;.equals(val)) {</b>
+<b class="nc"><i>613</i>&nbsp;                    return authAuthEa(entry.getField(FieldName.EDITOR).orElse(&quot;&quot;));</b>
+<b class="nc"><i>614</i>&nbsp;                } else if (&quot;edtrshort&quot;.equals(val)) {</b>
+<b class="nc"><i>615</i>&nbsp;                    return authshort(entry.getField(FieldName.EDITOR).orElse(&quot;&quot;));</b>
+<i>616</i>&nbsp;                }
+<i>617</i>&nbsp;                // authN. First N chars of the first author&#39;s last
+<i>618</i>&nbsp;                // name.
+<b class="nc"><i>619</i>&nbsp;                else if (val.matches(&quot;edtr\\d+&quot;)) {</b>
+<b class="nc"><i>620</i>&nbsp;                    String fa = firstAuthor(entry.getField(FieldName.EDITOR).orElse(&quot;&quot;));</b>
+<b class="nc"><i>621</i>&nbsp;                    int num = Integer.parseInt(val.substring(4));</b>
+<b class="nc"><i>622</i>&nbsp;                    if (num &gt; fa.length()) {</b>
+<b class="nc"><i>623</i>&nbsp;                        num = fa.length();</b>
+<i>624</i>&nbsp;                    }
+<b class="nc"><i>625</i>&nbsp;                    return fa.substring(0, num);</b>
+<i>626</i>&nbsp;                } else {
+<i>627</i>&nbsp;                    // This &quot;ed&quot; business was a dead end, so just
+<i>628</i>&nbsp;                    // use it literally:
+<b class="nc"><i>629</i>&nbsp;                    return entry.getFieldOrAlias(val).orElse(&quot;&quot;);</b>
+<i>630</i>&nbsp;                }
+<b class="nc"><i>631</i>&nbsp;            } else if (&quot;firstpage&quot;.equals(val)) {</b>
+<b class="nc"><i>632</i>&nbsp;                return firstPage(entry.getField(FieldName.PAGES).orElse(&quot;&quot;));</b>
+<b class="nc"><i>633</i>&nbsp;            } else if (&quot;lastpage&quot;.equals(val)) {</b>
+<b class="nc"><i>634</i>&nbsp;                return lastPage(entry.getField(FieldName.PAGES).orElse(&quot;&quot;));</b>
+<b class="nc"><i>635</i>&nbsp;            } else if (&quot;shorttitle&quot;.equals(val)) {</b>
+<b class="nc"><i>636</i>&nbsp;                return getTitleWords(3, entry.getField(FieldName.TITLE).orElse(&quot;&quot;));</b>
+<b class="nc"><i>637</i>&nbsp;            } else if (&quot;shorttitleINI&quot;.equals(val)) {</b>
+<b class="nc"><i>638</i>&nbsp;                return keepLettersAndDigitsOnly(</b>
+<b class="nc"><i>639</i>&nbsp;                        applyModifiers(getTitleWordsWithSpaces(3, entry.getField(FieldName.TITLE).orElse(&quot;&quot;)),</b>
+<b class="nc"><i>640</i>&nbsp;                                Collections.singletonList(&quot;abbr&quot;), 0));</b>
+<b class="nc"><i>641</i>&nbsp;            } else if (&quot;veryshorttitle&quot;.equals(val)) {</b>
+<b class="nc"><i>642</i>&nbsp;                return getTitleWords(1, entry.getField(FieldName.TITLE).orElse(&quot;&quot;));</b>
+<b class="nc"><i>643</i>&nbsp;            } else if (&quot;shortyear&quot;.equals(val)) {</b>
+<b class="nc"><i>644</i>&nbsp;                String yearString = entry.getFieldOrAlias(FieldName.YEAR).orElse(&quot;&quot;);</b>
+<b class="nc"><i>645</i>&nbsp;                if (yearString.isEmpty()) {</b>
+<b class="nc"><i>646</i>&nbsp;                    return yearString;</b>
+<i>647</i>&nbsp;                    // In press/in preparation/submitted
+<b class="nc"><i>648</i>&nbsp;                } else if (yearString.startsWith(&quot;in&quot;) || yearString.startsWith(&quot;sub&quot;)) {</b>
+<b class="nc"><i>649</i>&nbsp;                    return &quot;IP&quot;;</b>
+<b class="nc"><i>650</i>&nbsp;                } else if (yearString.length() &gt; 2) {</b>
+<b class="nc"><i>651</i>&nbsp;                    return yearString.substring(yearString.length() - 2);</b>
+<i>652</i>&nbsp;                } else {
+<b class="nc"><i>653</i>&nbsp;                    return yearString;</b>
+<i>654</i>&nbsp;                }
+<b class="nc"><i>655</i>&nbsp;            } else if (val.matches(&quot;keyword\\d+&quot;)) {</b>
+<i>656</i>&nbsp;                // according to LabelPattern.php, it returns keyword number n
+<b class="nc"><i>657</i>&nbsp;                int num = Integer.parseInt(val.substring(7));</b>
+<b class="nc"><i>658</i>&nbsp;                KeywordList separatedKeywords = entry.getKeywords(keywordDelimiter);</b>
+<b class="nc"><i>659</i>&nbsp;                if (separatedKeywords.size() &lt; num) {</b>
+<i>660</i>&nbsp;                    // not enough keywords
+<b class="nc"><i>661</i>&nbsp;                    return &quot;&quot;;</b>
+<i>662</i>&nbsp;                } else {
+<i>663</i>&nbsp;                    // num counts from 1 to n, but index in arrayList count from 0 to n-1
+<b class="nc"><i>664</i>&nbsp;                    return separatedKeywords.get(num-1).toString();</b>
+<i>665</i>&nbsp;                }
+<b class="nc"><i>666</i>&nbsp;            } else if (val.matches(&quot;keywords\\d*&quot;)) {</b>
+<i>667</i>&nbsp;                // return all keywords, not separated
+<i>668</i>&nbsp;                int num;
+<b class="nc"><i>669</i>&nbsp;                if (val.length() &gt; 8) {</b>
+<b class="nc"><i>670</i>&nbsp;                    num = Integer.parseInt(val.substring(8));</b>
+<i>671</i>&nbsp;                } else {
+<b class="nc"><i>672</i>&nbsp;                    num = Integer.MAX_VALUE;</b>
+<i>673</i>&nbsp;                }
+<b class="nc"><i>674</i>&nbsp;                KeywordList separatedKeywords = entry.getKeywords(keywordDelimiter);</b>
+<b class="nc"><i>675</i>&nbsp;                StringBuilder sb = new StringBuilder();</b>
+<b class="nc"><i>676</i>&nbsp;                int i = 0;</b>
+<b class="nc"><i>677</i>&nbsp;                for (Keyword keyword : separatedKeywords) {</b>
+<i>678</i>&nbsp;                    // remove all spaces
+<b class="nc"><i>679</i>&nbsp;                    sb.append(keyword.toString().replaceAll(&quot;\\s+&quot;, &quot;&quot;));</b>
+<i>680</i>&nbsp;
+<b class="nc"><i>681</i>&nbsp;                    i++;</b>
+<b class="nc"><i>682</i>&nbsp;                    if (i &gt;= num) {</b>
+<b class="nc"><i>683</i>&nbsp;                        break;</b>
+<i>684</i>&nbsp;                    }
+<b class="nc"><i>685</i>&nbsp;                }</b>
+<b class="nc"><i>686</i>&nbsp;                return sb.toString();</b>
+<i>687</i>&nbsp;            } else {
+<i>688</i>&nbsp;                // we haven&#39;t seen any special demands
+<b class="nc"><i>689</i>&nbsp;                return entry.getFieldOrAlias(val).orElse(&quot;&quot;);</b>
+<i>690</i>&nbsp;            }
+<b class="nc"><i>691</i>&nbsp;        } catch (NullPointerException ex) {</b>
+<b class="nc"><i>692</i>&nbsp;            LOGGER.debug(&quot;Problem making label&quot;, ex);</b>
+<b class="nc"><i>693</i>&nbsp;            return &quot;&quot;;</b>
+<i>694</i>&nbsp;        }
+<i>695</i>&nbsp;
+<i>696</i>&nbsp;    }
+<i>697</i>&nbsp;
+<i>698</i>&nbsp;    /**
+<i>699</i>&nbsp;     * Computes an appendix to a BibTeX key that could make it unique. We use
+<i>700</i>&nbsp;     * a-z for numbers 0-25, and then aa-az, ba-bz, etc.
+<i>701</i>&nbsp;     *
+<i>702</i>&nbsp;     * @param number
+<i>703</i>&nbsp;     *            The appendix number.
+<i>704</i>&nbsp;     * @return The String to append.
+<i>705</i>&nbsp;     */
+<i>706</i>&nbsp;    private static String getAddition(int number) {
+<b class="nc"><i>707</i>&nbsp;        if (number &gt;= CHARS.length()) {</b>
+<b class="nc"><i>708</i>&nbsp;            int lastChar = number % CHARS.length();</b>
+<b class="nc"><i>709</i>&nbsp;            return getAddition((number / CHARS.length()) - 1) + CHARS.substring(lastChar, lastChar + 1);</b>
+<i>710</i>&nbsp;        } else {
+<b class="nc"><i>711</i>&nbsp;            return CHARS.substring(number, number + 1);</b>
+<i>712</i>&nbsp;        }
+<i>713</i>&nbsp;    }
+<i>714</i>&nbsp;
+<i>715</i>&nbsp;    /**
+<i>716</i>&nbsp;     * Determines &quot;number&quot; words out of the &quot;title&quot; field in the given BibTeX entry
+<i>717</i>&nbsp;     */
+<i>718</i>&nbsp;    public static String getTitleWords(int number, String title) {
+<b class="nc"><i>719</i>&nbsp;        return keepLettersAndDigitsOnly(getTitleWordsWithSpaces(number, title));</b>
+<i>720</i>&nbsp;    }
+<i>721</i>&nbsp;
+<i>722</i>&nbsp;    private static String getTitleWordsWithSpaces(int number, String title) {
+<b class="nc"><i>723</i>&nbsp;        String ss = new RemoveLatexCommandsFormatter().format(title);</b>
+<b class="nc"><i>724</i>&nbsp;        StringBuilder stringBuilder = new StringBuilder();</b>
+<i>725</i>&nbsp;        StringBuilder current;
+<b class="nc"><i>726</i>&nbsp;        int piv = 0;</b>
+<b class="nc"><i>727</i>&nbsp;        int words = 0;</b>
+<i>728</i>&nbsp;
+<i>729</i>&nbsp;        // sorry for being English-centric. I guess these
+<i>730</i>&nbsp;        // words should really be an editable preference.
+<b class="nc"><i>731</i>&nbsp;        mainl: while ((piv &lt; ss.length()) &amp;&amp; (words &lt; number)) {</b>
+<b class="nc"><i>732</i>&nbsp;            current = new StringBuilder();</b>
+<i>733</i>&nbsp;            // Get the next word:
+<b class="nc"><i>734</i>&nbsp;            while ((piv &lt; ss.length()) &amp;&amp; !Character.isWhitespace(ss.charAt(piv))</b>
+<b class="nc"><i>735</i>&nbsp;                    &amp;&amp; (ss.charAt(piv) != &#39;-&#39;)) {</b>
+<b class="nc"><i>736</i>&nbsp;                current.append(ss.charAt(piv));</b>
+<b class="nc"><i>737</i>&nbsp;                piv++;</b>
+<i>738</i>&nbsp;            }
+<b class="nc"><i>739</i>&nbsp;            piv++;</b>
+<i>740</i>&nbsp;            // Check if it is ok:
+<b class="nc"><i>741</i>&nbsp;            String word = current.toString().trim();</b>
+<b class="nc"><i>742</i>&nbsp;            if (word.isEmpty()) {</b>
+<b class="nc"><i>743</i>&nbsp;                continue;</b>
+<i>744</i>&nbsp;            }
+<b class="nc"><i>745</i>&nbsp;            for (String smallWord: Word.SMALLER_WORDS) {</b>
+<b class="nc"><i>746</i>&nbsp;                if (word.equalsIgnoreCase(smallWord)) {</b>
+<b class="nc"><i>747</i>&nbsp;                    continue mainl;</b>
+<i>748</i>&nbsp;                }
+<b class="nc"><i>749</i>&nbsp;            }</b>
+<i>750</i>&nbsp;
+<i>751</i>&nbsp;            // If we get here, the word was accepted.
+<b class="nc"><i>752</i>&nbsp;            if (stringBuilder.length() &gt; 0) {</b>
+<b class="nc"><i>753</i>&nbsp;                stringBuilder.append(&#39; &#39;);</b>
+<i>754</i>&nbsp;            }
+<b class="nc"><i>755</i>&nbsp;            stringBuilder.append(word);</b>
+<b class="nc"><i>756</i>&nbsp;            words++;</b>
+<b class="nc"><i>757</i>&nbsp;        }</b>
+<i>758</i>&nbsp;
+<b class="nc"><i>759</i>&nbsp;        return stringBuilder.toString();</b>
+<i>760</i>&nbsp;    }
+<i>761</i>&nbsp;
+<i>762</i>&nbsp;    private static String keepLettersAndDigitsOnly(String in) {
+<b class="nc"><i>763</i>&nbsp;        StringBuilder stringBuilder = new StringBuilder();</b>
+<b class="nc"><i>764</i>&nbsp;        for (int i = 0; i &lt; in.length(); i++) {</b>
+<b class="nc"><i>765</i>&nbsp;            if (Character.isLetterOrDigit(in.charAt(i))) {</b>
+<b class="nc"><i>766</i>&nbsp;                stringBuilder.append(in.charAt(i));</b>
+<i>767</i>&nbsp;            }
+<i>768</i>&nbsp;        }
+<b class="nc"><i>769</i>&nbsp;        return stringBuilder.toString();</b>
+<i>770</i>&nbsp;    }
+<i>771</i>&nbsp;
+<i>772</i>&nbsp;
+<i>773</i>&nbsp;    /**
+<i>774</i>&nbsp;     * Gets the last name of the first author/editor
+<i>775</i>&nbsp;     *
+<i>776</i>&nbsp;     * @param authorField
+<i>777</i>&nbsp;     *            a &lt;code&gt;String&lt;/code&gt;
+<i>778</i>&nbsp;     * @return the surname of an author/editor or &quot;&quot; if no author was found
+<i>779</i>&nbsp;     *    This method is guaranteed to never return null.
+<i>780</i>&nbsp;     *
+<i>781</i>&nbsp;     * @throws NullPointerException
+<i>782</i>&nbsp;     *             if authorField == null
+<i>783</i>&nbsp;     */
+<i>784</i>&nbsp;    public static String firstAuthor(String authorField) {
+<b class="nc"><i>785</i>&nbsp;        AuthorList authorList = AuthorList.parse(authorField);</b>
+<b class="nc"><i>786</i>&nbsp;        if (authorList.isEmpty()) {</b>
+<b class="nc"><i>787</i>&nbsp;            return &quot;&quot;;</b>
+<i>788</i>&nbsp;        }
+<b class="nc"><i>789</i>&nbsp;        return authorList.getAuthor(0).getLast().orElse(&quot;&quot;);</b>
+<i>790</i>&nbsp;
+<i>791</i>&nbsp;    }
+<i>792</i>&nbsp;
+<i>793</i>&nbsp;    /**
+<i>794</i>&nbsp;     * Gets the first name initials of the first author/editor
+<i>795</i>&nbsp;     *
+<i>796</i>&nbsp;     * @param authorField
+<i>797</i>&nbsp;     *            a &lt;code&gt;String&lt;/code&gt;
+<i>798</i>&nbsp;     * @return the first name initial of an author/editor or &quot;&quot; if no author was found
+<i>799</i>&nbsp;     *    This method is guaranteed to never return null.
+<i>800</i>&nbsp;     *
+<i>801</i>&nbsp;     * @throws NullPointerException
+<i>802</i>&nbsp;     *             if authorField == null
+<i>803</i>&nbsp;     */
+<i>804</i>&nbsp;    public static String firstAuthorForenameInitials(String authorField) {
+<b class="nc"><i>805</i>&nbsp;        AuthorList authorList = AuthorList.parse(authorField);</b>
+<b class="nc"><i>806</i>&nbsp;        if (authorList.isEmpty()) {</b>
+<b class="nc"><i>807</i>&nbsp;            return &quot;&quot;;</b>
+<i>808</i>&nbsp;        }
+<b class="nc"><i>809</i>&nbsp;        return authorList.getAuthor(0).getFirstAbbr().map(s -&gt; s.substring(0, 1)).orElse(&quot;&quot;);</b>
+<i>810</i>&nbsp;    }
+<i>811</i>&nbsp;
+<i>812</i>&nbsp;    /**
+<i>813</i>&nbsp;     * Gets the von part and the last name of the first author/editor
+<i>814</i>&nbsp;     * No spaces are returned
+<i>815</i>&nbsp;     *
+<i>816</i>&nbsp;     * @param authorField
+<i>817</i>&nbsp;     *            a &lt;code&gt;String&lt;/code&gt;
+<i>818</i>&nbsp;     * @return the von part and surname of an author/editor or &quot;&quot; if no author was found.
+<i>819</i>&nbsp;     *  This method is guaranteed to never return null.
+<i>820</i>&nbsp;     *
+<i>821</i>&nbsp;     * @throws NullPointerException
+<i>822</i>&nbsp;     *             if authorField == null
+<i>823</i>&nbsp;     */
+<i>824</i>&nbsp;    public static String firstAuthorVonAndLast(String authorField) {
+<b class="nc"><i>825</i>&nbsp;        AuthorList authorList = AuthorList.parse(authorField);</b>
+<b class="nc"><i>826</i>&nbsp;        if (authorList.isEmpty()) {</b>
+<b class="nc"><i>827</i>&nbsp;            return &quot;&quot;;</b>
+<i>828</i>&nbsp;        }
+<i>829</i>&nbsp;
+<b class="nc"><i>830</i>&nbsp;        StringBuilder stringBuilder = new StringBuilder();</b>
+<b class="nc"><i>831</i>&nbsp;        authorList.getAuthor(0).getVon().ifPresent(vonAuthor -&gt; stringBuilder.append(vonAuthor.replaceAll(&quot; &quot;, &quot;&quot;)));</b>
+<b class="nc"><i>832</i>&nbsp;        authorList.getAuthor(0).getLast().ifPresent(stringBuilder::append);</b>
+<b class="nc"><i>833</i>&nbsp;        return stringBuilder.toString();</b>
+<i>834</i>&nbsp;    }
+<i>835</i>&nbsp;
+<i>836</i>&nbsp;    /**
+<i>837</i>&nbsp;     * Gets the last name of the last author/editor
+<i>838</i>&nbsp;     * @param authorField a &lt;code&gt;String&lt;/code&gt;
+<i>839</i>&nbsp;     * @return the surname of an author/editor
+<i>840</i>&nbsp;     */
+<i>841</i>&nbsp;    public static String lastAuthor(String authorField) {
+<b class="nc"><i>842</i>&nbsp;        String[] tokens = AuthorList.fixAuthorForAlphabetization(authorField).split(&quot;\\s+\\band\\b\\s+&quot;);</b>
+<b class="nc"><i>843</i>&nbsp;        if (tokens.length &gt; 0) {</b>
+<b class="nc"><i>844</i>&nbsp;            String[] lastAuthor = tokens[tokens.length - 1].split(&quot;,&quot;);</b>
+<b class="nc"><i>845</i>&nbsp;            return lastAuthor[0];</b>
+<i>846</i>&nbsp;        } else {
+<i>847</i>&nbsp;            // if author is empty
+<b class="nc"><i>848</i>&nbsp;            return &quot;&quot;;</b>
+<i>849</i>&nbsp;        }
+<i>850</i>&nbsp;    }
+<i>851</i>&nbsp;
+<i>852</i>&nbsp;    /**
+<i>853</i>&nbsp;     * Gets the forename initials of the last author/editor
+<i>854</i>&nbsp;     *
+<i>855</i>&nbsp;     * @param authorField
+<i>856</i>&nbsp;     *            a &lt;code&gt;String&lt;/code&gt;
+<i>857</i>&nbsp;     * @return the forename initial of an author/editor or &quot;&quot; if no author was found
+<i>858</i>&nbsp;     *    This method is guaranteed to never return null.
+<i>859</i>&nbsp;     *
+<i>860</i>&nbsp;     * @throws NullPointerException
+<i>861</i>&nbsp;     *             if authorField == null
+<i>862</i>&nbsp;     */
+<i>863</i>&nbsp;    public static String lastAuthorForenameInitials(String authorField) {
+<b class="nc"><i>864</i>&nbsp;        AuthorList authorList = AuthorList.parse(authorField);</b>
+<b class="nc"><i>865</i>&nbsp;        if (authorList.isEmpty()) {</b>
+<b class="nc"><i>866</i>&nbsp;            return &quot;&quot;;</b>
+<i>867</i>&nbsp;        }
+<b class="nc"><i>868</i>&nbsp;        return authorList.getAuthor(authorList.getNumberOfAuthors() - 1).getFirstAbbr().map(s -&gt; s.substring(0, 1))</b>
+<b class="nc"><i>869</i>&nbsp;                .orElse(&quot;&quot;);</b>
+<i>870</i>&nbsp;    }
+<i>871</i>&nbsp;
+<i>872</i>&nbsp;    /**
+<i>873</i>&nbsp;     * Gets the last name of all authors/editors
+<i>874</i>&nbsp;     * @param authorField a &lt;code&gt;String&lt;/code&gt;
+<i>875</i>&nbsp;     * @return the sur name of all authors/editors
+<i>876</i>&nbsp;     */
+<i>877</i>&nbsp;    public static String allAuthors(String authorField) {
+<i>878</i>&nbsp;        // Quick hack to use NAuthors to avoid code duplication
+<b class="nc"><i>879</i>&nbsp;        return nAuthors(authorField, Integer.MAX_VALUE);</b>
+<i>880</i>&nbsp;    }
+<i>881</i>&nbsp;
+<i>882</i>&nbsp;    /**
+<i>883</i>&nbsp;     * Returns the authors according to the BibTeX-alpha-Style
+<i>884</i>&nbsp;     * @param authorField string containing the value of the author field
+<i>885</i>&nbsp;     * @return the initials of all authornames
+<i>886</i>&nbsp;     */
+<i>887</i>&nbsp;    public static String authorsAlpha(String authorField) {
+<b class="nc"><i>888</i>&nbsp;        String authors = &quot;&quot;;</b>
+<i>889</i>&nbsp;
+<b class="nc"><i>890</i>&nbsp;        String fixedAuthors = AuthorList.fixAuthorLastNameOnlyCommas(authorField, false);</b>
+<i>891</i>&nbsp;
+<i>892</i>&nbsp;        // drop the &quot;and&quot; before the last author
+<i>893</i>&nbsp;        // -&gt; makes processing easier
+<b class="nc"><i>894</i>&nbsp;        fixedAuthors = fixedAuthors.replace(&quot; and &quot;, &quot;, &quot;);</b>
+<i>895</i>&nbsp;
+<b class="nc"><i>896</i>&nbsp;        String[] tokens = fixedAuthors.split(&quot;,&quot;);</b>
+<b class="nc"><i>897</i>&nbsp;        int max = tokens.length &gt; 4 ? 3 : tokens.length;</b>
+<b class="nc"><i>898</i>&nbsp;        if (max == 1) {</b>
+<b class="nc"><i>899</i>&nbsp;            String[] firstAuthor = tokens[0].replaceAll(&quot;\\s+&quot;, &quot; &quot;).trim().split(&quot; &quot;);</b>
+<i>900</i>&nbsp;            // take first letter of any &quot;prefixes&quot; (e.g. van der Aalst -&gt; vd)
+<b class="nc"><i>901</i>&nbsp;            for (int j = 0; j &lt; (firstAuthor.length - 1); j++) {</b>
+<b class="nc"><i>902</i>&nbsp;                authors = authors.concat(firstAuthor[j].substring(0, 1));</b>
+<i>903</i>&nbsp;            }
+<i>904</i>&nbsp;            // append last part of last name completely
+<b class="nc"><i>905</i>&nbsp;            authors = authors.concat(firstAuthor[firstAuthor.length - 1].substring(0,</b>
+<b class="nc"><i>906</i>&nbsp;                    Math.min(3, firstAuthor[firstAuthor.length - 1].length())));</b>
+<b class="nc"><i>907</i>&nbsp;        } else {</b>
+<b class="nc"><i>908</i>&nbsp;            for (int i = 0; i &lt; max; i++) {</b>
+<i>909</i>&nbsp;                // replace all whitespaces by &quot; &quot;
+<i>910</i>&nbsp;                // split the lastname at &quot; &quot;
+<b class="nc"><i>911</i>&nbsp;                String[] curAuthor = tokens[i].replaceAll(&quot;\\s+&quot;, &quot; &quot;).trim().split(&quot; &quot;);</b>
+<b class="nc"><i>912</i>&nbsp;                for (String aCurAuthor : curAuthor) {</b>
+<i>913</i>&nbsp;                    // use first character of each part of lastname
+<b class="nc"><i>914</i>&nbsp;                    authors = authors.concat(aCurAuthor.substring(0, 1));</b>
+<i>915</i>&nbsp;                }
+<i>916</i>&nbsp;            }
+<b class="nc"><i>917</i>&nbsp;            if (tokens.length &gt; 4) {</b>
+<b class="nc"><i>918</i>&nbsp;                authors = authors.concat(&quot;+&quot;);</b>
+<i>919</i>&nbsp;            }
+<i>920</i>&nbsp;        }
+<b class="nc"><i>921</i>&nbsp;        return authors;</b>
+<i>922</i>&nbsp;    }
+<i>923</i>&nbsp;
+<i>924</i>&nbsp;    /**
+<i>925</i>&nbsp;     * Gets the surnames of the first N authors and appends EtAl if there are more than N authors
+<i>926</i>&nbsp;     * @param authorField a &lt;code&gt;String&lt;/code&gt;
+<i>927</i>&nbsp;     * @param n the number of desired authors
+<i>928</i>&nbsp;     * @return Gets the surnames of the first N authors and appends EtAl if there are more than N authors
+<i>929</i>&nbsp;     */
+<i>930</i>&nbsp;    public static String nAuthors(String authorField, int n) {
+<b class="nc"><i>931</i>&nbsp;        String[] tokens = AuthorList.fixAuthorForAlphabetization(authorField).split(&quot;\\s+\\band\\b\\s+&quot;);</b>
+<b class="nc"><i>932</i>&nbsp;        int i = 0;</b>
+<b class="nc"><i>933</i>&nbsp;        StringBuilder authorSB = new StringBuilder();</b>
+<b class="nc"><i>934</i>&nbsp;        while ((tokens.length &gt; i) &amp;&amp; (i &lt; n)) {</b>
+<b class="nc"><i>935</i>&nbsp;            String lastName = tokens[i].replaceAll(&quot;,\\s+.*&quot;, &quot;&quot;);</b>
+<b class="nc"><i>936</i>&nbsp;            authorSB.append(lastName);</b>
+<b class="nc"><i>937</i>&nbsp;            i++;</b>
+<b class="nc"><i>938</i>&nbsp;        }</b>
+<b class="nc"><i>939</i>&nbsp;        if (tokens.length &gt; n) {</b>
+<b class="nc"><i>940</i>&nbsp;            authorSB.append(&quot;EtAl&quot;);</b>
+<i>941</i>&nbsp;        }
+<b class="nc"><i>942</i>&nbsp;        return authorSB.toString();</b>
+<i>943</i>&nbsp;    }
+<i>944</i>&nbsp;
+<i>945</i>&nbsp;    /**
+<i>946</i>&nbsp;     * Gets the first part of the last name of the first
+<i>947</i>&nbsp;     * author/editor, and appends the last name initial of the
+<i>948</i>&nbsp;     * remaining authors/editors.
+<i>949</i>&nbsp;     * Maximum 5 characters
+<i>950</i>&nbsp;     * @param authorField a &lt;code&gt;String&lt;/code&gt;
+<i>951</i>&nbsp;     * @return the surname of all authors/editors
+<i>952</i>&nbsp;     */
+<i>953</i>&nbsp;    public static String oneAuthorPlusIni(String authorField) {
+<b class="nc"><i>954</i>&nbsp;        String fixedAuthorField = AuthorList.fixAuthorForAlphabetization(authorField);</b>
+<b class="nc"><i>955</i>&nbsp;        String[] tokens = fixedAuthorField.split(&quot;\\s+\\band\\b\\s+&quot;);</b>
+<b class="nc"><i>956</i>&nbsp;        if (tokens.length == 0) {</b>
+<b class="nc"><i>957</i>&nbsp;            return &quot;&quot;;</b>
+<i>958</i>&nbsp;        }
+<i>959</i>&nbsp;
+<b class="nc"><i>960</i>&nbsp;        String firstAuthor = tokens[0].split(&quot;,&quot;)[0];</b>
+<b class="nc"><i>961</i>&nbsp;        StringBuilder authorSB = new StringBuilder();</b>
+<b class="nc"><i>962</i>&nbsp;        authorSB.append(firstAuthor.substring(0, Math.min(CHARS_OF_FIRST, firstAuthor.length())));</b>
+<b class="nc"><i>963</i>&nbsp;        int i = 1;</b>
+<b class="nc"><i>964</i>&nbsp;        while (tokens.length &gt; i) {</b>
+<i>965</i>&nbsp;            // convert lastname, firstname to firstname lastname
+<b class="nc"><i>966</i>&nbsp;            authorSB.append(tokens[i].charAt(0));</b>
+<b class="nc"><i>967</i>&nbsp;            i++;</b>
+<i>968</i>&nbsp;        }
+<b class="nc"><i>969</i>&nbsp;        return authorSB.toString();</b>
+<i>970</i>&nbsp;    }
+<i>971</i>&nbsp;
+<i>972</i>&nbsp;    /**
+<i>973</i>&nbsp;     * auth.auth.ea format:
+<i>974</i>&nbsp;     * Isaac Newton and James Maxwell and Albert Einstein (1960)
+<i>975</i>&nbsp;     * Isaac Newton and James Maxwell (1960)
+<i>976</i>&nbsp;     *  give:
+<i>977</i>&nbsp;     * Newton.Maxwell.ea
+<i>978</i>&nbsp;     * Newton.Maxwell
+<i>979</i>&nbsp;     */
+<i>980</i>&nbsp;    public static String authAuthEa(String authorField) {
+<b class="nc"><i>981</i>&nbsp;        String fixedAuthorField = AuthorList.fixAuthorForAlphabetization(authorField);</b>
+<i>982</i>&nbsp;
+<b class="nc"><i>983</i>&nbsp;        String[] tokens = fixedAuthorField.split(&quot;\\s+\\band\\b\\s+&quot;);</b>
+<b class="nc"><i>984</i>&nbsp;        if (tokens.length == 0) {</b>
+<b class="nc"><i>985</i>&nbsp;            return &quot;&quot;;</b>
+<i>986</i>&nbsp;        }
+<i>987</i>&nbsp;
+<b class="nc"><i>988</i>&nbsp;        StringBuilder author = new StringBuilder();</b>
+<i>989</i>&nbsp;        // append first author
+<b class="nc"><i>990</i>&nbsp;        author.append((tokens[0].split(&quot;,&quot;))[0]);</b>
+<b class="nc"><i>991</i>&nbsp;        if (tokens.length &gt;= 2) {</b>
+<i>992</i>&nbsp;            // append second author
+<b class="nc"><i>993</i>&nbsp;            author.append(&#39;.&#39;).append((tokens[1].split(&quot;,&quot;))[0]);</b>
+<i>994</i>&nbsp;        }
+<b class="nc"><i>995</i>&nbsp;        if (tokens.length &gt; 2) {</b>
+<i>996</i>&nbsp;            // append &quot;.ea&quot; if more than 2 authors
+<b class="nc"><i>997</i>&nbsp;            author.append(&quot;.ea&quot;);</b>
+<i>998</i>&nbsp;        }
+<i>999</i>&nbsp;
+<b class="nc"><i>1000</i>&nbsp;        return author.toString();</b>
+<i>1001</i>&nbsp;    }
+<i>1002</i>&nbsp;
+<i>1003</i>&nbsp;    /**
+<i>1004</i>&nbsp;     * auth.etal, authEtAl, ... format:
+<i>1005</i>&nbsp;     * Isaac Newton and James Maxwell and Albert Einstein (1960)
+<i>1006</i>&nbsp;     * Isaac Newton and James Maxwell (1960)
+<i>1007</i>&nbsp;     *
+<i>1008</i>&nbsp;     *  auth.etal give (delim=&quot;.&quot;, append=&quot;.etal&quot;):
+<i>1009</i>&nbsp;     * Newton.etal
+<i>1010</i>&nbsp;     * Newton.Maxwell
+<i>1011</i>&nbsp;     *
+<i>1012</i>&nbsp;     *  authEtAl give (delim=&quot;&quot;, append=&quot;EtAl&quot;):
+<i>1013</i>&nbsp;     * NewtonEtAl
+<i>1014</i>&nbsp;     * NewtonMaxwell
+<i>1015</i>&nbsp;     *
+<i>1016</i>&nbsp;     * Note that [authEtAl] equals [authors2]
+<i>1017</i>&nbsp;     */
+<i>1018</i>&nbsp;    public static String authEtal(String authorField, String delim,
+<i>1019</i>&nbsp;            String append) {
+<b class="nc"><i>1020</i>&nbsp;        String fixedAuthorField = AuthorList.fixAuthorForAlphabetization(authorField);</b>
+<i>1021</i>&nbsp;
+<b class="nc"><i>1022</i>&nbsp;        String[] tokens = fixedAuthorField.split(&quot;\\s*\\band\\b\\s*&quot;);</b>
+<b class="nc"><i>1023</i>&nbsp;        if (tokens.length == 0) {</b>
+<b class="nc"><i>1024</i>&nbsp;            return &quot;&quot;;</b>
+<i>1025</i>&nbsp;        }
+<b class="nc"><i>1026</i>&nbsp;        StringBuilder author = new StringBuilder();</b>
+<b class="nc"><i>1027</i>&nbsp;        author.append((tokens[0].split(&quot;,&quot;))[0]);</b>
+<b class="nc"><i>1028</i>&nbsp;        if (tokens.length == 2) {</b>
+<b class="nc"><i>1029</i>&nbsp;            author.append(delim).append((tokens[1].split(&quot;,&quot;))[0]);</b>
+<b class="nc"><i>1030</i>&nbsp;        } else if (tokens.length &gt; 2) {</b>
+<b class="nc"><i>1031</i>&nbsp;            author.append(append);</b>
+<i>1032</i>&nbsp;        }
+<i>1033</i>&nbsp;
+<b class="nc"><i>1034</i>&nbsp;        return author.toString();</b>
+<i>1035</i>&nbsp;    }
+<i>1036</i>&nbsp;
+<i>1037</i>&nbsp;    /**
+<i>1038</i>&nbsp;     * The first N characters of the Mth author/editor.
+<i>1039</i>&nbsp;     * M starts counting from 1
+<i>1040</i>&nbsp;     */
+<i>1041</i>&nbsp;    public static String authNofMth(String authorField, int n, int m) {
+<i>1042</i>&nbsp;        // have m counting from 0
+<b class="nc"><i>1043</i>&nbsp;        int mminusone = m - 1;</b>
+<i>1044</i>&nbsp;
+<b class="nc"><i>1045</i>&nbsp;        String fixedAuthorField = AuthorList.fixAuthorForAlphabetization(authorField);</b>
+<i>1046</i>&nbsp;
+<b class="nc"><i>1047</i>&nbsp;        String[] tokens = fixedAuthorField.split(&quot;\\s+\\band\\b\\s+&quot;);</b>
+<b class="nc"><i>1048</i>&nbsp;        if ((tokens.length &lt;= mminusone) || (n &lt; 0) || (mminusone &lt; 0)) {</b>
+<b class="nc"><i>1049</i>&nbsp;            return &quot;&quot;;</b>
+<i>1050</i>&nbsp;        }
+<b class="nc"><i>1051</i>&nbsp;        String lastName = (tokens[mminusone].split(&quot;,&quot;))[0];</b>
+<b class="nc"><i>1052</i>&nbsp;        if (lastName.length() &lt;= n) {</b>
+<b class="nc"><i>1053</i>&nbsp;            return lastName;</b>
+<i>1054</i>&nbsp;        } else {
+<b class="nc"><i>1055</i>&nbsp;            return lastName.substring(0, n);</b>
+<i>1056</i>&nbsp;        }
+<i>1057</i>&nbsp;    }
+<i>1058</i>&nbsp;
+<i>1059</i>&nbsp;    /**
+<i>1060</i>&nbsp;     * authshort format:
+<i>1061</i>&nbsp;     * added by Kolja Brix, kbx@users.sourceforge.net
+<i>1062</i>&nbsp;     *
+<i>1063</i>&nbsp;     * given author names
+<i>1064</i>&nbsp;     *
+<i>1065</i>&nbsp;     *   Isaac Newton and James Maxwell and Albert Einstein and N. Bohr
+<i>1066</i>&nbsp;     *
+<i>1067</i>&nbsp;     *   Isaac Newton and James Maxwell and Albert Einstein
+<i>1068</i>&nbsp;     *
+<i>1069</i>&nbsp;     *   Isaac Newton and James Maxwell
+<i>1070</i>&nbsp;     *
+<i>1071</i>&nbsp;     *   Isaac Newton
+<i>1072</i>&nbsp;     *
+<i>1073</i>&nbsp;     * yield
+<i>1074</i>&nbsp;     *
+<i>1075</i>&nbsp;     *   NME+
+<i>1076</i>&nbsp;     *
+<i>1077</i>&nbsp;     *   NME
+<i>1078</i>&nbsp;     *
+<i>1079</i>&nbsp;     *   NM
+<i>1080</i>&nbsp;     *
+<i>1081</i>&nbsp;     *   Newton
+<i>1082</i>&nbsp;     */
+<i>1083</i>&nbsp;    public static String authshort(String authorField) {
+<b class="nc"><i>1084</i>&nbsp;        String fixedAuthorField = AuthorList.fixAuthorForAlphabetization(authorField);</b>
+<b class="nc"><i>1085</i>&nbsp;        StringBuilder author = new StringBuilder();</b>
+<b class="nc"><i>1086</i>&nbsp;        String[] tokens = fixedAuthorField.split(&quot;\\band\\b&quot;);</b>
+<b class="nc"><i>1087</i>&nbsp;        int i = 0;</b>
+<i>1088</i>&nbsp;
+<b class="nc"><i>1089</i>&nbsp;        if (tokens.length == 1) {</b>
+<b class="nc"><i>1090</i>&nbsp;            author.append(authNofMth(fixedAuthorField, fixedAuthorField.length(), 1));</b>
+<b class="nc"><i>1091</i>&nbsp;        } else if (tokens.length &gt;= 2) {</b>
+<b class="nc"><i>1092</i>&nbsp;            while ((tokens.length &gt; i) &amp;&amp; (i &lt; 3)) {</b>
+<b class="nc"><i>1093</i>&nbsp;                author.append(authNofMth(fixedAuthorField, 1, i + 1));</b>
+<b class="nc"><i>1094</i>&nbsp;                i++;</b>
+<i>1095</i>&nbsp;            }
+<b class="nc"><i>1096</i>&nbsp;            if (tokens.length &gt; 3) {</b>
+<b class="nc"><i>1097</i>&nbsp;                author.append(&#39;+&#39;);</b>
+<i>1098</i>&nbsp;            }
+<i>1099</i>&nbsp;        }
+<i>1100</i>&nbsp;
+<b class="nc"><i>1101</i>&nbsp;        return author.toString();</b>
+<i>1102</i>&nbsp;    }
+<i>1103</i>&nbsp;
+<i>1104</i>&nbsp;    /**
+<i>1105</i>&nbsp;     * authIniN format:
+<i>1106</i>&nbsp;     *
+<i>1107</i>&nbsp;     * Each author gets (N div #authors) chars, the remaining (N mod #authors)
+<i>1108</i>&nbsp;     * chars are equally distributed to the authors first in the row.
+<i>1109</i>&nbsp;     *
+<i>1110</i>&nbsp;     * If (N &lt; #authors), only the first N authors get mentioned.
+<i>1111</i>&nbsp;     *
+<i>1112</i>&nbsp;     * For example if
+<i>1113</i>&nbsp;     *
+<i>1114</i>&nbsp;     * a) I. Newton and J. Maxwell and A. Einstein and N. Bohr (..)
+<i>1115</i>&nbsp;     *
+<i>1116</i>&nbsp;     * b) I. Newton and J. Maxwell and A. Einstein
+<i>1117</i>&nbsp;     *
+<i>1118</i>&nbsp;     * c) I. Newton and J. Maxwell
+<i>1119</i>&nbsp;     *
+<i>1120</i>&nbsp;     * d) I. Newton
+<i>1121</i>&nbsp;     *
+<i>1122</i>&nbsp;     * authIni4 gives: a) NMEB, b) NeME, c) NeMa, d) Newt
+<i>1123</i>&nbsp;     *
+<i>1124</i>&nbsp;     * @param authorField
+<i>1125</i>&nbsp;     *            The authors to format.
+<i>1126</i>&nbsp;     *
+<i>1127</i>&nbsp;     * @param n
+<i>1128</i>&nbsp;     *            The maximum number of characters this string will be long. A
+<i>1129</i>&nbsp;     *            negative number or zero will lead to &quot;&quot; be returned.
+<i>1130</i>&nbsp;     *
+<i>1131</i>&nbsp;     * @throws NullPointerException
+<i>1132</i>&nbsp;     *             if authorField is null and n &gt; 0
+<i>1133</i>&nbsp;     */
+<i>1134</i>&nbsp;    public static String authIniN(String authorField, int n) {
+<i>1135</i>&nbsp;
+<b class="nc"><i>1136</i>&nbsp;        if (n &lt;= 0) {</b>
+<b class="nc"><i>1137</i>&nbsp;            return &quot;&quot;;</b>
+<i>1138</i>&nbsp;        }
+<i>1139</i>&nbsp;
+<b class="nc"><i>1140</i>&nbsp;        String fixedAuthorField = AuthorList.fixAuthorForAlphabetization(authorField);</b>
+<b class="nc"><i>1141</i>&nbsp;        StringBuilder author = new StringBuilder();</b>
+<b class="nc"><i>1142</i>&nbsp;        String[] tokens = fixedAuthorField.split(&quot;\\band\\b&quot;);</b>
+<i>1143</i>&nbsp;
+<b class="nc"><i>1144</i>&nbsp;        if (tokens.length == 0) {</b>
+<b class="nc"><i>1145</i>&nbsp;            return author.toString();</b>
+<i>1146</i>&nbsp;        }
+<i>1147</i>&nbsp;
+<b class="nc"><i>1148</i>&nbsp;        int i = 0;</b>
+<b class="nc"><i>1149</i>&nbsp;        int charsAll = n / tokens.length;</b>
+<b class="nc"><i>1150</i>&nbsp;        while (tokens.length &gt; i) {</b>
+<b class="nc"><i>1151</i>&nbsp;            if (i &lt; (n % tokens.length)) {</b>
+<b class="nc"><i>1152</i>&nbsp;                author.append(authNofMth(fixedAuthorField, charsAll + 1, i + 1));</b>
+<i>1153</i>&nbsp;            } else {
+<b class="nc"><i>1154</i>&nbsp;                author.append(authNofMth(fixedAuthorField, charsAll, i + 1));</b>
+<i>1155</i>&nbsp;            }
+<b class="nc"><i>1156</i>&nbsp;            i++;</b>
+<i>1157</i>&nbsp;        }
+<i>1158</i>&nbsp;
+<b class="nc"><i>1159</i>&nbsp;        if (author.length() &lt;= n) {</b>
+<b class="nc"><i>1160</i>&nbsp;            return author.toString();</b>
+<i>1161</i>&nbsp;        } else {
+<b class="nc"><i>1162</i>&nbsp;            return author.toString().substring(0, n);</b>
+<i>1163</i>&nbsp;        }
+<i>1164</i>&nbsp;    }
+<i>1165</i>&nbsp;
+<i>1166</i>&nbsp;    /**
+<i>1167</i>&nbsp;     * Split the pages field into separate numbers and return the lowest
+<i>1168</i>&nbsp;     *
+<i>1169</i>&nbsp;     * @param pages
+<i>1170</i>&nbsp;     *            (may not be null) a pages string such as 42--111 or
+<i>1171</i>&nbsp;     *            7,41,73--97 or 43+
+<i>1172</i>&nbsp;     *
+<i>1173</i>&nbsp;     * @return the first page number or &quot;&quot; if no number is found in the string
+<i>1174</i>&nbsp;     *
+<i>1175</i>&nbsp;     * @throws NullPointerException
+<i>1176</i>&nbsp;     *             if pages is null
+<i>1177</i>&nbsp;     */
+<i>1178</i>&nbsp;    public static String firstPage(String pages) {
+<b class="nc"><i>1179</i>&nbsp;        final String[] splitPages = pages.split(&quot;\\D+&quot;);</b>
+<b class="nc"><i>1180</i>&nbsp;        int result = Integer.MAX_VALUE;</b>
+<b class="nc"><i>1181</i>&nbsp;        for (String n : splitPages) {</b>
+<b class="nc"><i>1182</i>&nbsp;            if (n.matches(&quot;\\d+&quot;)) {</b>
+<b class="nc"><i>1183</i>&nbsp;                result = Math.min(Integer.parseInt(n), result);</b>
+<i>1184</i>&nbsp;            }
+<i>1185</i>&nbsp;        }
+<i>1186</i>&nbsp;
+<b class="nc"><i>1187</i>&nbsp;        if (result == Integer.MAX_VALUE) {</b>
+<b class="nc"><i>1188</i>&nbsp;            return &quot;&quot;;</b>
+<i>1189</i>&nbsp;        } else {
+<b class="nc"><i>1190</i>&nbsp;            return String.valueOf(result);</b>
+<i>1191</i>&nbsp;        }
+<i>1192</i>&nbsp;    }
+<i>1193</i>&nbsp;
+<i>1194</i>&nbsp;    /**
+<i>1195</i>&nbsp;     * Split the pages field into separate numbers and return the highest
+<i>1196</i>&nbsp;     *
+<i>1197</i>&nbsp;     * @param pages
+<i>1198</i>&nbsp;     *            a pages string such as 42--111 or 7,41,73--97 or 43+
+<i>1199</i>&nbsp;     *
+<i>1200</i>&nbsp;     * @return the first page number or &quot;&quot; if no number is found in the string
+<i>1201</i>&nbsp;     *
+<i>1202</i>&nbsp;     * @throws NullPointerException
+<i>1203</i>&nbsp;     *             if pages is null.
+<i>1204</i>&nbsp;     */
+<i>1205</i>&nbsp;    public static String lastPage(String pages) {
+<b class="nc"><i>1206</i>&nbsp;        final String[] splitPages = pages.split(&quot;\\D+&quot;);</b>
+<b class="nc"><i>1207</i>&nbsp;        int result = Integer.MIN_VALUE;</b>
+<b class="nc"><i>1208</i>&nbsp;        for (String n : splitPages) {</b>
+<b class="nc"><i>1209</i>&nbsp;            if (n.matches(&quot;\\d+&quot;)) {</b>
+<b class="nc"><i>1210</i>&nbsp;                result = Math.max(Integer.parseInt(n), result);</b>
+<i>1211</i>&nbsp;            }
+<i>1212</i>&nbsp;        }
+<i>1213</i>&nbsp;
+<b class="nc"><i>1214</i>&nbsp;        if (result == Integer.MIN_VALUE) {</b>
+<b class="nc"><i>1215</i>&nbsp;            return &quot;&quot;;</b>
+<i>1216</i>&nbsp;        } else {
+<b class="nc"><i>1217</i>&nbsp;            return String.valueOf(result);</b>
+<i>1218</i>&nbsp;        }
+<i>1219</i>&nbsp;    }
+<i>1220</i>&nbsp;
+<i>1221</i>&nbsp;    /**
+<i>1222</i>&nbsp;     * Parse a field marker with modifiers, possibly containing a parenthesised modifier,
+<i>1223</i>&nbsp;     * as well as escaped colons and parentheses.
+<i>1224</i>&nbsp;     * @param arg The argument string.
+<i>1225</i>&nbsp;     * @return An array of strings representing the parts of the marker
+<i>1226</i>&nbsp;     */
+<i>1227</i>&nbsp;    private static List&lt;String&gt; parseFieldMarker(String arg) {
+<b class="nc"><i>1228</i>&nbsp;        List&lt;String&gt; parts = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>1229</i>&nbsp;        StringBuilder current = new StringBuilder();</b>
+<b class="nc"><i>1230</i>&nbsp;        boolean escaped = false;</b>
+<b class="nc"><i>1231</i>&nbsp;        int inParenthesis = 0;</b>
+<b class="nc"><i>1232</i>&nbsp;        for (int i = 0; i &lt; arg.length(); i++) {</b>
+<b class="nc"><i>1233</i>&nbsp;            char currentChar = arg.charAt(i);</b>
+<b class="nc"><i>1234</i>&nbsp;            if ((currentChar == &#39;:&#39;) &amp;&amp; !escaped &amp;&amp; (inParenthesis == 0)) {</b>
+<b class="nc"><i>1235</i>&nbsp;                parts.add(current.toString());</b>
+<b class="nc"><i>1236</i>&nbsp;                current = new StringBuilder();</b>
+<b class="nc"><i>1237</i>&nbsp;            } else if ((currentChar == &#39;(&#39;) &amp;&amp; !escaped) {</b>
+<b class="nc"><i>1238</i>&nbsp;                inParenthesis++;</b>
+<b class="nc"><i>1239</i>&nbsp;                current.append(currentChar);</b>
+<b class="nc"><i>1240</i>&nbsp;            } else if ((currentChar == &#39;)&#39;) &amp;&amp; !escaped &amp;&amp; (inParenthesis &gt; 0)) {</b>
+<b class="nc"><i>1241</i>&nbsp;                inParenthesis--;</b>
+<b class="nc"><i>1242</i>&nbsp;                current.append(currentChar);</b>
+<b class="nc"><i>1243</i>&nbsp;            } else if (currentChar == &#39;\\&#39;) {</b>
+<b class="nc"><i>1244</i>&nbsp;                if (escaped) {</b>
+<b class="nc"><i>1245</i>&nbsp;                    escaped = false;</b>
+<b class="nc"><i>1246</i>&nbsp;                    current.append(currentChar);</b>
+<i>1247</i>&nbsp;                } else {
+<b class="nc"><i>1248</i>&nbsp;                    escaped = true;</b>
+<i>1249</i>&nbsp;                }
+<b class="nc"><i>1250</i>&nbsp;            } else if (escaped) {</b>
+<b class="nc"><i>1251</i>&nbsp;                current.append(currentChar);</b>
+<b class="nc"><i>1252</i>&nbsp;                escaped = false;</b>
+<i>1253</i>&nbsp;            } else {
+<b class="nc"><i>1254</i>&nbsp;                current.append(currentChar);</b>
+<i>1255</i>&nbsp;            }
+<i>1256</i>&nbsp;        }
+<b class="nc"><i>1257</i>&nbsp;        parts.add(current.toString());</b>
+<b class="nc"><i>1258</i>&nbsp;        return parts;</b>
+<i>1259</i>&nbsp;    }
+<i>1260</i>&nbsp;
+<i>1261</i>&nbsp;
+<i>1262</i>&nbsp;    /**
+<i>1263</i>&nbsp;     * This method returns a String similar to the one passed in, except that it is molded into a form that is
+<i>1264</i>&nbsp;     * acceptable for bibtex.
+<i>1265</i>&nbsp;     * &lt;p&gt;
+<i>1266</i>&nbsp;     * Watch-out that the returned string might be of length 0 afterwards.
+<i>1267</i>&nbsp;     *
+<i>1268</i>&nbsp;     * @param key             mayBeNull
+<i>1269</i>&nbsp;     * @param enforceLegalKey make sure that the key is legal in all respects
+<i>1270</i>&nbsp;     */
+<i>1271</i>&nbsp;    public static String checkLegalKey(String key, boolean enforceLegalKey) {
+<b class="nc"><i>1272</i>&nbsp;        if (key == null) {</b>
+<b class="nc"><i>1273</i>&nbsp;            return null;</b>
+<i>1274</i>&nbsp;        }
+<b class="nc"><i>1275</i>&nbsp;        if (!enforceLegalKey) {</b>
+<i>1276</i>&nbsp;            // User doesn&#39;t want us to enforce legal characters. We must still look
+<i>1277</i>&nbsp;            // for whitespace and some characters such as commas, since these would
+<i>1278</i>&nbsp;            // interfere with parsing:
+<b class="nc"><i>1279</i>&nbsp;            StringBuilder newKey = new StringBuilder();</b>
+<b class="nc"><i>1280</i>&nbsp;            for (int i = 0; i &lt; key.length(); i++) {</b>
+<b class="nc"><i>1281</i>&nbsp;                char c = key.charAt(i);</b>
+<b class="nc"><i>1282</i>&nbsp;                if (!Character.isWhitespace(c) &amp;&amp; (&quot;{}(),\\\&quot;&quot;.indexOf(c) == -1)) {</b>
+<b class="nc"><i>1283</i>&nbsp;                    newKey.append(c);</b>
+<i>1284</i>&nbsp;                }
+<i>1285</i>&nbsp;            }
+<b class="nc"><i>1286</i>&nbsp;            return newKey.toString();</b>
+<i>1287</i>&nbsp;        }
+<i>1288</i>&nbsp;
+<b class="nc"><i>1289</i>&nbsp;        StringBuilder newKey = new StringBuilder();</b>
+<b class="nc"><i>1290</i>&nbsp;        for (int i = 0; i &lt; key.length(); i++) {</b>
+<b class="nc"><i>1291</i>&nbsp;            char c = key.charAt(i);</b>
+<b class="nc"><i>1292</i>&nbsp;            if (!Character.isWhitespace(c) &amp;&amp; (&quot;{}(),\\\&quot;#~^&#39;&quot;.indexOf(c) == -1)) {</b>
+<b class="nc"><i>1293</i>&nbsp;                newKey.append(c);</b>
+<i>1294</i>&nbsp;            }
+<i>1295</i>&nbsp;        }
+<i>1296</i>&nbsp;
+<i>1297</i>&nbsp;        // Replace non-English characters like umlauts etc. with a sensible
+<i>1298</i>&nbsp;        // letter or letter combination that bibtex can accept.
+<i>1299</i>&nbsp;
+<b class="nc"><i>1300</i>&nbsp;        return StringUtil.replaceSpecialCharacters(newKey.toString());</b>
+<i>1301</i>&nbsp;    }
+<i>1302</i>&nbsp;
+<i>1303</i>&nbsp;    public static String makeLabel(BibDatabaseContext bibDatabaseContext,
+<i>1304</i>&nbsp;            BibEntry entry,
+<i>1305</i>&nbsp;            BibtexKeyPatternPreferences bibtexKeyPatternPreferences) {
+<b class="nc"><i>1306</i>&nbsp;        AbstractBibtexKeyPattern citeKeyPattern = bibDatabaseContext.getMetaData().getCiteKeyPattern(bibtexKeyPatternPreferences.getKeyPattern());</b>
+<b class="nc"><i>1307</i>&nbsp;        return makeLabel(citeKeyPattern, bibDatabaseContext.getDatabase(), entry, bibtexKeyPatternPreferences);</b>
+<i>1308</i>&nbsp;    }
+<i>1309</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

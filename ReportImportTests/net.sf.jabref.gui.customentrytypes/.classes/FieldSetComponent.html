@@ -1,0 +1,464 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: FieldSetComponent</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.customentrytypes</a> ]
+</div>
+
+<h1>Coverage Summary for Class: FieldSetComponent (net.sf.jabref.gui.customentrytypes)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">FieldSetComponent</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 21)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 163)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">FieldSetComponent$FieldListFocusListener</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 7)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 24)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 170)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.customentrytypes;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.Component;
+<i>4</i>&nbsp;import java.awt.GridBagConstraints;
+<i>5</i>&nbsp;import java.awt.GridBagLayout;
+<i>6</i>&nbsp;import java.awt.Insets;
+<i>7</i>&nbsp;import java.awt.Rectangle;
+<i>8</i>&nbsp;import java.awt.event.ActionEvent;
+<i>9</i>&nbsp;import java.awt.event.ActionListener;
+<i>10</i>&nbsp;import java.awt.event.FocusEvent;
+<i>11</i>&nbsp;import java.awt.event.FocusListener;
+<i>12</i>&nbsp;import java.util.ArrayList;
+<i>13</i>&nbsp;import java.util.Enumeration;
+<i>14</i>&nbsp;import java.util.HashSet;
+<i>15</i>&nbsp;import java.util.List;
+<i>16</i>&nbsp;import java.util.Set;
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;import javax.swing.Box;
+<i>19</i>&nbsp;import javax.swing.DefaultListModel;
+<i>20</i>&nbsp;import javax.swing.JButton;
+<i>21</i>&nbsp;import javax.swing.JComboBox;
+<i>22</i>&nbsp;import javax.swing.JLabel;
+<i>23</i>&nbsp;import javax.swing.JList;
+<i>24</i>&nbsp;import javax.swing.JOptionPane;
+<i>25</i>&nbsp;import javax.swing.JPanel;
+<i>26</i>&nbsp;import javax.swing.JScrollPane;
+<i>27</i>&nbsp;import javax.swing.JTextField;
+<i>28</i>&nbsp;import javax.swing.JViewport;
+<i>29</i>&nbsp;import javax.swing.ListSelectionModel;
+<i>30</i>&nbsp;import javax.swing.ScrollPaneConstants;
+<i>31</i>&nbsp;import javax.swing.event.ListDataListener;
+<i>32</i>&nbsp;import javax.swing.event.ListSelectionListener;
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;import net.sf.jabref.Globals;
+<i>35</i>&nbsp;import net.sf.jabref.gui.IconTheme;
+<i>36</i>&nbsp;import net.sf.jabref.logic.bibtexkeypattern.BibtexKeyPatternUtil;
+<i>37</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>38</i>&nbsp;import net.sf.jabref.preferences.JabRefPreferences;
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;/**
+<i>41</i>&nbsp; * @author alver
+<i>42</i>&nbsp; */
+<i>43</i>&nbsp;class FieldSetComponent extends JPanel {
+<i>44</i>&nbsp;
+<b class="nc"><i>45</i>&nbsp;    private final Set&lt;ActionListener&gt; additionListeners = new HashSet&lt;&gt;();</b>
+<i>46</i>&nbsp;    protected final JList&lt;String&gt; list;
+<i>47</i>&nbsp;    private final JScrollPane sp;
+<i>48</i>&nbsp;    protected DefaultListModel&lt;String&gt; listModel;
+<i>49</i>&nbsp;    private JComboBox&lt;String&gt; sel;
+<i>50</i>&nbsp;    private JTextField input;
+<i>51</i>&nbsp;    private final JButton add;
+<i>52</i>&nbsp;    protected final JButton remove;
+<i>53</i>&nbsp;    private JButton up;
+<i>54</i>&nbsp;    private JButton down;
+<b class="nc"><i>55</i>&nbsp;    protected final GridBagLayout gbl = new GridBagLayout();</b>
+<b class="nc"><i>56</i>&nbsp;    protected final GridBagConstraints con = new GridBagConstraints();</b>
+<i>57</i>&nbsp;    protected final boolean forceLowerCase;
+<i>58</i>&nbsp;    protected boolean changesMade;
+<b class="nc"><i>59</i>&nbsp;    private final Set&lt;ListDataListener&gt; modelListeners = new HashSet&lt;&gt;();</b>
+<i>60</i>&nbsp;
+<i>61</i>&nbsp;
+<i>62</i>&nbsp;    /**
+<i>63</i>&nbsp;     * Creates a new instance of FieldSetComponent, with preset selection
+<i>64</i>&nbsp;     * values. These are put into a JComboBox.
+<i>65</i>&nbsp;     */
+<i>66</i>&nbsp;    public FieldSetComponent(String title, List&lt;String&gt; fields, List&lt;String&gt; preset, boolean arrows, boolean forceLowerCase) {
+<b class="nc"><i>67</i>&nbsp;        this(title, fields, preset, Localization.lang(&quot;Add&quot;),</b>
+<b class="nc"><i>68</i>&nbsp;                Localization.lang(&quot;Remove&quot;), arrows, forceLowerCase);</b>
+<b class="nc"><i>69</i>&nbsp;    }</b>
+<i>70</i>&nbsp;
+<i>71</i>&nbsp;    /**
+<i>72</i>&nbsp;     * Creates a new instance of FieldSetComponent without preset selection
+<i>73</i>&nbsp;     * values. Replaces the JComboBox with a JTextField.
+<i>74</i>&nbsp;     */
+<i>75</i>&nbsp;    FieldSetComponent(String title, List&lt;String&gt; fields, boolean arrows, boolean forceLowerCase) {
+<b class="nc"><i>76</i>&nbsp;        this(title, fields, null, Localization.lang(&quot;Add&quot;),</b>
+<b class="nc"><i>77</i>&nbsp;                Localization.lang(&quot;Remove&quot;), arrows, forceLowerCase);</b>
+<b class="nc"><i>78</i>&nbsp;    }</b>
+<i>79</i>&nbsp;
+<i>80</i>&nbsp;    private FieldSetComponent(String title, List&lt;String&gt; fields, List&lt;String&gt; preset, String addText, String removeText,
+<b class="nc"><i>81</i>&nbsp;                              boolean arrows, boolean forceLowerCase) {</b>
+<b class="nc"><i>82</i>&nbsp;        this.forceLowerCase = forceLowerCase;</b>
+<b class="nc"><i>83</i>&nbsp;        add = new JButton(addText);</b>
+<b class="nc"><i>84</i>&nbsp;        remove = new JButton(removeText);</b>
+<b class="nc"><i>85</i>&nbsp;        listModel = new DefaultListModel&lt;&gt;();</b>
+<b class="nc"><i>86</i>&nbsp;        JLabel title1 = null;</b>
+<b class="nc"><i>87</i>&nbsp;        if (title != null) {</b>
+<b class="nc"><i>88</i>&nbsp;            title1 = new JLabel(title);</b>
+<i>89</i>&nbsp;        }
+<i>90</i>&nbsp;
+<b class="nc"><i>91</i>&nbsp;        for (String field : fields) {</b>
+<b class="nc"><i>92</i>&nbsp;            listModel.addElement(field);</b>
+<b class="nc"><i>93</i>&nbsp;        }</b>
+<b class="nc"><i>94</i>&nbsp;        list = new JList&lt;&gt;(listModel);</b>
+<b class="nc"><i>95</i>&nbsp;        list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);</b>
+<i>96</i>&nbsp;        // Set up GUI:
+<b class="nc"><i>97</i>&nbsp;        add.addActionListener(e -&gt; {</b>
+<i>98</i>&nbsp;            // Selection has been made, or add button pressed:
+<b class="nc"><i>99</i>&nbsp;            if ((sel != null) &amp;&amp; (sel.getSelectedItem() != null)) {</b>
+<b class="nc"><i>100</i>&nbsp;                String s = sel.getSelectedItem().toString();</b>
+<b class="nc"><i>101</i>&nbsp;                addField(s);</b>
+<b class="nc"><i>102</i>&nbsp;            } else if ((input != null) &amp;&amp; !&quot;&quot;.equals(input.getText())) {</b>
+<b class="nc"><i>103</i>&nbsp;                addField(input.getText());</b>
+<i>104</i>&nbsp;            }
+<b class="nc"><i>105</i>&nbsp;        });</b>
+<b class="nc"><i>106</i>&nbsp;        remove.addActionListener(e -&gt; removeSelected()); // Remove button pressed</b>
+<i>107</i>&nbsp;
+<b class="nc"><i>108</i>&nbsp;        setLayout(gbl);</b>
+<b class="nc"><i>109</i>&nbsp;        con.insets = new Insets(1, 1, 1, 1);</b>
+<b class="nc"><i>110</i>&nbsp;        con.fill = GridBagConstraints.BOTH;</b>
+<b class="nc"><i>111</i>&nbsp;        con.weightx = 1;</b>
+<b class="nc"><i>112</i>&nbsp;        con.gridwidth = GridBagConstraints.REMAINDER;</b>
+<b class="nc"><i>113</i>&nbsp;        if (title1 != null) {</b>
+<b class="nc"><i>114</i>&nbsp;            gbl.setConstraints(title1, con);</b>
+<b class="nc"><i>115</i>&nbsp;            add(title1);</b>
+<i>116</i>&nbsp;        }
+<i>117</i>&nbsp;
+<b class="nc"><i>118</i>&nbsp;        con.weighty = 1;</b>
+<b class="nc"><i>119</i>&nbsp;        sp = new JScrollPane(list, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,</b>
+<i>120</i>&nbsp;                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+<b class="nc"><i>121</i>&nbsp;        gbl.setConstraints(sp, con);</b>
+<b class="nc"><i>122</i>&nbsp;        add(sp);</b>
+<b class="nc"><i>123</i>&nbsp;        con.weighty = 0;</b>
+<b class="nc"><i>124</i>&nbsp;        con.gridwidth = 1;</b>
+<b class="nc"><i>125</i>&nbsp;        if (arrows) {</b>
+<b class="nc"><i>126</i>&nbsp;            con.weightx = 0;</b>
+<b class="nc"><i>127</i>&nbsp;            up = new JButton(IconTheme.JabRefIcon.UP.getSmallIcon());</b>
+<b class="nc"><i>128</i>&nbsp;            down = new JButton(IconTheme.JabRefIcon.DOWN.getSmallIcon());</b>
+<b class="nc"><i>129</i>&nbsp;            up.addActionListener(e -&gt; move(-1));</b>
+<b class="nc"><i>130</i>&nbsp;            down.addActionListener(e -&gt; move(1));</b>
+<b class="nc"><i>131</i>&nbsp;            up.setToolTipText(Localization.lang(&quot;Move up&quot;));</b>
+<b class="nc"><i>132</i>&nbsp;            down.setToolTipText(Localization.lang(&quot;Move down&quot;));</b>
+<b class="nc"><i>133</i>&nbsp;            gbl.setConstraints(up, con);</b>
+<b class="nc"><i>134</i>&nbsp;            add(up);</b>
+<b class="nc"><i>135</i>&nbsp;            gbl.setConstraints(down, con);</b>
+<b class="nc"><i>136</i>&nbsp;            add(down);</b>
+<b class="nc"><i>137</i>&nbsp;            con.weightx = 0;</b>
+<i>138</i>&nbsp;        }
+<i>139</i>&nbsp;
+<b class="nc"><i>140</i>&nbsp;        Component strut = Box.createHorizontalStrut(5);</b>
+<b class="nc"><i>141</i>&nbsp;        gbl.setConstraints(strut, con);</b>
+<b class="nc"><i>142</i>&nbsp;        add(strut);</b>
+<i>143</i>&nbsp;
+<b class="nc"><i>144</i>&nbsp;        con.weightx = 1;</b>
+<b class="nc"><i>145</i>&nbsp;        con.gridwidth = GridBagConstraints.REMAINDER;</b>
+<i>146</i>&nbsp;
+<i>147</i>&nbsp;        //Component b = Box.createHorizontalGlue();
+<i>148</i>&nbsp;        //gbl.setConstraints(b, con);
+<i>149</i>&nbsp;        //add(b);
+<i>150</i>&nbsp;
+<i>151</i>&nbsp;        //if (!arrows)
+<b class="nc"><i>152</i>&nbsp;        con.gridwidth = GridBagConstraints.REMAINDER;</b>
+<b class="nc"><i>153</i>&nbsp;        gbl.setConstraints(remove, con);</b>
+<b class="nc"><i>154</i>&nbsp;        add(remove);</b>
+<i>155</i>&nbsp;
+<b class="nc"><i>156</i>&nbsp;        con.gridwidth = 3;</b>
+<b class="nc"><i>157</i>&nbsp;        con.weightx = 1;</b>
+<b class="nc"><i>158</i>&nbsp;        if (preset == null) {</b>
+<b class="nc"><i>159</i>&nbsp;            input = new JTextField(20);</b>
+<b class="nc"><i>160</i>&nbsp;            input.addActionListener(e -&gt; addField(input.getText()));</b>
+<b class="nc"><i>161</i>&nbsp;            gbl.setConstraints(input, con);</b>
+<b class="nc"><i>162</i>&nbsp;            add(input);</b>
+<i>163</i>&nbsp;        } else {
+<b class="nc"><i>164</i>&nbsp;            sel = new JComboBox&lt;&gt;(preset.toArray(new String[preset.size()]));</b>
+<b class="nc"><i>165</i>&nbsp;            sel.setEditable(true);</b>
+<b class="nc"><i>166</i>&nbsp;            gbl.setConstraints(sel, con);</b>
+<b class="nc"><i>167</i>&nbsp;            add(sel);</b>
+<i>168</i>&nbsp;        }
+<b class="nc"><i>169</i>&nbsp;        con.gridwidth = GridBagConstraints.REMAINDER;</b>
+<b class="nc"><i>170</i>&nbsp;        con.weighty = 0;</b>
+<b class="nc"><i>171</i>&nbsp;        con.weightx = 0.5;</b>
+<b class="nc"><i>172</i>&nbsp;        con.gridwidth = 1;</b>
+<b class="nc"><i>173</i>&nbsp;        gbl.setConstraints(add, con);</b>
+<b class="nc"><i>174</i>&nbsp;        add(add);</b>
+<i>175</i>&nbsp;
+<b class="nc"><i>176</i>&nbsp;        FieldListFocusListener&lt;String&gt; fieldListFocusListener = new FieldListFocusListener&lt;&gt;(list);</b>
+<b class="nc"><i>177</i>&nbsp;        list.addFocusListener(fieldListFocusListener);</b>
+<b class="nc"><i>178</i>&nbsp;    }</b>
+<i>179</i>&nbsp;
+<i>180</i>&nbsp;    public void setListSelectionMode(int mode) {
+<b class="nc"><i>181</i>&nbsp;        list.setSelectionMode(mode);</b>
+<b class="nc"><i>182</i>&nbsp;    }</b>
+<i>183</i>&nbsp;
+<i>184</i>&nbsp;    public void selectField(String fieldName) {
+<b class="nc"><i>185</i>&nbsp;        int idx = listModel.indexOf(fieldName);</b>
+<b class="nc"><i>186</i>&nbsp;        if (idx &gt;= 0) {</b>
+<b class="nc"><i>187</i>&nbsp;            list.setSelectedIndex(idx);</b>
+<i>188</i>&nbsp;        }
+<i>189</i>&nbsp;
+<i>190</i>&nbsp;        // Make sure it is visible:
+<b class="nc"><i>191</i>&nbsp;        JViewport viewport = sp.getViewport();</b>
+<b class="nc"><i>192</i>&nbsp;        Rectangle rectangle = list.getCellBounds(idx, idx);</b>
+<b class="nc"><i>193</i>&nbsp;        if (rectangle != null) {</b>
+<b class="nc"><i>194</i>&nbsp;            viewport.scrollRectToVisible(rectangle);</b>
+<i>195</i>&nbsp;        }
+<i>196</i>&nbsp;
+<b class="nc"><i>197</i>&nbsp;    }</b>
+<i>198</i>&nbsp;
+<i>199</i>&nbsp;    public String getFirstSelected() {
+<b class="nc"><i>200</i>&nbsp;        return list.getSelectedValue();</b>
+<i>201</i>&nbsp;    }
+<i>202</i>&nbsp;
+<i>203</i>&nbsp;    @Override
+<i>204</i>&nbsp;    public void setEnabled(boolean en) {
+<b class="nc"><i>205</i>&nbsp;        if (input != null) {</b>
+<b class="nc"><i>206</i>&nbsp;            input.setEnabled(en);</b>
+<i>207</i>&nbsp;        }
+<b class="nc"><i>208</i>&nbsp;        if (sel != null) {</b>
+<b class="nc"><i>209</i>&nbsp;            sel.setEnabled(en);</b>
+<i>210</i>&nbsp;        }
+<b class="nc"><i>211</i>&nbsp;        if (up != null) {</b>
+<b class="nc"><i>212</i>&nbsp;            up.setEnabled(en);</b>
+<b class="nc"><i>213</i>&nbsp;            down.setEnabled(en);</b>
+<i>214</i>&nbsp;        }
+<b class="nc"><i>215</i>&nbsp;        add.setEnabled(en);</b>
+<b class="nc"><i>216</i>&nbsp;        remove.setEnabled(en);</b>
+<b class="nc"><i>217</i>&nbsp;    }</b>
+<i>218</i>&nbsp;
+<i>219</i>&nbsp;    public void setFields(List&lt;String&gt; fields) {
+<b class="nc"><i>220</i>&nbsp;        DefaultListModel&lt;String&gt; newListModel = new DefaultListModel&lt;&gt;();</b>
+<b class="nc"><i>221</i>&nbsp;        for (String field : fields) {</b>
+<b class="nc"><i>222</i>&nbsp;            newListModel.addElement(field);</b>
+<b class="nc"><i>223</i>&nbsp;        }</b>
+<b class="nc"><i>224</i>&nbsp;        this.listModel = newListModel;</b>
+<b class="nc"><i>225</i>&nbsp;        for (ListDataListener modelListener : modelListeners) {</b>
+<b class="nc"><i>226</i>&nbsp;            newListModel.addListDataListener(modelListener);</b>
+<b class="nc"><i>227</i>&nbsp;        }</b>
+<b class="nc"><i>228</i>&nbsp;        list.setModel(newListModel);</b>
+<b class="nc"><i>229</i>&nbsp;    }</b>
+<i>230</i>&nbsp;
+<i>231</i>&nbsp;    /**
+<i>232</i>&nbsp;     * This method is called when a new field should be added to the list. Performs validation of the
+<i>233</i>&nbsp;     * field.
+<i>234</i>&nbsp;     */
+<i>235</i>&nbsp;    protected void addField(String str) {
+<b class="nc"><i>236</i>&nbsp;        String s = str.trim();</b>
+<b class="nc"><i>237</i>&nbsp;        if (forceLowerCase) {</b>
+<b class="nc"><i>238</i>&nbsp;            s = s.toLowerCase();</b>
+<i>239</i>&nbsp;        }
+<b class="nc"><i>240</i>&nbsp;        if (&quot;&quot;.equals(s) || listModel.contains(s)) {</b>
+<b class="nc"><i>241</i>&nbsp;            return;</b>
+<i>242</i>&nbsp;        }
+<i>243</i>&nbsp;
+<b class="nc"><i>244</i>&nbsp;        String testString = BibtexKeyPatternUtil.checkLegalKey(s,</b>
+<b class="nc"><i>245</i>&nbsp;                Globals.prefs.getBoolean(JabRefPreferences.ENFORCE_LEGAL_BIBTEX_KEY));</b>
+<b class="nc"><i>246</i>&nbsp;        if (!testString.equals(s) || (s.indexOf(&#39;&amp;&#39;) &gt;= 0)) {</b>
+<i>247</i>&nbsp;            // Report error and exit.
+<b class="nc"><i>248</i>&nbsp;            JOptionPane.showMessageDialog(this, Localization.lang(&quot;Field names are not allowed to contain white space or the following &quot;</b>
+<i>249</i>&nbsp;                            + &quot;characters&quot;) + &quot;: # { } ~ , ^ &amp;&quot;,
+<b class="nc"><i>250</i>&nbsp;                    Localization.lang(&quot;Error&quot;), JOptionPane.ERROR_MESSAGE);</b>
+<i>251</i>&nbsp;
+<b class="nc"><i>252</i>&nbsp;            return;</b>
+<i>253</i>&nbsp;        }
+<b class="nc"><i>254</i>&nbsp;        addFieldUncritically(s);</b>
+<b class="nc"><i>255</i>&nbsp;    }</b>
+<i>256</i>&nbsp;
+<i>257</i>&nbsp;    /**
+<i>258</i>&nbsp;     * This method adds a new field to the list, without any regard to validation. This method can be
+<i>259</i>&nbsp;     * useful for classes that overrides addField(s) to provide different validation.
+<i>260</i>&nbsp;     */
+<i>261</i>&nbsp;    protected void addFieldUncritically(String s) {
+<b class="nc"><i>262</i>&nbsp;        listModel.addElement(s);</b>
+<b class="nc"><i>263</i>&nbsp;        changesMade = true;</b>
+<b class="nc"><i>264</i>&nbsp;        for (ActionListener additionListener : additionListeners) {</b>
+<b class="nc"><i>265</i>&nbsp;            additionListener.actionPerformed(new ActionEvent(this, 0, s));</b>
+<b class="nc"><i>266</i>&nbsp;        }</b>
+<i>267</i>&nbsp;
+<b class="nc"><i>268</i>&nbsp;    }</b>
+<i>269</i>&nbsp;
+<i>270</i>&nbsp;    protected void removeSelected() {
+<b class="nc"><i>271</i>&nbsp;        int[] selected = list.getSelectedIndices();</b>
+<b class="nc"><i>272</i>&nbsp;        if (selected.length &gt; 0) {</b>
+<b class="nc"><i>273</i>&nbsp;            changesMade = true;</b>
+<i>274</i>&nbsp;        }
+<b class="nc"><i>275</i>&nbsp;        for (int i = 0; i &lt; selected.length; i++) {</b>
+<b class="nc"><i>276</i>&nbsp;            listModel.removeElementAt(selected[selected.length - 1 - i]);</b>
+<i>277</i>&nbsp;        }
+<i>278</i>&nbsp;
+<b class="nc"><i>279</i>&nbsp;    }</b>
+<i>280</i>&nbsp;
+<i>281</i>&nbsp;    /**
+<i>282</i>&nbsp;     * Return the current list.
+<i>283</i>&nbsp;     */
+<i>284</i>&nbsp;    public List&lt;String&gt; getFields() {
+<b class="nc"><i>285</i>&nbsp;        List&lt;String&gt; res = new ArrayList&lt;&gt;(listModel.getSize());</b>
+<b class="nc"><i>286</i>&nbsp;        Enumeration&lt;String&gt; elements = listModel.elements();</b>
+<b class="nc"><i>287</i>&nbsp;        while (elements.hasMoreElements()) {</b>
+<b class="nc"><i>288</i>&nbsp;            res.add(elements.nextElement());</b>
+<i>289</i>&nbsp;        }
+<b class="nc"><i>290</i>&nbsp;        return res;</b>
+<i>291</i>&nbsp;    }
+<i>292</i>&nbsp;
+<i>293</i>&nbsp;    /**
+<i>294</i>&nbsp;     * Add a ListSelectionListener to the JList component displayed as part of this component.
+<i>295</i>&nbsp;     */
+<i>296</i>&nbsp;    public void addListSelectionListener(ListSelectionListener l) {
+<b class="nc"><i>297</i>&nbsp;        list.addListSelectionListener(l);</b>
+<b class="nc"><i>298</i>&nbsp;    }</b>
+<i>299</i>&nbsp;
+<i>300</i>&nbsp;    /**
+<i>301</i>&nbsp;     * Adds an ActionListener that will receive events each time a field is added. The ActionEvent
+<i>302</i>&nbsp;     * will specify this component as source, and the added field as action command.
+<i>303</i>&nbsp;     */
+<i>304</i>&nbsp;    public void addAdditionActionListener(ActionListener l) {
+<b class="nc"><i>305</i>&nbsp;        additionListeners.add(l);</b>
+<b class="nc"><i>306</i>&nbsp;    }</b>
+<i>307</i>&nbsp;
+<i>308</i>&nbsp;    public void addListDataListener(ListDataListener l) {
+<b class="nc"><i>309</i>&nbsp;        listModel.addListDataListener(l);</b>
+<b class="nc"><i>310</i>&nbsp;        modelListeners.add(l);</b>
+<b class="nc"><i>311</i>&nbsp;    }</b>
+<i>312</i>&nbsp;
+<i>313</i>&nbsp;    /**
+<i>314</i>&nbsp;     * If a field is selected in the list, move it dy positions.
+<i>315</i>&nbsp;     */
+<i>316</i>&nbsp;    private void move(int dy) {
+<b class="nc"><i>317</i>&nbsp;        int oldIdx = list.getSelectedIndex();</b>
+<b class="nc"><i>318</i>&nbsp;        if (oldIdx &lt; 0) {</b>
+<b class="nc"><i>319</i>&nbsp;            return;</b>
+<i>320</i>&nbsp;        }
+<b class="nc"><i>321</i>&nbsp;        String o = listModel.get(oldIdx);</b>
+<i>322</i>&nbsp;        // Compute the new index:
+<b class="nc"><i>323</i>&nbsp;        int newInd = Math.max(0, Math.min(listModel.size() - 1, oldIdx + dy));</b>
+<b class="nc"><i>324</i>&nbsp;        listModel.remove(oldIdx);</b>
+<b class="nc"><i>325</i>&nbsp;        listModel.add(newInd, o);</b>
+<b class="nc"><i>326</i>&nbsp;        list.setSelectedIndex(newInd);</b>
+<b class="nc"><i>327</i>&nbsp;    }</b>
+<i>328</i>&nbsp;
+<i>329</i>&nbsp;
+<i>330</i>&nbsp;    /**
+<i>331</i>&nbsp;     * FocusListener to select the first entry in the list of fields when they are focused
+<i>332</i>&nbsp;     */
+<i>333</i>&nbsp;    protected class FieldListFocusListener&lt;T&gt; implements FocusListener {
+<i>334</i>&nbsp;
+<i>335</i>&nbsp;        private final JList&lt;T&gt; list;
+<i>336</i>&nbsp;
+<b class="nc"><i>337</i>&nbsp;        public FieldListFocusListener(JList&lt;T&gt; list) {</b>
+<b class="nc"><i>338</i>&nbsp;            this.list = list;</b>
+<b class="nc"><i>339</i>&nbsp;        }</b>
+<i>340</i>&nbsp;
+<i>341</i>&nbsp;        @Override
+<i>342</i>&nbsp;        public void focusGained(FocusEvent e) {
+<b class="nc"><i>343</i>&nbsp;            if (list.getSelectedValue() == null) {</b>
+<b class="nc"><i>344</i>&nbsp;                list.setSelectedIndex(0);</b>
+<i>345</i>&nbsp;            }
+<b class="nc"><i>346</i>&nbsp;        }</b>
+<i>347</i>&nbsp;
+<i>348</i>&nbsp;        @Override
+<i>349</i>&nbsp;        public void focusLost(FocusEvent e) {
+<i>350</i>&nbsp;            //focus should remain at the same position so nothing to do here
+<b class="nc"><i>351</i>&nbsp;        }</b>
+<i>352</i>&nbsp;    }
+<i>353</i>&nbsp;
+<i>354</i>&nbsp;
+<i>355</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

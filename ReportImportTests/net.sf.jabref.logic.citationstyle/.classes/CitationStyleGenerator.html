@@ -1,0 +1,183 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: CitationStyleGenerator</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.citationstyle</a> ]
+</div>
+
+<h1>Coverage Summary for Class: CitationStyleGenerator (net.sf.jabref.logic.citationstyle)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CitationStyleGenerator</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 30)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.citationstyle;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.IOException;
+<i>4</i>&nbsp;import java.util.Arrays;
+<i>5</i>&nbsp;import java.util.Collections;
+<i>6</i>&nbsp;import java.util.List;
+<i>7</i>&nbsp;import java.util.Optional;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>10</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;import de.undercouch.citeproc.CSL;
+<i>13</i>&nbsp;import de.undercouch.citeproc.bibtex.BibTeXConverter;
+<i>14</i>&nbsp;import de.undercouch.citeproc.csl.CSLItemData;
+<i>15</i>&nbsp;import de.undercouch.citeproc.output.Bibliography;
+<i>16</i>&nbsp;import org.apache.commons.logging.Log;
+<i>17</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>18</i>&nbsp;import org.jbibtex.BibTeXEntry;
+<i>19</i>&nbsp;import org.jbibtex.DigitStringValue;
+<i>20</i>&nbsp;import org.jbibtex.Key;
+<i>21</i>&nbsp;import org.jbibtex.TokenMgrException;
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;/**
+<i>25</i>&nbsp; * WARNING: the citation is generated using JavaScript which may take some time, better call it from outside the main Thread
+<i>26</i>&nbsp; */
+<b class="nc"><i>27</i>&nbsp;public class CitationStyleGenerator {</b>
+<i>28</i>&nbsp;
+<b class="nc"><i>29</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(CitationStyleGenerator.class);</b>
+<b class="nc"><i>30</i>&nbsp;    private static final BibTeXConverter BIBTEX_CONVERTER = new BibTeXConverter();</b>
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;    /**
+<i>33</i>&nbsp;     * WARNING: the citation is generated using JavaScript which may take some time, better call it from outside the main Thread
+<i>34</i>&nbsp;     * Generates a Citation based on the given entry and style
+<i>35</i>&nbsp;     */
+<i>36</i>&nbsp;    protected static String generateCitation(BibEntry entry, CitationStyle style) {
+<b class="nc"><i>37</i>&nbsp;        return generateCitation(entry, style.getSource(), CitationStyleOutputFormat.HTML);</b>
+<i>38</i>&nbsp;    }
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;    /**
+<i>41</i>&nbsp;     * WARNING: the citation is generated using JavaScript which may take some time, better call it from outside the main Thread
+<i>42</i>&nbsp;     * Generates a Citation based on the given entry and style
+<i>43</i>&nbsp;     */
+<i>44</i>&nbsp;    protected static String generateCitation(BibEntry entry, String style) {
+<b class="nc"><i>45</i>&nbsp;        return generateCitation(entry, style, CitationStyleOutputFormat.HTML);</b>
+<i>46</i>&nbsp;    }
+<i>47</i>&nbsp;
+<i>48</i>&nbsp;    /**
+<i>49</i>&nbsp;     * WARNING: the citation is generated using JavaScript which may take some time, better call it from outside the main Thread
+<i>50</i>&nbsp;     * Generates a Citation based on the given entry, style, and output format
+<i>51</i>&nbsp;     */
+<i>52</i>&nbsp;    protected static String generateCitation(BibEntry entry, String style, CitationStyleOutputFormat outputFormat) {
+<b class="nc"><i>53</i>&nbsp;        return generateCitations(Collections.singletonList(entry), style, outputFormat).get(0);</b>
+<i>54</i>&nbsp;    }
+<i>55</i>&nbsp;
+<i>56</i>&nbsp;    /**
+<i>57</i>&nbsp;     * WARNING: the citation is generated using JavaScript which may take some time, better call it from outside the main Thread
+<i>58</i>&nbsp;     * Generates the citation for multiple entries at once. This is useful when the Citation Style has an increasing number
+<i>59</i>&nbsp;     */
+<i>60</i>&nbsp;    public static List&lt;String&gt; generateCitations(List&lt;BibEntry&gt; bibEntries, String style, CitationStyleOutputFormat outputFormat) {
+<i>61</i>&nbsp;        try {
+<b class="nc"><i>62</i>&nbsp;            CSLItemData[] cslItemData = new CSLItemData[bibEntries.size()];</b>
+<b class="nc"><i>63</i>&nbsp;            for (int i = 0; i &lt; bibEntries.size(); i++) {</b>
+<b class="nc"><i>64</i>&nbsp;                cslItemData[i] = bibEntryToCSLItemData(bibEntries.get(i));</b>
+<i>65</i>&nbsp;            }
+<b class="nc"><i>66</i>&nbsp;            Bibliography bibliography = CSL.makeAdhocBibliography(style, outputFormat.getFormat(), cslItemData);</b>
+<b class="nc"><i>67</i>&nbsp;            return Arrays.asList(bibliography.getEntries());</b>
+<i>68</i>&nbsp;
+<b class="nc"><i>69</i>&nbsp;        } catch (IOException | ArrayIndexOutOfBoundsException e) {</b>
+<b class="nc"><i>70</i>&nbsp;            LOGGER.error(&quot;Could not generate BibEntry citation&quot;, e);</b>
+<b class="nc"><i>71</i>&nbsp;            return Collections.singletonList(Localization.lang(&quot;Cannot generate preview based on selected citation style.&quot;));</b>
+<b class="nc"><i>72</i>&nbsp;        } catch (TokenMgrException e) {</b>
+<b class="nc"><i>73</i>&nbsp;            LOGGER.error(&quot;Bad character inside BibEntry&quot;, e);</b>
+<i>74</i>&nbsp;            // sadly one cannot easily retrieve the bad char from the TokenMgrError
+<b class="nc"><i>75</i>&nbsp;            return Collections.singletonList(new StringBuilder()</b>
+<b class="nc"><i>76</i>&nbsp;                    .append(Localization.lang(&quot;Cannot generate preview based on selected citation style.&quot;))</b>
+<b class="nc"><i>77</i>&nbsp;                    .append(outputFormat.getLineSeparator())</b>
+<b class="nc"><i>78</i>&nbsp;                    .append(Localization.lang(&quot;Bad character inside entry&quot;))</b>
+<b class="nc"><i>79</i>&nbsp;                    .append(outputFormat.getLineSeparator())</b>
+<b class="nc"><i>80</i>&nbsp;                    .append(e.getLocalizedMessage())</b>
+<b class="nc"><i>81</i>&nbsp;                    .toString());</b>
+<i>82</i>&nbsp;        }
+<i>83</i>&nbsp;    }
+<i>84</i>&nbsp;
+<i>85</i>&nbsp;    /**
+<i>86</i>&nbsp;     * Converts the {@link BibEntry} into {@link CSLItemData}.
+<i>87</i>&nbsp;     */
+<i>88</i>&nbsp;    private static CSLItemData bibEntryToCSLItemData(BibEntry bibEntry) {
+<b class="nc"><i>89</i>&nbsp;        String citeKey = bibEntry.getCiteKeyOptional().orElse(&quot;&quot;);</b>
+<b class="nc"><i>90</i>&nbsp;        BibTeXEntry bibTeXEntry = new BibTeXEntry(new Key(bibEntry.getType()), new Key(citeKey));</b>
+<i>91</i>&nbsp;
+<i>92</i>&nbsp;        // Not every field is already generated into latex free fields
+<b class="nc"><i>93</i>&nbsp;        for (String key : bibEntry.getFieldMap().keySet()) {</b>
+<b class="nc"><i>94</i>&nbsp;            Optional&lt;String&gt; latexFreeField = bibEntry.getLatexFreeField(key);</b>
+<b class="nc"><i>95</i>&nbsp;            latexFreeField.ifPresent(value -&gt; bibTeXEntry.addField(new Key(key), new DigitStringValue(value)));</b>
+<b class="nc"><i>96</i>&nbsp;        }</b>
+<b class="nc"><i>97</i>&nbsp;        return BIBTEX_CONVERTER.toItemData(bibTeXEntry);</b>
+<i>98</i>&nbsp;    }
+<i>99</i>&nbsp;
+<i>100</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

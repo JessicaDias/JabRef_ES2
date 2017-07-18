@@ -1,0 +1,271 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: BibEntryWriter</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.bibtex</a> ]
+</div>
+
+<h1>Coverage Summary for Class: BibEntryWriter (net.sf.jabref.logic.bibtex)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">BibEntryWriter</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 73)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.bibtex;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.IOException;
+<i>4</i>&nbsp;import java.io.Writer;
+<i>5</i>&nbsp;import java.util.HashSet;
+<i>6</i>&nbsp;import java.util.List;
+<i>7</i>&nbsp;import java.util.Optional;
+<i>8</i>&nbsp;import java.util.Set;
+<i>9</i>&nbsp;import java.util.TreeSet;
+<i>10</i>&nbsp;import java.util.function.Predicate;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;import net.sf.jabref.logic.TypedBibEntry;
+<i>13</i>&nbsp;import net.sf.jabref.logic.util.OS;
+<i>14</i>&nbsp;import net.sf.jabref.model.EntryTypes;
+<i>15</i>&nbsp;import net.sf.jabref.model.database.BibDatabaseMode;
+<i>16</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>17</i>&nbsp;import net.sf.jabref.model.entry.EntryType;
+<i>18</i>&nbsp;import net.sf.jabref.model.entry.InternalBibtexFields;
+<i>19</i>&nbsp;import net.sf.jabref.model.strings.StringUtil;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;public class BibEntryWriter {
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;    private final LatexFieldFormatter fieldFormatter;
+<i>24</i>&nbsp;    private final boolean write;
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;
+<b class="nc"><i>27</i>&nbsp;    public BibEntryWriter(LatexFieldFormatter fieldFormatter, boolean write) {</b>
+<b class="nc"><i>28</i>&nbsp;        this.fieldFormatter = fieldFormatter;</b>
+<b class="nc"><i>29</i>&nbsp;        this.write = write;</b>
+<b class="nc"><i>30</i>&nbsp;    }</b>
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;    public void write(BibEntry entry, Writer out, BibDatabaseMode bibDatabaseMode) throws IOException {
+<b class="nc"><i>33</i>&nbsp;        write(entry, out, bibDatabaseMode, false);</b>
+<b class="nc"><i>34</i>&nbsp;    }</b>
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;    /**
+<i>37</i>&nbsp;     * Writes the given BibEntry using the given writer
+<i>38</i>&nbsp;     *
+<i>39</i>&nbsp;     * @param entry           The entry to write
+<i>40</i>&nbsp;     * @param out             The writer to use
+<i>41</i>&nbsp;     * @param bibDatabaseMode The database mode (bibtex or biblatex)
+<i>42</i>&nbsp;     * @param reformat        Should the entry be in any case, even if no change occurred?
+<i>43</i>&nbsp;     */
+<i>44</i>&nbsp;    public void write(BibEntry entry, Writer out, BibDatabaseMode bibDatabaseMode, Boolean reformat) throws IOException {
+<i>45</i>&nbsp;        // if the entry has not been modified, write it as it was
+<b class="nc"><i>46</i>&nbsp;        if (!reformat &amp;&amp; !entry.hasChanged()) {</b>
+<b class="nc"><i>47</i>&nbsp;            out.write(entry.getParsedSerialization());</b>
+<b class="nc"><i>48</i>&nbsp;            return;</b>
+<i>49</i>&nbsp;        }
+<i>50</i>&nbsp;
+<b class="nc"><i>51</i>&nbsp;        writeUserComments(entry, out);</b>
+<b class="nc"><i>52</i>&nbsp;        out.write(OS.NEWLINE);</b>
+<b class="nc"><i>53</i>&nbsp;        writeRequiredFieldsFirstRemainingFieldsSecond(entry, out, bibDatabaseMode);</b>
+<b class="nc"><i>54</i>&nbsp;        out.write(OS.NEWLINE);</b>
+<b class="nc"><i>55</i>&nbsp;    }</b>
+<i>56</i>&nbsp;
+<i>57</i>&nbsp;    private void writeUserComments(BibEntry entry, Writer out) throws IOException {
+<b class="nc"><i>58</i>&nbsp;        String userComments = entry.getUserComments();</b>
+<i>59</i>&nbsp;
+<b class="nc"><i>60</i>&nbsp;        if(!userComments.isEmpty()) {</b>
+<b class="nc"><i>61</i>&nbsp;            out.write(userComments + OS.NEWLINE);</b>
+<i>62</i>&nbsp;        }
+<b class="nc"><i>63</i>&nbsp;    }</b>
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;    public void writeWithoutPrependedNewlines(BibEntry entry, Writer out, BibDatabaseMode bibDatabaseMode) throws IOException {
+<i>66</i>&nbsp;        // if the entry has not been modified, write it as it was
+<b class="nc"><i>67</i>&nbsp;        if (!entry.hasChanged()) {</b>
+<b class="nc"><i>68</i>&nbsp;            out.write(entry.getParsedSerialization().trim());</b>
+<b class="nc"><i>69</i>&nbsp;            return;</b>
+<i>70</i>&nbsp;        }
+<i>71</i>&nbsp;
+<b class="nc"><i>72</i>&nbsp;        writeRequiredFieldsFirstRemainingFieldsSecond(entry, out, bibDatabaseMode);</b>
+<b class="nc"><i>73</i>&nbsp;    }</b>
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;    /**
+<i>76</i>&nbsp;     * Write fields in the order of requiredFields, optionalFields and other fields, but does not sort the fields.
+<i>77</i>&nbsp;     *
+<i>78</i>&nbsp;     * @param entry
+<i>79</i>&nbsp;     * @param out
+<i>80</i>&nbsp;     * @throws IOException
+<i>81</i>&nbsp;     */
+<i>82</i>&nbsp;    private void writeRequiredFieldsFirstRemainingFieldsSecond(BibEntry entry, Writer out,
+<i>83</i>&nbsp;                                                               BibDatabaseMode bibDatabaseMode) throws IOException {
+<i>84</i>&nbsp;        // Write header with type and bibtex-key.
+<b class="nc"><i>85</i>&nbsp;        TypedBibEntry typedEntry = new TypedBibEntry(entry, bibDatabaseMode);</b>
+<b class="nc"><i>86</i>&nbsp;        out.write(&#39;@&#39; + typedEntry.getTypeForDisplay() + &#39;{&#39;);</b>
+<i>87</i>&nbsp;
+<b class="nc"><i>88</i>&nbsp;        writeKeyField(entry, out);</b>
+<i>89</i>&nbsp;
+<b class="nc"><i>90</i>&nbsp;        Set&lt;String&gt; written = new HashSet&lt;&gt;();</b>
+<b class="nc"><i>91</i>&nbsp;        written.add(BibEntry.KEY_FIELD);</b>
+<b class="nc"><i>92</i>&nbsp;        int indentation = getLengthOfLongestFieldName(entry);</b>
+<i>93</i>&nbsp;
+<b class="nc"><i>94</i>&nbsp;        EntryType type = EntryTypes.getTypeOrDefault(entry.getType(), bibDatabaseMode);</b>
+<i>95</i>&nbsp;
+<i>96</i>&nbsp;        // Write required fields first.
+<b class="nc"><i>97</i>&nbsp;        List&lt;String&gt; fields = type.getRequiredFieldsFlat();</b>
+<b class="nc"><i>98</i>&nbsp;        if (fields != null) {</b>
+<b class="nc"><i>99</i>&nbsp;            for (String value : fields) {</b>
+<b class="nc"><i>100</i>&nbsp;                writeField(entry, out, value, indentation);</b>
+<b class="nc"><i>101</i>&nbsp;                written.add(value);</b>
+<b class="nc"><i>102</i>&nbsp;            }</b>
+<i>103</i>&nbsp;        }
+<i>104</i>&nbsp;        // Then optional fields.
+<b class="nc"><i>105</i>&nbsp;        fields = type.getOptionalFields();</b>
+<b class="nc"><i>106</i>&nbsp;        if (fields != null) {</b>
+<b class="nc"><i>107</i>&nbsp;            for (String value : fields) {</b>
+<b class="nc"><i>108</i>&nbsp;                if (!written.contains(value)) { // If field appears both in req. and opt. don&#39;t repeat.</b>
+<b class="nc"><i>109</i>&nbsp;                    writeField(entry, out, value, indentation);</b>
+<b class="nc"><i>110</i>&nbsp;                    written.add(value);</b>
+<i>111</i>&nbsp;                }
+<b class="nc"><i>112</i>&nbsp;            }</b>
+<i>113</i>&nbsp;        }
+<i>114</i>&nbsp;        // Then write remaining fields in alphabetic order.
+<b class="nc"><i>115</i>&nbsp;        Set&lt;String&gt; remainingFields = new TreeSet&lt;&gt;();</b>
+<b class="nc"><i>116</i>&nbsp;        for (String key : entry.getFieldNames()) {</b>
+<b class="nc"><i>117</i>&nbsp;            boolean writeIt = write ? InternalBibtexFields.isWriteableField(key) :</b>
+<b class="nc"><i>118</i>&nbsp;                    InternalBibtexFields.isDisplayableField(key);</b>
+<b class="nc"><i>119</i>&nbsp;            if (!written.contains(key) &amp;&amp; writeIt) {</b>
+<b class="nc"><i>120</i>&nbsp;                remainingFields.add(key);</b>
+<i>121</i>&nbsp;            }
+<b class="nc"><i>122</i>&nbsp;        }</b>
+<b class="nc"><i>123</i>&nbsp;        for (String field : remainingFields) {</b>
+<b class="nc"><i>124</i>&nbsp;            writeField(entry, out, field, indentation);</b>
+<b class="nc"><i>125</i>&nbsp;        }</b>
+<i>126</i>&nbsp;
+<i>127</i>&nbsp;        // Finally, end the entry.
+<b class="nc"><i>128</i>&nbsp;        out.write(&#39;}&#39;);</b>
+<b class="nc"><i>129</i>&nbsp;    }</b>
+<i>130</i>&nbsp;
+<i>131</i>&nbsp;    private void writeKeyField(BibEntry entry, Writer out) throws IOException {
+<b class="nc"><i>132</i>&nbsp;        String keyField = StringUtil.shaveString(entry.getCiteKeyOptional().orElse(&quot;&quot;));</b>
+<b class="nc"><i>133</i>&nbsp;        out.write(keyField + &#39;,&#39; + OS.NEWLINE);</b>
+<b class="nc"><i>134</i>&nbsp;    }</b>
+<i>135</i>&nbsp;
+<i>136</i>&nbsp;    /**
+<i>137</i>&nbsp;     * Write a single field, if it has any content.
+<i>138</i>&nbsp;     *
+<i>139</i>&nbsp;     * @param entry the entry to write
+<i>140</i>&nbsp;     * @param out   the target of the write
+<i>141</i>&nbsp;     * @param name  The field name
+<i>142</i>&nbsp;     * @throws IOException In case of an IO error
+<i>143</i>&nbsp;     */
+<i>144</i>&nbsp;    private void writeField(BibEntry entry, Writer out, String name, int indentation) throws IOException {
+<b class="nc"><i>145</i>&nbsp;        Optional&lt;String&gt; field = entry.getField(name);</b>
+<i>146</i>&nbsp;        // only write field if is is not empty
+<i>147</i>&nbsp;        // field.ifPresent does not work as an IOException may be thrown
+<b class="nc"><i>148</i>&nbsp;        if (field.isPresent() &amp;&amp; !field.get().trim().isEmpty()) {</b>
+<b class="nc"><i>149</i>&nbsp;            out.write(&quot;  &quot; + getFieldDisplayName(name, indentation));</b>
+<i>150</i>&nbsp;
+<i>151</i>&nbsp;            try {
+<b class="nc"><i>152</i>&nbsp;                out.write(fieldFormatter.format(field.get(), name));</b>
+<b class="nc"><i>153</i>&nbsp;                out.write(&#39;,&#39; + OS.NEWLINE);</b>
+<b class="nc"><i>154</i>&nbsp;            } catch (IOException ex) {</b>
+<b class="nc"><i>155</i>&nbsp;                throw new IOException(&quot;Error in field &#39;&quot; + name + &quot;&#39;: &quot; + ex.getMessage());</b>
+<b class="nc"><i>156</i>&nbsp;            }</b>
+<i>157</i>&nbsp;        }
+<b class="nc"><i>158</i>&nbsp;    }</b>
+<i>159</i>&nbsp;
+<i>160</i>&nbsp;    private int getLengthOfLongestFieldName(BibEntry entry) {
+<b class="nc"><i>161</i>&nbsp;        Predicate&lt;String&gt; isNotBibtexKey = field -&gt; !BibEntry.KEY_FIELD.equals(field);</b>
+<b class="nc"><i>162</i>&nbsp;        return entry.getFieldNames().stream().filter(isNotBibtexKey).mapToInt(String::length).max().orElse(0);</b>
+<i>163</i>&nbsp;    }
+<i>164</i>&nbsp;
+<i>165</i>&nbsp;    /**
+<i>166</i>&nbsp;     * Get display version of a entry field.
+<i>167</i>&nbsp;     * &lt;p&gt;
+<i>168</i>&nbsp;     * BibTeX is case-insensitive therefore there is no difference between:
+<i>169</i>&nbsp;     * howpublished, HOWPUBLISHED, HowPublished, etc.
+<i>170</i>&nbsp;     * &lt;p&gt;
+<i>171</i>&nbsp;     * The was a long discussion about how JabRef should write the fields.
+<i>172</i>&nbsp;     * See https://github.com/JabRef/jabref/issues/116
+<i>173</i>&nbsp;     * &lt;p&gt;
+<i>174</i>&nbsp;     * The team decided to do the biblatex way and use lower case for the field names.
+<i>175</i>&nbsp;     *
+<i>176</i>&nbsp;     * @param field The name of the field.
+<i>177</i>&nbsp;     * @return The display version of the field name.
+<i>178</i>&nbsp;     */
+<i>179</i>&nbsp;    private String getFieldDisplayName(String field, int intendation) {
+<b class="nc"><i>180</i>&nbsp;        String actualField = field;</b>
+<b class="nc"><i>181</i>&nbsp;        if (actualField.isEmpty()) {</b>
+<i>182</i>&nbsp;            // hard coded &quot;UNKNOWN&quot; is assigned to a field without any name
+<b class="nc"><i>183</i>&nbsp;            actualField = &quot;UNKNOWN&quot;;</b>
+<i>184</i>&nbsp;        }
+<i>185</i>&nbsp;
+<b class="nc"><i>186</i>&nbsp;        return actualField.toLowerCase() + StringUtil.repeatSpaces(intendation - actualField.length()) + &quot; = &quot;;</b>
+<i>187</i>&nbsp;    }
+<i>188</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

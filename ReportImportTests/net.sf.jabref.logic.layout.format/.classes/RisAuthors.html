@@ -1,0 +1,117 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: RisAuthors</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.layout.format</a> ]
+</div>
+
+<h1>Coverage Summary for Class: RisAuthors (net.sf.jabref.logic.layout.format)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">RisAuthors</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 15)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.layout.format;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import net.sf.jabref.logic.layout.ParamLayoutFormatter;
+<i>4</i>&nbsp;import net.sf.jabref.logic.util.OS;
+<i>5</i>&nbsp;import net.sf.jabref.model.entry.AuthorList;
+<i>6</i>&nbsp;
+<b class="nc"><i>7</i>&nbsp;public class RisAuthors implements ParamLayoutFormatter {</b>
+<i>8</i>&nbsp;
+<b class="nc"><i>9</i>&nbsp;    private String arg = &quot;&quot;;</b>
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;    @Override
+<i>13</i>&nbsp;    public String format(String s) {
+<b class="nc"><i>14</i>&nbsp;        if (s == null) {</b>
+<b class="nc"><i>15</i>&nbsp;            return &quot;&quot;;</b>
+<i>16</i>&nbsp;        }
+<b class="nc"><i>17</i>&nbsp;        StringBuilder sb = new StringBuilder();</b>
+<b class="nc"><i>18</i>&nbsp;        String[] authors = AuthorList.fixAuthorLastNameFirst(s).split(&quot; and &quot;);</b>
+<b class="nc"><i>19</i>&nbsp;        for (int i = 0; i &lt; authors.length; i++) {</b>
+<b class="nc"><i>20</i>&nbsp;            sb.append(arg);</b>
+<b class="nc"><i>21</i>&nbsp;            sb.append(&quot;  - &quot;);</b>
+<b class="nc"><i>22</i>&nbsp;            sb.append(authors[i]);</b>
+<b class="nc"><i>23</i>&nbsp;            if (i &lt; authors.length - 1) {</b>
+<b class="nc"><i>24</i>&nbsp;                sb.append(OS.NEWLINE);</b>
+<i>25</i>&nbsp;            }
+<i>26</i>&nbsp;        }
+<b class="nc"><i>27</i>&nbsp;        return sb.toString();</b>
+<i>28</i>&nbsp;    }
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;    @Override
+<i>31</i>&nbsp;    public void setArgument(String arg) {
+<b class="nc"><i>32</i>&nbsp;        this.arg = arg;</b>
+<b class="nc"><i>33</i>&nbsp;    }</b>
+<i>34</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

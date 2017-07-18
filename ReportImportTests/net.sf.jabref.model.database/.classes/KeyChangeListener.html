@@ -1,0 +1,170 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: KeyChangeListener</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.model.database</a> ]
+</div>
+
+<h1>Coverage Summary for Class: KeyChangeListener (net.sf.jabref.model.database)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">KeyChangeListener</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    12.5%
+  </span>
+  <span class="absValue">
+    (1/ 8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    23.1%
+  </span>
+  <span class="absValue">
+    (9/ 39)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.model.database;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.ArrayList;
+<i>4</i>&nbsp;import java.util.Arrays;
+<i>5</i>&nbsp;import java.util.List;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import net.sf.jabref.model.database.event.EntryRemovedEvent;
+<i>8</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>9</i>&nbsp;import net.sf.jabref.model.entry.FieldProperty;
+<i>10</i>&nbsp;import net.sf.jabref.model.entry.InternalBibtexFields;
+<i>11</i>&nbsp;import net.sf.jabref.model.entry.event.FieldChangedEvent;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;import com.google.common.eventbus.Subscribe;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;public class KeyChangeListener {
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;    private final BibDatabase database;
+<i>18</i>&nbsp;
+<b class="fc"><i>19</i>&nbsp;    private final List&lt;String&gt; keyFields = new ArrayList&lt;&gt;();</b>
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;
+<b class="fc"><i>22</i>&nbsp;    public KeyChangeListener(BibDatabase database) {</b>
+<b class="fc"><i>23</i>&nbsp;        this.database = database;</b>
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;        // Look for fields with FieldProperies.SINGLE_ENTRY_LINK or FieldProperties.MULTIPLE_ENTRY_LINK to speed up the search later
+<i>26</i>&nbsp;
+<b class="fc"><i>27</i>&nbsp;        for (String fieldName : InternalBibtexFields.getAllPublicFieldNames()) {</b>
+<b class="fc"><i>28</i>&nbsp;            if (InternalBibtexFields.getFieldProperties(fieldName).contains(FieldProperty.SINGLE_ENTRY_LINK)</b>
+<b class="fc"><i>29</i>&nbsp;                    || InternalBibtexFields.getFieldProperties(fieldName).contains(FieldProperty.MULTIPLE_ENTRY_LINK)) {</b>
+<b class="fc"><i>30</i>&nbsp;                keyFields.add(fieldName);</b>
+<i>31</i>&nbsp;            }
+<b class="fc"><i>32</i>&nbsp;        }</b>
+<b class="fc"><i>33</i>&nbsp;    }</b>
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    @Subscribe
+<i>36</i>&nbsp;    public void listen(FieldChangedEvent event) {
+<b class="nc"><i>37</i>&nbsp;        if (event.getFieldName().equals(BibEntry.KEY_FIELD)) {</b>
+<b class="nc"><i>38</i>&nbsp;            String newKey = event.getNewValue();</b>
+<b class="nc"><i>39</i>&nbsp;            String oldKey = event.getOldValue();</b>
+<b class="nc"><i>40</i>&nbsp;            updateEntryLinks(newKey, oldKey);</b>
+<i>41</i>&nbsp;        }
+<b class="nc"><i>42</i>&nbsp;    }</b>
+<i>43</i>&nbsp;
+<i>44</i>&nbsp;    @Subscribe
+<i>45</i>&nbsp;    public void listen(EntryRemovedEvent event) {
+<b class="nc"><i>46</i>&nbsp;        event.getBibEntry().getCiteKeyOptional().ifPresent(oldKey -&gt; updateEntryLinks(null, oldKey));</b>
+<b class="nc"><i>47</i>&nbsp;    }</b>
+<i>48</i>&nbsp;
+<i>49</i>&nbsp;    private void updateEntryLinks(String newKey, String oldKey) {
+<b class="nc"><i>50</i>&nbsp;        for (BibEntry entry : database.getEntries()) {</b>
+<b class="nc"><i>51</i>&nbsp;            for (String field : keyFields) {</b>
+<b class="nc"><i>52</i>&nbsp;                entry.getField(field).ifPresent(fieldContent -&gt; {</b>
+<b class="nc"><i>53</i>&nbsp;                    if (InternalBibtexFields.getFieldProperties(field).contains(FieldProperty.SINGLE_ENTRY_LINK)) {</b>
+<b class="nc"><i>54</i>&nbsp;                        replaceSingleKeyInField(newKey, oldKey, entry, field, fieldContent);</b>
+<i>55</i>&nbsp;                    } else { // MULTIPLE_ENTRY_LINK
+<b class="nc"><i>56</i>&nbsp;                        replaceKeyInMultiplesKeyField(newKey, oldKey, entry, field, fieldContent);</b>
+<i>57</i>&nbsp;                    }
+<b class="nc"><i>58</i>&nbsp;                });</b>
+<b class="nc"><i>59</i>&nbsp;            }</b>
+<b class="nc"><i>60</i>&nbsp;        }</b>
+<b class="nc"><i>61</i>&nbsp;    }</b>
+<i>62</i>&nbsp;
+<i>63</i>&nbsp;    private void replaceKeyInMultiplesKeyField(String newKey, String oldKey, BibEntry entry, String field,
+<i>64</i>&nbsp;            String fieldContent) {
+<b class="nc"><i>65</i>&nbsp;        List&lt;String&gt; keys = new ArrayList&lt;&gt;(Arrays.asList(fieldContent.split(&quot;,&quot;)));</b>
+<b class="nc"><i>66</i>&nbsp;        int index = keys.indexOf(oldKey);</b>
+<b class="nc"><i>67</i>&nbsp;        if (index != -1) {</b>
+<b class="nc"><i>68</i>&nbsp;            if (newKey == null) {</b>
+<b class="nc"><i>69</i>&nbsp;                keys.remove(index);</b>
+<i>70</i>&nbsp;            } else {
+<b class="nc"><i>71</i>&nbsp;                keys.set(index, newKey);</b>
+<i>72</i>&nbsp;            }
+<b class="nc"><i>73</i>&nbsp;            entry.setField(field, String.join(&quot;,&quot;, keys));</b>
+<i>74</i>&nbsp;        }
+<b class="nc"><i>75</i>&nbsp;    }</b>
+<i>76</i>&nbsp;
+<i>77</i>&nbsp;    private void replaceSingleKeyInField(String newKey, String oldKey, BibEntry entry, String field,
+<i>78</i>&nbsp;            String fieldContent) {
+<b class="nc"><i>79</i>&nbsp;        if (fieldContent.equals(oldKey)) {</b>
+<b class="nc"><i>80</i>&nbsp;            if (newKey == null) {</b>
+<b class="nc"><i>81</i>&nbsp;                entry.clearField(field);</b>
+<i>82</i>&nbsp;            } else {
+<b class="nc"><i>83</i>&nbsp;                entry.setField(field, newKey);</b>
+<i>84</i>&nbsp;            }
+<i>85</i>&nbsp;        }
+<b class="nc"><i>86</i>&nbsp;    }</b>
+<i>87</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,398 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: SidePaneManager</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui</a> ]
+</div>
+
+<h1>Coverage Summary for Class: SidePaneManager (net.sf.jabref.gui)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SidePaneManager</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 23)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 130)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">SidePaneManager$PreferredIndexSort</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 6)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 25)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 136)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.Collections;
+<i>4</i>&nbsp;import java.util.Comparator;
+<i>5</i>&nbsp;import java.util.HashMap;
+<i>6</i>&nbsp;import java.util.LinkedHashMap;
+<i>7</i>&nbsp;import java.util.LinkedList;
+<i>8</i>&nbsp;import java.util.List;
+<i>9</i>&nbsp;import java.util.Map;
+<i>10</i>&nbsp;import java.util.stream.Collectors;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;import javax.swing.SwingUtilities;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;import net.sf.jabref.Globals;
+<i>15</i>&nbsp;import net.sf.jabref.gui.maintable.MainTable;
+<i>16</i>&nbsp;import net.sf.jabref.preferences.JabRefPreferences;
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;import org.apache.commons.logging.Log;
+<i>19</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;/**
+<i>22</i>&nbsp; * Manages visibility of SideShowComponents in a given newly constructed
+<i>23</i>&nbsp; * sidePane.
+<i>24</i>&nbsp; */
+<i>25</i>&nbsp;public class SidePaneManager {
+<b class="nc"><i>26</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(SidePaneManager.class);</b>
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;    private final JabRefFrame frame;
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;    private final SidePane sidep;
+<i>31</i>&nbsp;
+<b class="nc"><i>32</i>&nbsp;    private final Map&lt;Class&lt;? extends SidePaneComponent&gt;, SidePaneComponent&gt; components = new LinkedHashMap&lt;&gt;();</b>
+<i>33</i>&nbsp;
+<b class="nc"><i>34</i>&nbsp;    private final List&lt;SidePaneComponent&gt; visible = new LinkedList&lt;&gt;();</b>
+<i>35</i>&nbsp;
+<b class="nc"><i>36</i>&nbsp;    public SidePaneManager(JabRefFrame frame) {</b>
+<b class="nc"><i>37</i>&nbsp;        this.frame = frame;</b>
+<i>38</i>&nbsp;        /*
+<i>39</i>&nbsp;         * Change by Morten Alver 2005.12.04: By postponing the updating of the
+<i>40</i>&nbsp;         * side pane components, we get rid of the annoying latency when
+<i>41</i>&nbsp;         * switching tabs:
+<i>42</i>&nbsp;         */
+<b class="nc"><i>43</i>&nbsp;        frame.getTabbedPane().addChangeListener(event -&gt; SwingUtilities.invokeLater(</b>
+<b class="nc"><i>44</i>&nbsp;                () -&gt; setActiveBasePanel(SidePaneManager.this.frame.getCurrentBasePanel())));</b>
+<b class="nc"><i>45</i>&nbsp;        sidep = new SidePane();</b>
+<b class="nc"><i>46</i>&nbsp;        sidep.setVisible(false);</b>
+<b class="nc"><i>47</i>&nbsp;    }</b>
+<i>48</i>&nbsp;
+<i>49</i>&nbsp;    public SidePane getPanel() {
+<b class="nc"><i>50</i>&nbsp;        return sidep;</b>
+<i>51</i>&nbsp;    }
+<i>52</i>&nbsp;
+<i>53</i>&nbsp;    public synchronized &lt;T extends SidePaneComponent&gt; boolean hasComponent(Class&lt;T&gt; sidePaneComponent) {
+<b class="nc"><i>54</i>&nbsp;        return components.containsKey(sidePaneComponent);</b>
+<i>55</i>&nbsp;    }
+<i>56</i>&nbsp;
+<i>57</i>&nbsp;    public synchronized &lt;T extends SidePaneComponent&gt; boolean isComponentVisible(Class&lt;T&gt; sidePaneComponent) {
+<b class="nc"><i>58</i>&nbsp;        SidePaneComponent component = components.get(sidePaneComponent);</b>
+<b class="nc"><i>59</i>&nbsp;        if (component == null) {</b>
+<b class="nc"><i>60</i>&nbsp;            return false;</b>
+<i>61</i>&nbsp;        } else {
+<b class="nc"><i>62</i>&nbsp;            return visible.contains(component);</b>
+<i>63</i>&nbsp;        }
+<i>64</i>&nbsp;    }
+<i>65</i>&nbsp;
+<i>66</i>&nbsp;    /**
+<i>67</i>&nbsp;     * If panel is visible it will be hidden and the other way around
+<i>68</i>&nbsp;     */
+<i>69</i>&nbsp;    public synchronized &lt;T extends SidePaneComponent&gt; void toggle(Class&lt;T&gt; sidePaneComponent) {
+<b class="nc"><i>70</i>&nbsp;        if (isComponentVisible(sidePaneComponent)) {</b>
+<b class="nc"><i>71</i>&nbsp;            hide(sidePaneComponent);</b>
+<i>72</i>&nbsp;        } else {
+<b class="nc"><i>73</i>&nbsp;            show(sidePaneComponent);</b>
+<i>74</i>&nbsp;        }
+<b class="nc"><i>75</i>&nbsp;    }</b>
+<i>76</i>&nbsp;
+<i>77</i>&nbsp;    /**
+<i>78</i>&nbsp;     * If panel is hidden it will be shown and focused
+<i>79</i>&nbsp;     * If panel is visible but not focused it will be focused
+<i>80</i>&nbsp;     * If panel is visible and focused it will be hidden
+<i>81</i>&nbsp;     */
+<i>82</i>&nbsp;    public synchronized &lt;T extends SidePaneComponent&gt; void toggleThreeWay(Class&lt;T&gt; sidePaneComponent) {
+<b class="nc"><i>83</i>&nbsp;        boolean isPanelFocused = Globals.getFocusListener().getFocused() == components.get(sidePaneComponent);</b>
+<b class="nc"><i>84</i>&nbsp;        if (isComponentVisible(sidePaneComponent) &amp;&amp; isPanelFocused) {</b>
+<b class="nc"><i>85</i>&nbsp;            hide(sidePaneComponent);</b>
+<i>86</i>&nbsp;        } else {
+<b class="nc"><i>87</i>&nbsp;            show(sidePaneComponent);</b>
+<i>88</i>&nbsp;        }
+<b class="nc"><i>89</i>&nbsp;    }</b>
+<i>90</i>&nbsp;
+<i>91</i>&nbsp;    public synchronized &lt;T extends SidePaneComponent&gt; void show(Class&lt;T&gt; sidePaneComponent) {
+<b class="nc"><i>92</i>&nbsp;        SidePaneComponent component = components.get(sidePaneComponent);</b>
+<b class="nc"><i>93</i>&nbsp;        if (component == null) {</b>
+<b class="nc"><i>94</i>&nbsp;            LOGGER.warn(&quot;Side pane component &#39;&quot; + sidePaneComponent + &quot;&#39; unknown.&quot;);</b>
+<i>95</i>&nbsp;        } else {
+<b class="nc"><i>96</i>&nbsp;            show(component);</b>
+<i>97</i>&nbsp;        }
+<b class="nc"><i>98</i>&nbsp;    }</b>
+<i>99</i>&nbsp;
+<i>100</i>&nbsp;    public synchronized &lt;T extends SidePaneComponent&gt; void hide(Class&lt;T&gt; sidePaneComponent) {
+<b class="nc"><i>101</i>&nbsp;        SidePaneComponent component = components.get(sidePaneComponent);</b>
+<b class="nc"><i>102</i>&nbsp;        if (component == null) {</b>
+<b class="nc"><i>103</i>&nbsp;            LOGGER.warn(&quot;Side pane component &#39;&quot; + sidePaneComponent + &quot;&#39; unknown.&quot;);</b>
+<i>104</i>&nbsp;        } else {
+<b class="nc"><i>105</i>&nbsp;            hideComponent(component);</b>
+<b class="nc"><i>106</i>&nbsp;            if (frame.getCurrentBasePanel() != null) {</b>
+<b class="nc"><i>107</i>&nbsp;                MainTable mainTable = frame.getCurrentBasePanel().getMainTable();</b>
+<b class="nc"><i>108</i>&nbsp;                mainTable.setSelected(mainTable.getSelectedRow());</b>
+<b class="nc"><i>109</i>&nbsp;                mainTable.requestFocus();</b>
+<i>110</i>&nbsp;            }
+<i>111</i>&nbsp;        }
+<b class="nc"><i>112</i>&nbsp;    }</b>
+<i>113</i>&nbsp;
+<i>114</i>&nbsp;    public synchronized void register(SidePaneComponent comp) {
+<b class="nc"><i>115</i>&nbsp;        components.put(comp.getClass(), comp);</b>
+<b class="nc"><i>116</i>&nbsp;    }</b>
+<i>117</i>&nbsp;
+<i>118</i>&nbsp;    private synchronized void show(SidePaneComponent component) {
+<b class="nc"><i>119</i>&nbsp;        if (!visible.contains(component)) {</b>
+<i>120</i>&nbsp;            // Put the new component at the top of the group
+<b class="nc"><i>121</i>&nbsp;            visible.add(0, component);</b>
+<i>122</i>&nbsp;
+<i>123</i>&nbsp;            // Sort the visible components by their preferred position
+<b class="nc"><i>124</i>&nbsp;            Collections.sort(visible, new PreferredIndexSort());</b>
+<i>125</i>&nbsp;
+<b class="nc"><i>126</i>&nbsp;            updateView();</b>
+<b class="nc"><i>127</i>&nbsp;            component.componentOpening();</b>
+<i>128</i>&nbsp;        }
+<b class="nc"><i>129</i>&nbsp;        Globals.getFocusListener().setFocused(component);</b>
+<b class="nc"><i>130</i>&nbsp;        component.grabFocus();</b>
+<b class="nc"><i>131</i>&nbsp;    }</b>
+<i>132</i>&nbsp;
+<i>133</i>&nbsp;    public synchronized &lt;T extends SidePaneComponent&gt; SidePaneComponent getComponent(Class&lt;T&gt; sidePaneComponent) {
+<b class="nc"><i>134</i>&nbsp;        return components.get(sidePaneComponent);</b>
+<i>135</i>&nbsp;    }
+<i>136</i>&nbsp;
+<i>137</i>&nbsp;    public synchronized void hideComponent(SidePaneComponent comp) {
+<b class="nc"><i>138</i>&nbsp;        if (visible.contains(comp)) {</b>
+<b class="nc"><i>139</i>&nbsp;            comp.componentClosing();</b>
+<b class="nc"><i>140</i>&nbsp;            visible.remove(comp);</b>
+<b class="nc"><i>141</i>&nbsp;            updateView();</b>
+<i>142</i>&nbsp;        }
+<b class="nc"><i>143</i>&nbsp;    }</b>
+<i>144</i>&nbsp;
+<i>145</i>&nbsp;    public synchronized &lt;T extends SidePaneComponent&gt; void hideComponent(Class&lt;T&gt; sidePaneComponent) {
+<b class="nc"><i>146</i>&nbsp;        SidePaneComponent component = components.get(sidePaneComponent);</b>
+<b class="nc"><i>147</i>&nbsp;        if (component == null) {</b>
+<b class="nc"><i>148</i>&nbsp;            return;</b>
+<i>149</i>&nbsp;        }
+<b class="nc"><i>150</i>&nbsp;        if (visible.contains(component)) {</b>
+<b class="nc"><i>151</i>&nbsp;            component.componentClosing();</b>
+<b class="nc"><i>152</i>&nbsp;            visible.remove(component);</b>
+<b class="nc"><i>153</i>&nbsp;            updateView();</b>
+<i>154</i>&nbsp;        }
+<b class="nc"><i>155</i>&nbsp;    }</b>
+<i>156</i>&nbsp;
+<i>157</i>&nbsp;    private static Map&lt;Class&lt;? extends SidePaneComponent&gt;, Integer&gt; getPreferredPositions() {
+<b class="nc"><i>158</i>&nbsp;        Map&lt;Class&lt;? extends SidePaneComponent&gt;, Integer&gt; preferredPositions = new HashMap&lt;&gt;();</b>
+<i>159</i>&nbsp;
+<b class="nc"><i>160</i>&nbsp;        List&lt;String&gt; componentNames = Globals.prefs.getStringList(JabRefPreferences.SIDE_PANE_COMPONENT_NAMES);</b>
+<b class="nc"><i>161</i>&nbsp;        List&lt;String&gt; componentPositions = Globals.prefs</b>
+<b class="nc"><i>162</i>&nbsp;                .getStringList(JabRefPreferences.SIDE_PANE_COMPONENT_PREFERRED_POSITIONS);</b>
+<i>163</i>&nbsp;
+<b class="nc"><i>164</i>&nbsp;        for (int i = 0; i &lt; componentNames.size(); ++i) {</b>
+<b class="nc"><i>165</i>&nbsp;            String componentName = componentNames.get(i);</b>
+<i>166</i>&nbsp;            try {
+<b class="nc"><i>167</i>&nbsp;                Class&lt;? extends SidePaneComponent&gt; componentClass = (Class&lt;? extends SidePaneComponent&gt;) Class.forName(componentName);</b>
+<b class="nc"><i>168</i>&nbsp;                preferredPositions.put(componentClass, Integer.parseInt(componentPositions.get(i)));</b>
+<b class="nc"><i>169</i>&nbsp;            } catch (ClassNotFoundException e) {</b>
+<b class="nc"><i>170</i>&nbsp;                LOGGER.error(&quot;Following side pane could not be found: &quot; + componentName, e);</b>
+<b class="nc"><i>171</i>&nbsp;            } catch (ClassCastException e) {</b>
+<b class="nc"><i>172</i>&nbsp;                LOGGER.error(&quot;Following Class is no side pane: &#39;&quot; + componentName, e);</b>
+<b class="nc"><i>173</i>&nbsp;            } catch (NumberFormatException e) {</b>
+<b class="nc"><i>174</i>&nbsp;                LOGGER.info(&quot;Invalid number format for side pane component &#39;&quot; + componentName + &quot;&#39;.&quot;, e);</b>
+<b class="nc"><i>175</i>&nbsp;            }</b>
+<i>176</i>&nbsp;        }
+<i>177</i>&nbsp;
+<b class="nc"><i>178</i>&nbsp;        return preferredPositions;</b>
+<i>179</i>&nbsp;    }
+<i>180</i>&nbsp;
+<i>181</i>&nbsp;    private void updatePreferredPositions() {
+<b class="nc"><i>182</i>&nbsp;        Map&lt;Class&lt;? extends SidePaneComponent&gt;, Integer&gt; preferredPositions = getPreferredPositions();</b>
+<i>183</i>&nbsp;
+<i>184</i>&nbsp;        // Update the preferred positions of all visible components
+<b class="nc"><i>185</i>&nbsp;        int index = 0;</b>
+<b class="nc"><i>186</i>&nbsp;        for (SidePaneComponent comp : visible) {</b>
+<b class="nc"><i>187</i>&nbsp;            preferredPositions.put(comp.getClass(), index);</b>
+<b class="nc"><i>188</i>&nbsp;            index++;</b>
+<b class="nc"><i>189</i>&nbsp;        }</b>
+<i>190</i>&nbsp;
+<i>191</i>&nbsp;        // Split the map into a pair of parallel String lists suitable for storage
+<b class="nc"><i>192</i>&nbsp;        List&lt;String&gt; tmpComponentNames = preferredPositions.keySet().parallelStream()</b>
+<b class="nc"><i>193</i>&nbsp;                .map(Class::getName)</b>
+<b class="nc"><i>194</i>&nbsp;                .collect(Collectors.toList());</b>
+<i>195</i>&nbsp;
+<b class="nc"><i>196</i>&nbsp;        List&lt;String&gt; componentPositions = preferredPositions.values().stream().map(Object::toString)</b>
+<b class="nc"><i>197</i>&nbsp;                .collect(Collectors.toList());</b>
+<i>198</i>&nbsp;
+<b class="nc"><i>199</i>&nbsp;        Globals.prefs.putStringList(JabRefPreferences.SIDE_PANE_COMPONENT_NAMES, tmpComponentNames);</b>
+<b class="nc"><i>200</i>&nbsp;        Globals.prefs.putStringList(JabRefPreferences.SIDE_PANE_COMPONENT_PREFERRED_POSITIONS, componentPositions);</b>
+<b class="nc"><i>201</i>&nbsp;    }</b>
+<i>202</i>&nbsp;
+<i>203</i>&nbsp;
+<i>204</i>&nbsp;    /**
+<i>205</i>&nbsp;     * Helper class for sorting visible components based on their preferred position
+<i>206</i>&nbsp;     */
+<i>207</i>&nbsp;    private class PreferredIndexSort implements Comparator&lt;SidePaneComponent&gt; {
+<i>208</i>&nbsp;
+<i>209</i>&nbsp;        private final Map&lt;Class&lt;? extends SidePaneComponent&gt;, Integer&gt; preferredPositions;
+<i>210</i>&nbsp;
+<i>211</i>&nbsp;
+<b class="nc"><i>212</i>&nbsp;        public PreferredIndexSort() {</b>
+<b class="nc"><i>213</i>&nbsp;            preferredPositions = getPreferredPositions();</b>
+<b class="nc"><i>214</i>&nbsp;        }</b>
+<i>215</i>&nbsp;
+<i>216</i>&nbsp;        @Override
+<i>217</i>&nbsp;        public int compare(SidePaneComponent comp1, SidePaneComponent comp2) {
+<b class="nc"><i>218</i>&nbsp;            int pos1 = preferredPositions.getOrDefault(comp1.getClass(), 0);</b>
+<b class="nc"><i>219</i>&nbsp;            int pos2 = preferredPositions.getOrDefault(comp2.getClass(), 0);</b>
+<b class="nc"><i>220</i>&nbsp;            return Integer.valueOf(pos1).compareTo(pos2);</b>
+<i>221</i>&nbsp;        }
+<i>222</i>&nbsp;    }
+<i>223</i>&nbsp;
+<i>224</i>&nbsp;
+<i>225</i>&nbsp;    public synchronized void moveUp(SidePaneComponent comp) {
+<b class="nc"><i>226</i>&nbsp;        if (visible.contains(comp)) {</b>
+<b class="nc"><i>227</i>&nbsp;            int currIndex = visible.indexOf(comp);</b>
+<b class="nc"><i>228</i>&nbsp;            if (currIndex &gt; 0) {</b>
+<b class="nc"><i>229</i>&nbsp;                int newIndex = currIndex - 1;</b>
+<b class="nc"><i>230</i>&nbsp;                visible.remove(currIndex);</b>
+<b class="nc"><i>231</i>&nbsp;                visible.add(newIndex, comp);</b>
+<i>232</i>&nbsp;
+<b class="nc"><i>233</i>&nbsp;                updatePreferredPositions();</b>
+<b class="nc"><i>234</i>&nbsp;                updateView();</b>
+<i>235</i>&nbsp;            }
+<i>236</i>&nbsp;        }
+<b class="nc"><i>237</i>&nbsp;    }</b>
+<i>238</i>&nbsp;
+<i>239</i>&nbsp;    public synchronized void moveDown(SidePaneComponent comp) {
+<b class="nc"><i>240</i>&nbsp;        if (visible.contains(comp)) {</b>
+<b class="nc"><i>241</i>&nbsp;            int currIndex = visible.indexOf(comp);</b>
+<b class="nc"><i>242</i>&nbsp;            if (currIndex &lt; (visible.size() - 1)) {</b>
+<b class="nc"><i>243</i>&nbsp;                int newIndex = currIndex + 1;</b>
+<b class="nc"><i>244</i>&nbsp;                visible.remove(currIndex);</b>
+<b class="nc"><i>245</i>&nbsp;                visible.add(newIndex, comp);</b>
+<i>246</i>&nbsp;
+<b class="nc"><i>247</i>&nbsp;                updatePreferredPositions();</b>
+<b class="nc"><i>248</i>&nbsp;                updateView();</b>
+<i>249</i>&nbsp;            }
+<i>250</i>&nbsp;        }
+<b class="nc"><i>251</i>&nbsp;    }</b>
+<i>252</i>&nbsp;
+<i>253</i>&nbsp;    public synchronized &lt;T extends SidePaneComponent&gt; void unregisterComponent(Class&lt;T&gt; sidePaneComponent) {
+<b class="nc"><i>254</i>&nbsp;        components.remove(sidePaneComponent);</b>
+<b class="nc"><i>255</i>&nbsp;    }</b>
+<i>256</i>&nbsp;
+<i>257</i>&nbsp;    /**
+<i>258</i>&nbsp;     * Update all side pane components to show information from the given
+<i>259</i>&nbsp;     * BasePanel.
+<i>260</i>&nbsp;     *
+<i>261</i>&nbsp;     * @param panel
+<i>262</i>&nbsp;     */
+<i>263</i>&nbsp;    private synchronized void setActiveBasePanel(BasePanel panel) {
+<b class="nc"><i>264</i>&nbsp;        for (SidePaneComponent component : components.values()) {</b>
+<b class="nc"><i>265</i>&nbsp;            component.setActiveBasePanel(panel);</b>
+<b class="nc"><i>266</i>&nbsp;        }</b>
+<b class="nc"><i>267</i>&nbsp;    }</b>
+<i>268</i>&nbsp;
+<i>269</i>&nbsp;    public synchronized void updateView() {
+<b class="nc"><i>270</i>&nbsp;        sidep.setComponents(visible);</b>
+<b class="nc"><i>271</i>&nbsp;        if (visible.isEmpty()) {</b>
+<b class="nc"><i>272</i>&nbsp;            if (sidep.isVisible()) {</b>
+<b class="nc"><i>273</i>&nbsp;                Globals.prefs.putInt(JabRefPreferences.SIDE_PANE_WIDTH, frame.getSplitPane().getDividerLocation());</b>
+<i>274</i>&nbsp;            }
+<b class="nc"><i>275</i>&nbsp;            sidep.setVisible(false);</b>
+<i>276</i>&nbsp;        } else {
+<b class="nc"><i>277</i>&nbsp;            boolean wasVisible = sidep.isVisible();</b>
+<b class="nc"><i>278</i>&nbsp;            sidep.setVisible(true);</b>
+<b class="nc"><i>279</i>&nbsp;            if (!wasVisible) {</b>
+<b class="nc"><i>280</i>&nbsp;                int width = Globals.prefs.getInt(JabRefPreferences.SIDE_PANE_WIDTH);</b>
+<b class="nc"><i>281</i>&nbsp;                if (width &gt; 0) {</b>
+<b class="nc"><i>282</i>&nbsp;                    frame.getSplitPane().setDividerLocation(width);</b>
+<i>283</i>&nbsp;                } else {
+<b class="nc"><i>284</i>&nbsp;                    frame.getSplitPane().setDividerLocation(getPanel().getPreferredSize().width);</b>
+<i>285</i>&nbsp;                }
+<i>286</i>&nbsp;            }
+<i>287</i>&nbsp;        }
+<b class="nc"><i>288</i>&nbsp;    }</b>
+<i>289</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

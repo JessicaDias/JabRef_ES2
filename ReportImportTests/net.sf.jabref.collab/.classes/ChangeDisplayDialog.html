@@ -1,0 +1,230 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ChangeDisplayDialog</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.collab</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ChangeDisplayDialog (net.sf.jabref.collab)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ChangeDisplayDialog</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 72)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.collab;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.BorderLayout;
+<i>4</i>&nbsp;import java.awt.Insets;
+<i>5</i>&nbsp;import java.util.Collections;
+<i>6</i>&nbsp;import java.util.Enumeration;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import javax.swing.BorderFactory;
+<i>9</i>&nbsp;import javax.swing.JButton;
+<i>10</i>&nbsp;import javax.swing.JCheckBox;
+<i>11</i>&nbsp;import javax.swing.JComponent;
+<i>12</i>&nbsp;import javax.swing.JDialog;
+<i>13</i>&nbsp;import javax.swing.JFrame;
+<i>14</i>&nbsp;import javax.swing.JLabel;
+<i>15</i>&nbsp;import javax.swing.JPanel;
+<i>16</i>&nbsp;import javax.swing.JScrollPane;
+<i>17</i>&nbsp;import javax.swing.JSplitPane;
+<i>18</i>&nbsp;import javax.swing.JTree;
+<i>19</i>&nbsp;import javax.swing.event.TreeSelectionEvent;
+<i>20</i>&nbsp;import javax.swing.event.TreeSelectionListener;
+<i>21</i>&nbsp;import javax.swing.tree.DefaultMutableTreeNode;
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;import net.sf.jabref.gui.BasePanel;
+<i>24</i>&nbsp;import net.sf.jabref.gui.undo.NamedCompound;
+<i>25</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>26</i>&nbsp;import net.sf.jabref.model.database.BibDatabase;
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;class ChangeDisplayDialog extends JDialog implements TreeSelectionListener {
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;    private final JTree tree;
+<b class="nc"><i>31</i>&nbsp;    private final JPanel infoPanel = new JPanel();</b>
+<b class="nc"><i>32</i>&nbsp;    private final JCheckBox cb = new JCheckBox(Localization.lang(&quot;Accept change&quot;));</b>
+<b class="nc"><i>33</i>&nbsp;    private final JLabel rootInfo = new JLabel(Localization.lang(&quot;Select the tree nodes to view and accept or reject changes&quot;) + &#39;.&#39;);</b>
+<i>34</i>&nbsp;    private Change selected;
+<i>35</i>&nbsp;    private JComponent infoShown;
+<i>36</i>&nbsp;    private boolean okPressed;
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;    public ChangeDisplayDialog(JFrame owner, final BasePanel panel,
+<i>40</i>&nbsp;            BibDatabase secondary, final DefaultMutableTreeNode root) {
+<b class="nc"><i>41</i>&nbsp;        super(owner, Localization.lang(&quot;External changes&quot;), true);</b>
+<i>42</i>&nbsp;        BibDatabase localSecondary;
+<i>43</i>&nbsp;
+<i>44</i>&nbsp;        // Just to be sure, put in an empty secondary base if none is given:
+<b class="nc"><i>45</i>&nbsp;        if (secondary == null) {</b>
+<b class="nc"><i>46</i>&nbsp;            localSecondary = new BibDatabase();</b>
+<i>47</i>&nbsp;        } else {
+<b class="nc"><i>48</i>&nbsp;            localSecondary = secondary;</b>
+<i>49</i>&nbsp;        }
+<b class="nc"><i>50</i>&nbsp;        tree = new JTree(root);</b>
+<b class="nc"><i>51</i>&nbsp;        tree.addTreeSelectionListener(this);</b>
+<i>52</i>&nbsp;
+<b class="nc"><i>53</i>&nbsp;        JSplitPane pane = new JSplitPane();</b>
+<b class="nc"><i>54</i>&nbsp;        pane.setLeftComponent(new JScrollPane(tree));</b>
+<b class="nc"><i>55</i>&nbsp;        JPanel infoBorder = new JPanel();</b>
+<b class="nc"><i>56</i>&nbsp;        pane.setRightComponent(infoBorder);</b>
+<i>57</i>&nbsp;
+<b class="nc"><i>58</i>&nbsp;        cb.setMargin(new Insets(2, 2, 2, 2));</b>
+<b class="nc"><i>59</i>&nbsp;        cb.setEnabled(false);</b>
+<b class="nc"><i>60</i>&nbsp;        infoPanel.setLayout(new BorderLayout());</b>
+<b class="nc"><i>61</i>&nbsp;        infoBorder.setLayout(new BorderLayout());</b>
+<b class="nc"><i>62</i>&nbsp;        infoBorder.setBorder(BorderFactory.createEtchedBorder());</b>
+<b class="nc"><i>63</i>&nbsp;        infoBorder.add(infoPanel, BorderLayout.CENTER);</b>
+<b class="nc"><i>64</i>&nbsp;        setInfo(rootInfo);</b>
+<b class="nc"><i>65</i>&nbsp;        infoPanel.add(cb, BorderLayout.SOUTH);</b>
+<i>66</i>&nbsp;
+<b class="nc"><i>67</i>&nbsp;        JButton ok = new JButton(Localization.lang(&quot;OK&quot;));</b>
+<b class="nc"><i>68</i>&nbsp;        JPanel buttonPanel = new JPanel();</b>
+<b class="nc"><i>69</i>&nbsp;        buttonPanel.add(ok);</b>
+<b class="nc"><i>70</i>&nbsp;        JButton cancel = new JButton(Localization.lang(&quot;Cancel&quot;));</b>
+<b class="nc"><i>71</i>&nbsp;        buttonPanel.add(cancel);</b>
+<i>72</i>&nbsp;
+<b class="nc"><i>73</i>&nbsp;        getContentPane().add(pane, BorderLayout.CENTER);</b>
+<b class="nc"><i>74</i>&nbsp;        getContentPane().add(buttonPanel, BorderLayout.SOUTH);</b>
+<i>75</i>&nbsp;
+<b class="nc"><i>76</i>&nbsp;        cb.addChangeListener(e -&gt; {</b>
+<b class="nc"><i>77</i>&nbsp;            if (selected != null) {</b>
+<b class="nc"><i>78</i>&nbsp;                selected.setAccepted(cb.isSelected());</b>
+<i>79</i>&nbsp;            }
+<b class="nc"><i>80</i>&nbsp;        });</b>
+<i>81</i>&nbsp;
+<b class="nc"><i>82</i>&nbsp;        cancel.addActionListener(e -&gt; dispose());</b>
+<i>83</i>&nbsp;
+<b class="nc"><i>84</i>&nbsp;        ok.addActionListener(e -&gt; {</b>
+<i>85</i>&nbsp;
+<i>86</i>&nbsp;            // Perform all accepted changes:
+<i>87</i>&nbsp;            // Store all edits in an Undoable object:
+<b class="nc"><i>88</i>&nbsp;            NamedCompound ce = new NamedCompound(Localization.lang(&quot;Merged external changes&quot;));</b>
+<b class="nc"><i>89</i>&nbsp;            Enumeration&lt;Change&gt; enumer = root.children();</b>
+<b class="nc"><i>90</i>&nbsp;            boolean anyDisabled = false;</b>
+<b class="nc"><i>91</i>&nbsp;            for (Change c : Collections.list(enumer)) {</b>
+<b class="nc"><i>92</i>&nbsp;                boolean allAccepted = false;</b>
+<b class="nc"><i>93</i>&nbsp;                if (c.isAcceptable() &amp;&amp; c.isAccepted()) {</b>
+<b class="nc"><i>94</i>&nbsp;                    allAccepted = c.makeChange(panel, localSecondary, ce);</b>
+<i>95</i>&nbsp;                }
+<i>96</i>&nbsp;
+<b class="nc"><i>97</i>&nbsp;                if (!allAccepted) {</b>
+<b class="nc"><i>98</i>&nbsp;                    anyDisabled = true;</b>
+<i>99</i>&nbsp;                }
+<b class="nc"><i>100</i>&nbsp;            }</b>
+<b class="nc"><i>101</i>&nbsp;            ce.end();</b>
+<b class="nc"><i>102</i>&nbsp;            panel.getUndoManager().addEdit(ce);</b>
+<b class="nc"><i>103</i>&nbsp;            if (anyDisabled) {</b>
+<b class="nc"><i>104</i>&nbsp;                panel.markBaseChanged();</b>
+<i>105</i>&nbsp;            }
+<b class="nc"><i>106</i>&nbsp;            panel.setUpdatedExternally(false);</b>
+<b class="nc"><i>107</i>&nbsp;            dispose();</b>
+<b class="nc"><i>108</i>&nbsp;            okPressed = true;</b>
+<b class="nc"><i>109</i>&nbsp;        });</b>
+<i>110</i>&nbsp;
+<b class="nc"><i>111</i>&nbsp;        pack();</b>
+<b class="nc"><i>112</i>&nbsp;    }</b>
+<i>113</i>&nbsp;
+<i>114</i>&nbsp;    public boolean isOkPressed() {
+<b class="nc"><i>115</i>&nbsp;        return okPressed;</b>
+<i>116</i>&nbsp;    }
+<i>117</i>&nbsp;
+<i>118</i>&nbsp;    private void setInfo(JComponent comp) {
+<b class="nc"><i>119</i>&nbsp;        if (infoShown != null) {</b>
+<b class="nc"><i>120</i>&nbsp;            infoPanel.remove(infoShown);</b>
+<i>121</i>&nbsp;        }
+<b class="nc"><i>122</i>&nbsp;        infoShown = comp;</b>
+<b class="nc"><i>123</i>&nbsp;        infoPanel.add(infoShown, BorderLayout.CENTER);</b>
+<b class="nc"><i>124</i>&nbsp;        infoPanel.revalidate();</b>
+<b class="nc"><i>125</i>&nbsp;        infoPanel.repaint();</b>
+<b class="nc"><i>126</i>&nbsp;    }</b>
+<i>127</i>&nbsp;
+<i>128</i>&nbsp;    /**
+<i>129</i>&nbsp;     * valueChanged
+<i>130</i>&nbsp;     *
+<i>131</i>&nbsp;     * @param e TreeSelectionEvent
+<i>132</i>&nbsp;     */
+<i>133</i>&nbsp;    @Override
+<i>134</i>&nbsp;    public void valueChanged(TreeSelectionEvent e) {
+<b class="nc"><i>135</i>&nbsp;        Object o = tree.getLastSelectedPathComponent();</b>
+<b class="nc"><i>136</i>&nbsp;        if (o instanceof Change) {</b>
+<b class="nc"><i>137</i>&nbsp;            selected = (Change) o;</b>
+<b class="nc"><i>138</i>&nbsp;            setInfo(selected.description());</b>
+<b class="nc"><i>139</i>&nbsp;            cb.setSelected(selected.isAccepted());</b>
+<b class="nc"><i>140</i>&nbsp;            cb.setEnabled(selected.isAcceptable());</b>
+<i>141</i>&nbsp;        } else {
+<b class="nc"><i>142</i>&nbsp;            setInfo(rootInfo);</b>
+<b class="nc"><i>143</i>&nbsp;            selected = null;</b>
+<b class="nc"><i>144</i>&nbsp;            cb.setEnabled(false);</b>
+<i>145</i>&nbsp;        }
+<b class="nc"><i>146</i>&nbsp;    }</b>
+<i>147</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,419 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: RegExpFileSearch</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.util.io</a> ]
+</div>
+
+<h1>Coverage Summary for Class: RegExpFileSearch (net.sf.jabref.logic.util.io)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">RegExpFileSearch</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 115)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.util.io;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.File;
+<i>4</i>&nbsp;import java.io.IOException;
+<i>5</i>&nbsp;import java.util.ArrayList;
+<i>6</i>&nbsp;import java.util.Arrays;
+<i>7</i>&nbsp;import java.util.Collections;
+<i>8</i>&nbsp;import java.util.HashMap;
+<i>9</i>&nbsp;import java.util.LinkedList;
+<i>10</i>&nbsp;import java.util.List;
+<i>11</i>&nbsp;import java.util.Map;
+<i>12</i>&nbsp;import java.util.regex.Matcher;
+<i>13</i>&nbsp;import java.util.regex.Pattern;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;import net.sf.jabref.logic.bibtexkeypattern.BibtexKeyPatternUtil;
+<i>16</i>&nbsp;import net.sf.jabref.model.database.BibDatabase;
+<i>17</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>18</i>&nbsp;import net.sf.jabref.model.strings.StringUtil;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;import org.apache.commons.logging.Log;
+<i>21</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>22</i>&nbsp;
+<b class="nc"><i>23</i>&nbsp;public class RegExpFileSearch {</b>
+<i>24</i>&nbsp;
+<b class="nc"><i>25</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(RegExpFileSearch.class);</b>
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    private static final String EXT_MARKER = &quot;__EXTENSION__&quot;;
+<i>28</i>&nbsp;
+<b class="nc"><i>29</i>&nbsp;    private static final Pattern ESCAPE_PATTERN = Pattern.compile(&quot;([^\\\\])\\\\([^\\\\])&quot;);</b>
+<i>30</i>&nbsp;
+<b class="nc"><i>31</i>&nbsp;    private static final Pattern SQUARE_BRACKETS_PATTERN = Pattern.compile(&quot;\\[.*?\\]&quot;);</b>
+<i>32</i>&nbsp;
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;    /**
+<i>35</i>&nbsp;     * Search for file links for a set of entries using regexp. Lists of extensions and directories
+<i>36</i>&nbsp;     * are given.
+<i>37</i>&nbsp;     * @param entries The entries to search for.
+<i>38</i>&nbsp;     * @param extensions The extensions that are acceptable.
+<i>39</i>&nbsp;     * @param directories The root directories to search.
+<i>40</i>&nbsp;     * @param regExp The expression deciding which names are acceptable.
+<i>41</i>&nbsp;     * @param keywordDelimiter
+<i>42</i>&nbsp;     * @return A map linking each given entry to a list of files matching the given criteria.
+<i>43</i>&nbsp;     */
+<i>44</i>&nbsp;    public static Map&lt;BibEntry, List&lt;File&gt;&gt; findFilesForSet(List&lt;BibEntry&gt; entries, List&lt;String&gt; extensions,
+<i>45</i>&nbsp;            List&lt;File&gt; directories, String regExp, Character keywordDelimiter) {
+<i>46</i>&nbsp;
+<b class="nc"><i>47</i>&nbsp;        Map&lt;BibEntry, List&lt;File&gt;&gt; res = new HashMap&lt;&gt;();</b>
+<b class="nc"><i>48</i>&nbsp;        for (BibEntry entry : entries) {</b>
+<b class="nc"><i>49</i>&nbsp;            res.put(entry, findFiles(entry, extensions, directories, regExp, keywordDelimiter));</b>
+<b class="nc"><i>50</i>&nbsp;        }</b>
+<b class="nc"><i>51</i>&nbsp;        return res;</b>
+<i>52</i>&nbsp;    }
+<i>53</i>&nbsp;
+<i>54</i>&nbsp;    /**
+<i>55</i>&nbsp;     * Method for searching for files using regexp. A list of extensions and directories can be
+<i>56</i>&nbsp;     * given.
+<i>57</i>&nbsp;     * @param entry The entry to search for.
+<i>58</i>&nbsp;     * @param extensions The extensions that are acceptable.
+<i>59</i>&nbsp;     * @param directories The root directories to search.
+<i>60</i>&nbsp;     * @param regularExpression The expression deciding which names are acceptable.
+<i>61</i>&nbsp;     * @param keywordDelimiter
+<i>62</i>&nbsp;     * @return A list of files paths matching the given criteria.
+<i>63</i>&nbsp;     */
+<i>64</i>&nbsp;    private static List&lt;File&gt; findFiles(BibEntry entry, List&lt;String&gt; extensions, List&lt;File&gt; directories,
+<i>65</i>&nbsp;            String regularExpression, Character keywordDelimiter) {
+<i>66</i>&nbsp;
+<b class="nc"><i>67</i>&nbsp;        String extensionRegExp = &#39;(&#39; + String.join(&quot;|&quot;, extensions) + &#39;)&#39;;</b>
+<i>68</i>&nbsp;
+<b class="nc"><i>69</i>&nbsp;        return findFile(entry, directories, regularExpression, extensionRegExp, keywordDelimiter);</b>
+<i>70</i>&nbsp;    }
+<i>71</i>&nbsp;
+<i>72</i>&nbsp;    /**
+<i>73</i>&nbsp;     * Searches the given directory and filename pattern for a file for the
+<i>74</i>&nbsp;     * BibTeX entry.
+<i>75</i>&nbsp;     *
+<i>76</i>&nbsp;     * Used to fix:
+<i>77</i>&nbsp;     *
+<i>78</i>&nbsp;     * http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1503410&amp;group_id=92314&amp;atid=600309
+<i>79</i>&nbsp;     *
+<i>80</i>&nbsp;     * Requirements:
+<i>81</i>&nbsp;     *  - Be able to find the associated PDF in a set of given directories.
+<i>82</i>&nbsp;     *  - Be able to return a relative path or absolute path.
+<i>83</i>&nbsp;     *  - Be fast.
+<i>84</i>&nbsp;     *  - Allow for flexible naming schemes in the PDFs.
+<i>85</i>&nbsp;     *
+<i>86</i>&nbsp;     * Syntax scheme for file:
+<i>87</i>&nbsp;     * &lt;ul&gt;
+<i>88</i>&nbsp;     * &lt;li&gt;* Any subDir&lt;/li&gt;
+<i>89</i>&nbsp;     * &lt;li&gt;** Any subDir (recursive)&lt;/li&gt;
+<i>90</i>&nbsp;     * &lt;li&gt;[key] Key from BibTeX file and database&lt;/li&gt;
+<i>91</i>&nbsp;     * &lt;li&gt;.* Anything else is taken to be a Regular expression.&lt;/li&gt;
+<i>92</i>&nbsp;     * &lt;/ul&gt;
+<i>93</i>&nbsp;     *
+<i>94</i>&nbsp;     * @param keywordDelimiter
+<i>95</i>&nbsp;     * @param entry
+<i>96</i>&nbsp;     *            non-null
+<i>97</i>&nbsp;     * @param dirs
+<i>98</i>&nbsp;     *            A set of root directories to start the search from. Paths are
+<i>99</i>&nbsp;     *            returned relative to these directories if relative is set to
+<i>100</i>&nbsp;     *            true. These directories will not be expanded or anything. Use
+<i>101</i>&nbsp;     *            the file attribute for this.
+<i>102</i>&nbsp;     * @param file
+<i>103</i>&nbsp;     *            non-null
+<i>104</i>&nbsp;     *
+<i>105</i>&nbsp;     * @return Will return the first file found to match the given criteria or
+<i>106</i>&nbsp;     *         null if none was found.
+<i>107</i>&nbsp;     */
+<i>108</i>&nbsp;    private static List&lt;File&gt; findFile(BibEntry entry, List&lt;File&gt; dirs, String file, String extensionRegExp,
+<i>109</i>&nbsp;            Character keywordDelimiter) {
+<b class="nc"><i>110</i>&nbsp;        List&lt;File&gt; res = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>111</i>&nbsp;        for (File directory : dirs) {</b>
+<b class="nc"><i>112</i>&nbsp;            res.addAll(findFile(entry, directory.getPath(), file, extensionRegExp, keywordDelimiter));</b>
+<b class="nc"><i>113</i>&nbsp;        }</b>
+<b class="nc"><i>114</i>&nbsp;        return res;</b>
+<i>115</i>&nbsp;    }
+<i>116</i>&nbsp;
+<i>117</i>&nbsp;    /**
+<i>118</i>&nbsp;     * Internal Version of findFile, which also accepts a current directory to
+<i>119</i>&nbsp;     * base the search on.
+<i>120</i>&nbsp;     *
+<i>121</i>&nbsp;     */
+<i>122</i>&nbsp;    private static List&lt;File&gt; findFile(BibEntry entry, String directory, String file, String extensionRegExp,
+<i>123</i>&nbsp;            Character keywordDelimiter) {
+<i>124</i>&nbsp;
+<i>125</i>&nbsp;        File root;
+<b class="nc"><i>126</i>&nbsp;        if (directory == null) {</b>
+<b class="nc"><i>127</i>&nbsp;            root = new File(&quot;.&quot;);</b>
+<i>128</i>&nbsp;        } else {
+<b class="nc"><i>129</i>&nbsp;            root = new File(directory);</b>
+<i>130</i>&nbsp;        }
+<b class="nc"><i>131</i>&nbsp;        if (!root.exists()) {</b>
+<b class="nc"><i>132</i>&nbsp;            return Collections.emptyList();</b>
+<i>133</i>&nbsp;        }
+<b class="nc"><i>134</i>&nbsp;        List&lt;File&gt; fileList = RegExpFileSearch.findFile(entry, root, file, extensionRegExp, keywordDelimiter);</b>
+<i>135</i>&nbsp;
+<b class="nc"><i>136</i>&nbsp;        List&lt;File&gt; result = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>137</i>&nbsp;        for (File tmpFile : fileList) {</b>
+<i>138</i>&nbsp;            try {
+<i>139</i>&nbsp;                /**
+<i>140</i>&nbsp;                 * [ 1601651 ] PDF subdirectory - missing first character
+<i>141</i>&nbsp;                 *
+<i>142</i>&nbsp;                 * http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1601651&amp;group_id=92314&amp;atid=600306
+<i>143</i>&nbsp;                 */
+<i>144</i>&nbsp;                // Changed by M. Alver 2007.01.04:
+<i>145</i>&nbsp;                // Remove first character if it is a directory separator character:
+<b class="nc"><i>146</i>&nbsp;                String tmp = tmpFile.getCanonicalPath().substring(root.getCanonicalPath().length());</b>
+<b class="nc"><i>147</i>&nbsp;                if ((tmp.length() &gt; 1) &amp;&amp; (tmp.charAt(0) == File.separatorChar)) {</b>
+<b class="nc"><i>148</i>&nbsp;                    tmp = tmp.substring(1);</b>
+<i>149</i>&nbsp;                }
+<b class="nc"><i>150</i>&nbsp;                result.add(new File(tmp));</b>
+<i>151</i>&nbsp;
+<b class="nc"><i>152</i>&nbsp;            } catch (IOException e) {</b>
+<b class="nc"><i>153</i>&nbsp;                LOGGER.warn(&quot;Problem searching&quot;, e);</b>
+<b class="nc"><i>154</i>&nbsp;            }</b>
+<b class="nc"><i>155</i>&nbsp;        }</b>
+<b class="nc"><i>156</i>&nbsp;        return result;</b>
+<i>157</i>&nbsp;    }
+<i>158</i>&nbsp;
+<i>159</i>&nbsp;    /**
+<i>160</i>&nbsp;     * The actual work-horse. Will find absolute filepaths starting from the
+<i>161</i>&nbsp;     * given directory using the given regular expression string for search.
+<i>162</i>&nbsp;     */
+<i>163</i>&nbsp;    private static List&lt;File&gt; findFile(BibEntry entry, File directory, String file, String extensionRegExp,
+<i>164</i>&nbsp;            Character keywordDelimiter) {
+<i>165</i>&nbsp;
+<b class="nc"><i>166</i>&nbsp;        List&lt;File&gt; res = new ArrayList&lt;&gt;();</b>
+<i>167</i>&nbsp;
+<b class="nc"><i>168</i>&nbsp;        String fileName = file;</b>
+<i>169</i>&nbsp;        File actualDirectory;
+<b class="nc"><i>170</i>&nbsp;        if (fileName.startsWith(&quot;/&quot;)) {</b>
+<b class="nc"><i>171</i>&nbsp;            actualDirectory = new File(&quot;.&quot;);</b>
+<b class="nc"><i>172</i>&nbsp;            fileName = fileName.substring(1);</b>
+<i>173</i>&nbsp;        } else {
+<b class="nc"><i>174</i>&nbsp;            actualDirectory = directory;</b>
+<i>175</i>&nbsp;        }
+<i>176</i>&nbsp;
+<i>177</i>&nbsp;        // Escape handling...
+<b class="nc"><i>178</i>&nbsp;        Matcher m = ESCAPE_PATTERN.matcher(fileName);</b>
+<b class="nc"><i>179</i>&nbsp;        StringBuffer s = new StringBuffer();</b>
+<b class="nc"><i>180</i>&nbsp;        while (m.find()) {</b>
+<b class="nc"><i>181</i>&nbsp;            m.appendReplacement(s, m.group(1) + &#39;/&#39; + m.group(2));</b>
+<i>182</i>&nbsp;        }
+<b class="nc"><i>183</i>&nbsp;        m.appendTail(s);</b>
+<b class="nc"><i>184</i>&nbsp;        fileName = s.toString();</b>
+<b class="nc"><i>185</i>&nbsp;        String[] fileParts = fileName.split(&quot;/&quot;);</b>
+<i>186</i>&nbsp;
+<b class="nc"><i>187</i>&nbsp;        if (fileParts.length == 0) {</b>
+<b class="nc"><i>188</i>&nbsp;            return res;</b>
+<i>189</i>&nbsp;        }
+<i>190</i>&nbsp;
+<b class="nc"><i>191</i>&nbsp;        for (int i = 0; i &lt; (fileParts.length - 1); i++) {</b>
+<i>192</i>&nbsp;
+<b class="nc"><i>193</i>&nbsp;            String dirToProcess = fileParts[i];</b>
+<b class="nc"><i>194</i>&nbsp;            dirToProcess = expandBrackets(dirToProcess, entry, null, keywordDelimiter);</b>
+<i>195</i>&nbsp;
+<b class="nc"><i>196</i>&nbsp;            if (dirToProcess.matches(&quot;^.:$&quot;)) { // Windows Drive Letter</b>
+<b class="nc"><i>197</i>&nbsp;                actualDirectory = new File(dirToProcess + &#39;/&#39;);</b>
+<b class="nc"><i>198</i>&nbsp;                continue;</b>
+<i>199</i>&nbsp;            }
+<b class="nc"><i>200</i>&nbsp;            if (&quot;.&quot;.equals(dirToProcess)) { // Stay in current directory</b>
+<b class="nc"><i>201</i>&nbsp;                continue;</b>
+<i>202</i>&nbsp;            }
+<b class="nc"><i>203</i>&nbsp;            if (&quot;..&quot;.equals(dirToProcess)) {</b>
+<b class="nc"><i>204</i>&nbsp;                actualDirectory = new File(actualDirectory.getParent());</b>
+<b class="nc"><i>205</i>&nbsp;                continue;</b>
+<i>206</i>&nbsp;            }
+<b class="nc"><i>207</i>&nbsp;            if (&quot;*&quot;.equals(dirToProcess)) { // Do for all direct subdirs</b>
+<i>208</i>&nbsp;
+<b class="nc"><i>209</i>&nbsp;                File[] subDirs = actualDirectory.listFiles();</b>
+<b class="nc"><i>210</i>&nbsp;                if (subDirs != null) {</b>
+<b class="nc"><i>211</i>&nbsp;                    String restOfFileString = StringUtil.join(fileParts, &quot;/&quot;, i + 1, fileParts.length);</b>
+<b class="nc"><i>212</i>&nbsp;                    for (File subDir : subDirs) {</b>
+<b class="nc"><i>213</i>&nbsp;                        if (subDir.isDirectory()) {</b>
+<b class="nc"><i>214</i>&nbsp;                            res.addAll(findFile(entry, subDir, restOfFileString, extensionRegExp, keywordDelimiter));</b>
+<i>215</i>&nbsp;                        }
+<i>216</i>&nbsp;                    }
+<i>217</i>&nbsp;                }
+<i>218</i>&nbsp;            }
+<i>219</i>&nbsp;            // Do for all direct and indirect subdirs
+<b class="nc"><i>220</i>&nbsp;            if (&quot;**&quot;.equals(dirToProcess)) {</b>
+<b class="nc"><i>221</i>&nbsp;                List&lt;File&gt; toDo = new LinkedList&lt;&gt;();</b>
+<b class="nc"><i>222</i>&nbsp;                toDo.add(actualDirectory);</b>
+<i>223</i>&nbsp;
+<b class="nc"><i>224</i>&nbsp;                String restOfFileString = StringUtil.join(fileParts, &quot;/&quot;, i + 1, fileParts.length);</b>
+<i>225</i>&nbsp;
+<b class="nc"><i>226</i>&nbsp;                while (!toDo.isEmpty()) {</b>
+<i>227</i>&nbsp;
+<i>228</i>&nbsp;                    // Get all subdirs of each of the elements found in toDo
+<b class="nc"><i>229</i>&nbsp;                    File[] subDirs = toDo.remove(0).listFiles();</b>
+<b class="nc"><i>230</i>&nbsp;                    if (subDirs == null) {</b>
+<b class="nc"><i>231</i>&nbsp;                        continue;</b>
+<i>232</i>&nbsp;                    }
+<i>233</i>&nbsp;
+<b class="nc"><i>234</i>&nbsp;                    toDo.addAll(Arrays.asList(subDirs));</b>
+<i>235</i>&nbsp;
+<b class="nc"><i>236</i>&nbsp;                    for (File subDir : subDirs) {</b>
+<b class="nc"><i>237</i>&nbsp;                        if (!subDir.isDirectory()) {</b>
+<b class="nc"><i>238</i>&nbsp;                            continue;</b>
+<i>239</i>&nbsp;                        }
+<b class="nc"><i>240</i>&nbsp;                        res.addAll(findFile(entry, subDir, restOfFileString, extensionRegExp, keywordDelimiter));</b>
+<i>241</i>&nbsp;                    }
+<b class="nc"><i>242</i>&nbsp;                }</b>
+<i>243</i>&nbsp;
+<i>244</i>&nbsp;            } // End process directory information
+<i>245</i>&nbsp;        }
+<i>246</i>&nbsp;
+<i>247</i>&nbsp;        // Last step: check if the given file can be found in this directory
+<b class="nc"><i>248</i>&nbsp;        String filePart = fileParts[fileParts.length - 1].replace(&quot;[extension]&quot;, EXT_MARKER);</b>
+<b class="nc"><i>249</i>&nbsp;        String filenameToLookFor = expandBrackets(filePart, entry, null, keywordDelimiter).replaceAll(EXT_MARKER, extensionRegExp);</b>
+<b class="nc"><i>250</i>&nbsp;        final Pattern toMatch = Pattern.compile(&#39;^&#39; + filenameToLookFor.replaceAll(&quot;\\\\\\\\&quot;, &quot;\\\\&quot;) + &#39;$&#39;,</b>
+<i>251</i>&nbsp;                Pattern.CASE_INSENSITIVE);
+<i>252</i>&nbsp;
+<b class="nc"><i>253</i>&nbsp;        File[] matches = actualDirectory.listFiles((arg0, arg1) -&gt; {</b>
+<b class="nc"><i>254</i>&nbsp;            return toMatch.matcher(arg1).matches();</b>
+<i>255</i>&nbsp;        });
+<b class="nc"><i>256</i>&nbsp;        if ((matches != null) &amp;&amp; (matches.length &gt; 0)) {</b>
+<b class="nc"><i>257</i>&nbsp;            Collections.addAll(res, matches);</b>
+<i>258</i>&nbsp;        }
+<b class="nc"><i>259</i>&nbsp;        return res;</b>
+<i>260</i>&nbsp;    }
+<i>261</i>&nbsp;
+<i>262</i>&nbsp;    /**
+<i>263</i>&nbsp;     * Takes a string that contains bracketed expression and expands each of these using getFieldAndFormat.
+<i>264</i>&nbsp;     * &lt;p&gt;
+<i>265</i>&nbsp;     * Unknown Bracket expressions are silently dropped.
+<i>266</i>&nbsp;     *
+<i>267</i>&nbsp;     * @param bracketString
+<i>268</i>&nbsp;     * @param entry
+<i>269</i>&nbsp;     * @param database
+<i>270</i>&nbsp;     * @param keywordDelimiter
+<i>271</i>&nbsp;     * @return
+<i>272</i>&nbsp;     */
+<i>273</i>&nbsp;    public static String expandBrackets(String bracketString, BibEntry entry, BibDatabase database,
+<i>274</i>&nbsp;            Character keywordDelimiter) {
+<b class="nc"><i>275</i>&nbsp;        Matcher m = SQUARE_BRACKETS_PATTERN.matcher(bracketString);</b>
+<b class="nc"><i>276</i>&nbsp;        StringBuffer s = new StringBuffer();</b>
+<b class="nc"><i>277</i>&nbsp;        while (m.find()) {</b>
+<b class="nc"><i>278</i>&nbsp;            String replacement = getFieldAndFormat(m.group(), entry, database, keywordDelimiter);</b>
+<b class="nc"><i>279</i>&nbsp;            m.appendReplacement(s, replacement);</b>
+<b class="nc"><i>280</i>&nbsp;        }</b>
+<b class="nc"><i>281</i>&nbsp;        m.appendTail(s);</b>
+<i>282</i>&nbsp;
+<b class="nc"><i>283</i>&nbsp;        return s.toString();</b>
+<i>284</i>&nbsp;    }
+<i>285</i>&nbsp;
+<i>286</i>&nbsp;    /**
+<i>287</i>&nbsp;     * Accepts a string like [author:lower] or [title:abbr] or [auth], whereas the first part signifies the bibtex-field
+<i>288</i>&nbsp;     * to get, or the key generator field marker to use, while the others are the modifiers that will be applied.
+<i>289</i>&nbsp;     *
+<i>290</i>&nbsp;     * @param fieldAndFormat
+<i>291</i>&nbsp;     * @param entry
+<i>292</i>&nbsp;     * @param database
+<i>293</i>&nbsp;     * @param keywordDelimiter
+<i>294</i>&nbsp;     * @return
+<i>295</i>&nbsp;     */
+<i>296</i>&nbsp;    public static String getFieldAndFormat(String fieldAndFormat, BibEntry entry, BibDatabase database,
+<i>297</i>&nbsp;            Character keywordDelimiter) {
+<i>298</i>&nbsp;
+<b class="nc"><i>299</i>&nbsp;        String strippedFieldAndFormat = StringUtil.stripBrackets(fieldAndFormat);</b>
+<i>300</i>&nbsp;
+<b class="nc"><i>301</i>&nbsp;        int colon = strippedFieldAndFormat.indexOf(&#39;:&#39;);</b>
+<i>302</i>&nbsp;
+<i>303</i>&nbsp;        String beforeColon;
+<i>304</i>&nbsp;        String afterColon;
+<b class="nc"><i>305</i>&nbsp;        if (colon == -1) {</b>
+<b class="nc"><i>306</i>&nbsp;            beforeColon = strippedFieldAndFormat;</b>
+<b class="nc"><i>307</i>&nbsp;            afterColon = null;</b>
+<i>308</i>&nbsp;        } else {
+<b class="nc"><i>309</i>&nbsp;            beforeColon = strippedFieldAndFormat.substring(0, colon);</b>
+<b class="nc"><i>310</i>&nbsp;            afterColon = strippedFieldAndFormat.substring(colon + 1);</b>
+<i>311</i>&nbsp;        }
+<b class="nc"><i>312</i>&nbsp;        beforeColon = beforeColon.trim();</b>
+<i>313</i>&nbsp;
+<b class="nc"><i>314</i>&nbsp;        if (beforeColon.isEmpty()) {</b>
+<b class="nc"><i>315</i>&nbsp;            return &quot;&quot;;</b>
+<i>316</i>&nbsp;        }
+<i>317</i>&nbsp;
+<i>318</i>&nbsp;        // If no field value was found, try to interpret it as a key generator field marker:
+<b class="nc"><i>319</i>&nbsp;        String fieldValue = entry.getResolvedFieldOrAlias(beforeColon, database)</b>
+<b class="nc"><i>320</i>&nbsp;                .orElse(BibtexKeyPatternUtil.makeLabel(entry, beforeColon, keywordDelimiter, database));</b>
+<i>321</i>&nbsp;
+<b class="nc"><i>322</i>&nbsp;        if (fieldValue == null) {</b>
+<b class="nc"><i>323</i>&nbsp;            return &quot;&quot;;</b>
+<i>324</i>&nbsp;        }
+<i>325</i>&nbsp;
+<b class="nc"><i>326</i>&nbsp;        if ((afterColon == null) || afterColon.isEmpty()) {</b>
+<b class="nc"><i>327</i>&nbsp;            return fieldValue;</b>
+<i>328</i>&nbsp;        }
+<i>329</i>&nbsp;
+<b class="nc"><i>330</i>&nbsp;        List&lt;String&gt; parts = Arrays.asList(afterColon.split(&quot;:&quot;));</b>
+<b class="nc"><i>331</i>&nbsp;        fieldValue = BibtexKeyPatternUtil.applyModifiers(fieldValue, parts, 0);</b>
+<i>332</i>&nbsp;
+<b class="nc"><i>333</i>&nbsp;        return fieldValue;</b>
+<i>334</i>&nbsp;    }
+<i>335</i>&nbsp;
+<i>336</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

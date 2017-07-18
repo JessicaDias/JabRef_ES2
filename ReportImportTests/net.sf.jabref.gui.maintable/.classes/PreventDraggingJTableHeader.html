@@ -1,0 +1,180 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: PreventDraggingJTableHeader</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.maintable</a> ]
+</div>
+
+<h1>Coverage Summary for Class: PreventDraggingJTableHeader (net.sf.jabref.gui.maintable)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PreventDraggingJTableHeader</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 29)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.maintable;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.event.MouseEvent;
+<i>4</i>&nbsp;import java.util.Collections;
+<i>5</i>&nbsp;import java.util.Enumeration;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import javax.swing.JTable;
+<i>8</i>&nbsp;import javax.swing.table.JTableHeader;
+<i>9</i>&nbsp;import javax.swing.table.TableColumn;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;/**
+<i>12</i>&nbsp; * Related to &lt;code&gt;MainTable&lt;/code&gt; class. &lt;br/&gt;
+<i>13</i>&nbsp; * Prevents dragging of the first header column (&quot;#&quot;) and shows icons in the table header if an icon has to be set.
+<i>14</i>&nbsp; *
+<i>15</i>&nbsp; * This might not be the best way to solve this problem. Overriding
+<i>16</i>&nbsp; * &lt;code&gt;getDraggedColumn&lt;/code&gt; produces some ugly gui dragging artifacts if a
+<i>17</i>&nbsp; * user attempts to drag something before the first columns.
+<i>18</i>&nbsp; *
+<i>19</i>&nbsp; * @author Daniel Waeber
+<i>20</i>&nbsp; * @author Fabian Bieker
+<i>21</i>&nbsp; * @since 12/2008
+<i>22</i>&nbsp; */
+<i>23</i>&nbsp;class PreventDraggingJTableHeader extends JTableHeader {
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;    private final MainTableFormat tableFormat;
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    public PreventDraggingJTableHeader(JTable table, MainTableFormat tableFormat) {
+<b class="nc"><i>28</i>&nbsp;        super(table.getColumnModel());</b>
+<b class="nc"><i>29</i>&nbsp;        this.setTable(table);</b>
+<b class="nc"><i>30</i>&nbsp;        this.tableFormat = tableFormat;</b>
+<b class="nc"><i>31</i>&nbsp;        setupTableHeaderIcons();</b>
+<b class="nc"><i>32</i>&nbsp;    }</b>
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;    private void setupTableHeaderIcons() {
+<i>35</i>&nbsp;
+<b class="nc"><i>36</i>&nbsp;        Enumeration&lt;TableColumn&gt; columns = columnModel.getColumns();</b>
+<b class="nc"><i>37</i>&nbsp;        for (TableColumn column : Collections.list(columns)) {</b>
+<b class="nc"><i>38</i>&nbsp;            MainTableColumn mainTableColumn = tableFormat.getTableColumn(column.getModelIndex());</b>
+<b class="nc"><i>39</i>&nbsp;            column.setHeaderValue(mainTableColumn.getHeaderLabel());</b>
+<b class="nc"><i>40</i>&nbsp;        }</b>
+<i>41</i>&nbsp;
+<b class="nc"><i>42</i>&nbsp;    }</b>
+<i>43</i>&nbsp;
+<i>44</i>&nbsp;    @Override
+<i>45</i>&nbsp;    public String getToolTipText(MouseEvent event) {
+<b class="nc"><i>46</i>&nbsp;        int index = columnModel.getColumnIndexAtX(event.getX());</b>
+<b class="nc"><i>47</i>&nbsp;        int realIndex = columnModel.getColumn(index).getModelIndex();</b>
+<b class="nc"><i>48</i>&nbsp;        MainTableColumn column = tableFormat.getTableColumn(realIndex);</b>
+<b class="nc"><i>49</i>&nbsp;        return column.getDisplayName();</b>
+<i>50</i>&nbsp;    }
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;    /**
+<i>53</i>&nbsp;     * Overridden to prevent dragging of first column (&quot;#&quot;)
+<i>54</i>&nbsp;     */
+<i>55</i>&nbsp;    @Override
+<i>56</i>&nbsp;    public void setDraggedColumn(TableColumn column) {
+<i>57</i>&nbsp;
+<b class="nc"><i>58</i>&nbsp;        if ((column != null) &amp;&amp; (column.getModelIndex() == 0)) {</b>
+<b class="nc"><i>59</i>&nbsp;            return;</b>
+<i>60</i>&nbsp;        }
+<b class="nc"><i>61</i>&nbsp;        super.setDraggedColumn(column);</b>
+<b class="nc"><i>62</i>&nbsp;    }</b>
+<i>63</i>&nbsp;
+<i>64</i>&nbsp;    /**
+<i>65</i>&nbsp;     * Overridden to prevent dragging of an other column before the first column (&quot;#&quot;).
+<i>66</i>&nbsp;     */
+<i>67</i>&nbsp;    @Override
+<i>68</i>&nbsp;    public TableColumn getDraggedColumn() {
+<b class="nc"><i>69</i>&nbsp;        TableColumn column = super.getDraggedColumn();</b>
+<b class="nc"><i>70</i>&nbsp;        if (column != null) {</b>
+<b class="nc"><i>71</i>&nbsp;            PreventDraggingJTableHeader.preventDragBeforeNumberColumn(this.getTable(), column.getModelIndex());</b>
+<i>72</i>&nbsp;        }
+<i>73</i>&nbsp;
+<b class="nc"><i>74</i>&nbsp;        return column;</b>
+<i>75</i>&nbsp;    }
+<i>76</i>&nbsp;
+<i>77</i>&nbsp;    /**
+<i>78</i>&nbsp;     * Transform model index &lt;code&gt;modelIndex&lt;/code&gt; to a view based index and
+<i>79</i>&nbsp;     * prevent dragging before model index &lt;code&gt;toIndex&lt;/code&gt; (inclusive).
+<i>80</i>&nbsp;     */
+<i>81</i>&nbsp;    private static void preventDragBeforeNumberColumn(JTable table, int modelIndex) {
+<i>82</i>&nbsp;
+<b class="nc"><i>83</i>&nbsp;        for (int columnIndex = 0; columnIndex &lt; table.getColumnCount(); columnIndex++) {</b>
+<i>84</i>&nbsp;
+<b class="nc"><i>85</i>&nbsp;            TableColumn col = table.getColumnModel().getColumn(columnIndex);</b>
+<i>86</i>&nbsp;
+<i>87</i>&nbsp;            // found the element in the view ...
+<i>88</i>&nbsp;            // ... and check if it should not be dragged
+<b class="nc"><i>89</i>&nbsp;            if ((col.getModelIndex() == modelIndex) &amp;&amp; (columnIndex &lt; 1)) {</b>
+<i>90</i>&nbsp;                // prevent dragging (move it back ...)
+<b class="nc"><i>91</i>&nbsp;                table.getColumnModel().moveColumn(columnIndex, 1);</b>
+<b class="nc"><i>92</i>&nbsp;                return; // we are done now</b>
+<i>93</i>&nbsp;            }
+<i>94</i>&nbsp;
+<i>95</i>&nbsp;        }
+<b class="nc"><i>96</i>&nbsp;    }</b>
+<i>97</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

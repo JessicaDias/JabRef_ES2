@@ -1,0 +1,246 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: BackupManager</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.autosaveandbackup</a> ]
+</div>
+
+<h1>Coverage Summary for Class: BackupManager (net.sf.jabref.logic.autosaveandbackup)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">BackupManager</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 55)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.autosaveandbackup;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.IOException;
+<i>4</i>&nbsp;import java.nio.charset.Charset;
+<i>5</i>&nbsp;import java.nio.file.Files;
+<i>6</i>&nbsp;import java.nio.file.Path;
+<i>7</i>&nbsp;import java.nio.file.StandardCopyOption;
+<i>8</i>&nbsp;import java.util.HashSet;
+<i>9</i>&nbsp;import java.util.Optional;
+<i>10</i>&nbsp;import java.util.Set;
+<i>11</i>&nbsp;import java.util.concurrent.ArrayBlockingQueue;
+<i>12</i>&nbsp;import java.util.concurrent.BlockingQueue;
+<i>13</i>&nbsp;import java.util.concurrent.ExecutorService;
+<i>14</i>&nbsp;import java.util.concurrent.RejectedExecutionException;
+<i>15</i>&nbsp;import java.util.concurrent.ThreadPoolExecutor;
+<i>16</i>&nbsp;import java.util.concurrent.TimeUnit;
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;import net.sf.jabref.logic.exporter.BibtexDatabaseWriter;
+<i>19</i>&nbsp;import net.sf.jabref.logic.exporter.FileSaveSession;
+<i>20</i>&nbsp;import net.sf.jabref.logic.exporter.SaveException;
+<i>21</i>&nbsp;import net.sf.jabref.logic.exporter.SavePreferences;
+<i>22</i>&nbsp;import net.sf.jabref.logic.util.io.FileUtil;
+<i>23</i>&nbsp;import net.sf.jabref.model.database.BibDatabaseContext;
+<i>24</i>&nbsp;import net.sf.jabref.model.database.event.BibDatabaseContextChangedEvent;
+<i>25</i>&nbsp;import net.sf.jabref.preferences.JabRefPreferences;
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;import com.google.common.eventbus.Subscribe;
+<i>28</i>&nbsp;import org.apache.commons.logging.Log;
+<i>29</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;/**
+<i>32</i>&nbsp; * Backups the given bib database file from {@link BibDatabaseContext} on every {@link BibDatabaseContextChangedEvent}.
+<i>33</i>&nbsp; * An intelligent {@link ExecutorService} with a {@link BlockingQueue} prevents a high load while making backups and
+<i>34</i>&nbsp; * rejects all redundant backup tasks.
+<i>35</i>&nbsp; * This class does not manage the .bak file which is created when opening a database.
+<i>36</i>&nbsp; */
+<i>37</i>&nbsp;public class BackupManager {
+<i>38</i>&nbsp;
+<b class="nc"><i>39</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(BackupManager.class);</b>
+<i>40</i>&nbsp;
+<i>41</i>&nbsp;    private static final String BACKUP_EXTENSION = &quot;.sav&quot;;
+<i>42</i>&nbsp;
+<b class="nc"><i>43</i>&nbsp;    private static Set&lt;BackupManager&gt; runningInstances = new HashSet&lt;&gt;();</b>
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;    private final BibDatabaseContext bibDatabaseContext;
+<i>46</i>&nbsp;    private final JabRefPreferences preferences;
+<i>47</i>&nbsp;    private final ExecutorService executor;
+<b class="nc"><i>48</i>&nbsp;    private final Runnable backupTask = () -&gt; determineBackupPath().ifPresent(this::performBackup);</b>
+<i>49</i>&nbsp;
+<i>50</i>&nbsp;
+<b class="nc"><i>51</i>&nbsp;    private BackupManager(BibDatabaseContext bibDatabaseContext) {</b>
+<b class="nc"><i>52</i>&nbsp;        this.bibDatabaseContext = bibDatabaseContext;</b>
+<b class="nc"><i>53</i>&nbsp;        this.preferences = JabRefPreferences.getInstance();</b>
+<b class="nc"><i>54</i>&nbsp;        BlockingQueue&lt;Runnable&gt; workerQueue = new ArrayBlockingQueue&lt;&gt;(1);</b>
+<b class="nc"><i>55</i>&nbsp;        this.executor = new ThreadPoolExecutor(1, 1, 0, TimeUnit.SECONDS, workerQueue);</b>
+<i>56</i>&nbsp;
+<i>57</i>&nbsp;        // Listen for change events
+<b class="nc"><i>58</i>&nbsp;        bibDatabaseContext.getDatabase().registerListener(this);</b>
+<b class="nc"><i>59</i>&nbsp;        bibDatabaseContext.getMetaData().registerListener(this);</b>
+<b class="nc"><i>60</i>&nbsp;    }</b>
+<i>61</i>&nbsp;
+<i>62</i>&nbsp;    static Path getBackupPath(Path originalPath) {
+<b class="nc"><i>63</i>&nbsp;        return FileUtil.addExtension(originalPath, BACKUP_EXTENSION);</b>
+<i>64</i>&nbsp;    }
+<i>65</i>&nbsp;
+<i>66</i>&nbsp;    /**
+<i>67</i>&nbsp;     * Starts the BackupManager which is associated with the given {@link BibDatabaseContext}.
+<i>68</i>&nbsp;     * As long as no database file is present in {@link BibDatabaseContext}, the {@link BackupManager} will do nothing.
+<i>69</i>&nbsp;     *
+<i>70</i>&nbsp;     * @param bibDatabaseContext Associated {@link BibDatabaseContext}
+<i>71</i>&nbsp;     */
+<i>72</i>&nbsp;    public static BackupManager start(BibDatabaseContext bibDatabaseContext) {
+<b class="nc"><i>73</i>&nbsp;        BackupManager backupManager = new BackupManager(bibDatabaseContext);</b>
+<b class="nc"><i>74</i>&nbsp;        backupManager.startBackupTask();</b>
+<b class="nc"><i>75</i>&nbsp;        runningInstances.add(backupManager);</b>
+<b class="nc"><i>76</i>&nbsp;        return backupManager;</b>
+<i>77</i>&nbsp;    }
+<i>78</i>&nbsp;
+<i>79</i>&nbsp;    /**
+<i>80</i>&nbsp;     * Shuts down the BackupManager which is associated with the given {@link BibDatabaseContext}.
+<i>81</i>&nbsp;     *
+<i>82</i>&nbsp;     * @param bibDatabaseContext Associated {@link BibDatabaseContext}
+<i>83</i>&nbsp;     */
+<i>84</i>&nbsp;    public static void shutdown(BibDatabaseContext bibDatabaseContext) {
+<b class="nc"><i>85</i>&nbsp;        runningInstances.stream().filter(instance -&gt; instance.bibDatabaseContext == bibDatabaseContext).forEach(</b>
+<i>86</i>&nbsp;                BackupManager::shutdown);
+<b class="nc"><i>87</i>&nbsp;        runningInstances.removeIf(instance -&gt; instance.bibDatabaseContext == bibDatabaseContext);</b>
+<b class="nc"><i>88</i>&nbsp;    }</b>
+<i>89</i>&nbsp;
+<i>90</i>&nbsp;    /**
+<i>91</i>&nbsp;     * Checks whether a backup file exists for the given database file.
+<i>92</i>&nbsp;     *
+<i>93</i>&nbsp;     * @param originalPath Path to the file a backup should be checked for.
+<i>94</i>&nbsp;     */
+<i>95</i>&nbsp;    public static boolean checkForBackupFile(Path originalPath) {
+<b class="nc"><i>96</i>&nbsp;        Path backupPath = getBackupPath(originalPath);</b>
+<b class="nc"><i>97</i>&nbsp;        return Files.exists(backupPath) &amp;&amp; !Files.isDirectory(backupPath);</b>
+<i>98</i>&nbsp;    }
+<i>99</i>&nbsp;
+<i>100</i>&nbsp;    /**
+<i>101</i>&nbsp;     * Restores the backup file by copying and overwriting the original one.
+<i>102</i>&nbsp;     *
+<i>103</i>&nbsp;     * @param originalPath Path to the file which should be equalized to the backup file.
+<i>104</i>&nbsp;     */
+<i>105</i>&nbsp;    public static void restoreBackup(Path originalPath) {
+<b class="nc"><i>106</i>&nbsp;        Path backupPath = getBackupPath(originalPath);</b>
+<i>107</i>&nbsp;        try {
+<b class="nc"><i>108</i>&nbsp;            Files.copy(backupPath, originalPath, StandardCopyOption.REPLACE_EXISTING);</b>
+<b class="nc"><i>109</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i>110</i>&nbsp;            LOGGER.error(&quot;Error while restoring the backup file.&quot;, e);</b>
+<b class="nc"><i>111</i>&nbsp;        }</b>
+<b class="nc"><i>112</i>&nbsp;    }</b>
+<i>113</i>&nbsp;
+<i>114</i>&nbsp;    private Optional&lt;Path&gt; determineBackupPath() {
+<b class="nc"><i>115</i>&nbsp;        return bibDatabaseContext.getDatabasePath().map(BackupManager::getBackupPath);</b>
+<i>116</i>&nbsp;    }
+<i>117</i>&nbsp;
+<i>118</i>&nbsp;    private void performBackup(Path backupPath) {
+<i>119</i>&nbsp;        try {
+<b class="nc"><i>120</i>&nbsp;            Charset charset = bibDatabaseContext.getMetaData().getEncoding().orElse(preferences.getDefaultEncoding());</b>
+<b class="nc"><i>121</i>&nbsp;            SavePreferences savePreferences = SavePreferences.loadForSaveFromPreferences(preferences).withEncoding</b>
+<b class="nc"><i>122</i>&nbsp;                    (charset).withMakeBackup(false);</b>
+<b class="nc"><i>123</i>&nbsp;            new BibtexDatabaseWriter&lt;&gt;(FileSaveSession::new).saveDatabase(bibDatabaseContext, savePreferences).commit</b>
+<b class="nc"><i>124</i>&nbsp;                    (backupPath);</b>
+<b class="nc"><i>125</i>&nbsp;        } catch (SaveException e) {</b>
+<b class="nc"><i>126</i>&nbsp;            LOGGER.error(&quot;Error while saving file.&quot;, e);</b>
+<b class="nc"><i>127</i>&nbsp;        }</b>
+<b class="nc"><i>128</i>&nbsp;    }</b>
+<i>129</i>&nbsp;
+<i>130</i>&nbsp;    @Subscribe
+<i>131</i>&nbsp;    public synchronized void listen(@SuppressWarnings(&quot;unused&quot;) BibDatabaseContextChangedEvent event) {
+<b class="nc"><i>132</i>&nbsp;        startBackupTask();</b>
+<b class="nc"><i>133</i>&nbsp;    }</b>
+<i>134</i>&nbsp;
+<i>135</i>&nbsp;    private void startBackupTask() {
+<i>136</i>&nbsp;        try {
+<b class="nc"><i>137</i>&nbsp;            executor.submit(backupTask);</b>
+<b class="nc"><i>138</i>&nbsp;        } catch (RejectedExecutionException e) {</b>
+<b class="nc"><i>139</i>&nbsp;            LOGGER.debug(&quot;Rejecting while another backup process is already running.&quot;);</b>
+<b class="nc"><i>140</i>&nbsp;        }</b>
+<b class="nc"><i>141</i>&nbsp;    }</b>
+<i>142</i>&nbsp;
+<i>143</i>&nbsp;    /**
+<i>144</i>&nbsp;     * Unregisters the BackupManager from the eventBus of {@link BibDatabaseContext} and deletes the backup file.
+<i>145</i>&nbsp;     * This method should only be used when closing a database/JabRef legally.
+<i>146</i>&nbsp;     */
+<i>147</i>&nbsp;    private void shutdown() {
+<b class="nc"><i>148</i>&nbsp;        bibDatabaseContext.getDatabase().unregisterListener(this);</b>
+<b class="nc"><i>149</i>&nbsp;        bibDatabaseContext.getMetaData().unregisterListener(this);</b>
+<b class="nc"><i>150</i>&nbsp;        executor.shutdown();</b>
+<b class="nc"><i>151</i>&nbsp;        determineBackupPath().ifPresent(this::deleteBackupFile);</b>
+<b class="nc"><i>152</i>&nbsp;    }</b>
+<i>153</i>&nbsp;
+<i>154</i>&nbsp;    private void deleteBackupFile(Path backupPath) {
+<i>155</i>&nbsp;        try {
+<b class="nc"><i>156</i>&nbsp;            if (Files.exists(backupPath) &amp;&amp; !Files.isDirectory(backupPath)) {</b>
+<b class="nc"><i>157</i>&nbsp;                Files.delete(backupPath);</b>
+<i>158</i>&nbsp;            }
+<b class="nc"><i>159</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i>160</i>&nbsp;            LOGGER.error(&quot;Error while deleting the backup file.&quot;, e);</b>
+<b class="nc"><i>161</i>&nbsp;        }</b>
+<b class="nc"><i>162</i>&nbsp;    }</b>
+<i>163</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,306 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: DragDropPane</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui</a> ]
+</div>
+
+<h1>Coverage Summary for Class: DragDropPane (net.sf.jabref.gui)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DragDropPane</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 7)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">DragDropPane$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 24)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">DragDropPane$2</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 22)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">DragDropPane$MarkerPane</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 13)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 66)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.AlphaComposite;
+<i>4</i>&nbsp;import java.awt.Component;
+<i>5</i>&nbsp;import java.awt.Font;
+<i>6</i>&nbsp;import java.awt.Graphics;
+<i>7</i>&nbsp;import java.awt.Graphics2D;
+<i>8</i>&nbsp;import java.awt.Point;
+<i>9</i>&nbsp;import java.awt.Rectangle;
+<i>10</i>&nbsp;import java.awt.event.MouseAdapter;
+<i>11</i>&nbsp;import java.awt.event.MouseEvent;
+<i>12</i>&nbsp;import java.awt.event.MouseMotionAdapter;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;import javax.swing.JPanel;
+<i>15</i>&nbsp;import javax.swing.JTabbedPane;
+<i>16</i>&nbsp;import javax.swing.SwingUtilities;
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;/**
+<i>19</i>&nbsp; * Extends the JTabbedPane class to support Drag&amp;Drop of Tabs.
+<i>20</i>&nbsp; *
+<i>21</i>&nbsp; * @author kleinms, strassfn
+<i>22</i>&nbsp; */
+<i>23</i>&nbsp;class DragDropPane extends JTabbedPane {
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;    private boolean draggingState; // State var if we are at dragging or not
+<i>26</i>&nbsp;    private int indexDraggedTab; // The index of the tab we drag at the moment
+<i>27</i>&nbsp;    private final MarkerPane markerPane; // The glass panel for painting the position marker
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;    DragDropPane() {
+<b class="nc"><i>31</i>&nbsp;        super();</b>
+<b class="nc"><i>32</i>&nbsp;        indexDraggedTab = -1;</b>
+<b class="nc"><i>33</i>&nbsp;        markerPane = new MarkerPane();</b>
+<b class="nc"><i>34</i>&nbsp;        markerPane.setVisible(false);</b>
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;        // -------------------------------------------
+<i>37</i>&nbsp;        // Adding listeners for Drag&amp;Drop Actions
+<i>38</i>&nbsp;        // -------------------------------------------
+<b class="nc"><i>39</i>&nbsp;        addMouseMotionListener(new MouseMotionAdapter() {</b>
+<i>40</i>&nbsp;
+<i>41</i>&nbsp;            @Override
+<i>42</i>&nbsp;            public void mouseDragged(MouseEvent e) { // Mouse is dragging
+<i>43</i>&nbsp;                // Calculates the tab index based on the mouse position
+<b class="nc"><i>44</i>&nbsp;                int indexActTab = getUI().tabForCoordinate(DragDropPane.this,</b>
+<b class="nc"><i>45</i>&nbsp;                        e.getX(), e.getY());</b>
+<b class="nc"><i>46</i>&nbsp;                if (draggingState) { // We are at tab dragging</b>
+<b class="nc"><i>47</i>&nbsp;                    if ((indexDraggedTab &gt;= 0) &amp;&amp; (indexActTab &gt;= 0)) { //Is it a valid scenario?</b>
+<b class="nc"><i>48</i>&nbsp;                        boolean toTheLeft = e.getX() &lt;= getUI().getTabBounds(DragDropPane.this, indexActTab).getCenterX(); //Go to the left or to the right of the actual Tab</b>
+<b class="nc"><i>49</i>&nbsp;                        DragDropPane.this.getRootPane().setGlassPane(markerPane); //Set the MarkerPane as glass Pane</b>
+<b class="nc"><i>50</i>&nbsp;                        Rectangle actTabRect = SwingUtilities.convertRectangle(DragDropPane.this, getBoundsAt(indexActTab),</b>
+<b class="nc"><i>51</i>&nbsp;                                DragDropPane.this.markerPane); //Rectangle with the same dimensions as the tab at the mouse position</b>
+<b class="nc"><i>52</i>&nbsp;                        if (toTheLeft) {</b>
+<b class="nc"><i>53</i>&nbsp;                            markerPane.setPicLocation(new Point(actTabRect.x, actTabRect.y</b>
+<i>54</i>&nbsp;                                    + actTabRect.height)); //Set pic to the left of the tab at the mouse position
+<i>55</i>&nbsp;                        }
+<i>56</i>&nbsp;                        else {
+<b class="nc"><i>57</i>&nbsp;                            markerPane.setPicLocation(new Point(actTabRect.x + actTabRect.width, actTabRect.y</b>
+<i>58</i>&nbsp;                                    + actTabRect.height)); //Set pic to the right of the tab at the mouse position
+<i>59</i>&nbsp;                        }
+<i>60</i>&nbsp;
+<b class="nc"><i>61</i>&nbsp;                        markerPane.setVisible(true);</b>
+<b class="nc"><i>62</i>&nbsp;                        markerPane.repaint();</b>
+<b class="nc"><i>63</i>&nbsp;                        repaint();</b>
+<b class="nc"><i>64</i>&nbsp;                    } else { //We have no valid tab tragging scenario</b>
+<b class="nc"><i>65</i>&nbsp;                        markerPane.setVisible(false);</b>
+<b class="nc"><i>66</i>&nbsp;                        markerPane.repaint();</b>
+<i>67</i>&nbsp;                    }
+<i>68</i>&nbsp;
+<i>69</i>&nbsp;                } else { //We are not at tab dragging
+<b class="nc"><i>70</i>&nbsp;                    if (indexActTab &gt;= 0) { // Mouse is above a tab, otherwise tabNumber would be -1</b>
+<i>71</i>&nbsp;                        // --&gt;Now we are at tab tragging
+<b class="nc"><i>72</i>&nbsp;                        draggingState = true; // Mark now we are at dragging</b>
+<b class="nc"><i>73</i>&nbsp;                        indexDraggedTab = indexActTab; // Set draggedTabIndex to the tabNumber where we are now</b>
+<b class="nc"><i>74</i>&nbsp;                        repaint();</b>
+<i>75</i>&nbsp;                    }
+<i>76</i>&nbsp;                }
+<b class="nc"><i>77</i>&nbsp;                super.mouseDragged(e);</b>
+<b class="nc"><i>78</i>&nbsp;            }</b>
+<i>79</i>&nbsp;        });
+<i>80</i>&nbsp;
+<b class="nc"><i>81</i>&nbsp;        addMouseListener(new MouseAdapter() {</b>
+<i>82</i>&nbsp;
+<i>83</i>&nbsp;            @Override
+<i>84</i>&nbsp;            public void mouseReleased(MouseEvent e) {
+<b class="nc"><i>85</i>&nbsp;                DragDropPane.this.markerPane.setVisible(false); //Set MarkerPane invisible</b>
+<b class="nc"><i>86</i>&nbsp;                int indexActTab = getUI().tabForCoordinate(DragDropPane.this,</b>
+<b class="nc"><i>87</i>&nbsp;                        e.getX(), e.getY());</b>
+<b class="nc"><i>88</i>&nbsp;                if ((indexDraggedTab &gt;= 0) &amp;&amp; (indexActTab &gt;= 0) &amp;&amp; (indexDraggedTab != indexActTab)) { //Is it a valid scenario?</b>
+<b class="nc"><i>89</i>&nbsp;                    if (draggingState) { //We are at tab dragging</b>
+<b class="nc"><i>90</i>&nbsp;                        boolean toTheLeft = e.getX() &lt;= getUI().getTabBounds(DragDropPane.this, indexActTab).getCenterX(); //Go to the left or to the right of the actual Tab</b>
+<b class="nc"><i>91</i>&nbsp;                        DragDropPane.this.markerPane.setVisible(false);</b>
+<i>92</i>&nbsp;
+<b class="nc"><i>93</i>&nbsp;                        Component actTab = getComponentAt(indexDraggedTab); //Save dragged tab</b>
+<b class="nc"><i>94</i>&nbsp;                        String actTabTitle = getTitleAt(indexDraggedTab); //Save Title of the dragged tab</b>
+<b class="nc"><i>95</i>&nbsp;                        removeTabAt(indexDraggedTab); //Remove dragged tab</b>
+<i>96</i>&nbsp;                        int newTabPos;
+<b class="nc"><i>97</i>&nbsp;                        if (indexActTab &lt; indexDraggedTab) { //We are dragging the tab to the left of its the position</b>
+<b class="nc"><i>98</i>&nbsp;                            if (toTheLeft &amp;&amp; (indexActTab &lt; (DragDropPane.this.getTabCount()))) {</b>
+<b class="nc"><i>99</i>&nbsp;                                newTabPos = indexActTab;</b>
+<i>100</i>&nbsp;                            } else {
+<b class="nc"><i>101</i>&nbsp;                                newTabPos = indexActTab + 1;</b>
+<i>102</i>&nbsp;                            }
+<i>103</i>&nbsp;                        } else { //We are dragging the tab to the right of the old position
+<b class="nc"><i>104</i>&nbsp;                            if (toTheLeft &amp;&amp; (indexActTab &gt; 0)) {</b>
+<b class="nc"><i>105</i>&nbsp;                                newTabPos = indexActTab - 1;</b>
+<i>106</i>&nbsp;                            } else {
+<b class="nc"><i>107</i>&nbsp;                                newTabPos = indexActTab;</b>
+<i>108</i>&nbsp;                            }
+<i>109</i>&nbsp;                        }
+<b class="nc"><i>110</i>&nbsp;                        insertTab(actTabTitle, null, actTab, null, newTabPos); //Insert dragged tab at new position</b>
+<b class="nc"><i>111</i>&nbsp;                        DragDropPane.this.setSelectedIndex(newTabPos); //Set selection back to the tab (at the new tab position</b>
+<i>112</i>&nbsp;                    }
+<i>113</i>&nbsp;                }
+<b class="nc"><i>114</i>&nbsp;                draggingState = false;</b>
+<b class="nc"><i>115</i>&nbsp;            }</b>
+<i>116</i>&nbsp;        });
+<b class="nc"><i>117</i>&nbsp;    }</b>
+<i>118</i>&nbsp;
+<i>119</i>&nbsp;
+<i>120</i>&nbsp;    /**
+<i>121</i>&nbsp;     * A glass panel which sets the marker for Dragging of Tabs.
+<i>122</i>&nbsp;     *
+<i>123</i>&nbsp;     */
+<i>124</i>&nbsp;    static class MarkerPane extends JPanel {
+<i>125</i>&nbsp;
+<i>126</i>&nbsp;        private Point locationP;
+<i>127</i>&nbsp;        private final IconTheme.JabRefIcon moveTabArrow;
+<i>128</i>&nbsp;
+<i>129</i>&nbsp;
+<b class="nc"><i>130</i>&nbsp;        public MarkerPane() {</b>
+<b class="nc"><i>131</i>&nbsp;            setOpaque(false);</b>
+<i>132</i>&nbsp;
+<i>133</i>&nbsp;            // Sets the marker fontIcon
+<b class="nc"><i>134</i>&nbsp;            moveTabArrow = IconTheme.JabRefIcon.MOVE_TAB_ARROW;</b>
+<b class="nc"><i>135</i>&nbsp;        }</b>
+<i>136</i>&nbsp;
+<i>137</i>&nbsp;        @Override
+<i>138</i>&nbsp;        public void paintComponent(Graphics g) {
+<b class="nc"><i>139</i>&nbsp;            super.paintComponent(g);</b>
+<b class="nc"><i>140</i>&nbsp;            Graphics2D g2 = (Graphics2D) g;</b>
+<b class="nc"><i>141</i>&nbsp;            g2.setComposite(AlphaComposite.getInstance(</b>
+<i>142</i>&nbsp;                    AlphaComposite.SRC_OVER, 0.9f)); // Set transparency
+<b class="nc"><i>143</i>&nbsp;            g.setFont(IconTheme.FONT.deriveFont(Font.BOLD, 24f));</b>
+<b class="nc"><i>144</i>&nbsp;            g.drawString(moveTabArrow.getCode(), locationP.x - (moveTabArrow.getIcon().getIconWidth() / 2),</b>
+<b class="nc"><i>145</i>&nbsp;                    locationP.y + (moveTabArrow.getIcon().getIconHeight() / 2));</b>
+<i>146</i>&nbsp;
+<b class="nc"><i>147</i>&nbsp;        }</b>
+<i>148</i>&nbsp;
+<i>149</i>&nbsp;        /**
+<i>150</i>&nbsp;         * Sets the new location, where the marker should be placed.
+<i>151</i>&nbsp;         *
+<i>152</i>&nbsp;         * @param pt the point for the marker
+<i>153</i>&nbsp;         */
+<i>154</i>&nbsp;        public void setPicLocation(Point pt) {
+<b class="nc"><i>155</i>&nbsp;            this.locationP = pt;</b>
+<b class="nc"><i>156</i>&nbsp;        }</b>
+<i>157</i>&nbsp;
+<i>158</i>&nbsp;    }
+<i>159</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

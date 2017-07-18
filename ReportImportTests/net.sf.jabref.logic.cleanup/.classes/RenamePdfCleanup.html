@@ -1,0 +1,242 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: RenamePdfCleanup</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.cleanup</a> ]
+</div>
+
+<h1>Coverage Summary for Class: RenamePdfCleanup (net.sf.jabref.logic.cleanup)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">RenamePdfCleanup</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 66)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.cleanup;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.File;
+<i>4</i>&nbsp;import java.io.IOException;
+<i>5</i>&nbsp;import java.nio.file.Files;
+<i>6</i>&nbsp;import java.nio.file.Path;
+<i>7</i>&nbsp;import java.nio.file.Paths;
+<i>8</i>&nbsp;import java.util.ArrayList;
+<i>9</i>&nbsp;import java.util.Collections;
+<i>10</i>&nbsp;import java.util.List;
+<i>11</i>&nbsp;import java.util.Objects;
+<i>12</i>&nbsp;import java.util.Optional;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;import net.sf.jabref.logic.TypedBibEntry;
+<i>15</i>&nbsp;import net.sf.jabref.logic.layout.LayoutFormatterPreferences;
+<i>16</i>&nbsp;import net.sf.jabref.logic.util.io.FileUtil;
+<i>17</i>&nbsp;import net.sf.jabref.model.FieldChange;
+<i>18</i>&nbsp;import net.sf.jabref.model.cleanup.CleanupJob;
+<i>19</i>&nbsp;import net.sf.jabref.model.database.BibDatabaseContext;
+<i>20</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>21</i>&nbsp;import net.sf.jabref.model.entry.ParsedFileField;
+<i>22</i>&nbsp;import net.sf.jabref.model.metadata.FileDirectoryPreferences;
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;import org.apache.commons.logging.Log;
+<i>25</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;public class RenamePdfCleanup implements CleanupJob {
+<i>28</i>&nbsp;
+<b class="nc"><i>29</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(RenamePdfCleanup.class);</b>
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;    private final BibDatabaseContext databaseContext;
+<i>32</i>&nbsp;    private final boolean onlyRelativePaths;
+<i>33</i>&nbsp;    private final String fileNamePattern;
+<i>34</i>&nbsp;    private final String fileDirPattern;
+<i>35</i>&nbsp;    private final LayoutFormatterPreferences prefs;
+<i>36</i>&nbsp;    private final FileDirectoryPreferences fileDirectoryPreferences;
+<i>37</i>&nbsp;    private int unsuccessfulRenames;
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;    public RenamePdfCleanup(boolean onlyRelativePaths, BibDatabaseContext databaseContext, String fileNamePattern,
+<i>40</i>&nbsp;            String fileDirPattern, LayoutFormatterPreferences prefs,
+<b class="nc"><i>41</i>&nbsp;            FileDirectoryPreferences fileDirectoryPreferences) {</b>
+<b class="nc"><i>42</i>&nbsp;        this.databaseContext = Objects.requireNonNull(databaseContext);</b>
+<b class="nc"><i>43</i>&nbsp;        this.onlyRelativePaths = onlyRelativePaths;</b>
+<b class="nc"><i>44</i>&nbsp;        this.fileNamePattern = Objects.requireNonNull(fileNamePattern);</b>
+<b class="nc"><i>45</i>&nbsp;        this.fileDirPattern = Objects.requireNonNull(fileDirPattern);</b>
+<b class="nc"><i>46</i>&nbsp;        this.prefs = Objects.requireNonNull(prefs);</b>
+<b class="nc"><i>47</i>&nbsp;        this.fileDirectoryPreferences = fileDirectoryPreferences;</b>
+<b class="nc"><i>48</i>&nbsp;    }</b>
+<i>49</i>&nbsp;
+<i>50</i>&nbsp;    @Override
+<i>51</i>&nbsp;    public List&lt;FieldChange&gt; cleanup(BibEntry entry) {
+<b class="nc"><i>52</i>&nbsp;        TypedBibEntry typedEntry = new TypedBibEntry(entry, databaseContext);</b>
+<b class="nc"><i>53</i>&nbsp;        List&lt;ParsedFileField&gt; fileList = typedEntry.getFiles();</b>
+<b class="nc"><i>54</i>&nbsp;        List&lt;ParsedFileField&gt; newFileList = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>55</i>&nbsp;        boolean changed = false;</b>
+<i>56</i>&nbsp;
+<b class="nc"><i>57</i>&nbsp;        for (ParsedFileField flEntry : fileList) {</b>
+<b class="nc"><i>58</i>&nbsp;            String realOldFilename = flEntry.getLink();</b>
+<i>59</i>&nbsp;
+<b class="nc"><i>60</i>&nbsp;            if (onlyRelativePaths &amp;&amp; (new File(realOldFilename).isAbsolute())) {</b>
+<b class="nc"><i>61</i>&nbsp;                newFileList.add(flEntry);</b>
+<b class="nc"><i>62</i>&nbsp;                continue;</b>
+<i>63</i>&nbsp;            }
+<i>64</i>&nbsp;
+<b class="nc"><i>65</i>&nbsp;            StringBuilder targetFileName = new StringBuilder(FileUtil</b>
+<b class="nc"><i>66</i>&nbsp;                    .createFileNameFromPattern(databaseContext.getDatabase(), entry, fileNamePattern, prefs).trim());</b>
+<i>67</i>&nbsp;
+<b class="nc"><i>68</i>&nbsp;            String targetDirName = &quot;&quot;;</b>
+<b class="nc"><i>69</i>&nbsp;            if (!fileDirPattern.isEmpty()) {</b>
+<b class="nc"><i>70</i>&nbsp;                targetDirName = FileUtil.createFileNameFromPattern(databaseContext.getDatabase(), entry, fileDirPattern,</b>
+<i>71</i>&nbsp;                        prefs);
+<i>72</i>&nbsp;            }
+<i>73</i>&nbsp;
+<i>74</i>&nbsp;            //Add extension to newFilename
+<b class="nc"><i>75</i>&nbsp;            targetFileName.append(&#39;.&#39;).append(FileUtil.getFileExtension(realOldFilename).orElse(&quot;pdf&quot;));</b>
+<i>76</i>&nbsp;
+<i>77</i>&nbsp;            //get new Filename with path
+<i>78</i>&nbsp;            //Create new Path based on old Path and new filename
+<b class="nc"><i>79</i>&nbsp;            Optional&lt;File&gt; expandedOldFile = FileUtil.expandFilename(realOldFilename,</b>
+<b class="nc"><i>80</i>&nbsp;                    databaseContext.getFileDirectories(fileDirectoryPreferences));</b>
+<i>81</i>&nbsp;
+<b class="nc"><i>82</i>&nbsp;            if ((!expandedOldFile.isPresent()) || (expandedOldFile.get().getParent() == null)) {</b>
+<i>83</i>&nbsp;                // something went wrong. Just skip this entry
+<b class="nc"><i>84</i>&nbsp;                newFileList.add(flEntry);</b>
+<b class="nc"><i>85</i>&nbsp;                continue;</b>
+<i>86</i>&nbsp;            }
+<b class="nc"><i>87</i>&nbsp;            Path newPath = null;</b>
+<b class="nc"><i>88</i>&nbsp;            Optional&lt;Path&gt; dir = databaseContext.getFirstExistingFileDir(fileDirectoryPreferences);</b>
+<b class="nc"><i>89</i>&nbsp;            if (dir.isPresent()) {</b>
+<i>90</i>&nbsp;
+<b class="nc"><i>91</i>&nbsp;                newPath = dir.get().resolve(targetDirName).resolve(targetFileName.toString());</b>
+<i>92</i>&nbsp;
+<b class="nc"><i>93</i>&nbsp;                String expandedOldFilePath = expandedOldFile.get().toString();</b>
+<b class="nc"><i>94</i>&nbsp;                boolean pathsDifferOnlyByCase = newPath.toString().equalsIgnoreCase(expandedOldFilePath)</b>
+<b class="nc"><i>95</i>&nbsp;                        &amp;&amp; !newPath.equals(expandedOldFilePath);</b>
+<i>96</i>&nbsp;
+<b class="nc"><i>97</i>&nbsp;                if (Files.exists(newPath) &amp;&amp; !pathsDifferOnlyByCase) {</b>
+<i>98</i>&nbsp;                    // we do not overwrite files
+<i>99</i>&nbsp;                    // Since File.exists is sometimes not case-sensitive, the check pathsDifferOnlyByCase ensures that we
+<i>100</i>&nbsp;                    // nonetheless rename files to a new name which just differs by case.
+<i>101</i>&nbsp;                    // TODO: we could check here if the newPath file is linked with the current entry. And if not, we could add a link
+<b class="nc"><i>102</i>&nbsp;                    newFileList.add(flEntry);</b>
+<b class="nc"><i>103</i>&nbsp;                    continue;</b>
+<i>104</i>&nbsp;                }
+<i>105</i>&nbsp;
+<i>106</i>&nbsp;                try {
+<b class="nc"><i>107</i>&nbsp;                    if (!Files.exists(newPath)) {</b>
+<b class="nc"><i>108</i>&nbsp;                        Files.createDirectories(newPath);</b>
+<i>109</i>&nbsp;                    }
+<b class="nc"><i>110</i>&nbsp;                } catch (IOException e) {</b>
+<i>111</i>&nbsp;                    // TODO Auto-generated catch block
+<b class="nc"><i>112</i>&nbsp;                    LOGGER.error(&quot;Could no create target necessary target directoires for renaming&quot;, e);</b>
+<b class="nc"><i>113</i>&nbsp;                }</b>
+<i>114</i>&nbsp;                //do rename
+<b class="nc"><i>115</i>&nbsp;                boolean renameSuccessful = FileUtil.renameFile(Paths.get(expandedOldFilePath), newPath, true);</b>
+<b class="nc"><i>116</i>&nbsp;                if (renameSuccessful) {</b>
+<b class="nc"><i>117</i>&nbsp;                    changed = true;</b>
+<i>118</i>&nbsp;
+<i>119</i>&nbsp;                    //Change the path for this entry
+<b class="nc"><i>120</i>&nbsp;                    String description = flEntry.getDescription();</b>
+<b class="nc"><i>121</i>&nbsp;                    String type = flEntry.getFileType();</b>
+<i>122</i>&nbsp;
+<b class="nc"><i>123</i>&nbsp;                    Optional&lt;Path&gt; settingsDir = databaseContext.getFirstExistingFileDir(fileDirectoryPreferences);</b>
+<b class="nc"><i>124</i>&nbsp;                    if (settingsDir.isPresent()) {</b>
+<i>125</i>&nbsp;
+<b class="nc"><i>126</i>&nbsp;                        Path parent = settingsDir.get();</b>
+<i>127</i>&nbsp;                        String newFileEntryFileName;
+<b class="nc"><i>128</i>&nbsp;                        if ((parent == null)) {</b>
+<b class="nc"><i>129</i>&nbsp;                            newFileEntryFileName = targetFileName.toString();</b>
+<i>130</i>&nbsp;
+<i>131</i>&nbsp;                        } else {
+<b class="nc"><i>132</i>&nbsp;                            newFileEntryFileName = parent.relativize(newPath).toString();</b>
+<i>133</i>&nbsp;                        }
+<i>134</i>&nbsp;
+<b class="nc"><i>135</i>&nbsp;                        newFileList.add(new ParsedFileField(description, newFileEntryFileName, type));</b>
+<i>136</i>&nbsp;                    }
+<b class="nc"><i>137</i>&nbsp;                } else {</b>
+<b class="nc"><i>138</i>&nbsp;                    unsuccessfulRenames++;</b>
+<i>139</i>&nbsp;                }
+<i>140</i>&nbsp;            }
+<b class="nc"><i>141</i>&nbsp;        }</b>
+<b class="nc"><i>142</i>&nbsp;        if (changed) {</b>
+<b class="nc"><i>143</i>&nbsp;            Optional&lt;FieldChange&gt; change = entry.setFiles(newFileList);</b>
+<i>144</i>&nbsp;            //we put an undo of the field content here
+<i>145</i>&nbsp;            //the file is not being renamed back, which leads to inconsistencies
+<i>146</i>&nbsp;            //if we put a null undo object here, the change by &quot;doMakePathsRelative&quot; would overwrite the field value nevertheless.
+<b class="nc"><i>147</i>&nbsp;            if (change.isPresent()) {</b>
+<b class="nc"><i>148</i>&nbsp;                return Collections.singletonList(change.get());</b>
+<i>149</i>&nbsp;            } else {
+<b class="nc"><i>150</i>&nbsp;                return Collections.emptyList();</b>
+<i>151</i>&nbsp;            }
+<i>152</i>&nbsp;        }
+<b class="nc"><i>153</i>&nbsp;        return Collections.emptyList();</b>
+<i>154</i>&nbsp;    }
+<i>155</i>&nbsp;
+<i>156</i>&nbsp;    public int getUnsuccessfulRenames() {
+<b class="nc"><i>157</i>&nbsp;        return unsuccessfulRenames;</b>
+<i>158</i>&nbsp;    }
+<i>159</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

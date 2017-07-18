@@ -1,0 +1,221 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: AbstractAutoCompleter</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.autocompleter</a> ]
+</div>
+
+<h1>Coverage Summary for Class: AbstractAutoCompleter (net.sf.jabref.logic.autocompleter)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AbstractAutoCompleter</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 42)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.autocompleter;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.ArrayList;
+<i>4</i>&nbsp;import java.util.HashMap;
+<i>5</i>&nbsp;import java.util.List;
+<i>6</i>&nbsp;import java.util.Map;
+<i>7</i>&nbsp;import java.util.Objects;
+<i>8</i>&nbsp;import java.util.Set;
+<i>9</i>&nbsp;import java.util.SortedSet;
+<i>10</i>&nbsp;import java.util.TreeSet;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;import net.sf.jabref.logic.layout.format.LatexToUnicodeFormatter;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;/**
+<i>15</i>&nbsp; * Delivers possible completions for a given string.
+<i>16</i>&nbsp; *
+<i>17</i>&nbsp; * @author kahlert, cordes, olly98
+<i>18</i>&nbsp; * @see AutoCompleterFactory
+<i>19</i>&nbsp; */
+<i>20</i>&nbsp;public abstract class AbstractAutoCompleter implements AutoCompleter&lt;String&gt; {
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;    private static final int SHORTEST_WORD_TO_ADD = 4;
+<i>23</i>&nbsp;    private final AutoCompletePreferences preferences;
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;    /**
+<i>26</i>&nbsp;     * Stores the strings as is.
+<i>27</i>&nbsp;     */
+<b class="nc"><i>28</i>&nbsp;    private final TreeSet&lt;String&gt; indexCaseSensitive = new TreeSet&lt;&gt;();</b>
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;    /**
+<i>31</i>&nbsp;     * Stores strings in lowercase.
+<i>32</i>&nbsp;     */
+<b class="nc"><i>33</i>&nbsp;    private final TreeSet&lt;String&gt; indexCaseInsensitive = new TreeSet&lt;&gt;();</b>
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    /**
+<i>36</i>&nbsp;     * Stores for a lowercase string the possible expanded strings.
+<i>37</i>&nbsp;     */
+<b class="nc"><i>38</i>&nbsp;    private final Map&lt;String, Set&lt;String&gt;&gt; possibleStringsForSearchString = new HashMap&lt;&gt;();</b>
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;
+<b class="nc"><i>41</i>&nbsp;    public AbstractAutoCompleter(AutoCompletePreferences preferences) {</b>
+<b class="nc"><i>42</i>&nbsp;        this.preferences = Objects.requireNonNull(preferences);</b>
+<b class="nc"><i>43</i>&nbsp;    }</b>
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;    /**
+<i>46</i>&nbsp;     * {@inheritDoc}
+<i>47</i>&nbsp;     * The completion is case sensitive if the string contains upper case letters.
+<i>48</i>&nbsp;     * Otherwise the completion is case insensitive.
+<i>49</i>&nbsp;     */
+<i>50</i>&nbsp;    @Override
+<i>51</i>&nbsp;    public List&lt;String&gt; complete(String toComplete) {
+<b class="nc"><i>52</i>&nbsp;        if(toComplete == null) {</b>
+<b class="nc"><i>53</i>&nbsp;            return new ArrayList&lt;&gt;();</b>
+<i>54</i>&nbsp;        }
+<b class="nc"><i>55</i>&nbsp;        if (isTooShortToComplete(toComplete)) {</b>
+<b class="nc"><i>56</i>&nbsp;            return new ArrayList&lt;&gt;();</b>
+<i>57</i>&nbsp;        }
+<b class="nc"><i>58</i>&nbsp;        String lowerCase = toComplete.toLowerCase();</b>
+<i>59</i>&nbsp;
+<b class="nc"><i>60</i>&nbsp;        if (lowerCase.equals(toComplete)) {</b>
+<i>61</i>&nbsp;            // user typed in lower case word -&gt; we do an case-insensitive search
+<b class="nc"><i>62</i>&nbsp;            String ender = AbstractAutoCompleter.incrementLastCharacter(lowerCase);</b>
+<b class="nc"><i>63</i>&nbsp;            SortedSet&lt;String&gt; subset = indexCaseInsensitive.subSet(lowerCase, ender);</b>
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;            // As subset only contains lower case strings,
+<i>66</i>&nbsp;            // we have to to determine possible strings for each hit
+<b class="nc"><i>67</i>&nbsp;            List&lt;String&gt; result = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>68</i>&nbsp;            for (String s : subset) {</b>
+<b class="nc"><i>69</i>&nbsp;                result.addAll(possibleStringsForSearchString.get(s));</b>
+<b class="nc"><i>70</i>&nbsp;            }</b>
+<b class="nc"><i>71</i>&nbsp;            return result;</b>
+<i>72</i>&nbsp;        } else {
+<i>73</i>&nbsp;            // user typed in a mix of upper case and lower case,
+<i>74</i>&nbsp;            // we assume user wants to have exact search
+<b class="nc"><i>75</i>&nbsp;            String ender = AbstractAutoCompleter.incrementLastCharacter(toComplete);</b>
+<b class="nc"><i>76</i>&nbsp;            SortedSet&lt;String&gt; subset = indexCaseSensitive.subSet(toComplete, ender);</b>
+<b class="nc"><i>77</i>&nbsp;            return new ArrayList&lt;&gt;(subset);</b>
+<i>78</i>&nbsp;        }
+<i>79</i>&nbsp;    }
+<i>80</i>&nbsp;
+<i>81</i>&nbsp;    /**
+<i>82</i>&nbsp;     * Increments the last character of a string.
+<i>83</i>&nbsp;     *
+<i>84</i>&nbsp;     * Example: incrementLastCharacter(&quot;abc&quot;) returns &quot;abd&quot;.
+<i>85</i>&nbsp;     */
+<i>86</i>&nbsp;    private static String incrementLastCharacter(String toIncrement) {
+<b class="nc"><i>87</i>&nbsp;        if (toIncrement.isEmpty()) {</b>
+<b class="nc"><i>88</i>&nbsp;            return &quot;&quot;;</b>
+<i>89</i>&nbsp;        }
+<i>90</i>&nbsp;
+<b class="nc"><i>91</i>&nbsp;        char lastChar = toIncrement.charAt(toIncrement.length() - 1);</b>
+<b class="nc"><i>92</i>&nbsp;        return toIncrement.substring(0, toIncrement.length() - 1) + Character.toString((char) (lastChar + 1));</b>
+<i>93</i>&nbsp;    }
+<i>94</i>&nbsp;
+<i>95</i>&nbsp;    /**
+<i>96</i>&nbsp;     * Returns whether the string is to short to be completed.
+<i>97</i>&nbsp;     */
+<i>98</i>&nbsp;    private boolean isTooShortToComplete(String toCheck) {
+<b class="nc"><i>99</i>&nbsp;        return toCheck.length() &lt; preferences.getShortestLengthToComplete();</b>
+<i>100</i>&nbsp;    }
+<i>101</i>&nbsp;
+<i>102</i>&nbsp;    @Override
+<i>103</i>&nbsp;    public void addItemToIndex(String word) {
+<b class="nc"><i>104</i>&nbsp;        if (word.length() &lt; getLengthOfShortestWordToAdd()) {</b>
+<b class="nc"><i>105</i>&nbsp;            return;</b>
+<i>106</i>&nbsp;        }
+<i>107</i>&nbsp;
+<b class="nc"><i>108</i>&nbsp;        word = new LatexToUnicodeFormatter().format(word);</b>
+<i>109</i>&nbsp;
+<b class="nc"><i>110</i>&nbsp;        indexCaseSensitive.add(word);</b>
+<i>111</i>&nbsp;
+<i>112</i>&nbsp;        // insensitive treatment
+<i>113</i>&nbsp;        // first, add the lower cased word to search index
+<i>114</i>&nbsp;        // second, add a mapping from the lower cased word to the real word
+<b class="nc"><i>115</i>&nbsp;        String lowerCase = word.toLowerCase();</b>
+<b class="nc"><i>116</i>&nbsp;        indexCaseInsensitive.add(lowerCase);</b>
+<b class="nc"><i>117</i>&nbsp;        Set&lt;String&gt; set = possibleStringsForSearchString.get(lowerCase);</b>
+<b class="nc"><i>118</i>&nbsp;        if (set == null) {</b>
+<b class="nc"><i>119</i>&nbsp;            set = new TreeSet&lt;&gt;();</b>
+<i>120</i>&nbsp;        }
+<b class="nc"><i>121</i>&nbsp;        set.add(word);</b>
+<b class="nc"><i>122</i>&nbsp;        possibleStringsForSearchString.put(lowerCase, set);</b>
+<b class="nc"><i>123</i>&nbsp;    }</b>
+<i>124</i>&nbsp;
+<i>125</i>&nbsp;    @Override
+<i>126</i>&nbsp;    public String getPrefix() {
+<b class="nc"><i>127</i>&nbsp;        return &quot;&quot;;</b>
+<i>128</i>&nbsp;    }
+<i>129</i>&nbsp;
+<i>130</i>&nbsp;    @Override
+<i>131</i>&nbsp;    public String getAutoCompleteText(String item) {
+<b class="nc"><i>132</i>&nbsp;        return item;</b>
+<i>133</i>&nbsp;    }
+<i>134</i>&nbsp;
+<i>135</i>&nbsp;    protected int getLengthOfShortestWordToAdd() {
+<b class="nc"><i>136</i>&nbsp;        return AbstractAutoCompleter.SHORTEST_WORD_TO_ADD;</b>
+<i>137</i>&nbsp;    }
+<i>138</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

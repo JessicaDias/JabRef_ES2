@@ -1,0 +1,364 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ImportMenuItem</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.importer</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ImportMenuItem (net.sf.jabref.gui.importer)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ImportMenuItem</td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (4/ 6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    76.8%
+  </span>
+  <span class="absValue">
+    (43/ 56)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">ImportMenuItem$MyWorker</td>
+<td class="coverageStat">
+  <span class="percent">
+    75%
+  </span>
+  <span class="absValue">
+    (3/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    58.9%
+  </span>
+  <span class="absValue">
+    (33/ 56)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    70%
+  </span>
+  <span class="absValue">
+    (7/ 10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    67.9%
+  </span>
+  <span class="absValue">
+    (76/ 112)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.importer;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.event.ActionEvent;
+<i>4</i>&nbsp;import java.awt.event.ActionListener;
+<i>5</i>&nbsp;import java.io.IOException;
+<i>6</i>&nbsp;import java.nio.file.Path;
+<i>7</i>&nbsp;import java.nio.file.Paths;
+<i>8</i>&nbsp;import java.util.ArrayList;
+<i>9</i>&nbsp;import java.util.Collection;
+<i>10</i>&nbsp;import java.util.List;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;import javax.swing.JMenuItem;
+<i>13</i>&nbsp;import javax.swing.JOptionPane;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;import net.sf.jabref.Globals;
+<i>16</i>&nbsp;import net.sf.jabref.gui.BasePanel;
+<i>17</i>&nbsp;import net.sf.jabref.gui.EntryMarker;
+<i>18</i>&nbsp;import net.sf.jabref.gui.FileDialog;
+<i>19</i>&nbsp;import net.sf.jabref.gui.JabRefFrame;
+<i>20</i>&nbsp;import net.sf.jabref.gui.undo.NamedCompound;
+<i>21</i>&nbsp;import net.sf.jabref.gui.worker.AbstractWorker;
+<i>22</i>&nbsp;import net.sf.jabref.logic.importer.ImportException;
+<i>23</i>&nbsp;import net.sf.jabref.logic.importer.ImportFormatReader;
+<i>24</i>&nbsp;import net.sf.jabref.logic.importer.Importer;
+<i>25</i>&nbsp;import net.sf.jabref.logic.importer.ParserResult;
+<i>26</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>27</i>&nbsp;import net.sf.jabref.logic.util.UpdateField;
+<i>28</i>&nbsp;import net.sf.jabref.model.database.BibDatabase;
+<i>29</i>&nbsp;import net.sf.jabref.model.database.KeyCollisionException;
+<i>30</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>31</i>&nbsp;import net.sf.jabref.model.entry.BibtexString;
+<i>32</i>&nbsp;import net.sf.jabref.preferences.JabRefPreferences;
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;/*
+<i>35</i>&nbsp; * TODO: could separate the &quot;menu item&quot; functionality from the importing functionality
+<i>36</i>&nbsp; */
+<b class="fc"><i>37</i>&nbsp;public class ImportMenuItem extends JMenuItem implements ActionListener {</b>
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;    private final JabRefFrame frame;
+<i>40</i>&nbsp;    private final boolean openInNew;
+<i>41</i>&nbsp;    private final Importer importer;
+<i>42</i>&nbsp;    private Exception importError;
+<i>43</i>&nbsp;
+<i>44</i>&nbsp;    public ImportMenuItem(JabRefFrame frame, boolean openInNew) {
+<b class="nc"><i>45</i>&nbsp;        this(frame, openInNew, null);</b>
+<b class="nc"><i>46</i>&nbsp;    }</b>
+<i>47</i>&nbsp;
+<i>48</i>&nbsp;    public ImportMenuItem(JabRefFrame frame, boolean openInNew, Importer importer) {
+<b class="fc"><i>49</i>&nbsp;        super(importer == null ? Localization.lang(&quot;Autodetect format&quot;) : importer.getName());</b>
+<b class="fc"><i>50</i>&nbsp;        this.importer = importer;</b>
+<b class="fc"><i>51</i>&nbsp;        this.frame = frame;</b>
+<b class="fc"><i>52</i>&nbsp;        this.openInNew = openInNew;</b>
+<b class="fc"><i>53</i>&nbsp;        addActionListener(this);</b>
+<b class="fc"><i>54</i>&nbsp;    }</b>
+<i>55</i>&nbsp;
+<i>56</i>&nbsp;    @Override
+<i>57</i>&nbsp;    public void actionPerformed(ActionEvent e) {
+<b class="nc"><i>58</i>&nbsp;        MyWorker worker = new MyWorker();</b>
+<b class="nc"><i>59</i>&nbsp;        worker.init();</b>
+<b class="nc"><i>60</i>&nbsp;        worker.getWorker().run();</b>
+<b class="nc"><i>61</i>&nbsp;        worker.getCallBack().update();</b>
+<b class="nc"><i>62</i>&nbsp;    }</b>
+<i>63</i>&nbsp;
+<i>64</i>&nbsp;    /**
+<i>65</i>&nbsp;     * Automatically imports the files given as arguments
+<i>66</i>&nbsp;     * @param filenames List of files to import
+<i>67</i>&nbsp;     */
+<i>68</i>&nbsp;    public void automatedImport(List&lt;String&gt; filenames) {
+<i>69</i>&nbsp;        // replace the work of the init step:
+<b class="fc"><i>70</i>&nbsp;        MyWorker worker = new MyWorker();</b>
+<b class="fc"><i>71</i>&nbsp;        worker.fileOk = true;</b>
+<b class="fc"><i>72</i>&nbsp;        worker.filenames = filenames;</b>
+<i>73</i>&nbsp;
+<b class="fc"><i>74</i>&nbsp;        worker.getWorker().run();</b>
+<b class="fc"><i>75</i>&nbsp;        worker.getCallBack().update();</b>
+<b class="fc"><i>76</i>&nbsp;    }</b>
+<i>77</i>&nbsp;
+<i>78</i>&nbsp;
+<b class="fc"><i>79</i>&nbsp;    class MyWorker extends AbstractWorker {</b>
+<i>80</i>&nbsp;
+<i>81</i>&nbsp;        private List&lt;String&gt; filenames;
+<i>82</i>&nbsp;        private ParserResult bibtexResult; // Contains the merged import results
+<i>83</i>&nbsp;        private boolean fileOk;
+<i>84</i>&nbsp;
+<i>85</i>&nbsp;        @Override
+<i>86</i>&nbsp;        public void init() {
+<b class="nc"><i>87</i>&nbsp;            importError = null;</b>
+<i>88</i>&nbsp;
+<b class="nc"><i>89</i>&nbsp;            filenames = new FileDialog(frame).updateWorkingDirPref().showDialogAndGetMultipleFiles();</b>
+<i>90</i>&nbsp;
+<b class="nc"><i>91</i>&nbsp;            if (!filenames.isEmpty()) {</b>
+<b class="nc"><i>92</i>&nbsp;                frame.block();</b>
+<b class="nc"><i>93</i>&nbsp;                frame.output(Localization.lang(&quot;Starting import&quot;));</b>
+<b class="nc"><i>94</i>&nbsp;                fileOk = true;</b>
+<i>95</i>&nbsp;
+<b class="nc"><i>96</i>&nbsp;                Globals.prefs.put(JabRefPreferences.WORKING_DIRECTORY, Paths.get(filenames.get(0)).getParent().toString());</b>
+<i>97</i>&nbsp;            }
+<b class="nc"><i>98</i>&nbsp;        }</b>
+<i>99</i>&nbsp;
+<i>100</i>&nbsp;        @Override
+<i>101</i>&nbsp;        public void run() {
+<b class="fc"><i>102</i>&nbsp;            if (!fileOk) {</b>
+<b class="nc"><i>103</i>&nbsp;                return;</b>
+<i>104</i>&nbsp;            }
+<i>105</i>&nbsp;
+<i>106</i>&nbsp;            // We import all files and collect their results:
+<b class="fc"><i>107</i>&nbsp;            List&lt;ImportFormatReader.UnknownFormatImport&gt; imports = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i>108</i>&nbsp;            for (String filename : filenames) {</b>
+<b class="fc"><i>109</i>&nbsp;                Path file = Paths.get(filename);</b>
+<i>110</i>&nbsp;                try {
+<b class="fc"><i>111</i>&nbsp;                    if (importer == null) {</b>
+<i>112</i>&nbsp;                        // Unknown format:
+<b class="fc"><i>113</i>&nbsp;                        frame.output(Localization.lang(&quot;Importing in unknown format&quot;) + &quot;...&quot;);</b>
+<i>114</i>&nbsp;                        // This import method never throws an IOException:
+<b class="fc"><i>115</i>&nbsp;                        imports.add(Globals.IMPORT_FORMAT_READER.importUnknownFormat(file));</b>
+<i>116</i>&nbsp;                    } else {
+<b class="nc"><i>117</i>&nbsp;                        frame.output(Localization.lang(&quot;Importing in %0 format&quot;, importer.getName()) + &quot;...&quot;);</b>
+<i>118</i>&nbsp;                        // Specific csv_importer:
+<b class="nc"><i>119</i>&nbsp;                        ParserResult pr = importer.importDatabase(file, Globals.prefs.getDefaultEncoding());</b>
+<b class="nc"><i>120</i>&nbsp;                        imports.add(new ImportFormatReader.UnknownFormatImport(importer.getName(), pr));</b>
+<i>121</i>&nbsp;                    }
+<b class="nc"><i>122</i>&nbsp;                } catch (ImportException | IOException e) {</b>
+<i>123</i>&nbsp;                    // This indicates that a specific csv_importer was specified, and that
+<i>124</i>&nbsp;                    // this csv_importer has thrown an IOException. We store the exception,
+<i>125</i>&nbsp;                    // so a relevant error message can be displayed.
+<b class="nc"><i>126</i>&nbsp;                    importError = e;</b>
+<b class="fc"><i>127</i>&nbsp;                }</b>
+<b class="fc"><i>128</i>&nbsp;            }</b>
+<i>129</i>&nbsp;
+<i>130</i>&nbsp;            // Ok, done. Then try to gather in all we have found. Since we might
+<i>131</i>&nbsp;            // have found
+<i>132</i>&nbsp;            // one or more bibtex results, it&#39;s best to gather them in a
+<i>133</i>&nbsp;            // BibDatabase.
+<b class="fc"><i>134</i>&nbsp;            bibtexResult = mergeImportResults(imports);</b>
+<i>135</i>&nbsp;
+<i>136</i>&nbsp;            /* show parserwarnings, if any. */
+<b class="fc"><i>137</i>&nbsp;            for (ImportFormatReader.UnknownFormatImport p : imports) {</b>
+<b class="fc"><i>138</i>&nbsp;                if (p != null) {</b>
+<b class="fc"><i>139</i>&nbsp;                    ParserResult pr = p.parserResult;</b>
+<b class="fc"><i>140</i>&nbsp;                    ParserResultWarningDialog.showParserResultWarningDialog(pr, frame);</b>
+<i>141</i>&nbsp;                }
+<b class="fc"><i>142</i>&nbsp;            }</b>
+<b class="fc"><i>143</i>&nbsp;        }</b>
+<i>144</i>&nbsp;
+<i>145</i>&nbsp;        @Override
+<i>146</i>&nbsp;        public void update() {
+<b class="fc"><i>147</i>&nbsp;            if (!fileOk) {</b>
+<b class="nc"><i>148</i>&nbsp;                return;</b>
+<i>149</i>&nbsp;            }
+<i>150</i>&nbsp;
+<b class="fc"><i>151</i>&nbsp;            if (bibtexResult == null) {</b>
+<b class="nc"><i>152</i>&nbsp;                if (importer == null) {</b>
+<b class="nc"><i>153</i>&nbsp;                    frame.output(Localization.lang(&quot;Could not find a suitable import format.&quot;));</b>
+<i>154</i>&nbsp;                } else {
+<i>155</i>&nbsp;                    // Import in a specific format was specified. Check if we have stored error information:
+<b class="nc"><i>156</i>&nbsp;                    if (importError == null) {</b>
+<b class="nc"><i>157</i>&nbsp;                        JOptionPane.showMessageDialog(frame,</b>
+<i>158</i>&nbsp;                                Localization
+<b class="nc"><i>159</i>&nbsp;                                        .lang(&quot;No entries found. Please make sure you are using the correct import filter.&quot;),</b>
+<b class="nc"><i>160</i>&nbsp;                                Localization.lang(&quot;Import failed&quot;), JOptionPane.ERROR_MESSAGE);</b>
+<i>161</i>&nbsp;                    } else {
+<b class="nc"><i>162</i>&nbsp;                        JOptionPane.showMessageDialog(frame, importError.getMessage(),</b>
+<b class="nc"><i>163</i>&nbsp;                                Localization.lang(&quot;Import failed&quot;), JOptionPane.ERROR_MESSAGE);</b>
+<i>164</i>&nbsp;                    }
+<i>165</i>&nbsp;                }
+<i>166</i>&nbsp;            } else {
+<b class="fc"><i>167</i>&nbsp;                if (openInNew) {</b>
+<b class="fc"><i>168</i>&nbsp;                    frame.addTab(bibtexResult.getDatabaseContext(), true);</b>
+<b class="fc"><i>169</i>&nbsp;                    frame.output(</b>
+<b class="fc"><i>170</i>&nbsp;                            Localization.lang(&quot;Imported entries&quot;) + &quot;: &quot; + bibtexResult.getDatabase().getEntryCount());</b>
+<i>171</i>&nbsp;                } else {
+<b class="fc"><i>172</i>&nbsp;                    final BasePanel panel = (BasePanel) frame.getTabbedPane().getSelectedComponent();</b>
+<i>173</i>&nbsp;
+<b class="fc"><i>174</i>&nbsp;                    ImportInspectionDialog diag = new ImportInspectionDialog(frame, panel, Localization.lang(&quot;Import&quot;),</b>
+<b class="fc"><i>175</i>&nbsp;                            openInNew);</b>
+<b class="fc"><i>176</i>&nbsp;                    diag.addEntries(bibtexResult.getDatabase().getEntries());</b>
+<b class="fc"><i>177</i>&nbsp;                    diag.entryListComplete();</b>
+<b class="fc"><i>178</i>&nbsp;                    diag.setLocationRelativeTo(frame);</b>
+<b class="fc"><i>179</i>&nbsp;                    diag.setVisible(true);</b>
+<b class="fc"><i>180</i>&nbsp;                    diag.toFront();</b>
+<i>181</i>&nbsp;                }
+<i>182</i>&nbsp;            }
+<b class="fc"><i>183</i>&nbsp;            frame.unblock();</b>
+<b class="fc"><i>184</i>&nbsp;        }</b>
+<i>185</i>&nbsp;    }
+<i>186</i>&nbsp;
+<i>187</i>&nbsp;
+<i>188</i>&nbsp;    private ParserResult mergeImportResults(List&lt;ImportFormatReader.UnknownFormatImport&gt; imports) {
+<b class="fc"><i>189</i>&nbsp;        BibDatabase database = new BibDatabase();</b>
+<b class="fc"><i>190</i>&nbsp;        ParserResult directParserResult = null;</b>
+<b class="fc"><i>191</i>&nbsp;        boolean anythingUseful = false;</b>
+<i>192</i>&nbsp;
+<b class="fc"><i>193</i>&nbsp;        for (ImportFormatReader.UnknownFormatImport importResult : imports) {</b>
+<b class="fc"><i>194</i>&nbsp;            if (importResult == null) {</b>
+<b class="nc"><i>195</i>&nbsp;                continue;</b>
+<i>196</i>&nbsp;            }
+<b class="fc"><i>197</i>&nbsp;            if (ImportFormatReader.BIBTEX_FORMAT.equals(importResult.format)) {</b>
+<i>198</i>&nbsp;                // Bibtex result. We must merge it into our main base.
+<b class="fc"><i>199</i>&nbsp;                ParserResult pr = importResult.parserResult;</b>
+<i>200</i>&nbsp;
+<b class="fc"><i>201</i>&nbsp;                anythingUseful = anythingUseful || pr.getDatabase().hasEntries() || (!pr.getDatabase().hasNoStrings());</b>
+<i>202</i>&nbsp;
+<i>203</i>&nbsp;                // Record the parserResult, as long as this is the first bibtex result:
+<b class="fc"><i>204</i>&nbsp;                if (directParserResult == null) {</b>
+<b class="fc"><i>205</i>&nbsp;                    directParserResult = pr;</b>
+<i>206</i>&nbsp;                }
+<i>207</i>&nbsp;
+<i>208</i>&nbsp;                // Merge entries:
+<b class="fc"><i>209</i>&nbsp;                for (BibEntry entry : pr.getDatabase().getEntries()) {</b>
+<b class="fc"><i>210</i>&nbsp;                    database.insertEntry(entry);</b>
+<b class="fc"><i>211</i>&nbsp;                }</b>
+<i>212</i>&nbsp;
+<i>213</i>&nbsp;                // Merge strings:
+<b class="fc"><i>214</i>&nbsp;                for (BibtexString bs : pr.getDatabase().getStringValues()) {</b>
+<i>215</i>&nbsp;                    try {
+<b class="nc"><i>216</i>&nbsp;                        database.addString((BibtexString) bs.clone());</b>
+<b class="nc"><i>217</i>&nbsp;                    } catch (KeyCollisionException e) {</b>
+<i>218</i>&nbsp;                        // TODO: This means a duplicate string name exists, so it&#39;s not
+<i>219</i>&nbsp;                        // a very exceptional situation. We should maybe give a warning...?
+<b class="nc"><i>220</i>&nbsp;                    }</b>
+<b class="nc"><i>221</i>&nbsp;                }</b>
+<b class="fc"><i>222</i>&nbsp;            } else {</b>
+<i>223</i>&nbsp;
+<b class="fc"><i>224</i>&nbsp;                ParserResult pr = importResult.parserResult;</b>
+<b class="fc"><i>225</i>&nbsp;                Collection&lt;BibEntry&gt; entries = pr.getDatabase().getEntries();</b>
+<i>226</i>&nbsp;
+<b class="fc"><i>227</i>&nbsp;                anythingUseful = anythingUseful | !entries.isEmpty();</b>
+<i>228</i>&nbsp;
+<i>229</i>&nbsp;                // set timestamp and owner
+<b class="fc"><i>230</i>&nbsp;                UpdateField.setAutomaticFields(entries, Globals.prefs.getUpdateFieldPreferences()); // set timestamp and owner</b>
+<i>231</i>&nbsp;
+<b class="fc"><i>232</i>&nbsp;                boolean markEntries = !openInNew &amp;&amp; EntryMarker.shouldMarkEntries();</b>
+<b class="fc"><i>233</i>&nbsp;                for (BibEntry entry : entries) {</b>
+<b class="fc"><i>234</i>&nbsp;                    if (markEntries) {</b>
+<b class="fc"><i>235</i>&nbsp;                        EntryMarker.markEntry(entry, EntryMarker.IMPORT_MARK_LEVEL, false, new NamedCompound(&quot;&quot;));</b>
+<i>236</i>&nbsp;                    }
+<b class="fc"><i>237</i>&nbsp;                    database.insertEntry(entry);</b>
+<b class="fc"><i>238</i>&nbsp;                }</b>
+<i>239</i>&nbsp;            }
+<b class="fc"><i>240</i>&nbsp;        }</b>
+<i>241</i>&nbsp;
+<b class="fc"><i>242</i>&nbsp;        if (!anythingUseful) {</b>
+<b class="nc"><i>243</i>&nbsp;            return null;</b>
+<i>244</i>&nbsp;        }
+<i>245</i>&nbsp;
+<b class="fc"><i>246</i>&nbsp;        if ((imports.size() == 1) &amp;&amp; (directParserResult != null)) {</b>
+<b class="fc"><i>247</i>&nbsp;            return directParserResult;</b>
+<i>248</i>&nbsp;        } else {
+<i>249</i>&nbsp;
+<b class="fc"><i>250</i>&nbsp;            return new ParserResult(database);</b>
+<i>251</i>&nbsp;
+<i>252</i>&nbsp;        }
+<i>253</i>&nbsp;    }
+<i>254</i>&nbsp;
+<i>255</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

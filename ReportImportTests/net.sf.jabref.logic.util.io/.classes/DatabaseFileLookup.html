@@ -1,0 +1,168 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: DatabaseFileLookup</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.util.io</a> ]
+</div>
+
+<h1>Coverage Summary for Class: DatabaseFileLookup (net.sf.jabref.logic.util.io)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DatabaseFileLookup</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 20)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.util.io;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.File;
+<i>4</i>&nbsp;import java.util.ArrayList;
+<i>5</i>&nbsp;import java.util.HashSet;
+<i>6</i>&nbsp;import java.util.List;
+<i>7</i>&nbsp;import java.util.Objects;
+<i>8</i>&nbsp;import java.util.Optional;
+<i>9</i>&nbsp;import java.util.Set;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;import net.sf.jabref.model.database.BibDatabase;
+<i>12</i>&nbsp;import net.sf.jabref.model.database.BibDatabaseContext;
+<i>13</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>14</i>&nbsp;import net.sf.jabref.model.entry.FieldName;
+<i>15</i>&nbsp;import net.sf.jabref.model.entry.FileField;
+<i>16</i>&nbsp;import net.sf.jabref.model.entry.ParsedFileField;
+<i>17</i>&nbsp;import net.sf.jabref.model.metadata.FileDirectoryPreferences;
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;/**
+<i>20</i>&nbsp; * Search class for files. &lt;br&gt;
+<i>21</i>&nbsp; * &lt;br&gt;
+<i>22</i>&nbsp; * This class provides some functionality to search in a {@link BibDatabase} for
+<i>23</i>&nbsp; * files. &lt;br&gt;
+<i>24</i>&nbsp;
+<i>25</i>&nbsp; * @author Nosh&amp;Dan
+<i>26</i>&nbsp; */
+<i>27</i>&nbsp;public class DatabaseFileLookup {
+<i>28</i>&nbsp;
+<b class="nc"><i>29</i>&nbsp;    private final Set&lt;File&gt; fileCache = new HashSet&lt;&gt;();</b>
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;    private final List&lt;String&gt; possibleFilePaths;
+<i>32</i>&nbsp;
+<i>33</i>&nbsp;    /**
+<i>34</i>&nbsp;     * Creates an instance by passing a {@link BibDatabase} which will be used for the searches.
+<i>35</i>&nbsp;     *
+<i>36</i>&nbsp;     * @param database A {@link BibDatabase}.
+<i>37</i>&nbsp;     */
+<b class="nc"><i>38</i>&nbsp;    public DatabaseFileLookup(BibDatabaseContext databaseContext, FileDirectoryPreferences fileDirectoryPreferences) {</b>
+<b class="nc"><i>39</i>&nbsp;        Objects.requireNonNull(databaseContext);</b>
+<b class="nc"><i>40</i>&nbsp;        possibleFilePaths = Optional.ofNullable(databaseContext.getFileDirectories(fileDirectoryPreferences))</b>
+<b class="nc"><i>41</i>&nbsp;                .orElse(new ArrayList&lt;&gt;());</b>
+<i>42</i>&nbsp;
+<b class="nc"><i>43</i>&nbsp;        for (BibEntry entry : databaseContext.getDatabase().getEntries()) {</b>
+<b class="nc"><i>44</i>&nbsp;            fileCache.addAll(parseFileField(entry));</b>
+<b class="nc"><i>45</i>&nbsp;        }</b>
+<b class="nc"><i>46</i>&nbsp;    }</b>
+<i>47</i>&nbsp;
+<i>48</i>&nbsp;    /**
+<i>49</i>&nbsp;     * Returns whether the File &lt;code&gt;file&lt;/code&gt; is present in the database
+<i>50</i>&nbsp;     * as an attached File to an {@link BibEntry}. &lt;br&gt;
+<i>51</i>&nbsp;     * &lt;br&gt;
+<i>52</i>&nbsp;     * To do this, the field specified by the key &lt;b&gt;file&lt;/b&gt; will be searched
+<i>53</i>&nbsp;     * for the provided file for every {@link BibEntry} in the database. &lt;br&gt;
+<i>54</i>&nbsp;     * &lt;br&gt;
+<i>55</i>&nbsp;     * For the matching, the absolute file paths will be used.
+<i>56</i>&nbsp;     *
+<i>57</i>&nbsp;     * @param file
+<i>58</i>&nbsp;     *            A {@link File} Object.
+<i>59</i>&nbsp;     * @return &lt;code&gt;true&lt;/code&gt;, if the file Object is stored in at least one
+<i>60</i>&nbsp;     *         entry in the database, otherwise &lt;code&gt;false&lt;/code&gt;.
+<i>61</i>&nbsp;     */
+<i>62</i>&nbsp;    public boolean lookupDatabase(File file) {
+<b class="nc"><i>63</i>&nbsp;        return fileCache.contains(file);</b>
+<i>64</i>&nbsp;    }
+<i>65</i>&nbsp;
+<i>66</i>&nbsp;    private List&lt;File&gt; parseFileField(BibEntry entry) {
+<b class="nc"><i>67</i>&nbsp;        Objects.requireNonNull(entry);</b>
+<i>68</i>&nbsp;
+<b class="nc"><i>69</i>&nbsp;        List&lt;ParsedFileField&gt; entries = FileField.parse(entry.getField(FieldName.FILE).orElse(null));</b>
+<i>70</i>&nbsp;
+<b class="nc"><i>71</i>&nbsp;        List&lt;File&gt; fileLinks = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>72</i>&nbsp;        for (ParsedFileField field : entries) {</b>
+<b class="nc"><i>73</i>&nbsp;            String link = field.getLink();</b>
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;            // Do not query external file links (huge performance leak)
+<b class="nc"><i>76</i>&nbsp;            if(link.contains(&quot;//&quot;)) {</b>
+<b class="nc"><i>77</i>&nbsp;                continue;</b>
+<i>78</i>&nbsp;            }
+<i>79</i>&nbsp;
+<b class="nc"><i>80</i>&nbsp;            FileUtil.expandFilename(link, possibleFilePaths).ifPresent(fileLinks::add);</b>
+<b class="nc"><i>81</i>&nbsp;        }</b>
+<i>82</i>&nbsp;
+<b class="nc"><i>83</i>&nbsp;        return fileLinks;</b>
+<i>84</i>&nbsp;    }
+<i>85</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,463 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Author</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.model.entry</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Author (net.sf.jabref.model.entry)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Author</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    37.5%
+  </span>
+  <span class="absValue">
+    (9/ 24)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    39.8%
+  </span>
+  <span class="absValue">
+    (51/ 128)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.model.entry;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.Objects;
+<i>4</i>&nbsp;import java.util.Optional;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;/**
+<i>7</i>&nbsp; * This is an immutable class that keeps information regarding single
+<i>8</i>&nbsp; * author. It is just a container for the information, with very simple
+<i>9</i>&nbsp; * methods to access it.
+<i>10</i>&nbsp; * &lt;p&gt;
+<i>11</i>&nbsp; * Current usage: only methods &lt;code&gt;getLastOnly&lt;/code&gt;,
+<i>12</i>&nbsp; * &lt;code&gt;getFirstLast&lt;/code&gt;, and &lt;code&gt;getLastFirst&lt;/code&gt; are used;
+<i>13</i>&nbsp; * all other methods are provided for completeness.
+<i>14</i>&nbsp; */
+<i>15</i>&nbsp;public class Author {
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;    private final String firstPart;
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;    private final String firstAbbr;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;    private final String vonPart;
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;    private final String lastPart;
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;    private final String jrPart;
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    /**
+<i>28</i>&nbsp;     * Creates the Author object. If any part of the name is absent, &lt;CODE&gt;null&lt;/CODE&gt;
+<i>29</i>&nbsp;     * must be passed; otherwise other methods may return erroneous results.
+<i>30</i>&nbsp;     *
+<i>31</i>&nbsp;     * @param first     the first name of the author (may consist of several
+<i>32</i>&nbsp;     *                  tokens, like &quot;Charles Louis Xavier Joseph&quot; in &quot;Charles
+<i>33</i>&nbsp;     *                  Louis Xavier Joseph de la Vall{\&#39;e}e Poussin&quot;)
+<i>34</i>&nbsp;     * @param firstabbr the abbreviated first name of the author (may consist of
+<i>35</i>&nbsp;     *                  several tokens, like &quot;C. L. X. J.&quot; in &quot;Charles Louis
+<i>36</i>&nbsp;     *                  Xavier Joseph de la Vall{\&#39;e}e Poussin&quot;). It is a
+<i>37</i>&nbsp;     *                  responsibility of the caller to create a reasonable
+<i>38</i>&nbsp;     *                  abbreviation of the first name.
+<i>39</i>&nbsp;     * @param von       the von part of the author&#39;s name (may consist of several
+<i>40</i>&nbsp;     *                  tokens, like &quot;de la&quot; in &quot;Charles Louis Xavier Joseph de la
+<i>41</i>&nbsp;     *                  Vall{\&#39;e}e Poussin&quot;)
+<i>42</i>&nbsp;     * @param last      the last name of the author (may consist of several
+<i>43</i>&nbsp;     *                  tokens, like &quot;Vall{\&#39;e}e Poussin&quot; in &quot;Charles Louis Xavier
+<i>44</i>&nbsp;     *                  Joseph de la Vall{\&#39;e}e Poussin&quot;)
+<i>45</i>&nbsp;     * @param jr        the junior part of the author&#39;s name (may consist of
+<i>46</i>&nbsp;     *                  several tokens, like &quot;Jr. III&quot; in &quot;Smith, Jr. III, John&quot;)
+<i>47</i>&nbsp;     */
+<b class="fc"><i>48</i>&nbsp;    public Author(String first, String firstabbr, String von, String last, String jr) {</b>
+<b class="fc"><i>49</i>&nbsp;        firstPart = addDotIfAbbreviation(removeStartAndEndBraces(first));</b>
+<b class="fc"><i>50</i>&nbsp;        firstAbbr = removeStartAndEndBraces(firstabbr);</b>
+<b class="fc"><i>51</i>&nbsp;        vonPart = removeStartAndEndBraces(von);</b>
+<b class="fc"><i>52</i>&nbsp;        lastPart = removeStartAndEndBraces(last);</b>
+<b class="fc"><i>53</i>&nbsp;        jrPart = removeStartAndEndBraces(jr);</b>
+<b class="fc"><i>54</i>&nbsp;    }</b>
+<i>55</i>&nbsp;
+<i>56</i>&nbsp;    public static String addDotIfAbbreviation(String name) {
+<i>57</i>&nbsp;        // Avoid arrayindexoutof.... :
+<b class="fc"><i>58</i>&nbsp;        if ((name == null) || name.isEmpty()) {</b>
+<b class="nc"><i>59</i>&nbsp;            return name;</b>
+<i>60</i>&nbsp;        }
+<i>61</i>&nbsp;        // If only one character (uppercase letter), add a dot and return immediately:
+<b class="fc"><i>62</i>&nbsp;        if ((name.length() == 1) &amp;&amp; Character.isLetter(name.charAt(0)) &amp;&amp;</b>
+<b class="nc"><i>63</i>&nbsp;                Character.isUpperCase(name.charAt(0))) {</b>
+<b class="nc"><i>64</i>&nbsp;            return name + &quot;.&quot;;</b>
+<i>65</i>&nbsp;        }
+<i>66</i>&nbsp;
+<b class="fc"><i>67</i>&nbsp;        StringBuilder sb = new StringBuilder();</b>
+<b class="fc"><i>68</i>&nbsp;        char lastChar = name.charAt(0);</b>
+<b class="fc"><i>69</i>&nbsp;        for (int i = 0; i &lt; name.length(); i++) {</b>
+<b class="fc"><i>70</i>&nbsp;            if(i &gt; 0) {</b>
+<b class="fc"><i>71</i>&nbsp;                lastChar = name.charAt(i - 1);</b>
+<i>72</i>&nbsp;            }
+<b class="fc"><i>73</i>&nbsp;            char currentChar = name.charAt(i);</b>
+<b class="fc"><i>74</i>&nbsp;            sb.append(currentChar);</b>
+<i>75</i>&nbsp;
+<b class="fc"><i>76</i>&nbsp;            if(currentChar == &#39;.&#39;) {</b>
+<i>77</i>&nbsp;                // A.A. -&gt; A. A.
+<b class="fc"><i>78</i>&nbsp;                if(((i + 1) &lt; name.length()) &amp;&amp; Character.isUpperCase(name.charAt(i + 1))) {</b>
+<b class="nc"><i>79</i>&nbsp;                    sb.append(&#39; &#39;);</b>
+<i>80</i>&nbsp;                }
+<i>81</i>&nbsp;            }
+<i>82</i>&nbsp;
+<b class="fc"><i>83</i>&nbsp;            boolean currentIsUppercaseLetter = Character.isLetter(currentChar) &amp;&amp; Character.isUpperCase(currentChar);</b>
+<b class="fc"><i>84</i>&nbsp;            if(!currentIsUppercaseLetter) {</b>
+<i>85</i>&nbsp;                // No uppercase letter, hence nothing to do
+<b class="fc"><i>86</i>&nbsp;                continue;</b>
+<i>87</i>&nbsp;            }
+<i>88</i>&nbsp;
+<b class="fc"><i>89</i>&nbsp;            boolean lastIsLowercaseLetter = Character.isLetter(lastChar) &amp;&amp; Character.isLowerCase(lastChar);</b>
+<b class="fc"><i>90</i>&nbsp;            if(lastIsLowercaseLetter) {</b>
+<i>91</i>&nbsp;                // previous character was lowercase (probably an acronym like JabRef) -&gt; don&#39;t change anything
+<b class="nc"><i>92</i>&nbsp;                continue;</b>
+<i>93</i>&nbsp;            }
+<i>94</i>&nbsp;
+<b class="fc"><i>95</i>&nbsp;            if((i + 1) &gt;= name.length()) {</b>
+<i>96</i>&nbsp;                // Current character is last character in input, so append dot
+<b class="nc"><i>97</i>&nbsp;                sb.append(&#39;.&#39;);</b>
+<b class="nc"><i>98</i>&nbsp;                continue;</b>
+<i>99</i>&nbsp;            }
+<i>100</i>&nbsp;
+<b class="fc"><i>101</i>&nbsp;            char nextChar = name.charAt(i + 1);</b>
+<b class="fc"><i>102</i>&nbsp;            if (&#39;-&#39; == nextChar) {</b>
+<i>103</i>&nbsp;                // A-A -&gt; A.-A.
+<b class="nc"><i>104</i>&nbsp;                sb.append(&quot;.&quot;);</b>
+<b class="nc"><i>105</i>&nbsp;                continue;</b>
+<i>106</i>&nbsp;            }
+<b class="fc"><i>107</i>&nbsp;            if(&#39;.&#39; == nextChar) {</b>
+<i>108</i>&nbsp;                // Dot already there, so nothing to do
+<b class="fc"><i>109</i>&nbsp;                continue;</b>
+<i>110</i>&nbsp;            }
+<i>111</i>&nbsp;
+<i>112</i>&nbsp;            // AA -&gt; A. A.
+<i>113</i>&nbsp;            // Only append &quot;. &quot; if the rest of the &#39;word&#39; is uppercase
+<b class="fc"><i>114</i>&nbsp;            boolean nextWordIsUppercase = true;</b>
+<b class="fc"><i>115</i>&nbsp;            for (int j = i + 1; j &lt; name.length(); j++) {</b>
+<b class="fc"><i>116</i>&nbsp;                char furtherChar = name.charAt(j);</b>
+<b class="fc"><i>117</i>&nbsp;                if(Character.isWhitespace(furtherChar) || (furtherChar == &#39;-&#39;) || (furtherChar == &#39;~&#39;) || (furtherChar == &#39;.&#39;)) {</b>
+<i>118</i>&nbsp;                    // end of word
+<b class="nc"><i>119</i>&nbsp;                    break;</b>
+<i>120</i>&nbsp;                }
+<i>121</i>&nbsp;
+<b class="fc"><i>122</i>&nbsp;                boolean furtherIsUppercaseLetter = Character.isLetter(furtherChar) &amp;&amp; Character.isUpperCase(furtherChar);</b>
+<b class="fc"><i>123</i>&nbsp;                if(!furtherIsUppercaseLetter) {</b>
+<b class="fc"><i>124</i>&nbsp;                    nextWordIsUppercase = false;</b>
+<b class="fc"><i>125</i>&nbsp;                    break;</b>
+<i>126</i>&nbsp;                }
+<i>127</i>&nbsp;            }
+<b class="fc"><i>128</i>&nbsp;            if(nextWordIsUppercase) {</b>
+<b class="nc"><i>129</i>&nbsp;                sb.append(&quot;. &quot;);</b>
+<i>130</i>&nbsp;            }
+<i>131</i>&nbsp;        }
+<i>132</i>&nbsp;
+<b class="fc"><i>133</i>&nbsp;        return sb.toString().trim();</b>
+<i>134</i>&nbsp;    }
+<i>135</i>&nbsp;
+<i>136</i>&nbsp;    @Override
+<i>137</i>&nbsp;    public int hashCode() {
+<b class="nc"><i>138</i>&nbsp;        return Objects.hash(firstAbbr, firstPart, jrPart, lastPart, vonPart);</b>
+<i>139</i>&nbsp;    }
+<i>140</i>&nbsp;
+<i>141</i>&nbsp;    /**
+<i>142</i>&nbsp;     * Compare this object with the given one.
+<i>143</i>&nbsp;     * &lt;p&gt;
+<i>144</i>&nbsp;     * Will return true iff the other object is an Author and all fields are identical on a string comparison.
+<i>145</i>&nbsp;     */
+<i>146</i>&nbsp;    @Override
+<i>147</i>&nbsp;    public boolean equals(Object o) {
+<b class="nc"><i>148</i>&nbsp;        if (this == o) {</b>
+<b class="nc"><i>149</i>&nbsp;            return true;</b>
+<i>150</i>&nbsp;        }
+<i>151</i>&nbsp;
+<b class="nc"><i>152</i>&nbsp;        if (o instanceof net.sf.jabref.model.entry.Author) {</b>
+<b class="nc"><i>153</i>&nbsp;            net.sf.jabref.model.entry.Author a = (net.sf.jabref.model.entry.Author) o;</b>
+<b class="nc"><i>154</i>&nbsp;            return Objects.equals(firstPart, a.firstPart) &amp;&amp; Objects.equals(firstAbbr, a.firstAbbr) &amp;&amp; Objects.equals(</b>
+<b class="nc"><i>155</i>&nbsp;                    vonPart, a.vonPart) &amp;&amp; Objects.equals(lastPart, a.lastPart) &amp;&amp; Objects.equals(jrPart, a.jrPart);</b>
+<i>156</i>&nbsp;        }
+<b class="nc"><i>157</i>&nbsp;        return false;</b>
+<i>158</i>&nbsp;    }
+<i>159</i>&nbsp;
+<i>160</i>&nbsp;    /**
+<i>161</i>&nbsp;     * @return true if the brackets in s are properly paired
+<i>162</i>&nbsp;     */
+<i>163</i>&nbsp;    private boolean properBrackets(String s) {
+<i>164</i>&nbsp;        // nested construct is there, check for &quot;proper&quot; nesting
+<b class="nc"><i>165</i>&nbsp;        int i = 0;</b>
+<b class="nc"><i>166</i>&nbsp;        int level = 0;</b>
+<b class="nc"><i>167</i>&nbsp;        while (i &lt; s.length()) {</b>
+<b class="nc"><i>168</i>&nbsp;            char c = s.charAt(i);</b>
+<b class="nc"><i>169</i>&nbsp;            switch (c) {</b>
+<i>170</i>&nbsp;            case &#39;{&#39;:
+<b class="nc"><i>171</i>&nbsp;                level++;</b>
+<b class="nc"><i>172</i>&nbsp;                break;</b>
+<i>173</i>&nbsp;            case &#39;}&#39;:
+<b class="nc"><i>174</i>&nbsp;                level--;</b>
+<b class="nc"><i>175</i>&nbsp;                if (level == -1) { // improper nesting</b>
+<b class="nc"><i>176</i>&nbsp;                    return false;</b>
+<i>177</i>&nbsp;                }
+<i>178</i>&nbsp;                break;
+<i>179</i>&nbsp;            default:
+<i>180</i>&nbsp;                break;
+<i>181</i>&nbsp;            }
+<b class="nc"><i>182</i>&nbsp;            i++;</b>
+<b class="nc"><i>183</i>&nbsp;        }</b>
+<b class="nc"><i>184</i>&nbsp;        return level == 0;</b>
+<i>185</i>&nbsp;    }
+<i>186</i>&nbsp;
+<i>187</i>&nbsp;    /**
+<i>188</i>&nbsp;     * Removes start and end brace at a string
+<i>189</i>&nbsp;     * &lt;p&gt;
+<i>190</i>&nbsp;     * E.g.,
+<i>191</i>&nbsp;     * * {Vall{\&#39;e}e Poussin} -&gt; Vall{\&#39;e}e Poussin
+<i>192</i>&nbsp;     * * {Vall{\&#39;e}e} {Poussin} -&gt; Vall{\&#39;e}e Poussin
+<i>193</i>&nbsp;     * * Vall{\&#39;e}e Poussin -&gt; Vall{\&#39;e}e Poussin
+<i>194</i>&nbsp;     */
+<i>195</i>&nbsp;    private String removeStartAndEndBraces(String name) {
+<b class="fc"><i>196</i>&nbsp;        if (name == null) {</b>
+<b class="fc"><i>197</i>&nbsp;            return null;</b>
+<i>198</i>&nbsp;        }
+<b class="fc"><i>199</i>&nbsp;        if (!name.contains(&quot;{&quot;)) {</b>
+<b class="fc"><i>200</i>&nbsp;            return name;</b>
+<i>201</i>&nbsp;        }
+<i>202</i>&nbsp;
+<b class="nc"><i>203</i>&nbsp;        String[] split = name.split(&quot; &quot;);</b>
+<b class="nc"><i>204</i>&nbsp;        StringBuilder b = new StringBuilder();</b>
+<b class="nc"><i>205</i>&nbsp;        for (String s : split) {</b>
+<b class="nc"><i>206</i>&nbsp;            if ((s.length() &gt; 2) &amp;&amp; s.startsWith(&quot;{&quot;) &amp;&amp; s.endsWith(&quot;}&quot;)) {</b>
+<i>207</i>&nbsp;                // quick solution (which we don&#39;t do: just remove first &quot;{&quot; and last &quot;}&quot;
+<i>208</i>&nbsp;                // however, it might be that s is like {A}bbb{c}, where braces may not be removed
+<i>209</i>&nbsp;
+<i>210</i>&nbsp;                // inner
+<b class="nc"><i>211</i>&nbsp;                String inner = s.substring(1, s.length() - 1);</b>
+<i>212</i>&nbsp;
+<b class="nc"><i>213</i>&nbsp;                if (inner.contains(&quot;}&quot;)) {</b>
+<b class="nc"><i>214</i>&nbsp;                    if (properBrackets(inner)) {</b>
+<b class="nc"><i>215</i>&nbsp;                        s = inner;</b>
+<i>216</i>&nbsp;                    }
+<i>217</i>&nbsp;                } else {
+<i>218</i>&nbsp;                    //  no inner curly brackets found, no check needed, inner can just be used as s
+<b class="nc"><i>219</i>&nbsp;                    s = inner;</b>
+<i>220</i>&nbsp;                }
+<i>221</i>&nbsp;            }
+<b class="nc"><i>222</i>&nbsp;            b.append(s).append(&#39; &#39;);</b>
+<i>223</i>&nbsp;        }
+<i>224</i>&nbsp;        // delete last
+<b class="nc"><i>225</i>&nbsp;        b.deleteCharAt(b.length() - 1);</b>
+<i>226</i>&nbsp;
+<i>227</i>&nbsp;        // now, all inner words are cleared
+<i>228</i>&nbsp;        // case {word word word} remains
+<i>229</i>&nbsp;        // as above, we have to be aware of {w}ord word wor{d} and {{w}ord word word}
+<i>230</i>&nbsp;
+<b class="nc"><i>231</i>&nbsp;        String newName = b.toString();</b>
+<i>232</i>&nbsp;
+<b class="nc"><i>233</i>&nbsp;        if (newName.startsWith(&quot;{&quot;) &amp;&amp; newName.endsWith(&quot;}&quot;)) {</b>
+<b class="nc"><i>234</i>&nbsp;            String inner = newName.substring(1, newName.length() - 1);</b>
+<b class="nc"><i>235</i>&nbsp;            if (properBrackets(inner)) {</b>
+<b class="nc"><i>236</i>&nbsp;                return inner;</b>
+<i>237</i>&nbsp;            } else {
+<b class="nc"><i>238</i>&nbsp;                return newName;</b>
+<i>239</i>&nbsp;            }
+<i>240</i>&nbsp;        } else {
+<b class="nc"><i>241</i>&nbsp;            return newName;</b>
+<i>242</i>&nbsp;        }
+<i>243</i>&nbsp;    }
+<i>244</i>&nbsp;
+<i>245</i>&nbsp;    /**
+<i>246</i>&nbsp;     * Returns the first name of the author stored in this object (&quot;First&quot;).
+<i>247</i>&nbsp;     *
+<i>248</i>&nbsp;     * @return first name of the author (may consist of several tokens)
+<i>249</i>&nbsp;     */
+<i>250</i>&nbsp;    public Optional&lt;String&gt; getFirst() {
+<b class="fc"><i>251</i>&nbsp;        return Optional.ofNullable(firstPart);</b>
+<i>252</i>&nbsp;    }
+<i>253</i>&nbsp;
+<i>254</i>&nbsp;    /**
+<i>255</i>&nbsp;     * Returns the abbreviated first name of the author stored in this
+<i>256</i>&nbsp;     * object (&quot;F.&quot;).
+<i>257</i>&nbsp;     *
+<i>258</i>&nbsp;     * @return abbreviated first name of the author (may consist of several
+<i>259</i>&nbsp;     * tokens)
+<i>260</i>&nbsp;     */
+<i>261</i>&nbsp;    public Optional&lt;String&gt; getFirstAbbr() {
+<b class="nc"><i>262</i>&nbsp;        return Optional.ofNullable(firstAbbr);</b>
+<i>263</i>&nbsp;    }
+<i>264</i>&nbsp;
+<i>265</i>&nbsp;    /**
+<i>266</i>&nbsp;     * Returns the von part of the author&#39;s name stored in this object
+<i>267</i>&nbsp;     * (&quot;von&quot;).
+<i>268</i>&nbsp;     *
+<i>269</i>&nbsp;     * @return von part of the author&#39;s name (may consist of several tokens)
+<i>270</i>&nbsp;     */
+<i>271</i>&nbsp;    public Optional&lt;String&gt; getVon() {
+<b class="nc"><i>272</i>&nbsp;        return Optional.ofNullable(vonPart);</b>
+<i>273</i>&nbsp;    }
+<i>274</i>&nbsp;
+<i>275</i>&nbsp;    /**
+<i>276</i>&nbsp;     * Returns the last name of the author stored in this object (&quot;Last&quot;).
+<i>277</i>&nbsp;     *
+<i>278</i>&nbsp;     * @return last name of the author (may consist of several tokens)
+<i>279</i>&nbsp;     */
+<i>280</i>&nbsp;    public Optional&lt;String&gt; getLast() {
+<b class="fc"><i>281</i>&nbsp;        return Optional.ofNullable(lastPart);</b>
+<i>282</i>&nbsp;    }
+<i>283</i>&nbsp;
+<i>284</i>&nbsp;    /**
+<i>285</i>&nbsp;     * Returns the junior part of the author&#39;s name stored in this object
+<i>286</i>&nbsp;     * (&quot;Jr&quot;).
+<i>287</i>&nbsp;     *
+<i>288</i>&nbsp;     * @return junior part of the author&#39;s name (may consist of several
+<i>289</i>&nbsp;     * tokens) or null if the author does not have a Jr. Part
+<i>290</i>&nbsp;     */
+<i>291</i>&nbsp;    public Optional&lt;String&gt; getJr() {
+<b class="fc"><i>292</i>&nbsp;        return Optional.ofNullable(jrPart);</b>
+<i>293</i>&nbsp;    }
+<i>294</i>&nbsp;
+<i>295</i>&nbsp;    /**
+<i>296</i>&nbsp;     * Returns von-part followed by last name (&quot;von Last&quot;). If both fields
+<i>297</i>&nbsp;     * were specified as &lt;CODE&gt;null&lt;/CODE&gt;, the empty string &lt;CODE&gt;&quot;&quot;&lt;/CODE&gt;
+<i>298</i>&nbsp;     * is returned.
+<i>299</i>&nbsp;     *
+<i>300</i>&nbsp;     * @return &#39;von Last&#39;
+<i>301</i>&nbsp;     */
+<i>302</i>&nbsp;    public String getLastOnly() {
+<b class="fc"><i>303</i>&nbsp;        if (vonPart == null) {</b>
+<b class="fc"><i>304</i>&nbsp;            return getLast().orElse(&quot;&quot;);</b>
+<i>305</i>&nbsp;        } else {
+<b class="nc"><i>306</i>&nbsp;            return lastPart == null ? vonPart : vonPart + &#39; &#39; + lastPart;</b>
+<i>307</i>&nbsp;        }
+<i>308</i>&nbsp;    }
+<i>309</i>&nbsp;
+<i>310</i>&nbsp;    /**
+<i>311</i>&nbsp;     * Returns the author&#39;s name in form &#39;von Last, Jr., First&#39; with the
+<i>312</i>&nbsp;     * first name full or abbreviated depending on parameter.
+<i>313</i>&nbsp;     *
+<i>314</i>&nbsp;     * @param abbr &lt;CODE&gt;true&lt;/CODE&gt; - abbreviate first name, &lt;CODE&gt;false&lt;/CODE&gt; -
+<i>315</i>&nbsp;     *             do not abbreviate
+<i>316</i>&nbsp;     * @return &#39;von Last, Jr., First&#39; (if &lt;CODE&gt;abbr==false&lt;/CODE&gt;) or
+<i>317</i>&nbsp;     * &#39;von Last, Jr., F.&#39; (if &lt;CODE&gt;abbr==true&lt;/CODE&gt;)
+<i>318</i>&nbsp;     */
+<i>319</i>&nbsp;    public String getLastFirst(boolean abbr) {
+<b class="fc"><i>320</i>&nbsp;        StringBuilder res = new StringBuilder(getLastOnly());</b>
+<b class="nc"><i>321</i>&nbsp;        getJr().ifPresent(jr -&gt; res.append(&quot;, &quot;).append(jr));</b>
+<b class="fc"><i>322</i>&nbsp;        if (abbr) {</b>
+<b class="nc"><i>323</i>&nbsp;            getFirstAbbr().ifPresent(firstA -&gt; res.append(&quot;, &quot;).append(firstA));</b>
+<i>324</i>&nbsp;        } else {
+<b class="fc"><i>325</i>&nbsp;            getFirst().ifPresent(first -&gt; res.append(&quot;, &quot;).append(first));</b>
+<i>326</i>&nbsp;        }
+<b class="fc"><i>327</i>&nbsp;        return res.toString();</b>
+<i>328</i>&nbsp;    }
+<i>329</i>&nbsp;
+<i>330</i>&nbsp;    /**
+<i>331</i>&nbsp;     * Returns the author&#39;s name in form &#39;First von Last, Jr.&#39; with the
+<i>332</i>&nbsp;     * first name full or abbreviated depending on parameter.
+<i>333</i>&nbsp;     *
+<i>334</i>&nbsp;     * @param abbr &lt;CODE&gt;true&lt;/CODE&gt; - abbreviate first name, &lt;CODE&gt;false&lt;/CODE&gt; -
+<i>335</i>&nbsp;     *             do not abbreviate
+<i>336</i>&nbsp;     * @return &#39;First von Last, Jr.&#39; (if &lt;CODE&gt;abbr==false&lt;/CODE&gt;) or &#39;F.
+<i>337</i>&nbsp;     * von Last, Jr.&#39; (if &lt;CODE&gt;abbr==true&lt;/CODE&gt;)
+<i>338</i>&nbsp;     */
+<i>339</i>&nbsp;    public String getFirstLast(boolean abbr) {
+<b class="nc"><i>340</i>&nbsp;        StringBuilder res = new StringBuilder();</b>
+<b class="nc"><i>341</i>&nbsp;        if (abbr) {</b>
+<b class="nc"><i>342</i>&nbsp;            getFirstAbbr().map(firstA -&gt; firstA + &#39; &#39;).ifPresent(res::append);</b>
+<i>343</i>&nbsp;        } else {
+<b class="nc"><i>344</i>&nbsp;            getFirst().map(first -&gt; first + &#39; &#39;).ifPresent(res::append);</b>
+<i>345</i>&nbsp;        }
+<b class="nc"><i>346</i>&nbsp;        res.append(getLastOnly());</b>
+<b class="nc"><i>347</i>&nbsp;        getJr().ifPresent(jr -&gt; res.append(&quot;, &quot;).append(jr));</b>
+<b class="nc"><i>348</i>&nbsp;        return res.toString();</b>
+<i>349</i>&nbsp;    }
+<i>350</i>&nbsp;
+<i>351</i>&nbsp;    @Override
+<i>352</i>&nbsp;    public String toString() {
+<b class="nc"><i>353</i>&nbsp;        final StringBuilder sb = new StringBuilder(&quot;Author{&quot;);</b>
+<b class="nc"><i>354</i>&nbsp;        sb.append(&quot;firstPart=&#39;&quot;).append(firstPart).append(&#39;\&#39;&#39;);</b>
+<b class="nc"><i>355</i>&nbsp;        sb.append(&quot;, firstAbbr=&#39;&quot;).append(firstAbbr).append(&#39;\&#39;&#39;);</b>
+<b class="nc"><i>356</i>&nbsp;        sb.append(&quot;, vonPart=&#39;&quot;).append(vonPart).append(&#39;\&#39;&#39;);</b>
+<b class="nc"><i>357</i>&nbsp;        sb.append(&quot;, lastPart=&#39;&quot;).append(lastPart).append(&#39;\&#39;&#39;);</b>
+<b class="nc"><i>358</i>&nbsp;        sb.append(&quot;, jrPart=&#39;&quot;).append(jrPart).append(&#39;\&#39;&#39;);</b>
+<b class="nc"><i>359</i>&nbsp;        sb.append(&#39;}&#39;);</b>
+<b class="nc"><i>360</i>&nbsp;        return sb.toString();</b>
+<i>361</i>&nbsp;    }
+<i>362</i>&nbsp;
+<i>363</i>&nbsp;    /**
+<i>364</i>&nbsp;     * Returns the name as &quot;Last, Jr, F.&quot; omitting the von-part and removing
+<i>365</i>&nbsp;     * starting braces.
+<i>366</i>&nbsp;     *
+<i>367</i>&nbsp;     * @return &quot;Last, Jr, F.&quot; as described above or &quot;&quot; if all these parts
+<i>368</i>&nbsp;     * are empty.
+<i>369</i>&nbsp;     */
+<i>370</i>&nbsp;    public String getNameForAlphabetization() {
+<b class="nc"><i>371</i>&nbsp;        StringBuilder res = new StringBuilder();</b>
+<b class="nc"><i>372</i>&nbsp;        getLast().ifPresent(res::append);</b>
+<b class="nc"><i>373</i>&nbsp;        getJr().ifPresent(jr -&gt; res.append(&quot;, &quot;).append(jr));</b>
+<b class="nc"><i>374</i>&nbsp;        getFirstAbbr().ifPresent(firstA -&gt; res.append(&quot;, &quot;).append(firstA));</b>
+<b class="nc"><i>375</i>&nbsp;        while ((res.length() &gt; 0) &amp;&amp; (res.charAt(0) == &#39;{&#39;)) {</b>
+<b class="nc"><i>376</i>&nbsp;            res.deleteCharAt(0);</b>
+<i>377</i>&nbsp;        }
+<b class="nc"><i>378</i>&nbsp;        return res.toString();</b>
+<i>379</i>&nbsp;    }
+<i>380</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,117 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: TeeStream</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.error</a> ]
+</div>
+
+<h1>Coverage Summary for Class: TeeStream (net.sf.jabref.logic.error)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TeeStream</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 11)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.error;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.PrintStream;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;/**
+<i>6</i>&nbsp; * All writes to this print stream are copied to two print streams
+<i>7</i>&nbsp; * &lt;p/&gt;
+<i>8</i>&nbsp; * Is based on the command line tool tee
+<i>9</i>&nbsp; */
+<i>10</i>&nbsp;public class TeeStream extends PrintStream {
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;    private final PrintStream outStream;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;    public TeeStream(PrintStream out1, PrintStream out2) {
+<b class="nc"><i>15</i>&nbsp;        super(out1);</b>
+<b class="nc"><i>16</i>&nbsp;        this.outStream = out2;</b>
+<b class="nc"><i>17</i>&nbsp;    }</b>
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;    @Override
+<i>20</i>&nbsp;    public void write(byte[] buf, int off, int len) {
+<i>21</i>&nbsp;        try {
+<b class="nc"><i>22</i>&nbsp;            super.write(buf, off, len);</b>
+<b class="nc"><i>23</i>&nbsp;            outStream.write(buf, off, len);</b>
+<b class="nc"><i>24</i>&nbsp;        } catch (Exception ignored) {</b>
+<i>25</i>&nbsp;            // Ignored
+<b class="nc"><i>26</i>&nbsp;        }</b>
+<b class="nc"><i>27</i>&nbsp;    }</b>
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;    @Override
+<i>30</i>&nbsp;    public void flush() {
+<b class="nc"><i>31</i>&nbsp;        super.flush();</b>
+<b class="nc"><i>32</i>&nbsp;        outStream.flush();</b>
+<b class="nc"><i>33</i>&nbsp;    }</b>
+<i>34</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

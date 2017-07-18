@@ -1,0 +1,346 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: JabRefCLI</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.cli</a> ]
+</div>
+
+<h1>Coverage Summary for Class: JabRefCLI (net.sf.jabref.cli)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">JabRefCLI</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 34)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 126)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.cli;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.Arrays;
+<i>4</i>&nbsp;import java.util.List;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import net.sf.jabref.Globals;
+<i>7</i>&nbsp;import net.sf.jabref.logic.exporter.ExportFormats;
+<i>8</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;import org.apache.commons.cli.CommandLine;
+<i>11</i>&nbsp;import org.apache.commons.cli.DefaultParser;
+<i>12</i>&nbsp;import org.apache.commons.cli.HelpFormatter;
+<i>13</i>&nbsp;import org.apache.commons.cli.Option;
+<i>14</i>&nbsp;import org.apache.commons.cli.Options;
+<i>15</i>&nbsp;import org.apache.commons.cli.ParseException;
+<i>16</i>&nbsp;import org.apache.commons.logging.Log;
+<i>17</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;public class JabRefCLI {
+<i>20</i>&nbsp;
+<b class="nc"><i>21</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(JabRefCLI.class);</b>
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;    private List&lt;String&gt; leftOver;
+<i>24</i>&nbsp;    private final CommandLine cl;
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;
+<b class="nc"><i>27</i>&nbsp;    public JabRefCLI(String[] args) {</b>
+<i>28</i>&nbsp;
+<b class="nc"><i>29</i>&nbsp;        Options options = getOptions();</b>
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;        try {
+<b class="nc"><i>32</i>&nbsp;            this.cl = new DefaultParser().parse(options, args);</b>
+<b class="nc"><i>33</i>&nbsp;            this.leftOver = Arrays.asList(cl.getArgs());</b>
+<b class="nc"><i>34</i>&nbsp;        } catch (ParseException e) {</b>
+<b class="nc"><i>35</i>&nbsp;            LOGGER.warn(&quot;Problem parsing arguments&quot;, e);</b>
+<i>36</i>&nbsp;
+<b class="nc"><i>37</i>&nbsp;            this.printUsage();</b>
+<b class="nc"><i>38</i>&nbsp;            throw new RuntimeException();</b>
+<b class="nc"><i>39</i>&nbsp;        }</b>
+<b class="nc"><i>40</i>&nbsp;    }</b>
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;    public boolean isHelp() {
+<b class="nc"><i>43</i>&nbsp;        return cl.hasOption(&quot;help&quot;);</b>
+<i>44</i>&nbsp;    }
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;    public boolean isShowVersion() {
+<b class="nc"><i>47</i>&nbsp;        return cl.hasOption(&quot;version&quot;);</b>
+<i>48</i>&nbsp;    }
+<i>49</i>&nbsp;
+<i>50</i>&nbsp;    public boolean isBlank() {
+<b class="nc"><i>51</i>&nbsp;        return cl.hasOption(&quot;blank&quot;);</b>
+<i>52</i>&nbsp;    }
+<i>53</i>&nbsp;
+<i>54</i>&nbsp;    public boolean isLoadSession() {
+<b class="nc"><i>55</i>&nbsp;        return cl.hasOption(&quot;loads&quot;);</b>
+<i>56</i>&nbsp;    }
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;    public boolean isDisableGui() {
+<b class="nc"><i>59</i>&nbsp;        return cl.hasOption(&quot;nogui&quot;);</b>
+<i>60</i>&nbsp;    }
+<i>61</i>&nbsp;
+<i>62</i>&nbsp;    public boolean isPreferencesExport() {
+<b class="nc"><i>63</i>&nbsp;        return cl.hasOption(&quot;prexp&quot;);</b>
+<i>64</i>&nbsp;    }
+<i>65</i>&nbsp;
+<i>66</i>&nbsp;    public String getPreferencesExport() {
+<b class="nc"><i>67</i>&nbsp;        return cl.getOptionValue(&quot;prexp&quot;, &quot;jabref_prefs.xml&quot;);</b>
+<i>68</i>&nbsp;    }
+<i>69</i>&nbsp;
+<i>70</i>&nbsp;    public boolean isPreferencesImport() {
+<b class="nc"><i>71</i>&nbsp;        return cl.hasOption(&quot;primp&quot;);</b>
+<i>72</i>&nbsp;    }
+<i>73</i>&nbsp;
+<i>74</i>&nbsp;    public String getPreferencesImport() {
+<b class="nc"><i>75</i>&nbsp;        return cl.getOptionValue(&quot;primp&quot;, &quot;jabref_prefs.xml&quot;);</b>
+<i>76</i>&nbsp;    }
+<i>77</i>&nbsp;
+<i>78</i>&nbsp;    public boolean isPreferencesReset() {
+<b class="nc"><i>79</i>&nbsp;        return cl.hasOption(&quot;prdef&quot;);</b>
+<i>80</i>&nbsp;    }
+<i>81</i>&nbsp;
+<i>82</i>&nbsp;    public String getPreferencesReset() {
+<b class="nc"><i>83</i>&nbsp;        return cl.getOptionValue(&quot;prdef&quot;);</b>
+<i>84</i>&nbsp;    }
+<i>85</i>&nbsp;
+<i>86</i>&nbsp;    public boolean isFileExport() {
+<b class="nc"><i>87</i>&nbsp;        return cl.hasOption(&quot;output&quot;);</b>
+<i>88</i>&nbsp;    }
+<i>89</i>&nbsp;
+<i>90</i>&nbsp;    public String getFileExport() {
+<b class="nc"><i>91</i>&nbsp;        return cl.getOptionValue(&quot;output&quot;);</b>
+<i>92</i>&nbsp;    }
+<i>93</i>&nbsp;
+<i>94</i>&nbsp;    public boolean isFileImport() {
+<b class="nc"><i>95</i>&nbsp;        return cl.hasOption(&quot;import&quot;);</b>
+<i>96</i>&nbsp;    }
+<i>97</i>&nbsp;
+<i>98</i>&nbsp;    public String getFileImport() {
+<b class="nc"><i>99</i>&nbsp;        return cl.getOptionValue(&quot;import&quot;);</b>
+<i>100</i>&nbsp;    }
+<i>101</i>&nbsp;
+<i>102</i>&nbsp;    public boolean isAuxImport() {
+<b class="nc"><i>103</i>&nbsp;        return cl.hasOption(&quot;aux&quot;);</b>
+<i>104</i>&nbsp;    }
+<i>105</i>&nbsp;
+<i>106</i>&nbsp;    public String getAuxImport() {
+<b class="nc"><i>107</i>&nbsp;        return cl.getOptionValue(&quot;aux&quot;);</b>
+<i>108</i>&nbsp;    }
+<i>109</i>&nbsp;
+<i>110</i>&nbsp;    public boolean isImportToOpenBase() {
+<b class="nc"><i>111</i>&nbsp;        return cl.hasOption(&quot;importToOpen&quot;);</b>
+<i>112</i>&nbsp;    }
+<i>113</i>&nbsp;
+<i>114</i>&nbsp;    public String getImportToOpenBase() {
+<b class="nc"><i>115</i>&nbsp;        return cl.getOptionValue(&quot;importToOpen&quot;);</b>
+<i>116</i>&nbsp;    }
+<i>117</i>&nbsp;
+<i>118</i>&nbsp;    public boolean isDebugLogging() {
+<b class="nc"><i>119</i>&nbsp;        return cl.hasOption(&quot;debug&quot;);</b>
+<i>120</i>&nbsp;    }
+<i>121</i>&nbsp;
+<i>122</i>&nbsp;    public boolean isFetcherEngine() {
+<b class="nc"><i>123</i>&nbsp;        return cl.hasOption(&quot;fetch&quot;);</b>
+<i>124</i>&nbsp;    }
+<i>125</i>&nbsp;
+<i>126</i>&nbsp;    public String getFetcherEngine() {
+<b class="nc"><i>127</i>&nbsp;        return cl.getOptionValue(&quot;fetch&quot;);</b>
+<i>128</i>&nbsp;    }
+<i>129</i>&nbsp;
+<i>130</i>&nbsp;    public boolean isExportMatches() {
+<b class="nc"><i>131</i>&nbsp;        return cl.hasOption(&quot;exportMatches&quot;);</b>
+<i>132</i>&nbsp;    }
+<i>133</i>&nbsp;
+<i>134</i>&nbsp;    public String getExportMatches() {
+<b class="nc"><i>135</i>&nbsp;        return cl.getOptionValue(&quot;exportMatches&quot;);</b>
+<i>136</i>&nbsp;    }
+<i>137</i>&nbsp;
+<b class="nc"><i>138</i>&nbsp;    public boolean isGenerateBibtexKeys() { return cl.hasOption(&quot;generateBibtexKeys&quot;); }</b>
+<i>139</i>&nbsp;
+<b class="nc"><i>140</i>&nbsp;    public boolean isAutomaticallySetFileLinks() { return cl.hasOption(&quot;automaticallySetFileLinks&quot;);}</b>
+<i>141</i>&nbsp;
+<i>142</i>&nbsp;    private Options getOptions() {
+<b class="nc"><i>143</i>&nbsp;        Options options = new Options();</b>
+<i>144</i>&nbsp;
+<i>145</i>&nbsp;        // boolean options
+<b class="nc"><i>146</i>&nbsp;        options.addOption(&quot;v&quot;, &quot;version&quot;, false, Localization.lang(&quot;Display version&quot;));</b>
+<b class="nc"><i>147</i>&nbsp;        options.addOption(&quot;n&quot;, &quot;nogui&quot;, false, Localization.lang(&quot;No GUI. Only process command line options.&quot;));</b>
+<b class="nc"><i>148</i>&nbsp;        options.addOption(&quot;h&quot;, &quot;help&quot;, false, Localization.lang(&quot;Display help on command line options&quot;));</b>
+<b class="nc"><i>149</i>&nbsp;        options.addOption(&quot;b&quot;, &quot;blank&quot;, false, Localization.lang(&quot;Do not open any files at startup&quot;));</b>
+<b class="nc"><i>150</i>&nbsp;        options.addOption(null, &quot;debug&quot;, false, Localization.lang(&quot;Show debug level messages&quot;));</b>
+<i>151</i>&nbsp;
+<b class="nc"><i>152</i>&nbsp;        options.addOption(Option.builder(&quot;i&quot;).</b>
+<b class="nc"><i>153</i>&nbsp;                longOpt(&quot;import&quot;).</b>
+<b class="nc"><i>154</i>&nbsp;                desc(String.format(&quot;%s: %s[,import format]&quot;, Localization.lang(&quot;Import file&quot;),</b>
+<b class="nc"><i>155</i>&nbsp;                        Localization.lang(&quot;filename&quot;))).</b>
+<b class="nc"><i>156</i>&nbsp;                hasArg().</b>
+<b class="nc"><i>157</i>&nbsp;                argName(&quot;FILE&quot;).build());</b>
+<i>158</i>&nbsp;
+<b class="nc"><i>159</i>&nbsp;        options.addOption(Option.builder(&quot;o&quot;).</b>
+<b class="nc"><i>160</i>&nbsp;                longOpt(&quot;output&quot;).</b>
+<b class="nc"><i>161</i>&nbsp;                desc(String.format(&quot;%s: %s[,export format]&quot;, Localization.lang(&quot;Output or export file&quot;),</b>
+<b class="nc"><i>162</i>&nbsp;                        Localization.lang(&quot;filename&quot;))).</b>
+<b class="nc"><i>163</i>&nbsp;                hasArg().</b>
+<b class="nc"><i>164</i>&nbsp;                argName(&quot;FILE&quot;).</b>
+<b class="nc"><i>165</i>&nbsp;                build());</b>
+<i>166</i>&nbsp;
+<b class="nc"><i>167</i>&nbsp;        options.addOption(Option.builder(&quot;x&quot;).</b>
+<b class="nc"><i>168</i>&nbsp;                longOpt(&quot;prexp&quot;).</b>
+<b class="nc"><i>169</i>&nbsp;                desc(Localization.lang(&quot;Export preferences to file&quot;)).</b>
+<b class="nc"><i>170</i>&nbsp;                hasArg().</b>
+<b class="nc"><i>171</i>&nbsp;                argName(&quot;FILE&quot;).</b>
+<b class="nc"><i>172</i>&nbsp;                build());</b>
+<i>173</i>&nbsp;
+<b class="nc"><i>174</i>&nbsp;        options.addOption(Option.builder(&quot;p&quot;).</b>
+<b class="nc"><i>175</i>&nbsp;                longOpt(&quot;primp&quot;).</b>
+<b class="nc"><i>176</i>&nbsp;                desc(Localization.lang(&quot;Import preferences from file&quot;)).</b>
+<b class="nc"><i>177</i>&nbsp;                hasArg().</b>
+<b class="nc"><i>178</i>&nbsp;                argName(&quot;FILE&quot;).</b>
+<b class="nc"><i>179</i>&nbsp;                build());</b>
+<b class="nc"><i>180</i>&nbsp;        options.addOption(Option.builder(&quot;d&quot;).</b>
+<b class="nc"><i>181</i>&nbsp;                longOpt(&quot;prdef&quot;).</b>
+<b class="nc"><i>182</i>&nbsp;                desc(Localization.lang(&quot;Reset preferences (key1,key2,... or &#39;all&#39;)&quot;)).</b>
+<b class="nc"><i>183</i>&nbsp;                hasArg().</b>
+<b class="nc"><i>184</i>&nbsp;                argName(&quot;FILE&quot;).</b>
+<b class="nc"><i>185</i>&nbsp;                build());</b>
+<i>186</i>&nbsp;
+<b class="nc"><i>187</i>&nbsp;        options.addOption(Option.builder(&quot;a&quot;).</b>
+<b class="nc"><i>188</i>&nbsp;                longOpt(&quot;aux&quot;).</b>
+<b class="nc"><i>189</i>&nbsp;                desc(String.format(&quot;%s: %s[.aux],%s[.bib]&quot;, Localization.lang(&quot;Subdatabase from AUX&quot;),</b>
+<b class="nc"><i>190</i>&nbsp;                        Localization.lang(&quot;file&quot;),</b>
+<b class="nc"><i>191</i>&nbsp;                        Localization.lang(&quot;new&quot;))).</b>
+<b class="nc"><i>192</i>&nbsp;                hasArg().</b>
+<b class="nc"><i>193</i>&nbsp;                argName(&quot;FILE&quot;).</b>
+<b class="nc"><i>194</i>&nbsp;                build());</b>
+<i>195</i>&nbsp;
+<b class="nc"><i>196</i>&nbsp;        options.addOption(Option.builder().</b>
+<b class="nc"><i>197</i>&nbsp;                longOpt(&quot;importToOpen&quot;).</b>
+<b class="nc"><i>198</i>&nbsp;                desc(Localization.lang(&quot;Import to open tab&quot;)).</b>
+<b class="nc"><i>199</i>&nbsp;                hasArg().</b>
+<b class="nc"><i>200</i>&nbsp;                argName(&quot;FILE&quot;).</b>
+<b class="nc"><i>201</i>&nbsp;                build());</b>
+<i>202</i>&nbsp;
+<b class="nc"><i>203</i>&nbsp;        options.addOption(Option.builder(&quot;f&quot;).</b>
+<b class="nc"><i>204</i>&nbsp;                longOpt(&quot;fetch&quot;).</b>
+<b class="nc"><i>205</i>&nbsp;                desc(Localization.lang(&quot;Run fetcher, e.g. \&quot;--fetch=Medline:cancer\&quot;&quot;)).</b>
+<b class="nc"><i>206</i>&nbsp;                hasArg().</b>
+<b class="nc"><i>207</i>&nbsp;                argName(&quot;FILE&quot;).</b>
+<b class="nc"><i>208</i>&nbsp;                build());</b>
+<i>209</i>&nbsp;
+<b class="nc"><i>210</i>&nbsp;        options.addOption(Option.builder(&quot;m&quot;).</b>
+<b class="nc"><i>211</i>&nbsp;                longOpt(&quot;exportMatches&quot;).</b>
+<b class="nc"><i>212</i>&nbsp;                desc(JabRefCLI.getExportMatchesSyntax()).</b>
+<b class="nc"><i>213</i>&nbsp;                hasArg().</b>
+<b class="nc"><i>214</i>&nbsp;                argName(&quot;FILE&quot;).</b>
+<b class="nc"><i>215</i>&nbsp;                build());</b>
+<i>216</i>&nbsp;
+<b class="nc"><i>217</i>&nbsp;        options.addOption(Option.builder(&quot;g&quot;).</b>
+<b class="nc"><i>218</i>&nbsp;                longOpt(&quot;generateBibtexKeys&quot;).</b>
+<b class="nc"><i>219</i>&nbsp;                desc(Localization.lang(&quot;Regenerate all keys for the entries in a BibTeX file&quot;))</b>
+<b class="nc"><i>220</i>&nbsp;                .build());</b>
+<i>221</i>&nbsp;
+<b class="nc"><i>222</i>&nbsp;        options.addOption(Option.builder(&quot;asfl&quot;).</b>
+<b class="nc"><i>223</i>&nbsp;                longOpt(&quot;automaticallySetFileLinks&quot;).</b>
+<b class="nc"><i>224</i>&nbsp;                desc(Localization.lang(&quot;Automatically set file links&quot;)).</b>
+<b class="nc"><i>225</i>&nbsp;                build());</b>
+<i>226</i>&nbsp;
+<b class="nc"><i>227</i>&nbsp;        return options;</b>
+<i>228</i>&nbsp;    }
+<i>229</i>&nbsp;
+<i>230</i>&nbsp;    public void displayVersion() {
+<b class="nc"><i>231</i>&nbsp;        System.out.println(getVersionInfo());</b>
+<b class="nc"><i>232</i>&nbsp;    }</b>
+<i>233</i>&nbsp;
+<i>234</i>&nbsp;    public void printUsage() {
+<b class="nc"><i>235</i>&nbsp;        String header = &quot;&quot;;</b>
+<i>236</i>&nbsp;
+<b class="nc"><i>237</i>&nbsp;        String importFormats = Globals.IMPORT_FORMAT_READER.getImportFormatList();</b>
+<b class="nc"><i>238</i>&nbsp;        String importFormatsList = String.format(&quot;%s:%n%s%n&quot;, Localization.lang(&quot;Available import formats&quot;), importFormats);</b>
+<i>239</i>&nbsp;
+<b class="nc"><i>240</i>&nbsp;        String outFormats = ExportFormats.getConsoleExportList(70, 20, &quot;&quot;);</b>
+<b class="nc"><i>241</i>&nbsp;        String outFormatsList = String.format(&quot;%s: %s%n&quot;, Localization.lang(&quot;Available export formats&quot;), outFormats);</b>
+<i>242</i>&nbsp;
+<b class="nc"><i>243</i>&nbsp;        String footer = &#39;\n&#39; + importFormatsList + outFormatsList + &quot;\nPlease report issues at https://github.com/JabRef/jabref/issues&quot;;</b>
+<i>244</i>&nbsp;
+<b class="nc"><i>245</i>&nbsp;        HelpFormatter formatter = new HelpFormatter();</b>
+<b class="nc"><i>246</i>&nbsp;        formatter.printHelp(&quot;jabref [OPTIONS] [BIBTEX_FILE]\n\nOptions:&quot;, header, getOptions(), footer, true);</b>
+<b class="nc"><i>247</i>&nbsp;    }</b>
+<i>248</i>&nbsp;
+<i>249</i>&nbsp;    private String getVersionInfo() {
+<b class="nc"><i>250</i>&nbsp;        return String.format(&quot;JabRef %s&quot;, Globals.BUILD_INFO.getVersion());</b>
+<i>251</i>&nbsp;    }
+<i>252</i>&nbsp;
+<i>253</i>&nbsp;    public List&lt;String&gt; getLeftOver() {
+<b class="nc"><i>254</i>&nbsp;        return leftOver;</b>
+<i>255</i>&nbsp;    }
+<i>256</i>&nbsp;
+<i>257</i>&nbsp;    public static String getExportMatchesSyntax() {
+<b class="nc"><i>258</i>&nbsp;        return String.format(&quot;[%s]searchTerm,outputFile: %s[,%s]&quot;,</b>
+<b class="nc"><i>259</i>&nbsp;                Localization.lang(&quot;field&quot;),</b>
+<b class="nc"><i>260</i>&nbsp;                Localization.lang(&quot;file&quot;),</b>
+<b class="nc"><i>261</i>&nbsp;                Localization.lang(&quot;exportFormat&quot;));</b>
+<i>262</i>&nbsp;    }
+<i>263</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

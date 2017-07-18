@@ -1,0 +1,392 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Authors</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.layout.format</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Authors (net.sf.jabref.logic.layout.format)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Authors</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 180)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.layout.format;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.ArrayList;
+<i>4</i>&nbsp;import java.util.List;
+<i>5</i>&nbsp;import java.util.regex.Pattern;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import net.sf.jabref.logic.layout.AbstractParamLayoutFormatter;
+<i>8</i>&nbsp;import net.sf.jabref.model.entry.Author;
+<i>9</i>&nbsp;import net.sf.jabref.model.entry.AuthorList;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;/**
+<i>12</i>&nbsp; * Versatile author name formatter that takes arguments to control the formatting style.
+<i>13</i>&nbsp; */
+<b class="nc"><i>14</i>&nbsp;public class Authors extends AbstractParamLayoutFormatter {</b>
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;    /*
+<i>17</i>&nbsp;    AuthorSort = [FirstFirst | LastFirst | LastFirstFirstFirst]
+<i>18</i>&nbsp;    AuthorAbbr = [FullName | Initials | FirstInitial | MiddleInitial | InitialsNoSpace | LastName]
+<i>19</i>&nbsp;    AuthorSep = [Comma | And | Colon | Semicolon | Sep=&lt;string&gt;]
+<i>20</i>&nbsp;    AuthorLastSep = [And | Comma | Colon | Semicolon | Amp | Oxford | LastSep=&lt;string&gt;]
+<i>21</i>&nbsp;    AuthorPunc = [FullPunc | NoPunc | NoComma | NoPeriod]
+<i>22</i>&nbsp;    AuthorNumber = [inf | &lt;number&gt;]
+<i>23</i>&nbsp;    AuthorNumberEtAl = [ {1} | &lt;number&gt;]
+<i>24</i>&nbsp;    EtAlString = [ et al. | EtAl=&lt;string&gt;]
+<i>25</i>&nbsp;     */
+<i>26</i>&nbsp;
+<b class="nc"><i>27</i>&nbsp;    private static final List&lt;String&gt; AUTHOR_ORDER = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>28</i>&nbsp;    private static final List&lt;String&gt; AUTHOR_ABRV = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>29</i>&nbsp;    private static final List&lt;String&gt; AUTHOR_PUNC = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>30</i>&nbsp;    private static final List&lt;String&gt; SEPARATORS = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>31</i>&nbsp;    private static final List&lt;String&gt; LAST_SEPARATORS = new ArrayList&lt;&gt;();</b>
+<i>32</i>&nbsp;
+<b class="nc"><i>33</i>&nbsp;    private static final Pattern NUMBER_PATTERN = Pattern.compile(&quot;[0-9]+&quot;);</b>
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    static {
+<b class="nc"><i>36</i>&nbsp;        Authors.AUTHOR_ORDER.add(&quot;firstfirst&quot;);</b>
+<b class="nc"><i>37</i>&nbsp;        Authors.AUTHOR_ORDER.add(&quot;lastfirst&quot;);</b>
+<b class="nc"><i>38</i>&nbsp;        Authors.AUTHOR_ORDER.add(&quot;lastfirstfirstfirst&quot;);</b>
+<i>39</i>&nbsp;
+<b class="nc"><i>40</i>&nbsp;        Authors.AUTHOR_ABRV.add(&quot;fullname&quot;);</b>
+<b class="nc"><i>41</i>&nbsp;        Authors.AUTHOR_ABRV.add(&quot;initials&quot;);</b>
+<b class="nc"><i>42</i>&nbsp;        Authors.AUTHOR_ABRV.add(&quot;firstinitial&quot;);</b>
+<b class="nc"><i>43</i>&nbsp;        Authors.AUTHOR_ABRV.add(&quot;middleinitial&quot;);</b>
+<b class="nc"><i>44</i>&nbsp;        Authors.AUTHOR_ABRV.add(&quot;lastname&quot;);</b>
+<b class="nc"><i>45</i>&nbsp;        Authors.AUTHOR_ABRV.add(&quot;initialsnospace&quot;);</b>
+<i>46</i>&nbsp;
+<b class="nc"><i>47</i>&nbsp;        Authors.AUTHOR_PUNC.add(&quot;fullpunc&quot;);</b>
+<b class="nc"><i>48</i>&nbsp;        Authors.AUTHOR_PUNC.add(&quot;nopunc&quot;);</b>
+<b class="nc"><i>49</i>&nbsp;        Authors.AUTHOR_PUNC.add(&quot;nocomma&quot;);</b>
+<b class="nc"><i>50</i>&nbsp;        Authors.AUTHOR_PUNC.add(&quot;noperiod&quot;);</b>
+<i>51</i>&nbsp;
+<b class="nc"><i>52</i>&nbsp;        Authors.SEPARATORS.add(&quot;comma&quot;);</b>
+<b class="nc"><i>53</i>&nbsp;        Authors.SEPARATORS.add(&quot;and&quot;);</b>
+<b class="nc"><i>54</i>&nbsp;        Authors.SEPARATORS.add(&quot;colon&quot;);</b>
+<b class="nc"><i>55</i>&nbsp;        Authors.SEPARATORS.add(&quot;semicolon&quot;);</b>
+<b class="nc"><i>56</i>&nbsp;        Authors.SEPARATORS.add(&quot;sep&quot;);</b>
+<i>57</i>&nbsp;
+<b class="nc"><i>58</i>&nbsp;        Authors.LAST_SEPARATORS.add(&quot;and&quot;);</b>
+<b class="nc"><i>59</i>&nbsp;        Authors.LAST_SEPARATORS.add(&quot;colon&quot;);</b>
+<b class="nc"><i>60</i>&nbsp;        Authors.LAST_SEPARATORS.add(&quot;semicolon&quot;);</b>
+<b class="nc"><i>61</i>&nbsp;        Authors.LAST_SEPARATORS.add(&quot;amp&quot;);</b>
+<b class="nc"><i>62</i>&nbsp;        Authors.LAST_SEPARATORS.add(&quot;oxford&quot;);</b>
+<b class="nc"><i>63</i>&nbsp;        Authors.LAST_SEPARATORS.add(&quot;lastsep&quot;);</b>
+<i>64</i>&nbsp;
+<b class="nc"><i>65</i>&nbsp;    }</b>
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;    private static final int
+<i>68</i>&nbsp;    FIRST_FIRST = 0;
+<i>69</i>&nbsp;    private static final int LAST_FIRST = 1;
+<i>70</i>&nbsp;    private static final int LF_FF = 2;
+<i>71</i>&nbsp;
+<i>72</i>&nbsp;    private static final String
+<i>73</i>&nbsp;    COMMA = &quot;, &quot;;
+<i>74</i>&nbsp;    private static final String AMP = &quot; &amp; &quot;;
+<i>75</i>&nbsp;    private static final String COLON = &quot;: &quot;;
+<i>76</i>&nbsp;    private static final String SEMICOLON = &quot;; &quot;;
+<i>77</i>&nbsp;    private static final String AND = &quot; and &quot;;
+<i>78</i>&nbsp;    private static final String OXFORD = &quot;, and &quot;;
+<i>79</i>&nbsp;
+<i>80</i>&nbsp;    private int flMode;
+<i>81</i>&nbsp;
+<b class="nc"><i>82</i>&nbsp;    private boolean</b>
+<i>83</i>&nbsp;    abbreviate = true;
+<i>84</i>&nbsp;    private boolean firstInitialOnly;
+<i>85</i>&nbsp;    private boolean middleInitial;
+<i>86</i>&nbsp;    private boolean lastNameOnly;
+<b class="nc"><i>87</i>&nbsp;    private boolean abbrDots = true;</b>
+<b class="nc"><i>88</i>&nbsp;    private boolean abbrSpaces = true;</b>
+<i>89</i>&nbsp;
+<i>90</i>&nbsp;    private boolean setSep;
+<i>91</i>&nbsp;    private boolean setMaxAuthors;
+<b class="nc"><i>92</i>&nbsp;    private int maxAuthors = -1;</b>
+<b class="nc"><i>93</i>&nbsp;    private int authorNumberEtAl = 1;</b>
+<i>94</i>&nbsp;
+<b class="nc"><i>95</i>&nbsp;    private String lastFirstSeparator = &quot;, &quot;;</b>
+<b class="nc"><i>96</i>&nbsp;    private String separator = Authors.COMMA;</b>
+<b class="nc"><i>97</i>&nbsp;    private String lastSeparator = Authors.AND;</b>
+<b class="nc"><i>98</i>&nbsp;    private String etAlString = &quot; et al.&quot;;</b>
+<i>99</i>&nbsp;
+<i>100</i>&nbsp;
+<i>101</i>&nbsp;    @Override
+<i>102</i>&nbsp;    public void setArgument(String arg) {
+<b class="nc"><i>103</i>&nbsp;        List&lt;String&gt; parts = AbstractParamLayoutFormatter.parseArgument(arg);</b>
+<b class="nc"><i>104</i>&nbsp;        for (String part : parts) {</b>
+<b class="nc"><i>105</i>&nbsp;            int index = part.indexOf(&#39;=&#39;);</b>
+<b class="nc"><i>106</i>&nbsp;            if (index &gt; 0) {</b>
+<b class="nc"><i>107</i>&nbsp;                String key = part.substring(0, index);</b>
+<b class="nc"><i>108</i>&nbsp;                String value = part.substring(index + 1);</b>
+<b class="nc"><i>109</i>&nbsp;                handleArgument(key, value);</b>
+<b class="nc"><i>110</i>&nbsp;            } else {</b>
+<b class="nc"><i>111</i>&nbsp;                handleArgument(part, &quot;&quot;);</b>
+<i>112</i>&nbsp;            }
+<i>113</i>&nbsp;
+<b class="nc"><i>114</i>&nbsp;        }</b>
+<b class="nc"><i>115</i>&nbsp;    }</b>
+<i>116</i>&nbsp;
+<i>117</i>&nbsp;    private void handleArgument(String key, String value) {
+<b class="nc"><i>118</i>&nbsp;        if (Authors.AUTHOR_ORDER.contains(key.trim().toLowerCase())) {</b>
+<b class="nc"><i>119</i>&nbsp;            if (comp(key, &quot;FirstFirst&quot;)) {</b>
+<b class="nc"><i>120</i>&nbsp;                flMode = Authors.FIRST_FIRST;</b>
+<b class="nc"><i>121</i>&nbsp;            } else if (comp(key, &quot;LastFirst&quot;)) {</b>
+<b class="nc"><i>122</i>&nbsp;                flMode = Authors.LAST_FIRST;</b>
+<b class="nc"><i>123</i>&nbsp;            } else if (comp(key, &quot;LastFirstFirstFirst&quot;)) {</b>
+<b class="nc"><i>124</i>&nbsp;                flMode = Authors.LF_FF;</b>
+<i>125</i>&nbsp;            }
+<b class="nc"><i>126</i>&nbsp;        } else if (Authors.AUTHOR_ABRV.contains(key.trim().toLowerCase())) {</b>
+<b class="nc"><i>127</i>&nbsp;            if (comp(key, &quot;FullName&quot;)) {</b>
+<b class="nc"><i>128</i>&nbsp;                abbreviate = false;</b>
+<b class="nc"><i>129</i>&nbsp;            } else if (comp(key, &quot;Initials&quot;)) {</b>
+<b class="nc"><i>130</i>&nbsp;                abbreviate = true;</b>
+<b class="nc"><i>131</i>&nbsp;                firstInitialOnly = false;</b>
+<b class="nc"><i>132</i>&nbsp;            } else if (comp(key, &quot;FirstInitial&quot;)) {</b>
+<b class="nc"><i>133</i>&nbsp;                abbreviate = true;</b>
+<b class="nc"><i>134</i>&nbsp;                firstInitialOnly = true;</b>
+<b class="nc"><i>135</i>&nbsp;            } else if (comp(key, &quot;MiddleInitial&quot;)) {</b>
+<b class="nc"><i>136</i>&nbsp;                abbreviate = true;</b>
+<b class="nc"><i>137</i>&nbsp;                middleInitial = true;</b>
+<b class="nc"><i>138</i>&nbsp;            } else if (comp(key, &quot;LastName&quot;)) {</b>
+<b class="nc"><i>139</i>&nbsp;                lastNameOnly = true;</b>
+<b class="nc"><i>140</i>&nbsp;            } else if (comp(key, &quot;InitialsNoSpace&quot;)) {</b>
+<b class="nc"><i>141</i>&nbsp;                abbreviate = true;</b>
+<b class="nc"><i>142</i>&nbsp;                abbrSpaces = false;</b>
+<i>143</i>&nbsp;            }
+<b class="nc"><i>144</i>&nbsp;        } else if (Authors.AUTHOR_PUNC.contains(key.trim().toLowerCase())) {</b>
+<b class="nc"><i>145</i>&nbsp;            if (comp(key, &quot;FullPunc&quot;)) {</b>
+<b class="nc"><i>146</i>&nbsp;                abbrDots = true;</b>
+<b class="nc"><i>147</i>&nbsp;                lastFirstSeparator = &quot;, &quot;;</b>
+<b class="nc"><i>148</i>&nbsp;            } else if (comp(key, &quot;NoPunc&quot;)) {</b>
+<b class="nc"><i>149</i>&nbsp;                abbrDots = false;</b>
+<b class="nc"><i>150</i>&nbsp;                lastFirstSeparator = &quot; &quot;;</b>
+<b class="nc"><i>151</i>&nbsp;            } else if (comp(key, &quot;NoComma&quot;)) {</b>
+<b class="nc"><i>152</i>&nbsp;                abbrDots = true;</b>
+<b class="nc"><i>153</i>&nbsp;                lastFirstSeparator = &quot; &quot;;</b>
+<b class="nc"><i>154</i>&nbsp;            } else if (comp(key, &quot;NoPeriod&quot;)) {</b>
+<b class="nc"><i>155</i>&nbsp;                abbrDots = false;</b>
+<b class="nc"><i>156</i>&nbsp;                lastFirstSeparator = &quot;, &quot;;</b>
+<i>157</i>&nbsp;            }
+<i>158</i>&nbsp;        }
+<i>159</i>&nbsp;
+<i>160</i>&nbsp;        // AuthorSep = [Comma | And | Colon | Semicolon | sep=&lt;string&gt;]
+<i>161</i>&nbsp;        // AuthorLastSep = [And | Comma | Colon | Semicolon | Amp | Oxford | lastsep=&lt;string&gt;]
+<b class="nc"><i>162</i>&nbsp;        else if (Authors.SEPARATORS.contains(key.trim().toLowerCase()) || Authors.LAST_SEPARATORS.contains(key.trim().toLowerCase())) {</b>
+<b class="nc"><i>163</i>&nbsp;            if (comp(key, &quot;Comma&quot;)) {</b>
+<b class="nc"><i>164</i>&nbsp;                if (setSep) {</b>
+<b class="nc"><i>165</i>&nbsp;                    lastSeparator = Authors.COMMA;</b>
+<i>166</i>&nbsp;                } else {
+<b class="nc"><i>167</i>&nbsp;                    separator = Authors.COMMA;</b>
+<b class="nc"><i>168</i>&nbsp;                    setSep = true;</b>
+<i>169</i>&nbsp;                }
+<b class="nc"><i>170</i>&nbsp;            } else if (comp(key, &quot;And&quot;)) {</b>
+<b class="nc"><i>171</i>&nbsp;                if (setSep) {</b>
+<b class="nc"><i>172</i>&nbsp;                    lastSeparator = Authors.AND;</b>
+<i>173</i>&nbsp;                } else {
+<b class="nc"><i>174</i>&nbsp;                    separator = Authors.AND;</b>
+<b class="nc"><i>175</i>&nbsp;                    setSep = true;</b>
+<i>176</i>&nbsp;                }
+<b class="nc"><i>177</i>&nbsp;            } else if (comp(key, &quot;Colon&quot;)) {</b>
+<b class="nc"><i>178</i>&nbsp;                if (setSep) {</b>
+<b class="nc"><i>179</i>&nbsp;                    lastSeparator = Authors.COLON;</b>
+<i>180</i>&nbsp;                } else {
+<b class="nc"><i>181</i>&nbsp;                    separator = Authors.COLON;</b>
+<b class="nc"><i>182</i>&nbsp;                    setSep = true;</b>
+<i>183</i>&nbsp;                }
+<b class="nc"><i>184</i>&nbsp;            } else if (comp(key, &quot;Semicolon&quot;)) {</b>
+<b class="nc"><i>185</i>&nbsp;                if (setSep) {</b>
+<b class="nc"><i>186</i>&nbsp;                    lastSeparator = Authors.SEMICOLON;</b>
+<i>187</i>&nbsp;                } else {
+<b class="nc"><i>188</i>&nbsp;                    separator = Authors.SEMICOLON;</b>
+<b class="nc"><i>189</i>&nbsp;                    setSep = true;</b>
+<i>190</i>&nbsp;                }
+<b class="nc"><i>191</i>&nbsp;            } else if (comp(key, &quot;Oxford&quot;)) {</b>
+<b class="nc"><i>192</i>&nbsp;                lastSeparator = Authors.OXFORD;</b>
+<b class="nc"><i>193</i>&nbsp;            } else if (comp(key, &quot;Amp&quot;)) {</b>
+<b class="nc"><i>194</i>&nbsp;                lastSeparator = Authors.AMP;</b>
+<b class="nc"><i>195</i>&nbsp;            } else if (comp(key, &quot;Sep&quot;) &amp;&amp; !value.isEmpty()) {</b>
+<b class="nc"><i>196</i>&nbsp;                separator = value;</b>
+<b class="nc"><i>197</i>&nbsp;                setSep = true;</b>
+<b class="nc"><i>198</i>&nbsp;            } else if (comp(key, &quot;LastSep&quot;) &amp;&amp; !value.isEmpty()) {</b>
+<b class="nc"><i>199</i>&nbsp;                lastSeparator = value;</b>
+<i>200</i>&nbsp;            }
+<b class="nc"><i>201</i>&nbsp;        } else if (&quot;etal&quot;.equalsIgnoreCase(key.trim())) {</b>
+<b class="nc"><i>202</i>&nbsp;            etAlString = value;</b>
+<b class="nc"><i>203</i>&nbsp;        } else if (Authors.NUMBER_PATTERN.matcher(key.trim()).matches()) {</b>
+<i>204</i>&nbsp;            // Just a number:
+<b class="nc"><i>205</i>&nbsp;            int num = Integer.parseInt(key.trim());</b>
+<b class="nc"><i>206</i>&nbsp;            if (setMaxAuthors) {</b>
+<b class="nc"><i>207</i>&nbsp;                authorNumberEtAl = num;</b>
+<i>208</i>&nbsp;            } else {
+<b class="nc"><i>209</i>&nbsp;                maxAuthors = num;</b>
+<b class="nc"><i>210</i>&nbsp;                setMaxAuthors = true;</b>
+<i>211</i>&nbsp;            }
+<i>212</i>&nbsp;        }
+<b class="nc"><i>213</i>&nbsp;    }</b>
+<i>214</i>&nbsp;
+<i>215</i>&nbsp;    /**
+<i>216</i>&nbsp;     * Check for case-insensitive equality between two strings after removing
+<i>217</i>&nbsp;     * white space at the beginning and end of the first string.
+<i>218</i>&nbsp;     * @param one The first string - whitespace is trimmed
+<i>219</i>&nbsp;     * @param two The second string
+<i>220</i>&nbsp;     * @return true if the strings are deemed equal
+<i>221</i>&nbsp;     */
+<i>222</i>&nbsp;    private static boolean comp(String one, String two) {
+<b class="nc"><i>223</i>&nbsp;        return one.trim().equalsIgnoreCase(two);</b>
+<i>224</i>&nbsp;    }
+<i>225</i>&nbsp;
+<i>226</i>&nbsp;    @Override
+<i>227</i>&nbsp;    public String format(String fieldText) {
+<b class="nc"><i>228</i>&nbsp;        if (fieldText == null) {</b>
+<b class="nc"><i>229</i>&nbsp;            return &quot;&quot;;</b>
+<i>230</i>&nbsp;        }
+<i>231</i>&nbsp;
+<b class="nc"><i>232</i>&nbsp;        StringBuilder sb = new StringBuilder();</b>
+<b class="nc"><i>233</i>&nbsp;        AuthorList al = AuthorList.parse(fieldText);</b>
+<i>234</i>&nbsp;
+<b class="nc"><i>235</i>&nbsp;        if ((maxAuthors &lt; 0) || (al.getNumberOfAuthors() &lt;= maxAuthors)) {</b>
+<b class="nc"><i>236</i>&nbsp;            for (int i = 0; i &lt; al.getNumberOfAuthors(); i++) {</b>
+<b class="nc"><i>237</i>&nbsp;                Author a = al.getAuthor(i);</b>
+<i>238</i>&nbsp;
+<b class="nc"><i>239</i>&nbsp;                addSingleName(sb, a, (flMode == Authors.FIRST_FIRST) || ((flMode == Authors.LF_FF) &amp;&amp; (i &gt; 0)));</b>
+<i>240</i>&nbsp;
+<b class="nc"><i>241</i>&nbsp;                if (i &lt; (al.getNumberOfAuthors() - 2)) {</b>
+<b class="nc"><i>242</i>&nbsp;                    sb.append(separator);</b>
+<b class="nc"><i>243</i>&nbsp;                } else if (i &lt; (al.getNumberOfAuthors() - 1)) {</b>
+<b class="nc"><i>244</i>&nbsp;                    sb.append(lastSeparator);</b>
+<i>245</i>&nbsp;                }
+<i>246</i>&nbsp;            }
+<i>247</i>&nbsp;        } else {
+<b class="nc"><i>248</i>&nbsp;            for (int i = 0; i &lt; Math.min(al.getNumberOfAuthors() - 1, authorNumberEtAl); i++) {</b>
+<b class="nc"><i>249</i>&nbsp;                if (i &gt; 0) {</b>
+<b class="nc"><i>250</i>&nbsp;                    sb.append(separator);</b>
+<i>251</i>&nbsp;                }
+<b class="nc"><i>252</i>&nbsp;                addSingleName(sb, al.getAuthor(i), flMode == Authors.FIRST_FIRST);</b>
+<i>253</i>&nbsp;            }
+<b class="nc"><i>254</i>&nbsp;            sb.append(etAlString);</b>
+<i>255</i>&nbsp;        }
+<i>256</i>&nbsp;
+<b class="nc"><i>257</i>&nbsp;        return sb.toString();</b>
+<i>258</i>&nbsp;    }
+<i>259</i>&nbsp;
+<i>260</i>&nbsp;    private void addSingleName(StringBuilder sb, Author a, boolean firstFirst) {
+<b class="nc"><i>261</i>&nbsp;        StringBuilder lastNameSB = new StringBuilder();</b>
+<b class="nc"><i>262</i>&nbsp;        a.getVon().filter(von -&gt; !von.isEmpty()).ifPresent(von -&gt; lastNameSB.append(von).append(&#39; &#39;));</b>
+<b class="nc"><i>263</i>&nbsp;        a.getLast().ifPresent(lastNameSB::append);</b>
+<b class="nc"><i>264</i>&nbsp;        String jrSeparator = &quot; &quot;;</b>
+<b class="nc"><i>265</i>&nbsp;        a.getJr().filter(jr -&gt; !jr.isEmpty()).ifPresent(jr -&gt; lastNameSB.append(jrSeparator).append(jr));</b>
+<i>266</i>&nbsp;
+<b class="nc"><i>267</i>&nbsp;        String firstNameResult = &quot;&quot;;</b>
+<b class="nc"><i>268</i>&nbsp;        if (a.getFirst().isPresent()) {</b>
+<b class="nc"><i>269</i>&nbsp;            if (abbreviate) {</b>
+<b class="nc"><i>270</i>&nbsp;                firstNameResult = a.getFirstAbbr().orElse(&quot;&quot;);</b>
+<i>271</i>&nbsp;
+<b class="nc"><i>272</i>&nbsp;                if (firstInitialOnly &amp;&amp; (firstNameResult.length() &gt; 2)) {</b>
+<b class="nc"><i>273</i>&nbsp;                    firstNameResult = firstNameResult.substring(0, 2);</b>
+<b class="nc"><i>274</i>&nbsp;                } else if (middleInitial) {</b>
+<b class="nc"><i>275</i>&nbsp;                    String abbr = firstNameResult;</b>
+<b class="nc"><i>276</i>&nbsp;                    firstNameResult = a.getFirst().get();</b>
+<b class="nc"><i>277</i>&nbsp;                    int index = firstNameResult.indexOf(&#39; &#39;);</b>
+<i>278</i>&nbsp;                    //System.out.println(firstNamePart);
+<i>279</i>&nbsp;                    //System.out.println(index);
+<b class="nc"><i>280</i>&nbsp;                    if (index &gt;= 0) {</b>
+<b class="nc"><i>281</i>&nbsp;                        firstNameResult = firstNameResult.substring(0, index + 1);</b>
+<b class="nc"><i>282</i>&nbsp;                        if (abbr.length() &gt; 3) {</b>
+<b class="nc"><i>283</i>&nbsp;                            firstNameResult = firstNameResult + abbr.substring(3);</b>
+<i>284</i>&nbsp;                        }
+<i>285</i>&nbsp;                    }
+<i>286</i>&nbsp;                }
+<b class="nc"><i>287</i>&nbsp;                if (!abbrDots) {</b>
+<b class="nc"><i>288</i>&nbsp;                    firstNameResult = firstNameResult.replace(&quot;.&quot;, &quot;&quot;);</b>
+<i>289</i>&nbsp;                }
+<b class="nc"><i>290</i>&nbsp;                if (!abbrSpaces) {</b>
+<b class="nc"><i>291</i>&nbsp;                    firstNameResult = firstNameResult.replace(&quot; &quot;, &quot;&quot;);</b>
+<i>292</i>&nbsp;                }
+<i>293</i>&nbsp;            } else {
+<b class="nc"><i>294</i>&nbsp;                firstNameResult = a.getFirst().get();</b>
+<i>295</i>&nbsp;            }
+<i>296</i>&nbsp;        }
+<i>297</i>&nbsp;
+<b class="nc"><i>298</i>&nbsp;        if (lastNameOnly || (firstNameResult.isEmpty())) {</b>
+<b class="nc"><i>299</i>&nbsp;            sb.append(lastNameSB);</b>
+<b class="nc"><i>300</i>&nbsp;        } else if (firstFirst) {</b>
+<b class="nc"><i>301</i>&nbsp;            String firstFirstSeparator = &quot; &quot;;</b>
+<b class="nc"><i>302</i>&nbsp;            sb.append(firstNameResult).append(firstFirstSeparator);</b>
+<b class="nc"><i>303</i>&nbsp;            sb.append(lastNameSB);</b>
+<b class="nc"><i>304</i>&nbsp;        } else {</b>
+<b class="nc"><i>305</i>&nbsp;            sb.append(lastNameSB).append(lastFirstSeparator).append(firstNameResult);</b>
+<i>306</i>&nbsp;        }
+<i>307</i>&nbsp;
+<b class="nc"><i>308</i>&nbsp;    }</b>
+<i>309</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

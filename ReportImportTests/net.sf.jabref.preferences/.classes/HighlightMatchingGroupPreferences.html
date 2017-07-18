@@ -1,0 +1,122 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: HighlightMatchingGroupPreferences</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.preferences</a> ]
+</div>
+
+<h1>Coverage Summary for Class: HighlightMatchingGroupPreferences (net.sf.jabref.preferences)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">HighlightMatchingGroupPreferences</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 12)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.preferences;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;public class HighlightMatchingGroupPreferences {
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;    public static final String ALL = &quot;all&quot;;
+<i>6</i>&nbsp;    public static final String ANY = &quot;any&quot;;
+<i>7</i>&nbsp;    public static final String DISABLED = &quot;&quot;;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;    private final JabRefPreferences preferences;
+<i>10</i>&nbsp;
+<b class="nc"><i>11</i>&nbsp;    public HighlightMatchingGroupPreferences(JabRefPreferences preferences) {</b>
+<b class="nc"><i>12</i>&nbsp;        this.preferences = preferences;</b>
+<b class="nc"><i>13</i>&nbsp;    }</b>
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;    public boolean isAll() {
+<b class="nc"><i>16</i>&nbsp;        return ALL.equals(preferences.get(JabRefPreferences.HIGHLIGHT_GROUPS_MATCHING));</b>
+<i>17</i>&nbsp;    }
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;    public boolean isAny() {
+<b class="nc"><i>20</i>&nbsp;        return ANY.equals(preferences.get(JabRefPreferences.HIGHLIGHT_GROUPS_MATCHING));</b>
+<i>21</i>&nbsp;    }
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;    public boolean isDisabled() {
+<b class="nc"><i>24</i>&nbsp;        return !isAll() &amp;&amp; !isAny();</b>
+<i>25</i>&nbsp;    }
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    public void setToAll() {
+<b class="nc"><i>28</i>&nbsp;        preferences.put(JabRefPreferences.HIGHLIGHT_GROUPS_MATCHING, ALL);</b>
+<b class="nc"><i>29</i>&nbsp;    }</b>
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;    public void setToAny() {
+<b class="nc"><i>32</i>&nbsp;        preferences.put(JabRefPreferences.HIGHLIGHT_GROUPS_MATCHING, ANY);</b>
+<b class="nc"><i>33</i>&nbsp;    }</b>
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    public void setToDisabled() {
+<b class="nc"><i>36</i>&nbsp;        preferences.put(JabRefPreferences.HIGHLIGHT_GROUPS_MATCHING, DISABLED);</b>
+<b class="nc"><i>37</i>&nbsp;    }</b>
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

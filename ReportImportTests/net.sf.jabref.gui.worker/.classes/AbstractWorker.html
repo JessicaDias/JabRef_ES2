@@ -1,0 +1,137 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: AbstractWorker</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.worker</a> ]
+</div>
+
+<h1>Coverage Summary for Class: AbstractWorker (net.sf.jabref.gui.worker)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AbstractWorker</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 8)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.worker;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import spin.Spin;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;/**
+<i>6</i>&nbsp; * Convenience class for creating an object used for performing a time-
+<i>7</i>&nbsp; * consuming action off the Swing thread, and optionally performing GUI
+<i>8</i>&nbsp; * work afterwards. This class is supported by runCommand() in BasePanel,
+<i>9</i>&nbsp; * which, if the action called is an AbstractWorker, will run its run()
+<i>10</i>&nbsp; * method through the Worker interface, and then its update() method through
+<i>11</i>&nbsp; * the CallBack interface. This procedure ensures that run() cannot freeze
+<i>12</i>&nbsp; * the GUI, and that update() can safely update GUI components.
+<i>13</i>&nbsp; */
+<i>14</i>&nbsp;public abstract class AbstractWorker implements Runnable, CallBack {
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;    private final Runnable worker;
+<i>17</i>&nbsp;    private final CallBack callBack;
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;
+<b class="nc"><i>20</i>&nbsp;    public AbstractWorker() {</b>
+<b class="nc"><i>21</i>&nbsp;        worker = (Runnable) Spin.off(this);</b>
+<b class="nc"><i>22</i>&nbsp;        callBack = (CallBack) Spin.over(this);</b>
+<i>23</i>&nbsp;
+<b class="nc"><i>24</i>&nbsp;    }</b>
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    public void init() throws Exception {
+<i>27</i>&nbsp;        // Do nothing
+<b class="nc"><i>28</i>&nbsp;    }</b>
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;    /**
+<i>31</i>&nbsp;     * This method returns a wrapped Worker instance of this AbstractWorker.
+<i>32</i>&nbsp;     * whose methods will automatically be run off the EDT (Swing) thread.
+<i>33</i>&nbsp;     */
+<i>34</i>&nbsp;    public Runnable getWorker() {
+<b class="nc"><i>35</i>&nbsp;        return worker;</b>
+<i>36</i>&nbsp;    }
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;    /**
+<i>39</i>&nbsp;     * This method returns a wrapped CallBack instance of this AbstractWorker
+<i>40</i>&nbsp;     * whose methods will automatically be run on the EDT (Swing) thread.
+<i>41</i>&nbsp;     */
+<i>42</i>&nbsp;    public CallBack getCallBack() {
+<b class="nc"><i>43</i>&nbsp;        return callBack;</b>
+<i>44</i>&nbsp;    }
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;    /**
+<i>47</i>&nbsp;     * Empty implementation of the update() method. Override this method
+<i>48</i>&nbsp;     * if a callback is needed.
+<i>49</i>&nbsp;     */
+<i>50</i>&nbsp;    @Override
+<i>51</i>&nbsp;    public void update() {
+<i>52</i>&nbsp;        // Do nothing, see above
+<b class="nc"><i>53</i>&nbsp;    }</b>
+<i>54</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

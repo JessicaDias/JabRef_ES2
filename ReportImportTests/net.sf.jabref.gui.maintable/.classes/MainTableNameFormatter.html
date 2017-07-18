@@ -1,0 +1,125 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: MainTableNameFormatter</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.maintable</a> ]
+</div>
+
+<h1>Coverage Summary for Class: MainTableNameFormatter (net.sf.jabref.gui.maintable)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MainTableNameFormatter</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 17)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.maintable;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import net.sf.jabref.Globals;
+<i>4</i>&nbsp;import net.sf.jabref.model.entry.AuthorList;
+<i>5</i>&nbsp;import net.sf.jabref.preferences.JabRefPreferences;
+<i>6</i>&nbsp;
+<b class="nc"><i>7</i>&nbsp;public class MainTableNameFormatter {</b>
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;    /**
+<i>10</i>&nbsp;     * Format a name field for the table, according to user preferences.
+<i>11</i>&nbsp;     *
+<i>12</i>&nbsp;     * @param nameToFormat The contents of the name field.
+<i>13</i>&nbsp;     * @return The formatted name field.
+<i>14</i>&nbsp;     */
+<i>15</i>&nbsp;    public static String formatName(final String nameToFormat) {
+<b class="nc"><i>16</i>&nbsp;        if (nameToFormat == null) {</b>
+<b class="nc"><i>17</i>&nbsp;            return null;</b>
+<i>18</i>&nbsp;        }
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;        // Read name format options:
+<b class="nc"><i>21</i>&nbsp;        final boolean namesNatbib = Globals.prefs.getBoolean(JabRefPreferences.NAMES_NATBIB); //MK:</b>
+<b class="nc"><i>22</i>&nbsp;        final boolean namesLastOnly = Globals.prefs.getBoolean(JabRefPreferences.NAMES_LAST_ONLY);</b>
+<b class="nc"><i>23</i>&nbsp;        final boolean namesAsIs = Globals.prefs.getBoolean(JabRefPreferences.NAMES_AS_IS);</b>
+<b class="nc"><i>24</i>&nbsp;        final boolean namesFf = Globals.prefs.getBoolean(JabRefPreferences.NAMES_FIRST_LAST);</b>
+<i>25</i>&nbsp;
+<b class="nc"><i>26</i>&nbsp;        final boolean abbrAuthorNames = Globals.prefs.getBoolean(JabRefPreferences.ABBR_AUTHOR_NAMES); //MK:</b>
+<i>27</i>&nbsp;
+<b class="nc"><i>28</i>&nbsp;        if (namesAsIs) {</b>
+<b class="nc"><i>29</i>&nbsp;            return nameToFormat;</b>
+<b class="nc"><i>30</i>&nbsp;        } else if (namesNatbib) {</b>
+<b class="nc"><i>31</i>&nbsp;            return AuthorList.fixAuthorNatbib(nameToFormat);</b>
+<b class="nc"><i>32</i>&nbsp;        } else if (namesLastOnly) {</b>
+<b class="nc"><i>33</i>&nbsp;            return AuthorList.fixAuthorLastNameOnlyCommas(nameToFormat, false);</b>
+<b class="nc"><i>34</i>&nbsp;        } else if (namesFf) {</b>
+<b class="nc"><i>35</i>&nbsp;            return AuthorList.fixAuthorFirstNameFirstCommas(nameToFormat, abbrAuthorNames, false);</b>
+<i>36</i>&nbsp;        }
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;        // None of namesAsIs, namesNatbib, namesAsIs, namesFf
+<b class="nc"><i>39</i>&nbsp;        return AuthorList.fixAuthorLastNameFirstCommas(nameToFormat, abbrAuthorNames, false);</b>
+<i>40</i>&nbsp;    }
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

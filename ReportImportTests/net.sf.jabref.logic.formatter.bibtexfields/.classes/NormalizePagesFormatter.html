@@ -1,0 +1,184 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: NormalizePagesFormatter</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.formatter.bibtexfields</a> ]
+</div>
+
+<h1>Coverage Summary for Class: NormalizePagesFormatter (net.sf.jabref.logic.formatter.bibtexfields)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">NormalizePagesFormatter</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    33.3%
+  </span>
+  <span class="absValue">
+    (3/ 9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    15.8%
+  </span>
+  <span class="absValue">
+    (3/ 19)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.formatter.bibtexfields;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.Objects;
+<i>4</i>&nbsp;import java.util.regex.Matcher;
+<i>5</i>&nbsp;import java.util.regex.Pattern;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>8</i>&nbsp;import net.sf.jabref.model.cleanup.Formatter;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;import com.google.common.base.Strings;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;/**
+<i>13</i>&nbsp; * This class includes sensible defaults for consistent formatting of BibTeX page numbers.
+<i>14</i>&nbsp; *
+<i>15</i>&nbsp; * From BibTeX manual:
+<i>16</i>&nbsp; * One or more page numbers or range of numbers, such as 42--111 or 7,41,73--97 or 43+
+<i>17</i>&nbsp; * (the &#39;+&#39; in this last example indicates pages following that don&#39;t form a simple range).
+<i>18</i>&nbsp; * To make it easier to maintain Scribe-compatible databases, the standard styles convert
+<i>19</i>&nbsp; * a single dash (as in 7-33) to the double dash used in TEX to denote number ranges (as in 7--33).
+<i>20</i>&nbsp; */
+<b class="fc"><i>21</i>&nbsp;public class NormalizePagesFormatter implements Formatter {</b>
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;    // &quot;startpage&quot; and &quot;endpage&quot; are named groups. See http://stackoverflow.com/a/415635/873282 for a documentation
+<b class="fc"><i>24</i>&nbsp;    private static final Pattern PAGES_DETECT_PATTERN = Pattern.compile(&quot;\\A(?&lt;startpage&gt;(\\d+:)?\\d+)(?:-{1,2}(?&lt;endpage&gt;(\\d+:)?\\d+))?\\Z&quot;);</b>
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    private static final String REJECT_LITERALS = &quot;[^a-zA-Z0-9,\\-\\+,:]&quot;;
+<i>27</i>&nbsp;    private static final String PAGES_REPLACE_PATTERN = &quot;${startpage}--${endpage}&quot;;
+<i>28</i>&nbsp;    private static final String SINGLE_PAGE_REPLACE_PATTERN = &quot;$1&quot;;
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;    @Override
+<i>32</i>&nbsp;    public String getName() {
+<b class="nc"><i>33</i>&nbsp;        return Localization.lang(&quot;Normalize page numbers&quot;);</b>
+<i>34</i>&nbsp;    }
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;    @Override
+<i>37</i>&nbsp;    public String getKey() {
+<b class="fc"><i>38</i>&nbsp;        return &quot;normalize_page_numbers&quot;;</b>
+<i>39</i>&nbsp;    }
+<i>40</i>&nbsp;
+<i>41</i>&nbsp;    /**
+<i>42</i>&nbsp;     * Format page numbers, separated either by commas or double-hyphens.
+<i>43</i>&nbsp;     * Converts the range number format of the &lt;code&gt;pages&lt;/code&gt; field to page_number--page_number.
+<i>44</i>&nbsp;     * Removes unwanted literals except letters, numbers and -+ signs.
+<i>45</i>&nbsp;     * Keeps the existing String if the resulting field does not match the expected Regex.
+<i>46</i>&nbsp;     *
+<i>47</i>&nbsp;     * &lt;example&gt;
+<i>48</i>&nbsp;     *     1-2 -&gt; 1--2
+<i>49</i>&nbsp;     *     1,2,3 -&gt; 1,2,3
+<i>50</i>&nbsp;     *     {1}-{2} -&gt; 1--2
+<i>51</i>&nbsp;     *     43+ -&gt; 43+
+<i>52</i>&nbsp;     *     Invalid -&gt; Invalid
+<i>53</i>&nbsp;     * &lt;/example&gt;
+<i>54</i>&nbsp;     */
+<i>55</i>&nbsp;    @Override
+<i>56</i>&nbsp;    public String format(String value) {
+<b class="nc"><i>57</i>&nbsp;        Objects.requireNonNull(value);</b>
+<i>58</i>&nbsp;
+<b class="nc"><i>59</i>&nbsp;        if (value.isEmpty()) {</b>
+<i>60</i>&nbsp;            // nothing to do
+<b class="nc"><i>61</i>&nbsp;            return value;</b>
+<i>62</i>&nbsp;        }
+<i>63</i>&nbsp;
+<i>64</i>&nbsp;        // Remove pages prefix
+<b class="nc"><i>65</i>&nbsp;        String cleanValue = value.replace(&quot;pp.&quot;, &quot;&quot;).replace(&quot;p.&quot;,&quot;&quot;);</b>
+<i>66</i>&nbsp;        // remove unwanted literals incl. whitespace
+<b class="nc"><i>67</i>&nbsp;        cleanValue = cleanValue.replaceAll(&quot;\u2013|\u2014&quot;, &quot;-&quot;).replaceAll(REJECT_LITERALS, &quot;&quot;);</b>
+<i>68</i>&nbsp;        // try to find pages pattern
+<b class="nc"><i>69</i>&nbsp;        Matcher matcher = PAGES_DETECT_PATTERN.matcher(cleanValue);</b>
+<b class="nc"><i>70</i>&nbsp;        if (matcher.matches()) {</b>
+<i>71</i>&nbsp;            // replace
+<b class="nc"><i>72</i>&nbsp;            if (Strings.isNullOrEmpty(matcher.group(&quot;endpage&quot;))) {</b>
+<b class="nc"><i>73</i>&nbsp;                return matcher.replaceFirst(SINGLE_PAGE_REPLACE_PATTERN);</b>
+<i>74</i>&nbsp;            } else {
+<b class="nc"><i>75</i>&nbsp;                return matcher.replaceFirst(PAGES_REPLACE_PATTERN);</b>
+<i>76</i>&nbsp;            }
+<i>77</i>&nbsp;        }
+<i>78</i>&nbsp;        // no replacement
+<b class="nc"><i>79</i>&nbsp;        return value;</b>
+<i>80</i>&nbsp;    }
+<i>81</i>&nbsp;
+<i>82</i>&nbsp;    @Override
+<i>83</i>&nbsp;    public String getDescription() {
+<b class="nc"><i>84</i>&nbsp;        return Localization.lang(&quot;Normalize pages to BibTeX standard.&quot;);</b>
+<i>85</i>&nbsp;    }
+<i>86</i>&nbsp;
+<i>87</i>&nbsp;    @Override
+<i>88</i>&nbsp;    public String getExampleInput() {
+<b class="nc"><i>89</i>&nbsp;        return &quot;1 - 2&quot;;</b>
+<i>90</i>&nbsp;    }
+<i>91</i>&nbsp;
+<i>92</i>&nbsp;    @Override
+<i>93</i>&nbsp;    public int hashCode() {
+<b class="nc"><i>94</i>&nbsp;        return defaultHashCode();</b>
+<i>95</i>&nbsp;    }
+<i>96</i>&nbsp;
+<i>97</i>&nbsp;    @Override
+<i>98</i>&nbsp;    public boolean equals(Object obj) {
+<b class="nc"><i>99</i>&nbsp;        return defaultEquals(obj);</b>
+<i>100</i>&nbsp;    }
+<i>101</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

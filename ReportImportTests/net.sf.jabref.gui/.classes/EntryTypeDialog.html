@@ -1,0 +1,498 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: EntryTypeDialog</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui</a> ]
+</div>
+
+<h1>Coverage Summary for Class: EntryTypeDialog (net.sf.jabref.gui)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">EntryTypeDialog</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 112)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">EntryTypeDialog$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">EntryTypeDialog$CancelAction</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 6)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">EntryTypeDialog$FetcherWorker</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 42)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">EntryTypeDialog$TypeButton</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 26)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 168)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.BorderLayout;
+<i>4</i>&nbsp;import java.awt.GridBagConstraints;
+<i>5</i>&nbsp;import java.awt.GridBagLayout;
+<i>6</i>&nbsp;import java.awt.Insets;
+<i>7</i>&nbsp;import java.awt.event.ActionEvent;
+<i>8</i>&nbsp;import java.awt.event.ActionListener;
+<i>9</i>&nbsp;import java.awt.event.WindowAdapter;
+<i>10</i>&nbsp;import java.awt.event.WindowEvent;
+<i>11</i>&nbsp;import java.util.Collection;
+<i>12</i>&nbsp;import java.util.List;
+<i>13</i>&nbsp;import java.util.Optional;
+<i>14</i>&nbsp;import java.util.concurrent.ExecutionException;
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;import javax.swing.AbstractAction;
+<i>17</i>&nbsp;import javax.swing.BorderFactory;
+<i>18</i>&nbsp;import javax.swing.JButton;
+<i>19</i>&nbsp;import javax.swing.JComboBox;
+<i>20</i>&nbsp;import javax.swing.JComponent;
+<i>21</i>&nbsp;import javax.swing.JDialog;
+<i>22</i>&nbsp;import javax.swing.JLabel;
+<i>23</i>&nbsp;import javax.swing.JOptionPane;
+<i>24</i>&nbsp;import javax.swing.JPanel;
+<i>25</i>&nbsp;import javax.swing.JTextField;
+<i>26</i>&nbsp;import javax.swing.SwingUtilities;
+<i>27</i>&nbsp;import javax.swing.SwingWorker;
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;import net.sf.jabref.Globals;
+<i>30</i>&nbsp;import net.sf.jabref.gui.importer.fetcher.EntryFetchers;
+<i>31</i>&nbsp;import net.sf.jabref.gui.keyboard.KeyBinding;
+<i>32</i>&nbsp;import net.sf.jabref.logic.importer.FetcherException;
+<i>33</i>&nbsp;import net.sf.jabref.logic.importer.IdBasedFetcher;
+<i>34</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>35</i>&nbsp;import net.sf.jabref.model.EntryTypes;
+<i>36</i>&nbsp;import net.sf.jabref.model.database.BibDatabaseMode;
+<i>37</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>38</i>&nbsp;import net.sf.jabref.model.entry.BibLatexEntryTypes;
+<i>39</i>&nbsp;import net.sf.jabref.model.entry.BibtexEntryTypes;
+<i>40</i>&nbsp;import net.sf.jabref.model.entry.EntryType;
+<i>41</i>&nbsp;import net.sf.jabref.model.entry.IEEETranEntryTypes;
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;import com.jgoodies.forms.builder.ButtonBarBuilder;
+<i>44</i>&nbsp;import org.apache.commons.logging.Log;
+<i>45</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>46</i>&nbsp;import org.jdesktop.swingx.VerticalLayout;
+<i>47</i>&nbsp;
+<i>48</i>&nbsp;/**
+<i>49</i>&nbsp; * Dialog that prompts the user to choose a type for an entry.
+<i>50</i>&nbsp; * Returns null if canceled.
+<i>51</i>&nbsp; */
+<i>52</i>&nbsp;public class EntryTypeDialog extends JDialog implements ActionListener {
+<i>53</i>&nbsp;
+<b class="nc"><i>54</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(EntryTypeDialog.class);</b>
+<i>55</i>&nbsp;
+<i>56</i>&nbsp;    private EntryType type;
+<b class="nc"><i>57</i>&nbsp;    private SwingWorker&lt;Optional&lt;BibEntry&gt;, Void&gt; fetcherWorker = new FetcherWorker();</b>
+<i>58</i>&nbsp;    private JButton generateButton;
+<i>59</i>&nbsp;    private JTextField idTextField;
+<i>60</i>&nbsp;    private JComboBox&lt;String&gt; comboBox;
+<i>61</i>&nbsp;    private final JabRefFrame frame;
+<i>62</i>&nbsp;    private static final int COLUMN = 3;
+<i>63</i>&nbsp;
+<b class="nc"><i>64</i>&nbsp;    private final CancelAction cancelAction = new CancelAction();</b>
+<i>65</i>&nbsp;
+<i>66</i>&nbsp;    static class TypeButton extends JButton implements Comparable&lt;TypeButton&gt; {
+<i>67</i>&nbsp;
+<i>68</i>&nbsp;        private final EntryType type;
+<i>69</i>&nbsp;
+<i>70</i>&nbsp;
+<i>71</i>&nbsp;        TypeButton(String label, EntryType type) {
+<b class="nc"><i>72</i>&nbsp;            super(label);</b>
+<b class="nc"><i>73</i>&nbsp;            this.type = type;</b>
+<b class="nc"><i>74</i>&nbsp;        }</b>
+<i>75</i>&nbsp;
+<i>76</i>&nbsp;        @Override
+<i>77</i>&nbsp;        public int compareTo(TypeButton o) {
+<b class="nc"><i>78</i>&nbsp;            return type.getName().compareTo(o.type.getName());</b>
+<i>79</i>&nbsp;        }
+<i>80</i>&nbsp;
+<i>81</i>&nbsp;        public EntryType getType() {
+<b class="nc"><i>82</i>&nbsp;            return type;</b>
+<i>83</i>&nbsp;        }
+<i>84</i>&nbsp;    }
+<i>85</i>&nbsp;
+<i>86</i>&nbsp;    public EntryTypeDialog(JabRefFrame frame) {
+<i>87</i>&nbsp;        // modal dialog
+<b class="nc"><i>88</i>&nbsp;        super(frame, true);</b>
+<i>89</i>&nbsp;
+<b class="nc"><i>90</i>&nbsp;        this.frame = frame;</b>
+<i>91</i>&nbsp;
+<b class="nc"><i>92</i>&nbsp;        setTitle(Localization.lang(&quot;Select entry type&quot;));</b>
+<i>93</i>&nbsp;
+<b class="nc"><i>94</i>&nbsp;        addWindowListener(new WindowAdapter() {</b>
+<i>95</i>&nbsp;            @Override
+<i>96</i>&nbsp;            public void windowClosing(WindowEvent e) {
+<b class="nc"><i>97</i>&nbsp;                cancelAction.actionPerformed(null);</b>
+<b class="nc"><i>98</i>&nbsp;            }</b>
+<i>99</i>&nbsp;        });
+<i>100</i>&nbsp;
+<b class="nc"><i>101</i>&nbsp;        getContentPane().setLayout(new BorderLayout());</b>
+<b class="nc"><i>102</i>&nbsp;        getContentPane().add(createCancelButtonBarPanel(), BorderLayout.SOUTH);</b>
+<b class="nc"><i>103</i>&nbsp;        getContentPane().add(createEntryGroupsPanel(), BorderLayout.CENTER);</b>
+<i>104</i>&nbsp;
+<b class="nc"><i>105</i>&nbsp;        pack();</b>
+<b class="nc"><i>106</i>&nbsp;        setResizable(false);</b>
+<b class="nc"><i>107</i>&nbsp;    }</b>
+<i>108</i>&nbsp;
+<i>109</i>&nbsp;    private JPanel createEntryGroupsPanel() {
+<b class="nc"><i>110</i>&nbsp;        JPanel panel = new JPanel();</b>
+<b class="nc"><i>111</i>&nbsp;        panel.setLayout(new VerticalLayout());</b>
+<i>112</i>&nbsp;
+<b class="nc"><i>113</i>&nbsp;        if (frame.getCurrentBasePanel().getBibDatabaseContext().isBiblatexMode()) {</b>
+<b class="nc"><i>114</i>&nbsp;            panel.add(createEntryGroupPanel(&quot;BibLateX&quot;, BibLatexEntryTypes.ALL));</b>
+<i>115</i>&nbsp;
+<b class="nc"><i>116</i>&nbsp;            List&lt;EntryType&gt; customTypes = EntryTypes.getAllCustomTypes(BibDatabaseMode.BIBLATEX);</b>
+<b class="nc"><i>117</i>&nbsp;            if (!customTypes.isEmpty()) {</b>
+<b class="nc"><i>118</i>&nbsp;                panel.add(createEntryGroupPanel(Localization.lang(&quot;Custom&quot;), customTypes));</b>
+<i>119</i>&nbsp;            }
+<i>120</i>&nbsp;
+<b class="nc"><i>121</i>&nbsp;        } else {</b>
+<b class="nc"><i>122</i>&nbsp;            panel.add(createEntryGroupPanel(&quot;BibTeX&quot;, BibtexEntryTypes.ALL));</b>
+<b class="nc"><i>123</i>&nbsp;            panel.add(createEntryGroupPanel(&quot;IEEETran&quot;, IEEETranEntryTypes.ALL));</b>
+<i>124</i>&nbsp;
+<b class="nc"><i>125</i>&nbsp;            List&lt;EntryType&gt; customTypes = EntryTypes.getAllCustomTypes(BibDatabaseMode.BIBTEX);</b>
+<b class="nc"><i>126</i>&nbsp;            if (!customTypes.isEmpty()) {</b>
+<b class="nc"><i>127</i>&nbsp;                panel.add(createEntryGroupPanel(Localization.lang(&quot;Custom&quot;), customTypes));</b>
+<i>128</i>&nbsp;            }
+<i>129</i>&nbsp;        }
+<b class="nc"><i>130</i>&nbsp;        panel.add(createIdFetcherPanel());</b>
+<i>131</i>&nbsp;
+<b class="nc"><i>132</i>&nbsp;        return panel;</b>
+<i>133</i>&nbsp;    }
+<i>134</i>&nbsp;
+<i>135</i>&nbsp;    private JPanel createCancelButtonBarPanel() {
+<b class="nc"><i>136</i>&nbsp;        JButton cancel = new JButton(Localization.lang(&quot;Cancel&quot;));</b>
+<b class="nc"><i>137</i>&nbsp;        cancel.addActionListener(this);</b>
+<i>138</i>&nbsp;
+<i>139</i>&nbsp;        // Make ESC close dialog, equivalent to clicking Cancel.
+<b class="nc"><i>140</i>&nbsp;        cancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(Globals.getKeyPrefs().getKey(KeyBinding.CLOSE_DIALOG), &quot;close&quot;);</b>
+<b class="nc"><i>141</i>&nbsp;        cancel.getActionMap().put(&quot;close&quot;, cancelAction);</b>
+<i>142</i>&nbsp;
+<b class="nc"><i>143</i>&nbsp;        JPanel buttons = new JPanel();</b>
+<b class="nc"><i>144</i>&nbsp;        ButtonBarBuilder bb = new ButtonBarBuilder(buttons);</b>
+<b class="nc"><i>145</i>&nbsp;        bb.addGlue();</b>
+<b class="nc"><i>146</i>&nbsp;        bb.addButton(cancel);</b>
+<b class="nc"><i>147</i>&nbsp;        bb.addGlue();</b>
+<b class="nc"><i>148</i>&nbsp;        return buttons;</b>
+<i>149</i>&nbsp;    }
+<i>150</i>&nbsp;
+<i>151</i>&nbsp;    private JPanel createEntryGroupPanel(String groupTitle, Collection&lt;? extends EntryType&gt; entries) {
+<b class="nc"><i>152</i>&nbsp;        JPanel panel = new JPanel();</b>
+<b class="nc"><i>153</i>&nbsp;        GridBagLayout bagLayout = new GridBagLayout();</b>
+<b class="nc"><i>154</i>&nbsp;        panel.setLayout(bagLayout);</b>
+<b class="nc"><i>155</i>&nbsp;        GridBagConstraints constraints = new GridBagConstraints();</b>
+<b class="nc"><i>156</i>&nbsp;        constraints.anchor = GridBagConstraints.WEST;</b>
+<b class="nc"><i>157</i>&nbsp;        constraints.fill = GridBagConstraints.HORIZONTAL;</b>
+<b class="nc"><i>158</i>&nbsp;        constraints.insets = new Insets(4, 4, 4, 4);</b>
+<i>159</i>&nbsp;        // column count
+<b class="nc"><i>160</i>&nbsp;        int col = 0;</b>
+<i>161</i>&nbsp;
+<b class="nc"><i>162</i>&nbsp;        for (EntryType entryType : entries) {</b>
+<b class="nc"><i>163</i>&nbsp;            TypeButton entryButton = new TypeButton(entryType.getName(), entryType);</b>
+<b class="nc"><i>164</i>&nbsp;            entryButton.addActionListener(this);</b>
+<i>165</i>&nbsp;            // Check if we should finish the row.
+<b class="nc"><i>166</i>&nbsp;            col++;</b>
+<b class="nc"><i>167</i>&nbsp;            if (col == EntryTypeDialog.COLUMN) {</b>
+<b class="nc"><i>168</i>&nbsp;                col = 0;</b>
+<b class="nc"><i>169</i>&nbsp;                constraints.gridwidth = GridBagConstraints.REMAINDER;</b>
+<i>170</i>&nbsp;            } else {
+<b class="nc"><i>171</i>&nbsp;                constraints.gridwidth = 1;</b>
+<i>172</i>&nbsp;            }
+<b class="nc"><i>173</i>&nbsp;            bagLayout.setConstraints(entryButton, constraints);</b>
+<b class="nc"><i>174</i>&nbsp;            panel.add(entryButton);</b>
+<b class="nc"><i>175</i>&nbsp;        }</b>
+<b class="nc"><i>176</i>&nbsp;        panel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), groupTitle));</b>
+<i>177</i>&nbsp;
+<b class="nc"><i>178</i>&nbsp;        return panel;</b>
+<i>179</i>&nbsp;    }
+<i>180</i>&nbsp;
+<i>181</i>&nbsp;    private JPanel createIdFetcherPanel() {
+<b class="nc"><i>182</i>&nbsp;        JLabel fetcherLabel = new JLabel(Localization.lang(&quot;ID type&quot;));</b>
+<b class="nc"><i>183</i>&nbsp;        JLabel idLabel = new JLabel(Localization.lang(&quot;ID&quot;));</b>
+<b class="nc"><i>184</i>&nbsp;        generateButton = new JButton(Localization.lang(&quot;Generate&quot;));</b>
+<b class="nc"><i>185</i>&nbsp;        idTextField = new JTextField(&quot;&quot;);</b>
+<b class="nc"><i>186</i>&nbsp;        comboBox = new JComboBox&lt;&gt;();</b>
+<i>187</i>&nbsp;
+<b class="nc"><i>188</i>&nbsp;        EntryFetchers.getIdFetchers(Globals.prefs.getImportFormatPreferences()).forEach(fetcher -&gt; comboBox.addItem(fetcher.getName()));</b>
+<i>189</i>&nbsp;
+<b class="nc"><i>190</i>&nbsp;        generateButton.addActionListener(action -&gt; {</b>
+<b class="nc"><i>191</i>&nbsp;            fetcherWorker.execute();</b>
+<b class="nc"><i>192</i>&nbsp;        });</b>
+<i>193</i>&nbsp;
+<b class="nc"><i>194</i>&nbsp;        comboBox.addActionListener(e -&gt; {</b>
+<b class="nc"><i>195</i>&nbsp;            idTextField.requestFocus();</b>
+<b class="nc"><i>196</i>&nbsp;            idTextField.selectAll();</b>
+<b class="nc"><i>197</i>&nbsp;        });</b>
+<i>198</i>&nbsp;
+<b class="nc"><i>199</i>&nbsp;        idTextField.addActionListener(event -&gt; fetcherWorker.execute());</b>
+<i>200</i>&nbsp;
+<b class="nc"><i>201</i>&nbsp;        JPanel jPanel = new JPanel();</b>
+<i>202</i>&nbsp;
+<b class="nc"><i>203</i>&nbsp;        GridBagConstraints constraints = new GridBagConstraints();</b>
+<b class="nc"><i>204</i>&nbsp;        constraints.insets = new Insets(4,4,4,4);</b>
+<i>205</i>&nbsp;
+<b class="nc"><i>206</i>&nbsp;        GridBagLayout layout = new GridBagLayout();</b>
+<b class="nc"><i>207</i>&nbsp;        jPanel.setLayout(layout);</b>
+<i>208</i>&nbsp;
+<b class="nc"><i>209</i>&nbsp;        constraints.fill = GridBagConstraints.HORIZONTAL;</b>
+<i>210</i>&nbsp;
+<b class="nc"><i>211</i>&nbsp;        constraints.gridx = 0;</b>
+<b class="nc"><i>212</i>&nbsp;        constraints.gridy = 0;</b>
+<b class="nc"><i>213</i>&nbsp;        constraints.weightx = 1;</b>
+<b class="nc"><i>214</i>&nbsp;        jPanel.add(fetcherLabel, constraints);</b>
+<i>215</i>&nbsp;
+<b class="nc"><i>216</i>&nbsp;        constraints.gridx = 1;</b>
+<b class="nc"><i>217</i>&nbsp;        constraints.gridy = 0;</b>
+<b class="nc"><i>218</i>&nbsp;        constraints.weightx = 2;</b>
+<b class="nc"><i>219</i>&nbsp;        jPanel.add(comboBox, constraints);</b>
+<i>220</i>&nbsp;
+<b class="nc"><i>221</i>&nbsp;        constraints.gridx = 0;</b>
+<b class="nc"><i>222</i>&nbsp;        constraints.gridy = 1;</b>
+<b class="nc"><i>223</i>&nbsp;        constraints.weightx = 1;</b>
+<b class="nc"><i>224</i>&nbsp;        jPanel.add(idLabel, constraints);</b>
+<i>225</i>&nbsp;
+<b class="nc"><i>226</i>&nbsp;        constraints.gridx = 1;</b>
+<b class="nc"><i>227</i>&nbsp;        constraints.gridy = 1;</b>
+<b class="nc"><i>228</i>&nbsp;        constraints.weightx = 2;</b>
+<b class="nc"><i>229</i>&nbsp;        jPanel.add(idTextField, constraints);</b>
+<i>230</i>&nbsp;
+<b class="nc"><i>231</i>&nbsp;        constraints.gridy = 2;</b>
+<b class="nc"><i>232</i>&nbsp;        constraints.gridx = 0;</b>
+<b class="nc"><i>233</i>&nbsp;        constraints.gridwidth = 2;</b>
+<b class="nc"><i>234</i>&nbsp;        constraints.fill = GridBagConstraints.NONE;</b>
+<b class="nc"><i>235</i>&nbsp;        jPanel.add(generateButton, constraints);</b>
+<i>236</i>&nbsp;
+<b class="nc"><i>237</i>&nbsp;        jPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), Localization.lang(&quot;ID-based_entry_generator&quot;)));</b>
+<i>238</i>&nbsp;
+<b class="nc"><i>239</i>&nbsp;        SwingUtilities.invokeLater(() -&gt; idTextField.requestFocus());</b>
+<i>240</i>&nbsp;
+<b class="nc"><i>241</i>&nbsp;        return jPanel;</b>
+<i>242</i>&nbsp;    }
+<i>243</i>&nbsp;
+<i>244</i>&nbsp;    private void stopFetching() {
+<b class="nc"><i>245</i>&nbsp;        if (fetcherWorker.getState() == SwingWorker.StateValue.STARTED) {</b>
+<b class="nc"><i>246</i>&nbsp;            fetcherWorker.cancel(true);</b>
+<i>247</i>&nbsp;        }
+<b class="nc"><i>248</i>&nbsp;    }</b>
+<i>249</i>&nbsp;
+<i>250</i>&nbsp;    @Override
+<i>251</i>&nbsp;    public void actionPerformed(ActionEvent e) {
+<b class="nc"><i>252</i>&nbsp;        if (e.getSource() instanceof TypeButton) {</b>
+<b class="nc"><i>253</i>&nbsp;            type = ((TypeButton) e.getSource()).getType();</b>
+<i>254</i>&nbsp;        }
+<b class="nc"><i>255</i>&nbsp;        stopFetching();</b>
+<b class="nc"><i>256</i>&nbsp;        dispose();</b>
+<b class="nc"><i>257</i>&nbsp;    }</b>
+<i>258</i>&nbsp;
+<i>259</i>&nbsp;    public EntryType getChoice() {
+<b class="nc"><i>260</i>&nbsp;        return type;</b>
+<i>261</i>&nbsp;    }
+<i>262</i>&nbsp;
+<i>263</i>&nbsp;
+<i>264</i>&nbsp;    class CancelAction extends AbstractAction {
+<b class="nc"><i>265</i>&nbsp;        public CancelAction() {</b>
+<b class="nc"><i>266</i>&nbsp;            super(&quot;Cancel&quot;);</b>
+<b class="nc"><i>267</i>&nbsp;        }</b>
+<i>268</i>&nbsp;
+<i>269</i>&nbsp;        @Override
+<i>270</i>&nbsp;        public void actionPerformed(ActionEvent e) {
+<b class="nc"><i>271</i>&nbsp;            stopFetching();</b>
+<b class="nc"><i>272</i>&nbsp;            dispose();</b>
+<b class="nc"><i>273</i>&nbsp;        }</b>
+<i>274</i>&nbsp;    }
+<i>275</i>&nbsp;
+<b class="nc"><i>276</i>&nbsp;    private class FetcherWorker extends SwingWorker&lt;Optional&lt;BibEntry&gt;, Void&gt; {</b>
+<b class="nc"><i>277</i>&nbsp;        private boolean fetcherException = false;</b>
+<b class="nc"><i>278</i>&nbsp;        private String fetcherExceptionMessage = &quot;&quot;;</b>
+<b class="nc"><i>279</i>&nbsp;        private IdBasedFetcher fetcher = null;</b>
+<b class="nc"><i>280</i>&nbsp;        private String searchID = &quot;&quot;;</b>
+<i>281</i>&nbsp;
+<i>282</i>&nbsp;        @Override
+<i>283</i>&nbsp;        protected Optional&lt;BibEntry&gt; doInBackground() throws Exception {
+<b class="nc"><i>284</i>&nbsp;            Optional&lt;BibEntry&gt; bibEntry = Optional.empty();</b>
+<b class="nc"><i>285</i>&nbsp;            SwingUtilities.invokeLater(() -&gt; {</b>
+<b class="nc"><i>286</i>&nbsp;                generateButton.setEnabled(false);</b>
+<b class="nc"><i>287</i>&nbsp;                generateButton.setText(Localization.lang(&quot;Searching...&quot;));</b>
+<b class="nc"><i>288</i>&nbsp;            });</b>
+<b class="nc"><i>289</i>&nbsp;            searchID = idTextField.getText().trim();</b>
+<b class="nc"><i>290</i>&nbsp;            fetcher = EntryFetchers.getIdFetchers(Globals.prefs.getImportFormatPreferences()).get(comboBox.getSelectedIndex());</b>
+<b class="nc"><i>291</i>&nbsp;            if (!searchID.isEmpty()) {</b>
+<i>292</i>&nbsp;                try {
+<b class="nc"><i>293</i>&nbsp;                    bibEntry = fetcher.performSearchById(searchID);</b>
+<b class="nc"><i>294</i>&nbsp;                } catch (FetcherException e) {</b>
+<b class="nc"><i>295</i>&nbsp;                    LOGGER.error(e.getMessage(), e);</b>
+<b class="nc"><i>296</i>&nbsp;                    fetcherException = true;</b>
+<b class="nc"><i>297</i>&nbsp;                    fetcherExceptionMessage = e.getMessage();</b>
+<b class="nc"><i>298</i>&nbsp;                }</b>
+<i>299</i>&nbsp;            }
+<b class="nc"><i>300</i>&nbsp;            return bibEntry;</b>
+<i>301</i>&nbsp;        }
+<i>302</i>&nbsp;
+<i>303</i>&nbsp;        @Override
+<i>304</i>&nbsp;        protected void done() {
+<i>305</i>&nbsp;            try {
+<b class="nc"><i>306</i>&nbsp;                Optional&lt;BibEntry&gt; result = get();</b>
+<b class="nc"><i>307</i>&nbsp;                if (result.isPresent()) {</b>
+<b class="nc"><i>308</i>&nbsp;                    frame.getCurrentBasePanel().insertEntry(result.get());</b>
+<b class="nc"><i>309</i>&nbsp;                    dispose();</b>
+<b class="nc"><i>310</i>&nbsp;                } else if (searchID.trim().isEmpty()) {</b>
+<b class="nc"><i>311</i>&nbsp;                    JOptionPane.showMessageDialog(frame, Localization.lang(&quot;The given search ID was empty.&quot;), Localization.lang(&quot;Empty search ID&quot;), JOptionPane.WARNING_MESSAGE);</b>
+<b class="nc"><i>312</i>&nbsp;                } else if (!fetcherException) {</b>
+<b class="nc"><i>313</i>&nbsp;                    JOptionPane.showMessageDialog(frame, Localization.lang(&quot;Fetcher_&#39;%0&#39;_did_not_find_an_entry_for_id_&#39;%1&#39;.&quot;, fetcher.getName(), searchID)+ &quot;\n&quot; + fetcherExceptionMessage, Localization.lang(&quot;No files found.&quot;), JOptionPane.WARNING_MESSAGE);</b>
+<i>314</i>&nbsp;                } else {
+<b class="nc"><i>315</i>&nbsp;                    JOptionPane.showMessageDialog(frame,</b>
+<b class="nc"><i>316</i>&nbsp;                            Localization.lang(&quot;Error while fetching from %0&quot;, fetcher.getName()) +&quot;.&quot; + &quot;\n&quot; + fetcherExceptionMessage,</b>
+<b class="nc"><i>317</i>&nbsp;                            Localization.lang(&quot;Error&quot;), JOptionPane.ERROR_MESSAGE);</b>
+<i>318</i>&nbsp;                }
+<b class="nc"><i>319</i>&nbsp;                fetcherWorker = new FetcherWorker();</b>
+<b class="nc"><i>320</i>&nbsp;                SwingUtilities.invokeLater(() -&gt; {</b>
+<b class="nc"><i>321</i>&nbsp;                    idTextField.requestFocus();</b>
+<b class="nc"><i>322</i>&nbsp;                    idTextField.selectAll();</b>
+<b class="nc"><i>323</i>&nbsp;                    generateButton.setText(Localization.lang(&quot;Generate&quot;));</b>
+<b class="nc"><i>324</i>&nbsp;                    generateButton.setEnabled(true);</b>
+<b class="nc"><i>325</i>&nbsp;                });</b>
+<b class="nc"><i>326</i>&nbsp;            } catch (ExecutionException | InterruptedException e) {</b>
+<b class="nc"><i>327</i>&nbsp;                LOGGER.error(String.format(&quot;Exception during fetching when using fetcher &#39;%s&#39; with entry id &#39;%s&#39;.&quot;, searchID, fetcher.getName()), e);</b>
+<b class="nc"><i>328</i>&nbsp;            }</b>
+<b class="nc"><i>329</i>&nbsp;        }</b>
+<i>330</i>&nbsp;    }
+<i>331</i>&nbsp;
+<i>332</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,149 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ChangeCaseFunction</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.bst</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ChangeCaseFunction (net.sf.jabref.logic.bst)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ChangeCaseFunction</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 16)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.bst;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.Stack;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;import net.sf.jabref.logic.bst.BibtexCaseChanger.FORMAT_MODE;
+<i>6</i>&nbsp;import net.sf.jabref.logic.bst.VM.BstEntry;
+<i>7</i>&nbsp;import net.sf.jabref.logic.bst.VM.BstFunction;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;/**
+<i>10</i>&nbsp; * From the Bibtex manual:
+<i>11</i>&nbsp; *
+<i>12</i>&nbsp; * Pops the top two (string) literals; it changes the case of the second
+<i>13</i>&nbsp; * according to the specifications of the first, as follows. (Note: The word
+<i>14</i>&nbsp; * `letters&#39; in the next sentence refers only to those at brace-level 0, the
+<i>15</i>&nbsp; * top-most brace level; no other characters are changed, except perhaps for
+<i>16</i>&nbsp; * \special characters&quot;, described in Section 4.) If the first literal is the
+<i>17</i>&nbsp; * string `t&#39;, it converts to lower case all letters except the very first
+<i>18</i>&nbsp; * character in the string, which it leaves alone, and except the first
+<i>19</i>&nbsp; * character following any colon and then nonnull white space, which it also
+<i>20</i>&nbsp; * leaves alone; if it&#39;s the string `l&#39;, it converts all letters to lower case;
+<i>21</i>&nbsp; * and if it&#39;s the string `u&#39;, it converts all letters to upper case. It then
+<i>22</i>&nbsp; * pushes this resulting string. If either type is incorrect, it complains and
+<i>23</i>&nbsp; * pushes the null string; however, if both types are correct but the
+<i>24</i>&nbsp; * specification string (i.e., the first string) isn&#39;t one of the legal ones, it
+<i>25</i>&nbsp; * merely pushes the second back onto the stack, after complaining. (Another
+<i>26</i>&nbsp; * note: It ignores case differences in the specification string; for example,
+<i>27</i>&nbsp; * the strings t and T are equivalent for the purposes of this built-in
+<i>28</i>&nbsp; * function.)
+<i>29</i>&nbsp; *
+<i>30</i>&nbsp; * Christopher: I think this should be another grammar! This parser is horrible.
+<i>31</i>&nbsp; *
+<i>32</i>&nbsp; */
+<i>33</i>&nbsp;public class ChangeCaseFunction implements BstFunction {
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    private final VM vm;
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;
+<b class="nc"><i>38</i>&nbsp;    public ChangeCaseFunction(VM vm) {</b>
+<b class="nc"><i>39</i>&nbsp;        this.vm = vm;</b>
+<b class="nc"><i>40</i>&nbsp;    }</b>
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;    @Override
+<i>43</i>&nbsp;    public void execute(BstEntry context) {
+<b class="nc"><i>44</i>&nbsp;        Stack&lt;Object&gt; stack = vm.getStack();</b>
+<i>45</i>&nbsp;
+<b class="nc"><i>46</i>&nbsp;        if (stack.size() &lt; 2) {</b>
+<b class="nc"><i>47</i>&nbsp;            throw new VMException(&quot;Not enough operands on stack for operation change.case$&quot;);</b>
+<i>48</i>&nbsp;        }
+<i>49</i>&nbsp;
+<b class="nc"><i>50</i>&nbsp;        Object o1 = stack.pop();</b>
+<b class="nc"><i>51</i>&nbsp;        if (!((o1 instanceof String) &amp;&amp; (((String) o1).length() == 1))) {</b>
+<b class="nc"><i>52</i>&nbsp;            throw new VMException(&quot;A format string of length 1 is needed for change.case$&quot;);</b>
+<i>53</i>&nbsp;        }
+<i>54</i>&nbsp;
+<b class="nc"><i>55</i>&nbsp;        Object o2 = stack.pop();</b>
+<b class="nc"><i>56</i>&nbsp;        if (!(o2 instanceof String)) {</b>
+<b class="nc"><i>57</i>&nbsp;            throw new VMException(&quot;A string is needed as second parameter for change.case$&quot;);</b>
+<i>58</i>&nbsp;        }
+<i>59</i>&nbsp;
+<b class="nc"><i>60</i>&nbsp;        char format = ((String) o1).toLowerCase().charAt(0);</b>
+<b class="nc"><i>61</i>&nbsp;        String s = (String) o2;</b>
+<i>62</i>&nbsp;
+<b class="nc"><i>63</i>&nbsp;        stack.push(BibtexCaseChanger.changeCase(s, FORMAT_MODE.getFormatModeForBSTFormat(format)));</b>
+<b class="nc"><i>64</i>&nbsp;    }</b>
+<i>65</i>&nbsp;
+<i>66</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,193 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: JTextFieldChangeListenerUtil</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.search</a> ]
+</div>
+
+<h1>Coverage Summary for Class: JTextFieldChangeListenerUtil (net.sf.jabref.gui.search)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">JTextFieldChangeListenerUtil</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 17)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">JTextFieldChangeListenerUtil$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 12)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 29)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.search;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.beans.PropertyChangeEvent;
+<i>4</i>&nbsp;import java.beans.PropertyChangeListener;
+<i>5</i>&nbsp;import java.util.Objects;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import javax.swing.JTextArea;
+<i>8</i>&nbsp;import javax.swing.JTextField;
+<i>9</i>&nbsp;import javax.swing.SwingUtilities;
+<i>10</i>&nbsp;import javax.swing.event.ChangeEvent;
+<i>11</i>&nbsp;import javax.swing.event.ChangeListener;
+<i>12</i>&nbsp;import javax.swing.event.DocumentEvent;
+<i>13</i>&nbsp;import javax.swing.event.DocumentListener;
+<i>14</i>&nbsp;import javax.swing.text.Document;
+<i>15</i>&nbsp;import javax.swing.text.JTextComponent;
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;/**
+<i>18</i>&nbsp; * Taken from http://stackoverflow.com/questions/3953208/value-change-listener-to-jtextfield
+<i>19</i>&nbsp; */
+<b class="nc"><i>20</i>&nbsp;public class JTextFieldChangeListenerUtil {</b>
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;    /**
+<i>23</i>&nbsp;     * Installs a listener to receive notification when the text of any
+<i>24</i>&nbsp;     * {@code JTextComponent} is changed. Internally, it installs a
+<i>25</i>&nbsp;     * {@link DocumentListener} on the text component&#39;s {@link Document},
+<i>26</i>&nbsp;     * and a {@link PropertyChangeListener} on the text component to detect
+<i>27</i>&nbsp;     * if the {@code Document} itself is replaced.
+<i>28</i>&nbsp;     *
+<i>29</i>&nbsp;     * Taken from
+<i>30</i>&nbsp;     *
+<i>31</i>&nbsp;     * @param text any text component, such as a {@link JTextField}
+<i>32</i>&nbsp;     *        or {@link JTextArea}
+<i>33</i>&nbsp;     * @param changeListener a listener to receive {@link ChangeEvent}s
+<i>34</i>&nbsp;     *        when the text is changed; the source object for the events
+<i>35</i>&nbsp;     *        will be the text component
+<i>36</i>&nbsp;     * @throws NullPointerException if either parameter is null
+<i>37</i>&nbsp;     */
+<i>38</i>&nbsp;    public static void addChangeListener(JTextComponent text, ChangeListener changeListener) {
+<b class="nc"><i>39</i>&nbsp;        Objects.requireNonNull(text);</b>
+<b class="nc"><i>40</i>&nbsp;        Objects.requireNonNull(changeListener);</b>
+<b class="nc"><i>41</i>&nbsp;        DocumentListener dl = new DocumentListener() {</b>
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;            private int lastChange;
+<i>44</i>&nbsp;            private int lastNotifiedChange;
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;            @Override
+<i>47</i>&nbsp;            public void insertUpdate(DocumentEvent e) {
+<b class="nc"><i>48</i>&nbsp;                changedUpdate(e);</b>
+<b class="nc"><i>49</i>&nbsp;            }</b>
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;            @Override
+<i>52</i>&nbsp;            public void removeUpdate(DocumentEvent e) {
+<b class="nc"><i>53</i>&nbsp;                changedUpdate(e);</b>
+<b class="nc"><i>54</i>&nbsp;            }</b>
+<i>55</i>&nbsp;
+<i>56</i>&nbsp;            @Override
+<i>57</i>&nbsp;            public void changedUpdate(DocumentEvent e) {
+<b class="nc"><i>58</i>&nbsp;                lastChange++;</b>
+<b class="nc"><i>59</i>&nbsp;                SwingUtilities.invokeLater(() -&gt; {</b>
+<b class="nc"><i>60</i>&nbsp;                    if (lastNotifiedChange != lastChange) {</b>
+<b class="nc"><i>61</i>&nbsp;                        lastNotifiedChange = lastChange;</b>
+<b class="nc"><i>62</i>&nbsp;                        changeListener.stateChanged(new ChangeEvent(text));</b>
+<i>63</i>&nbsp;                    }
+<b class="nc"><i>64</i>&nbsp;                });</b>
+<b class="nc"><i>65</i>&nbsp;            }</b>
+<i>66</i>&nbsp;        };
+<b class="nc"><i>67</i>&nbsp;        text.addPropertyChangeListener(&quot;document&quot;, (PropertyChangeEvent e) -&gt; {</b>
+<b class="nc"><i>68</i>&nbsp;            Document d1 = (Document)e.getOldValue();</b>
+<b class="nc"><i>69</i>&nbsp;            Document d2 = (Document)e.getNewValue();</b>
+<b class="nc"><i>70</i>&nbsp;            if (d1 != null) {</b>
+<b class="nc"><i>71</i>&nbsp;                d1.removeDocumentListener(dl);</b>
+<i>72</i>&nbsp;            }
+<b class="nc"><i>73</i>&nbsp;            if (d2 != null) {</b>
+<b class="nc"><i>74</i>&nbsp;                d2.addDocumentListener(dl);</b>
+<i>75</i>&nbsp;            }
+<b class="nc"><i>76</i>&nbsp;            dl.changedUpdate(null);</b>
+<b class="nc"><i>77</i>&nbsp;        });</b>
+<b class="nc"><i>78</i>&nbsp;        Document d = text.getDocument();</b>
+<b class="nc"><i>79</i>&nbsp;        if (d != null) {</b>
+<b class="nc"><i>80</i>&nbsp;            d.addDocumentListener(dl);</b>
+<i>81</i>&nbsp;        }
+<b class="nc"><i>82</i>&nbsp;    }</b>
+<i>83</i>&nbsp;
+<i>84</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

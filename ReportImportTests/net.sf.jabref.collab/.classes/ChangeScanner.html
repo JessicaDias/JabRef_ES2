@@ -1,0 +1,555 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ChangeScanner</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.collab</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ChangeScanner (net.sf.jabref.collab)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ChangeScanner</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 17)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 219)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.collab;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.File;
+<i>4</i>&nbsp;import java.io.IOException;
+<i>5</i>&nbsp;import java.nio.file.Path;
+<i>6</i>&nbsp;import java.util.HashSet;
+<i>7</i>&nbsp;import java.util.Iterator;
+<i>8</i>&nbsp;import java.util.Objects;
+<i>9</i>&nbsp;import java.util.Optional;
+<i>10</i>&nbsp;import java.util.Set;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;import javax.swing.JOptionPane;
+<i>13</i>&nbsp;import javax.swing.SwingUtilities;
+<i>14</i>&nbsp;import javax.swing.tree.DefaultMutableTreeNode;
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;import net.sf.jabref.Globals;
+<i>17</i>&nbsp;import net.sf.jabref.JabRefExecutorService;
+<i>18</i>&nbsp;import net.sf.jabref.gui.BasePanel;
+<i>19</i>&nbsp;import net.sf.jabref.gui.JabRefFrame;
+<i>20</i>&nbsp;import net.sf.jabref.logic.bibtex.comparator.EntryComparator;
+<i>21</i>&nbsp;import net.sf.jabref.logic.exporter.BibDatabaseWriter;
+<i>22</i>&nbsp;import net.sf.jabref.logic.exporter.BibtexDatabaseWriter;
+<i>23</i>&nbsp;import net.sf.jabref.logic.exporter.FileSaveSession;
+<i>24</i>&nbsp;import net.sf.jabref.logic.exporter.SaveException;
+<i>25</i>&nbsp;import net.sf.jabref.logic.exporter.SavePreferences;
+<i>26</i>&nbsp;import net.sf.jabref.logic.exporter.SaveSession;
+<i>27</i>&nbsp;import net.sf.jabref.logic.importer.ImportFormatPreferences;
+<i>28</i>&nbsp;import net.sf.jabref.logic.importer.OpenDatabase;
+<i>29</i>&nbsp;import net.sf.jabref.logic.importer.ParserResult;
+<i>30</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>31</i>&nbsp;import net.sf.jabref.model.Defaults;
+<i>32</i>&nbsp;import net.sf.jabref.model.DuplicateCheck;
+<i>33</i>&nbsp;import net.sf.jabref.model.database.BibDatabase;
+<i>34</i>&nbsp;import net.sf.jabref.model.database.BibDatabaseContext;
+<i>35</i>&nbsp;import net.sf.jabref.model.database.EntrySorter;
+<i>36</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>37</i>&nbsp;import net.sf.jabref.model.entry.BibtexString;
+<i>38</i>&nbsp;import net.sf.jabref.model.entry.FieldName;
+<i>39</i>&nbsp;import net.sf.jabref.model.groups.GroupTreeNode;
+<i>40</i>&nbsp;import net.sf.jabref.model.metadata.MetaData;
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;import org.apache.commons.logging.Log;
+<i>43</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;public class ChangeScanner implements Runnable {
+<b class="nc"><i>46</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(ChangeScanner.class);</b>
+<i>47</i>&nbsp;
+<b class="nc"><i>48</i>&nbsp;    private static final String[] SORT_BY = new String[] {FieldName.YEAR, FieldName.AUTHOR, FieldName.TITLE};</b>
+<i>49</i>&nbsp;
+<i>50</i>&nbsp;    private final File file;
+<i>51</i>&nbsp;    private final BibDatabase databaseInMemory;
+<i>52</i>&nbsp;    private final MetaData metadataInMemory;
+<i>53</i>&nbsp;    private final BasePanel panel;
+<i>54</i>&nbsp;
+<i>55</i>&nbsp;    private final JabRefFrame frame;
+<i>56</i>&nbsp;    private BibDatabase databaseInTemp;
+<i>57</i>&nbsp;    private MetaData metadataInTemp;
+<i>58</i>&nbsp;
+<i>59</i>&nbsp;    private static final double MATCH_THRESHOLD = 0.4;
+<i>60</i>&nbsp;
+<i>61</i>&nbsp;    /**
+<i>62</i>&nbsp;     * We create an ArrayList to hold the changes we find. These will be added in the form
+<i>63</i>&nbsp;     * of UndoEdit objects. We instantiate these so that the changes found in the file on disk
+<i>64</i>&nbsp;     * can be reproduced in memory by calling redo() on them. REDO, not UNDO!
+<i>65</i>&nbsp;     */
+<b class="nc"><i>66</i>&nbsp;    private final DefaultMutableTreeNode changes = new DefaultMutableTreeNode(Localization.lang(&quot;External changes&quot;));</b>
+<i>67</i>&nbsp;
+<i>68</i>&nbsp;    //  NamedCompound edit = new NamedCompound(&quot;Merged external changes&quot;)
+<i>69</i>&nbsp;
+<b class="nc"><i>70</i>&nbsp;    public ChangeScanner(JabRefFrame frame, BasePanel bp, File file) {</b>
+<b class="nc"><i>71</i>&nbsp;        this.panel = bp;</b>
+<b class="nc"><i>72</i>&nbsp;        this.frame = frame;</b>
+<b class="nc"><i>73</i>&nbsp;        this.databaseInMemory = bp.getDatabase();</b>
+<b class="nc"><i>74</i>&nbsp;        this.metadataInMemory = bp.getBibDatabaseContext().getMetaData();</b>
+<b class="nc"><i>75</i>&nbsp;        this.file = file;</b>
+<b class="nc"><i>76</i>&nbsp;    }</b>
+<i>77</i>&nbsp;
+<i>78</i>&nbsp;    @Override
+<i>79</i>&nbsp;    public void run() {
+<i>80</i>&nbsp;        try {
+<i>81</i>&nbsp;
+<i>82</i>&nbsp;            // Parse the temporary file.
+<b class="nc"><i>83</i>&nbsp;            Path tempFile = Globals.getFileUpdateMonitor().getTempFile(panel.fileMonitorHandle());</b>
+<b class="nc"><i>84</i>&nbsp;            ImportFormatPreferences importFormatPreferences = Globals.prefs.getImportFormatPreferences();</b>
+<b class="nc"><i>85</i>&nbsp;            ParserResult result = OpenDatabase.loadDatabase(tempFile.toFile(), importFormatPreferences);</b>
+<b class="nc"><i>86</i>&nbsp;            databaseInTemp = result.getDatabase();</b>
+<b class="nc"><i>87</i>&nbsp;            metadataInTemp = result.getMetaData();</b>
+<i>88</i>&nbsp;
+<i>89</i>&nbsp;            // Parse the modified file.
+<b class="nc"><i>90</i>&nbsp;            result = OpenDatabase.loadDatabase(file, importFormatPreferences);</b>
+<b class="nc"><i>91</i>&nbsp;            BibDatabase databaseOnDisk = result.getDatabase();</b>
+<b class="nc"><i>92</i>&nbsp;            MetaData metadataOnDisk = result.getMetaData();</b>
+<i>93</i>&nbsp;
+<i>94</i>&nbsp;            // Sort both databases according to a common sort key.
+<b class="nc"><i>95</i>&nbsp;            EntryComparator comparator = new EntryComparator(false, true, SORT_BY[2]);</b>
+<b class="nc"><i>96</i>&nbsp;            comparator = new EntryComparator(false, true, SORT_BY[1], comparator);</b>
+<b class="nc"><i>97</i>&nbsp;            comparator = new EntryComparator(false, true, SORT_BY[0], comparator);</b>
+<b class="nc"><i>98</i>&nbsp;            EntrySorter sorterInTemp = databaseInTemp.getSorter(comparator);</b>
+<b class="nc"><i>99</i>&nbsp;            comparator = new EntryComparator(false, true, SORT_BY[2]);</b>
+<b class="nc"><i>100</i>&nbsp;            comparator = new EntryComparator(false, true, SORT_BY[1], comparator);</b>
+<b class="nc"><i>101</i>&nbsp;            comparator = new EntryComparator(false, true, SORT_BY[0], comparator);</b>
+<b class="nc"><i>102</i>&nbsp;            EntrySorter sorterOnDisk = databaseOnDisk.getSorter(comparator);</b>
+<b class="nc"><i>103</i>&nbsp;            comparator = new EntryComparator(false, true, SORT_BY[2]);</b>
+<b class="nc"><i>104</i>&nbsp;            comparator = new EntryComparator(false, true, SORT_BY[1], comparator);</b>
+<b class="nc"><i>105</i>&nbsp;            comparator = new EntryComparator(false, true, SORT_BY[0], comparator);</b>
+<b class="nc"><i>106</i>&nbsp;            EntrySorter sorterInMem = databaseInMemory.getSorter(comparator);</b>
+<i>107</i>&nbsp;
+<i>108</i>&nbsp;            // Start looking at changes.
+<b class="nc"><i>109</i>&nbsp;            scanMetaData(metadataInMemory, metadataInTemp, metadataOnDisk);</b>
+<b class="nc"><i>110</i>&nbsp;            scanPreamble(databaseInMemory, databaseInTemp, databaseOnDisk);</b>
+<b class="nc"><i>111</i>&nbsp;            scanStrings(databaseInMemory, databaseInTemp, databaseOnDisk);</b>
+<i>112</i>&nbsp;
+<b class="nc"><i>113</i>&nbsp;            scanEntries(sorterInMem, sorterInTemp, sorterOnDisk);</b>
+<i>114</i>&nbsp;
+<b class="nc"><i>115</i>&nbsp;            scanGroups(metadataInTemp, metadataOnDisk);</b>
+<i>116</i>&nbsp;
+<b class="nc"><i>117</i>&nbsp;        } catch (IOException ex) {</b>
+<b class="nc"><i>118</i>&nbsp;            LOGGER.warn(&quot;Problem running&quot;, ex);</b>
+<b class="nc"><i>119</i>&nbsp;        }</b>
+<b class="nc"><i>120</i>&nbsp;    }</b>
+<i>121</i>&nbsp;
+<i>122</i>&nbsp;    public boolean changesFound() {
+<b class="nc"><i>123</i>&nbsp;        return changes.getChildCount() &gt; 0;</b>
+<i>124</i>&nbsp;    }
+<i>125</i>&nbsp;
+<i>126</i>&nbsp;    public void displayResult(final DisplayResultCallback fup) {
+<b class="nc"><i>127</i>&nbsp;        if (changes.getChildCount() &gt; 0) {</b>
+<b class="nc"><i>128</i>&nbsp;            SwingUtilities.invokeLater(() -&gt; {</b>
+<b class="nc"><i>129</i>&nbsp;                ChangeDisplayDialog changeDialog = new ChangeDisplayDialog(frame, panel, databaseInTemp, changes);</b>
+<b class="nc"><i>130</i>&nbsp;                changeDialog.setLocationRelativeTo(frame);</b>
+<b class="nc"><i>131</i>&nbsp;                changeDialog.setVisible(true);</b>
+<b class="nc"><i>132</i>&nbsp;                fup.scanResultsResolved(changeDialog.isOkPressed());</b>
+<b class="nc"><i>133</i>&nbsp;                if (changeDialog.isOkPressed()) {</b>
+<i>134</i>&nbsp;                    // Overwrite the temp database:
+<b class="nc"><i>135</i>&nbsp;                    storeTempDatabase();</b>
+<i>136</i>&nbsp;                }
+<b class="nc"><i>137</i>&nbsp;            });</b>
+<i>138</i>&nbsp;
+<i>139</i>&nbsp;        } else {
+<b class="nc"><i>140</i>&nbsp;            JOptionPane.showMessageDialog(frame, Localization.lang(&quot;No actual changes found.&quot;),</b>
+<b class="nc"><i>141</i>&nbsp;                    Localization.lang(&quot;External changes&quot;), JOptionPane.INFORMATION_MESSAGE);</b>
+<b class="nc"><i>142</i>&nbsp;            fup.scanResultsResolved(true);</b>
+<i>143</i>&nbsp;        }
+<b class="nc"><i>144</i>&nbsp;    }</b>
+<i>145</i>&nbsp;
+<i>146</i>&nbsp;    private void storeTempDatabase() {
+<b class="nc"><i>147</i>&nbsp;        JabRefExecutorService.INSTANCE.execute(() -&gt; {</b>
+<i>148</i>&nbsp;            try {
+<b class="nc"><i>149</i>&nbsp;                SavePreferences prefs = SavePreferences.loadForSaveFromPreferences(Globals.prefs).withMakeBackup(false)</b>
+<b class="nc"><i>150</i>&nbsp;                        .withEncoding(panel.getBibDatabaseContext().getMetaData().getEncoding()</b>
+<b class="nc"><i>151</i>&nbsp;                                .orElse(Globals.prefs.getDefaultEncoding()));</b>
+<i>152</i>&nbsp;
+<b class="nc"><i>153</i>&nbsp;                Defaults defaults = new Defaults(Globals.prefs.getDefaultBibDatabaseMode());</b>
+<b class="nc"><i>154</i>&nbsp;                BibDatabaseWriter&lt;SaveSession&gt; databaseWriter = new BibtexDatabaseWriter&lt;&gt;(FileSaveSession::new);</b>
+<b class="nc"><i>155</i>&nbsp;                SaveSession ss = databaseWriter.saveDatabase(new BibDatabaseContext(databaseInTemp, metadataInTemp, defaults), prefs);</b>
+<b class="nc"><i>156</i>&nbsp;                ss.commit(Globals.getFileUpdateMonitor().getTempFile(panel.fileMonitorHandle()));</b>
+<b class="nc"><i>157</i>&nbsp;            } catch (SaveException ex) {</b>
+<b class="nc"><i>158</i>&nbsp;                LOGGER.warn(&quot;Problem updating tmp file after accepting external changes&quot;, ex);</b>
+<b class="nc"><i>159</i>&nbsp;            }</b>
+<b class="nc"><i>160</i>&nbsp;        });</b>
+<b class="nc"><i>161</i>&nbsp;    }</b>
+<i>162</i>&nbsp;
+<i>163</i>&nbsp;    private void scanMetaData(MetaData inMemory, MetaData onTmp, MetaData onDisk) {
+<b class="nc"><i>164</i>&nbsp;        if (!onTmp.isEmpty()) {</b>
+<b class="nc"><i>165</i>&nbsp;            if (!inMemory.equals(onDisk)) {</b>
+<b class="nc"><i>166</i>&nbsp;                changes.add(new MetaDataChange(inMemory, onDisk));</b>
+<i>167</i>&nbsp;            }
+<i>168</i>&nbsp;        } else {
+<b class="nc"><i>169</i>&nbsp;            if (!onDisk.isEmpty() || !onTmp.equals(onDisk)) {</b>
+<b class="nc"><i>170</i>&nbsp;                changes.add(new MetaDataChange(inMemory, onDisk));</b>
+<i>171</i>&nbsp;            }
+<i>172</i>&nbsp;        }
+<b class="nc"><i>173</i>&nbsp;    }</b>
+<i>174</i>&nbsp;
+<i>175</i>&nbsp;    private void scanEntries(EntrySorter memorySorter, EntrySorter tmpSorter, EntrySorter diskSorter) {
+<i>176</i>&nbsp;
+<i>177</i>&nbsp;        // Create pointers that are incremented as the entries of each base are used in
+<i>178</i>&nbsp;        // successive order from the beginning. Entries &quot;further down&quot; in the &quot;disk&quot; base
+<i>179</i>&nbsp;        // can also be matched.
+<i>180</i>&nbsp;        int piv1;
+<b class="nc"><i>181</i>&nbsp;        int piv2 = 0;</b>
+<i>182</i>&nbsp;
+<i>183</i>&nbsp;        // Create a HashSet where we can put references to entry numbers in the &quot;disk&quot;
+<i>184</i>&nbsp;        // database that we have matched. This is to avoid matching them twice.
+<b class="nc"><i>185</i>&nbsp;        Set&lt;String&gt; used = new HashSet&lt;&gt;(diskSorter.getEntryCount());</b>
+<b class="nc"><i>186</i>&nbsp;        Set&lt;Integer&gt; notMatched = new HashSet&lt;&gt;(tmpSorter.getEntryCount());</b>
+<i>187</i>&nbsp;
+<i>188</i>&nbsp;        // Loop through the entries of the &quot;tmp&quot; database, looking for exact matches in the &quot;disk&quot; one.
+<i>189</i>&nbsp;        // We must finish scanning for exact matches before looking for near matches, to avoid an exact
+<i>190</i>&nbsp;        // match being &quot;stolen&quot; from another entry.
+<i>191</i>&nbsp;        mainLoop:
+<b class="nc"><i>192</i>&nbsp;        for (piv1 = 0; piv1 &lt; tmpSorter.getEntryCount(); piv1++) {</b>
+<i>193</i>&nbsp;
+<i>194</i>&nbsp;            // First check if the similarly placed entry in the other base matches exactly.
+<b class="nc"><i>195</i>&nbsp;            double comp = -1;</b>
+<i>196</i>&nbsp;            // (if there are not any entries left in the &quot;disk&quot; database, comp will stay at -1,
+<i>197</i>&nbsp;            // and this entry will be marked as nonmatched).
+<b class="nc"><i>198</i>&nbsp;            if (!used.contains(String.valueOf(piv2)) &amp;&amp; (piv2 &lt; diskSorter.getEntryCount())) {</b>
+<b class="nc"><i>199</i>&nbsp;                comp = DuplicateCheck.compareEntriesStrictly(tmpSorter.getEntryAt(piv1), diskSorter.getEntryAt(piv2));</b>
+<i>200</i>&nbsp;            }
+<b class="nc"><i>201</i>&nbsp;            if (comp &gt; 1) {</b>
+<b class="nc"><i>202</i>&nbsp;                used.add(String.valueOf(piv2));</b>
+<b class="nc"><i>203</i>&nbsp;                piv2++;</b>
+<b class="nc"><i>204</i>&nbsp;                continue;</b>
+<i>205</i>&nbsp;            }
+<i>206</i>&nbsp;
+<i>207</i>&nbsp;            // No? Then check if another entry matches exactly.
+<b class="nc"><i>208</i>&nbsp;            if (piv2 &lt; (diskSorter.getEntryCount() - 1)) {</b>
+<b class="nc"><i>209</i>&nbsp;                for (int i = piv2 + 1; i &lt; diskSorter.getEntryCount(); i++) {</b>
+<b class="nc"><i>210</i>&nbsp;                    if (used.contains(String.valueOf(i))) {</b>
+<b class="nc"><i>211</i>&nbsp;                        comp = -1;</b>
+<i>212</i>&nbsp;                    } else {
+<b class="nc"><i>213</i>&nbsp;                        comp = DuplicateCheck.compareEntriesStrictly(tmpSorter.getEntryAt(piv1), diskSorter.getEntryAt(i));</b>
+<i>214</i>&nbsp;                    }
+<i>215</i>&nbsp;
+<b class="nc"><i>216</i>&nbsp;                    if (comp &gt; 1) {</b>
+<b class="nc"><i>217</i>&nbsp;                        used.add(String.valueOf(i));</b>
+<b class="nc"><i>218</i>&nbsp;                        continue mainLoop;</b>
+<i>219</i>&nbsp;                    }
+<i>220</i>&nbsp;                }
+<i>221</i>&nbsp;            }
+<i>222</i>&nbsp;
+<i>223</i>&nbsp;            // No? Add this entry to the list of nonmatched entries.
+<b class="nc"><i>224</i>&nbsp;            notMatched.add(piv1);</b>
+<i>225</i>&nbsp;        }
+<i>226</i>&nbsp;
+<i>227</i>&nbsp;        // Now we&#39;ve found all exact matches, look through the remaining entries, looking
+<i>228</i>&nbsp;        // for close matches.
+<b class="nc"><i>229</i>&nbsp;        if (!notMatched.isEmpty()) {</b>
+<i>230</i>&nbsp;
+<b class="nc"><i>231</i>&nbsp;            for (Iterator&lt;Integer&gt; it = notMatched.iterator(); it.hasNext(); ) {</b>
+<i>232</i>&nbsp;
+<b class="nc"><i>233</i>&nbsp;                piv1 = it.next();</b>
+<i>234</i>&nbsp;
+<i>235</i>&nbsp;                // These two variables will keep track of which entry most closely matches the
+<i>236</i>&nbsp;                // one we&#39;re looking at, in case none matches completely.
+<b class="nc"><i>237</i>&nbsp;                int bestMatchI = -1;</b>
+<b class="nc"><i>238</i>&nbsp;                double bestMatch = 0;</b>
+<i>239</i>&nbsp;                double comp;
+<i>240</i>&nbsp;
+<b class="nc"><i>241</i>&nbsp;                if (piv2 &lt; (diskSorter.getEntryCount() - 1)) {</b>
+<b class="nc"><i>242</i>&nbsp;                    for (int i = piv2; i &lt; diskSorter.getEntryCount(); i++) {</b>
+<b class="nc"><i>243</i>&nbsp;                        if (used.contains(String.valueOf(i))) {</b>
+<b class="nc"><i>244</i>&nbsp;                            comp = -1;</b>
+<i>245</i>&nbsp;                        } else {
+<b class="nc"><i>246</i>&nbsp;                            comp = DuplicateCheck.compareEntriesStrictly(tmpSorter.getEntryAt(piv1), diskSorter.getEntryAt(i));</b>
+<i>247</i>&nbsp;                        }
+<i>248</i>&nbsp;
+<b class="nc"><i>249</i>&nbsp;                        if (comp &gt; bestMatch) {</b>
+<b class="nc"><i>250</i>&nbsp;                            bestMatch = comp;</b>
+<b class="nc"><i>251</i>&nbsp;                            bestMatchI = i;</b>
+<i>252</i>&nbsp;                        }
+<i>253</i>&nbsp;                    }
+<i>254</i>&nbsp;                }
+<i>255</i>&nbsp;
+<b class="nc"><i>256</i>&nbsp;                if (bestMatch &gt; MATCH_THRESHOLD) {</b>
+<b class="nc"><i>257</i>&nbsp;                    used.add(String.valueOf(bestMatchI));</b>
+<b class="nc"><i>258</i>&nbsp;                    it.remove();</b>
+<i>259</i>&nbsp;
+<b class="nc"><i>260</i>&nbsp;                    changes.add(new EntryChange(bestFit(tmpSorter, memorySorter, piv1), tmpSorter.getEntryAt(piv1),</b>
+<b class="nc"><i>261</i>&nbsp;                            diskSorter.getEntryAt(bestMatchI)));</b>
+<i>262</i>&nbsp;                } else {
+<b class="nc"><i>263</i>&nbsp;                    changes.add(</b>
+<b class="nc"><i>264</i>&nbsp;                            new EntryDeleteChange(bestFit(tmpSorter, memorySorter, piv1), tmpSorter.getEntryAt(piv1)));</b>
+<i>265</i>&nbsp;                }
+<i>266</i>&nbsp;
+<b class="nc"><i>267</i>&nbsp;            }</b>
+<i>268</i>&nbsp;
+<i>269</i>&nbsp;        }
+<i>270</i>&nbsp;
+<i>271</i>&nbsp;        // Finally, look if there are still untouched entries in the disk database. These
+<i>272</i>&nbsp;        // may have been added.
+<b class="nc"><i>273</i>&nbsp;        if (used.size() &lt; diskSorter.getEntryCount()) {</b>
+<b class="nc"><i>274</i>&nbsp;            for (int i = 0; i &lt; diskSorter.getEntryCount(); i++) {</b>
+<b class="nc"><i>275</i>&nbsp;                if (!used.contains(String.valueOf(i))) {</b>
+<i>276</i>&nbsp;
+<i>277</i>&nbsp;                    // See if there is an identical dupe in the mem database:
+<b class="nc"><i>278</i>&nbsp;                    boolean hasAlready = false;</b>
+<b class="nc"><i>279</i>&nbsp;                    for (int j = 0; j &lt; memorySorter.getEntryCount(); j++) {</b>
+<b class="nc"><i>280</i>&nbsp;                        if (DuplicateCheck.compareEntriesStrictly(memorySorter.getEntryAt(j), diskSorter.getEntryAt(i)) &gt;= 1) {</b>
+<b class="nc"><i>281</i>&nbsp;                            hasAlready = true;</b>
+<b class="nc"><i>282</i>&nbsp;                            break;</b>
+<i>283</i>&nbsp;                        }
+<i>284</i>&nbsp;                    }
+<b class="nc"><i>285</i>&nbsp;                    if (!hasAlready) {</b>
+<b class="nc"><i>286</i>&nbsp;                        changes.add(new EntryAddChange(diskSorter.getEntryAt(i)));</b>
+<i>287</i>&nbsp;                    }
+<i>288</i>&nbsp;                }
+<i>289</i>&nbsp;            }
+<i>290</i>&nbsp;        }
+<b class="nc"><i>291</i>&nbsp;    }</b>
+<i>292</i>&nbsp;
+<i>293</i>&nbsp;    /**
+<i>294</i>&nbsp;     * Finds the entry in neu best fitting the specified entry in old. If no entries get a score
+<i>295</i>&nbsp;     * above zero, an entry is still returned.
+<i>296</i>&nbsp;     *
+<i>297</i>&nbsp;     * @param oldSorter   EntrySorter
+<i>298</i>&nbsp;     * @param newSorter   EntrySorter
+<i>299</i>&nbsp;     * @param index int
+<i>300</i>&nbsp;     * @return BibEntry
+<i>301</i>&nbsp;     */
+<i>302</i>&nbsp;    private static BibEntry bestFit(EntrySorter oldSorter, EntrySorter newSorter, int index) {
+<b class="nc"><i>303</i>&nbsp;        double comp = -1;</b>
+<b class="nc"><i>304</i>&nbsp;        int found = 0;</b>
+<b class="nc"><i>305</i>&nbsp;        for (int i = 0; i &lt; newSorter.getEntryCount(); i++) {</b>
+<b class="nc"><i>306</i>&nbsp;            double res = DuplicateCheck.compareEntriesStrictly(oldSorter.getEntryAt(index), newSorter.getEntryAt(i));</b>
+<b class="nc"><i>307</i>&nbsp;            if (res &gt; comp) {</b>
+<b class="nc"><i>308</i>&nbsp;                comp = res;</b>
+<b class="nc"><i>309</i>&nbsp;                found = i;</b>
+<i>310</i>&nbsp;            }
+<b class="nc"><i>311</i>&nbsp;            if (comp &gt; 1) {</b>
+<b class="nc"><i>312</i>&nbsp;                break;</b>
+<i>313</i>&nbsp;            }
+<i>314</i>&nbsp;        }
+<b class="nc"><i>315</i>&nbsp;        return newSorter.getEntryAt(found);</b>
+<i>316</i>&nbsp;    }
+<i>317</i>&nbsp;
+<i>318</i>&nbsp;    private void scanPreamble(BibDatabase inMemory, BibDatabase onTmp, BibDatabase onDisk) {
+<b class="nc"><i>319</i>&nbsp;        String mem = inMemory.getPreamble().orElse(null);</b>
+<b class="nc"><i>320</i>&nbsp;        Optional&lt;String&gt; tmp = onTmp.getPreamble();</b>
+<b class="nc"><i>321</i>&nbsp;        Optional&lt;String&gt; disk = onDisk.getPreamble();</b>
+<b class="nc"><i>322</i>&nbsp;        if (!tmp.isPresent()) {</b>
+<b class="nc"><i>323</i>&nbsp;            disk.ifPresent(diskContent -&gt; changes.add(new PreambleChange(mem, diskContent)));</b>
+<i>324</i>&nbsp;        } else {
+<b class="nc"><i>325</i>&nbsp;            if (!disk.isPresent() || !tmp.equals(disk)) {</b>
+<b class="nc"><i>326</i>&nbsp;                changes.add(new PreambleChange(mem, disk.orElse(null)));</b>
+<i>327</i>&nbsp;            }
+<i>328</i>&nbsp;        }
+<b class="nc"><i>329</i>&nbsp;    }</b>
+<i>330</i>&nbsp;
+<i>331</i>&nbsp;    private void scanStrings(BibDatabase inMem1, BibDatabase inTmp, BibDatabase onDisk) {
+<b class="nc"><i>332</i>&nbsp;        if (inTmp.hasNoStrings() &amp;&amp; onDisk.hasNoStrings()) {</b>
+<b class="nc"><i>333</i>&nbsp;            return;</b>
+<i>334</i>&nbsp;        }
+<i>335</i>&nbsp;
+<b class="nc"><i>336</i>&nbsp;        Set&lt;Object&gt; used = new HashSet&lt;&gt;();</b>
+<b class="nc"><i>337</i>&nbsp;        Set&lt;Object&gt; usedInMem = new HashSet&lt;&gt;();</b>
+<b class="nc"><i>338</i>&nbsp;        Set&lt;String&gt; notMatched = new HashSet&lt;&gt;(inTmp.getStringCount());</b>
+<i>339</i>&nbsp;
+<i>340</i>&nbsp;        // First try to match by string names.
+<i>341</i>&nbsp;        mainLoop:
+<b class="nc"><i>342</i>&nbsp;        for (String key : inTmp.getStringKeySet()) {</b>
+<b class="nc"><i>343</i>&nbsp;            BibtexString tmp = inTmp.getString(key);</b>
+<i>344</i>&nbsp;
+<b class="nc"><i>345</i>&nbsp;            for (String diskId : onDisk.getStringKeySet()) {</b>
+<b class="nc"><i>346</i>&nbsp;                if (!used.contains(diskId)) {</b>
+<b class="nc"><i>347</i>&nbsp;                    BibtexString disk = onDisk.getString(diskId);</b>
+<b class="nc"><i>348</i>&nbsp;                    if (disk.getName().equals(tmp.getName())) {</b>
+<i>349</i>&nbsp;                        // We have found a string with a matching name.
+<b class="nc"><i>350</i>&nbsp;                        if (!Objects.equals(tmp.getContent(), disk.getContent())) {</b>
+<i>351</i>&nbsp;                            // But they have nonmatching contents, so we&#39;ve found a change.
+<b class="nc"><i>352</i>&nbsp;                            Optional&lt;BibtexString&gt; mem = findString(inMem1, tmp.getName(), usedInMem);</b>
+<b class="nc"><i>353</i>&nbsp;                            if (mem.isPresent()) {</b>
+<b class="nc"><i>354</i>&nbsp;                                changes.add(new StringChange(mem.get(), tmp, tmp.getName(), mem.get().getContent(),</b>
+<b class="nc"><i>355</i>&nbsp;                                        disk.getContent()));</b>
+<i>356</i>&nbsp;                            } else {
+<b class="nc"><i>357</i>&nbsp;                                changes.add(new StringChange(null, tmp, tmp.getName(), null, disk.getContent()));</b>
+<i>358</i>&nbsp;                            }
+<i>359</i>&nbsp;                        }
+<b class="nc"><i>360</i>&nbsp;                        used.add(diskId);</b>
+<b class="nc"><i>361</i>&nbsp;                        continue mainLoop;</b>
+<i>362</i>&nbsp;                    }
+<i>363</i>&nbsp;
+<i>364</i>&nbsp;                }
+<b class="nc"><i>365</i>&nbsp;            }</b>
+<i>366</i>&nbsp;            // If we get here, there was no match for this string.
+<b class="nc"><i>367</i>&nbsp;            notMatched.add(tmp.getId());</b>
+<b class="nc"><i>368</i>&nbsp;        }</b>
+<i>369</i>&nbsp;
+<i>370</i>&nbsp;        // See if we can detect a name change for those entries that we couldn&#39;t match.
+<b class="nc"><i>371</i>&nbsp;        if (!notMatched.isEmpty()) {</b>
+<b class="nc"><i>372</i>&nbsp;            for (Iterator&lt;String&gt; i = notMatched.iterator(); i.hasNext(); ) {</b>
+<b class="nc"><i>373</i>&nbsp;                BibtexString tmp = inTmp.getString(i.next());</b>
+<i>374</i>&nbsp;
+<i>375</i>&nbsp;                // If we get to this point, we found no string with matching name. See if we
+<i>376</i>&nbsp;                // can find one with matching content.
+<b class="nc"><i>377</i>&nbsp;                for (String diskId : onDisk.getStringKeySet()) {</b>
+<i>378</i>&nbsp;
+<b class="nc"><i>379</i>&nbsp;                    if (!used.contains(diskId)) {</b>
+<b class="nc"><i>380</i>&nbsp;                        BibtexString disk = onDisk.getString(diskId);</b>
+<i>381</i>&nbsp;
+<b class="nc"><i>382</i>&nbsp;                        if (disk.getContent().equals(tmp.getContent())) {</b>
+<i>383</i>&nbsp;                            // We have found a string with the same content. It cannot have the same
+<i>384</i>&nbsp;                            // name, or we would have found it above.
+<i>385</i>&nbsp;
+<i>386</i>&nbsp;                            // Try to find the matching one in memory:
+<b class="nc"><i>387</i>&nbsp;                            BibtexString bsMem = null;</b>
+<i>388</i>&nbsp;
+<b class="nc"><i>389</i>&nbsp;                            for (String memId : inMem1.getStringKeySet()) {</b>
+<b class="nc"><i>390</i>&nbsp;                                BibtexString bsMemCandidate = inMem1.getString(memId);</b>
+<b class="nc"><i>391</i>&nbsp;                                if (bsMemCandidate.getContent().equals(disk.getContent())</b>
+<b class="nc"><i>392</i>&nbsp;                                        &amp;&amp; !usedInMem.contains(memId)) {</b>
+<b class="nc"><i>393</i>&nbsp;                                    usedInMem.add(memId);</b>
+<b class="nc"><i>394</i>&nbsp;                                    bsMem = bsMemCandidate;</b>
+<b class="nc"><i>395</i>&nbsp;                                    break;</b>
+<i>396</i>&nbsp;                                }
+<b class="nc"><i>397</i>&nbsp;                            }</b>
+<i>398</i>&nbsp;
+<b class="nc"><i>399</i>&nbsp;                            if (bsMem != null) {</b>
+<b class="nc"><i>400</i>&nbsp;                                changes.add(new StringNameChange(bsMem, tmp, bsMem.getName(), tmp.getName(),</b>
+<b class="nc"><i>401</i>&nbsp;                                        disk.getName(), tmp.getContent()));</b>
+<b class="nc"><i>402</i>&nbsp;                                i.remove();</b>
+<b class="nc"><i>403</i>&nbsp;                                used.add(diskId);</b>
+<i>404</i>&nbsp;                            }
+<i>405</i>&nbsp;
+<i>406</i>&nbsp;                        }
+<i>407</i>&nbsp;                    }
+<b class="nc"><i>408</i>&nbsp;                }</b>
+<b class="nc"><i>409</i>&nbsp;            }</b>
+<i>410</i>&nbsp;        }
+<i>411</i>&nbsp;
+<b class="nc"><i>412</i>&nbsp;        if (!notMatched.isEmpty()) {</b>
+<i>413</i>&nbsp;            // Still one or more non-matched strings. So they must have been removed.
+<b class="nc"><i>414</i>&nbsp;            for (String notMatchedId : notMatched) {</b>
+<b class="nc"><i>415</i>&nbsp;                BibtexString tmp = inTmp.getString(notMatchedId);</b>
+<i>416</i>&nbsp;                // The removed string is not removed from the mem version.
+<b class="nc"><i>417</i>&nbsp;                findString(inMem1, tmp.getName(), usedInMem).ifPresent(</b>
+<b class="nc"><i>418</i>&nbsp;                        x -&gt; changes.add(new StringRemoveChange(tmp, tmp, x)));</b>
+<b class="nc"><i>419</i>&nbsp;            }</b>
+<i>420</i>&nbsp;        }
+<i>421</i>&nbsp;
+<i>422</i>&nbsp;        // Finally, see if there are remaining strings in the disk database. They
+<i>423</i>&nbsp;        // must have been added.
+<b class="nc"><i>424</i>&nbsp;        for (String diskId : onDisk.getStringKeySet()) {</b>
+<b class="nc"><i>425</i>&nbsp;            if (!used.contains(diskId)) {</b>
+<b class="nc"><i>426</i>&nbsp;                BibtexString disk = onDisk.getString(diskId);</b>
+<b class="nc"><i>427</i>&nbsp;                used.add(diskId);</b>
+<b class="nc"><i>428</i>&nbsp;                changes.add(new StringAddChange(disk));</b>
+<i>429</i>&nbsp;            }
+<b class="nc"><i>430</i>&nbsp;        }</b>
+<b class="nc"><i>431</i>&nbsp;    }</b>
+<i>432</i>&nbsp;
+<i>433</i>&nbsp;    private static Optional&lt;BibtexString&gt; findString(BibDatabase base, String name, Set&lt;Object&gt; used) {
+<b class="nc"><i>434</i>&nbsp;        if (!base.hasStringLabel(name)) {</b>
+<b class="nc"><i>435</i>&nbsp;            return Optional.empty();</b>
+<i>436</i>&nbsp;        }
+<b class="nc"><i>437</i>&nbsp;        for (String key : base.getStringKeySet()) {</b>
+<b class="nc"><i>438</i>&nbsp;            BibtexString bs = base.getString(key);</b>
+<b class="nc"><i>439</i>&nbsp;            if (bs.getName().equals(name) &amp;&amp; !used.contains(key)) {</b>
+<b class="nc"><i>440</i>&nbsp;                used.add(key);</b>
+<b class="nc"><i>441</i>&nbsp;                return Optional.of(bs);</b>
+<i>442</i>&nbsp;            }
+<b class="nc"><i>443</i>&nbsp;        }</b>
+<b class="nc"><i>444</i>&nbsp;        return Optional.empty();</b>
+<i>445</i>&nbsp;    }
+<i>446</i>&nbsp;
+<i>447</i>&nbsp;    /**
+<i>448</i>&nbsp;     * This method only detects whether a change took place or not. It does not determine the type of change. This would
+<i>449</i>&nbsp;     * be possible, but difficult to do properly, so I rather only report the change.
+<i>450</i>&nbsp;     */
+<i>451</i>&nbsp;    private void scanGroups(MetaData inTemp, MetaData onDisk) {
+<b class="nc"><i>452</i>&nbsp;        final Optional&lt;GroupTreeNode&gt; groupsTmp = inTemp.getGroups();</b>
+<b class="nc"><i>453</i>&nbsp;        final Optional&lt;GroupTreeNode&gt; groupsDisk = onDisk.getGroups();</b>
+<b class="nc"><i>454</i>&nbsp;        if (!groupsTmp.isPresent() &amp;&amp; !groupsDisk.isPresent()) {</b>
+<b class="nc"><i>455</i>&nbsp;            return;</b>
+<i>456</i>&nbsp;        }
+<b class="nc"><i>457</i>&nbsp;        if ((groupsTmp.isPresent() &amp;&amp; !groupsDisk.isPresent()) || !groupsTmp.isPresent()) {</b>
+<b class="nc"><i>458</i>&nbsp;            changes.add(new GroupChange(groupsDisk.orElse(null), groupsTmp.orElse(null)));</b>
+<b class="nc"><i>459</i>&nbsp;            return;</b>
+<i>460</i>&nbsp;        }
+<i>461</i>&nbsp;        // Both present here
+<b class="nc"><i>462</i>&nbsp;        if (!groupsTmp.equals(groupsDisk)) {</b>
+<b class="nc"><i>463</i>&nbsp;            changes.add(new GroupChange(groupsDisk.get(), groupsTmp.get()));</b>
+<i>464</i>&nbsp;        }
+<b class="nc"><i>465</i>&nbsp;    }</b>
+<i>466</i>&nbsp;
+<i>467</i>&nbsp;
+<i>468</i>&nbsp;    @FunctionalInterface
+<i>469</i>&nbsp;    public interface DisplayResultCallback {
+<i>470</i>&nbsp;        void scanResultsResolved(boolean resolved);
+<i>471</i>&nbsp;    }
+<i>472</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

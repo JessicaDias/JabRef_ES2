@@ -1,0 +1,332 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: EntryFromFileCreatorManager</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.importer</a> ]
+</div>
+
+<h1>Coverage Summary for Class: EntryFromFileCreatorManager (net.sf.jabref.gui.importer)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">EntryFromFileCreatorManager</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 63)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">EntryFromFileCreatorManager$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 7)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 70)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.importer;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.File;
+<i>4</i>&nbsp;import java.io.FileFilter;
+<i>5</i>&nbsp;import java.util.ArrayList;
+<i>6</i>&nbsp;import java.util.Collection;
+<i>7</i>&nbsp;import java.util.LinkedList;
+<i>8</i>&nbsp;import java.util.List;
+<i>9</i>&nbsp;import java.util.Optional;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;import javax.swing.event.ChangeEvent;
+<i>12</i>&nbsp;import javax.swing.event.ChangeListener;
+<i>13</i>&nbsp;import javax.swing.undo.CompoundEdit;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;import net.sf.jabref.gui.BasePanel;
+<i>16</i>&nbsp;import net.sf.jabref.gui.externalfiletype.ExternalFileType;
+<i>17</i>&nbsp;import net.sf.jabref.gui.externalfiletype.ExternalFileTypes;
+<i>18</i>&nbsp;import net.sf.jabref.gui.undo.UndoableInsertEntry;
+<i>19</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>20</i>&nbsp;import net.sf.jabref.model.database.BibDatabase;
+<i>21</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>22</i>&nbsp;import net.sf.jabref.model.entry.EntryType;
+<i>23</i>&nbsp;import net.sf.jabref.model.entry.IdGenerator;
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;/**
+<i>26</i>&nbsp; * The class EntryFromFileCreatorManager manages entry creators.
+<i>27</i>&nbsp; * The manager knows all existing implementations of the interface EntryFromFileCreator.
+<i>28</i>&nbsp; * Given a file, the manager can then provide a creator, which is able to create a Bibtex entry for his file.
+<i>29</i>&nbsp; * Knowing all implementations of the interface, the manager also knows the set of all files, of which Bibtex entries can be created.
+<i>30</i>&nbsp; * The GUI uses this capability for offering the user only such files, of which entries could actually be created.
+<i>31</i>&nbsp; * @author Dan&amp;Nosh
+<i>32</i>&nbsp; *
+<i>33</i>&nbsp; */
+<b class="nc"><i>34</i>&nbsp;public final class EntryFromFileCreatorManager {</b>
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;    private final List&lt;EntryFromFileCreator&gt; entryCreators;
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;
+<b class="nc"><i>39</i>&nbsp;    public EntryFromFileCreatorManager() {</b>
+<i>40</i>&nbsp;
+<b class="nc"><i>41</i>&nbsp;        entryCreators = new ArrayList&lt;&gt;(10);</b>
+<b class="nc"><i>42</i>&nbsp;        entryCreators.add(new EntryFromPDFCreator());</b>
+<i>43</i>&nbsp;
+<i>44</i>&nbsp;        // add a creator for each ExternalFileType if there is no specialized
+<i>45</i>&nbsp;        // creator existing.
+<b class="nc"><i>46</i>&nbsp;        Collection&lt;ExternalFileType&gt; fileTypes = ExternalFileTypes.getInstance().getExternalFileTypeSelection();</b>
+<i>47</i>&nbsp;
+<b class="nc"><i>48</i>&nbsp;        for (ExternalFileType exFileType : fileTypes) {</b>
+<b class="nc"><i>49</i>&nbsp;            if (!hasSpecialisedCreatorForExternalFileType(exFileType)) {</b>
+<b class="nc"><i>50</i>&nbsp;                entryCreators.add(new EntryFromExternalFileCreator(exFileType));</b>
+<i>51</i>&nbsp;            }
+<b class="nc"><i>52</i>&nbsp;        }</b>
+<b class="nc"><i>53</i>&nbsp;    }</b>
+<i>54</i>&nbsp;
+<i>55</i>&nbsp;    private boolean hasSpecialisedCreatorForExternalFileType(
+<i>56</i>&nbsp;            ExternalFileType externalFileType) {
+<b class="nc"><i>57</i>&nbsp;        for (EntryFromFileCreator entryCreator : entryCreators) {</b>
+<b class="nc"><i>58</i>&nbsp;            if ((entryCreator.getExternalFileType() == null)</b>
+<b class="nc"><i>59</i>&nbsp;                    || (entryCreator.getExternalFileType().getExtension().isEmpty())) {</b>
+<b class="nc"><i>60</i>&nbsp;                continue;</b>
+<i>61</i>&nbsp;            }
+<b class="nc"><i>62</i>&nbsp;            if (entryCreator.getExternalFileType().getExtension().equals(</b>
+<b class="nc"><i>63</i>&nbsp;                    externalFileType.getExtension())) {</b>
+<b class="nc"><i>64</i>&nbsp;                return true;</b>
+<i>65</i>&nbsp;            }
+<b class="nc"><i>66</i>&nbsp;        }</b>
+<b class="nc"><i>67</i>&nbsp;        return false;</b>
+<i>68</i>&nbsp;    }
+<i>69</i>&nbsp;
+<i>70</i>&nbsp;    /**
+<i>71</i>&nbsp;     * Returns a EntryFromFileCreator object that is capable of creating a
+<i>72</i>&nbsp;     * BibEntry for the given File.
+<i>73</i>&nbsp;     *
+<i>74</i>&nbsp;     * @param file the pdf file
+<i>75</i>&nbsp;     * @return null if there is no EntryFromFileCreator for this File.
+<i>76</i>&nbsp;     */
+<i>77</i>&nbsp;    public EntryFromFileCreator getEntryCreator(File file) {
+<b class="nc"><i>78</i>&nbsp;        if ((file == null) || !file.exists()) {</b>
+<b class="nc"><i>79</i>&nbsp;            return null;</b>
+<i>80</i>&nbsp;        }
+<b class="nc"><i>81</i>&nbsp;        for (EntryFromFileCreator creator : entryCreators) {</b>
+<b class="nc"><i>82</i>&nbsp;            if (creator.accept(file)) {</b>
+<b class="nc"><i>83</i>&nbsp;                return creator;</b>
+<i>84</i>&nbsp;            }
+<b class="nc"><i>85</i>&nbsp;        }</b>
+<b class="nc"><i>86</i>&nbsp;        return null;</b>
+<i>87</i>&nbsp;    }
+<i>88</i>&nbsp;
+<i>89</i>&nbsp;    /**
+<i>90</i>&nbsp;     * Tries to add a entry for each file in the List.
+<i>91</i>&nbsp;     *
+<i>92</i>&nbsp;     * @param files
+<i>93</i>&nbsp;     * @param database
+<i>94</i>&nbsp;     * @param entryType
+<i>95</i>&nbsp;     * @return List of unexpected import event messages including failures.
+<i>96</i>&nbsp;     */
+<i>97</i>&nbsp;    public List&lt;String&gt; addEntrysFromFiles(List&lt;File&gt; files,
+<i>98</i>&nbsp;            BibDatabase database, EntryType entryType,
+<i>99</i>&nbsp;            boolean generateKeywordsFromPathToFile) {
+<b class="nc"><i>100</i>&nbsp;        List&lt;String&gt; importGUIMessages = new LinkedList&lt;&gt;();</b>
+<b class="nc"><i>101</i>&nbsp;        addEntriesFromFiles(files, database, null, entryType,</b>
+<i>102</i>&nbsp;                generateKeywordsFromPathToFile, null, importGUIMessages);
+<b class="nc"><i>103</i>&nbsp;        return importGUIMessages;</b>
+<i>104</i>&nbsp;    }
+<i>105</i>&nbsp;
+<i>106</i>&nbsp;    /**
+<i>107</i>&nbsp;     * Tries to add a entry for each file in the List.
+<i>108</i>&nbsp;     *
+<i>109</i>&nbsp;     * @param files
+<i>110</i>&nbsp;     * @param database
+<i>111</i>&nbsp;     * @param panel
+<i>112</i>&nbsp;     * @param entryType
+<i>113</i>&nbsp;     * @param generateKeywordsFromPathToFile
+<i>114</i>&nbsp;     * @param changeListener
+<i>115</i>&nbsp;     * @param importGUIMessages list of unexpected import event - Messages including
+<i>116</i>&nbsp;     *         failures
+<i>117</i>&nbsp;     * @return Returns The number of entries added
+<i>118</i>&nbsp;     */
+<i>119</i>&nbsp;    public int addEntriesFromFiles(List&lt;File&gt; files,
+<i>120</i>&nbsp;            BibDatabase database, BasePanel panel, EntryType entryType,
+<i>121</i>&nbsp;            boolean generateKeywordsFromPathToFile,
+<i>122</i>&nbsp;            ChangeListener changeListener, List&lt;String&gt; importGUIMessages) {
+<i>123</i>&nbsp;
+<b class="nc"><i>124</i>&nbsp;        int count = 0;</b>
+<b class="nc"><i>125</i>&nbsp;        CompoundEdit ce = new CompoundEdit();</b>
+<b class="nc"><i>126</i>&nbsp;        for (File f : files) {</b>
+<b class="nc"><i>127</i>&nbsp;            EntryFromFileCreator creator = getEntryCreator(f);</b>
+<b class="nc"><i>128</i>&nbsp;            if (creator == null) {</b>
+<b class="nc"><i>129</i>&nbsp;                importGUIMessages.add(&quot;Problem importing &quot; + f.getPath() + &quot;: Unknown filetype.&quot;);</b>
+<i>130</i>&nbsp;            } else {
+<b class="nc"><i>131</i>&nbsp;                Optional&lt;BibEntry&gt; entry = creator.createEntry(f, generateKeywordsFromPathToFile);</b>
+<b class="nc"><i>132</i>&nbsp;                if (!entry.isPresent()) {</b>
+<b class="nc"><i>133</i>&nbsp;                    importGUIMessages.add(&quot;Problem importing &quot; + f.getPath() + &quot;: Entry could not be created.&quot;);</b>
+<b class="nc"><i>134</i>&nbsp;                    continue;</b>
+<i>135</i>&nbsp;                }
+<b class="nc"><i>136</i>&nbsp;                if (entryType != null) {</b>
+<b class="nc"><i>137</i>&nbsp;                    entry.get().setType(entryType);</b>
+<i>138</i>&nbsp;                }
+<b class="nc"><i>139</i>&nbsp;                if (entry.get().getId() == null) {</b>
+<b class="nc"><i>140</i>&nbsp;                    entry.get().setId(IdGenerator.next());</b>
+<i>141</i>&nbsp;                }
+<i>142</i>&nbsp;                /*
+<i>143</i>&nbsp;                 * TODO: database.insertEntry(BibEntry) is not sensible. Why
+<i>144</i>&nbsp;                 * does &#39;true&#39; mean &quot;There were duplicates&quot;, while &#39;false&#39; means
+<i>145</i>&nbsp;                 * &quot;Everything alright&quot;?
+<i>146</i>&nbsp;                 */
+<b class="nc"><i>147</i>&nbsp;                if (!database.containsEntryWithId(entry.get().getId())) {</b>
+<i>148</i>&nbsp;                    // Work around SIDE EFFECT of creator.createEntry. The EntryFromPDFCreator also creates the entry in the table
+<i>149</i>&nbsp;                    // Therefore, we only insert the entry if it is not already present
+<b class="nc"><i>150</i>&nbsp;                    if (database.insertEntry(entry.get())) {</b>
+<b class="nc"><i>151</i>&nbsp;                        importGUIMessages.add(&quot;Problem importing &quot; + f.getPath() + &quot;: Insert into BibDatabase failed.&quot;);</b>
+<i>152</i>&nbsp;                    } else {
+<b class="nc"><i>153</i>&nbsp;                        count++;</b>
+<b class="nc"><i>154</i>&nbsp;                        if (panel != null) {</b>
+<b class="nc"><i>155</i>&nbsp;                            ce.addEdit(new UndoableInsertEntry(database, entry.get(), panel));</b>
+<i>156</i>&nbsp;                        }
+<i>157</i>&nbsp;                    }
+<i>158</i>&nbsp;                }
+<i>159</i>&nbsp;            }
+<i>160</i>&nbsp;
+<b class="nc"><i>161</i>&nbsp;            if (changeListener != null) {</b>
+<b class="nc"><i>162</i>&nbsp;                changeListener.stateChanged(new ChangeEvent(this));</b>
+<i>163</i>&nbsp;            }
+<b class="nc"><i>164</i>&nbsp;        }</b>
+<i>165</i>&nbsp;
+<b class="nc"><i>166</i>&nbsp;        if ((count &gt; 0) &amp;&amp; (panel != null)) {</b>
+<b class="nc"><i>167</i>&nbsp;            ce.end();</b>
+<b class="nc"><i>168</i>&nbsp;            panel.getUndoManager().addEdit(ce);</b>
+<i>169</i>&nbsp;        }
+<b class="nc"><i>170</i>&nbsp;        return count;</b>
+<i>171</i>&nbsp;
+<i>172</i>&nbsp;    }
+<i>173</i>&nbsp;
+<i>174</i>&nbsp;    /**
+<i>175</i>&nbsp;     * Returns a {@link FileFilter} instance which will accept all files, for
+<i>176</i>&nbsp;     * which a {@link EntryFromFileCreator} exists, that accepts the files. &lt;br&gt;
+<i>177</i>&nbsp;     * &lt;br&gt;
+<i>178</i>&nbsp;     * This {@link FileFilter} will be displayed in the GUI as
+<i>179</i>&nbsp;     * &quot;All supported files&quot;.
+<i>180</i>&nbsp;     *
+<i>181</i>&nbsp;     * @return A {@link FileFilter} that accepts all files for which creators
+<i>182</i>&nbsp;     *         exist.
+<i>183</i>&nbsp;     */
+<i>184</i>&nbsp;    private FileFilter getFileFilter() {
+<b class="nc"><i>185</i>&nbsp;        return new FileFilter() {</b>
+<i>186</i>&nbsp;
+<i>187</i>&nbsp;            /**
+<i>188</i>&nbsp;             * Accepts all files, which are accepted by any known creator.
+<i>189</i>&nbsp;             */
+<i>190</i>&nbsp;            @Override
+<i>191</i>&nbsp;            public boolean accept(File file) {
+<b class="nc"><i>192</i>&nbsp;                for (EntryFromFileCreator creator : entryCreators) {</b>
+<b class="nc"><i>193</i>&nbsp;                    if (creator.accept(file)) {</b>
+<b class="nc"><i>194</i>&nbsp;                        return true;</b>
+<i>195</i>&nbsp;                    }
+<b class="nc"><i>196</i>&nbsp;                }</b>
+<b class="nc"><i>197</i>&nbsp;                return false;</b>
+<i>198</i>&nbsp;            }
+<i>199</i>&nbsp;
+<i>200</i>&nbsp;            @Override
+<i>201</i>&nbsp;            public String toString() {
+<b class="nc"><i>202</i>&nbsp;                return Localization.lang(&quot;All external files&quot;);</b>
+<i>203</i>&nbsp;            }
+<i>204</i>&nbsp;        };
+<i>205</i>&nbsp;    }
+<i>206</i>&nbsp;
+<i>207</i>&nbsp;    /**
+<i>208</i>&nbsp;     * Returns a list of all {@link FileFilter} instances (i.e.
+<i>209</i>&nbsp;     * {@link EntryFromFileCreator}, plus the file filter that comes with the
+<i>210</i>&nbsp;     * {@link #getFileFilter()} method.
+<i>211</i>&nbsp;     *
+<i>212</i>&nbsp;     * @return A List of all known possible file filters.
+<i>213</i>&nbsp;     */
+<i>214</i>&nbsp;    public List&lt;FileFilter&gt; getFileFilterList() {
+<i>215</i>&nbsp;
+<b class="nc"><i>216</i>&nbsp;        List&lt;FileFilter&gt; filters = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>217</i>&nbsp;        filters.add(getFileFilter());</b>
+<b class="nc"><i>218</i>&nbsp;        for (FileFilter creator : entryCreators) {</b>
+<b class="nc"><i>219</i>&nbsp;            filters.add(creator);</b>
+<b class="nc"><i>220</i>&nbsp;        }</b>
+<b class="nc"><i>221</i>&nbsp;        return filters;</b>
+<i>222</i>&nbsp;    }
+<i>223</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,306 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: IEEETranEntryTypes</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.model.entry</a> ]
+</div>
+
+<h1>Coverage Summary for Class: IEEETranEntryTypes (net.sf.jabref.model.entry)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">IEEETranEntryTypes</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 8)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">IEEETranEntryTypes$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">IEEETranEntryTypes$2</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">IEEETranEntryTypes$3</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">IEEETranEntryTypes$4</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 6)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">IEEETranEntryTypes$5</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 32)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.model.entry;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.Arrays;
+<i>4</i>&nbsp;import java.util.List;
+<i>5</i>&nbsp;import java.util.Optional;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;/**
+<i>8</i>&nbsp; * This class represents all supported IEEETran entry types.
+<i>9</i>&nbsp; *
+<i>10</i>&nbsp; * @see http://ctan.sharelatex.com/tex-archive/macros/latex/contrib/IEEEtran/bibtex/IEEEtran_bst_HOWTO.pdf
+<i>11</i>&nbsp; * &lt;p&gt;
+<i>12</i>&nbsp; * Electronic, IEEETranBSTCTL, Periodical, Patent, Standard
+<i>13</i>&nbsp; */
+<b class="nc"><i>14</i>&nbsp;public class IEEETranEntryTypes {</b>
+<i>15</i>&nbsp;    /**
+<i>16</i>&nbsp;     * Electronic entry type for internet references
+<i>17</i>&nbsp;     * &lt;p&gt;
+<i>18</i>&nbsp;     * Required fields:
+<i>19</i>&nbsp;     * Optional fields: author, month, year, title, language, howpublished, organization, address, note, url
+<i>20</i>&nbsp;     */
+<b class="nc"><i>21</i>&nbsp;    public static final EntryType ELECTRONIC = new BibtexEntryType() {</b>
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;        {
+<b class="nc"><i>24</i>&nbsp;            addAllOptional(FieldName.AUTHOR, FieldName.MONTH, FieldName.YEAR, FieldName.TITLE, FieldName.LANGUAGE,</b>
+<i>25</i>&nbsp;                    FieldName.HOWPUBLISHED, FieldName.ORGANIZATION, FieldName.ADDRESS, FieldName.NOTE, FieldName.URL);
+<b class="nc"><i>26</i>&nbsp;        }</b>
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;        @Override
+<i>29</i>&nbsp;        public String getName() {
+<b class="nc"><i>30</i>&nbsp;            return &quot;Electronic&quot;;</b>
+<i>31</i>&nbsp;        }
+<i>32</i>&nbsp;    };
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;    /**
+<i>35</i>&nbsp;     * Special entry type that can be used to externally control some aspects of the bibliography style.
+<i>36</i>&nbsp;     */
+<b class="nc"><i>37</i>&nbsp;    public static final EntryType IEEETRANBSTCTL = new BibtexEntryType() {</b>
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;        {
+<b class="nc"><i>40</i>&nbsp;            addAllOptional(FieldName.CTLUSE_ARTICLE_NUMBER, FieldName.CTLUSE_PAPER, FieldName.CTLUSE_FORCED_ETAL,</b>
+<i>41</i>&nbsp;                    FieldName.CTLUSE_URL, FieldName.CTLMAX_NAMES_FORCED_ETAL, FieldName.CTLNAMES_SHOW_ETAL,
+<i>42</i>&nbsp;                    FieldName.CTLUSE_ALT_SPACING, FieldName.CTLALT_STRETCH_FACTOR, FieldName.CTLDASH_REPEATED_NAMES,
+<i>43</i>&nbsp;                    FieldName.CTLNAME_FORMAT_STRING, FieldName.CTLNAME_LATEX_CMD, FieldName.CTLNAME_URL_PREFIX);
+<b class="nc"><i>44</i>&nbsp;        }</b>
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;        @Override
+<i>47</i>&nbsp;        public String getName() {
+<b class="nc"><i>48</i>&nbsp;            return &quot;IEEEtranBSTCTL&quot;;</b>
+<i>49</i>&nbsp;        }
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;    };
+<i>52</i>&nbsp;
+<i>53</i>&nbsp;    /**
+<i>54</i>&nbsp;     * The periodical entry type is used for journals and magazines.
+<i>55</i>&nbsp;     * &lt;p&gt;
+<i>56</i>&nbsp;     * Required fields: title, year
+<i>57</i>&nbsp;     * Optional fields: editor, language, series, volume, number, organization, month, note, url
+<i>58</i>&nbsp;     */
+<b class="nc"><i>59</i>&nbsp;    public static final EntryType PERIODICAL = new BibtexEntryType() {</b>
+<i>60</i>&nbsp;
+<i>61</i>&nbsp;        {
+<b class="nc"><i>62</i>&nbsp;            addAllRequired(FieldName.TITLE, FieldName.YEAR);</b>
+<b class="nc"><i>63</i>&nbsp;            addAllOptional(FieldName.EDITOR, FieldName.LANGUAGE, FieldName.SERIES, FieldName.VOLUME, FieldName.NUMBER,</b>
+<i>64</i>&nbsp;                    FieldName.ORGANIZATION, FieldName.MONTH, FieldName.NOTE, FieldName.URL);
+<b class="nc"><i>65</i>&nbsp;        }</b>
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;        @Override
+<i>68</i>&nbsp;        public String getName() {
+<b class="nc"><i>69</i>&nbsp;            return &quot;Periodical&quot;;</b>
+<i>70</i>&nbsp;        }
+<i>71</i>&nbsp;    };
+<i>72</i>&nbsp;
+<i>73</i>&nbsp;    /**
+<i>74</i>&nbsp;     * Entry type for patents.
+<i>75</i>&nbsp;     * &lt;p&gt;
+<i>76</i>&nbsp;     * Required fields: nationality, number, year or yearfiled
+<i>77</i>&nbsp;     * Optional fields: author, title, language, assignee, address, type, number, day, dayfiled, month, monthfiled, note, url
+<i>78</i>&nbsp;     */
+<b class="nc"><i>79</i>&nbsp;    public static final EntryType PATENT = new BibtexEntryType() {</b>
+<i>80</i>&nbsp;
+<i>81</i>&nbsp;        {
+<b class="nc"><i>82</i>&nbsp;            addAllRequired(FieldName.NATIONALITY, FieldName.NUMBER,</b>
+<b class="nc"><i>83</i>&nbsp;                    FieldName.orFields(FieldName.YEAR, FieldName.YEARFILED));</b>
+<b class="nc"><i>84</i>&nbsp;            addAllOptional(FieldName.AUTHOR, FieldName.TITLE, FieldName.LANGUAGE, FieldName.ASSIGNEE, FieldName.ADDRESS,</b>
+<i>85</i>&nbsp;                    FieldName.TYPE, FieldName.NUMBER, FieldName.DAY, FieldName.DAYFILED, FieldName.MONTH,
+<i>86</i>&nbsp;                    FieldName.MONTHFILED, FieldName.NOTE, FieldName.URL);
+<b class="nc"><i>87</i>&nbsp;        }</b>
+<i>88</i>&nbsp;
+<i>89</i>&nbsp;        @Override
+<i>90</i>&nbsp;        public String getName() {
+<b class="nc"><i>91</i>&nbsp;            return &quot;Patent&quot;;</b>
+<i>92</i>&nbsp;        }
+<i>93</i>&nbsp;    };
+<i>94</i>&nbsp;
+<i>95</i>&nbsp;    /**
+<i>96</i>&nbsp;     * The standard entry type is used for proposed or formally published standards.
+<i>97</i>&nbsp;     * &lt;p&gt;
+<i>98</i>&nbsp;     * Required fields: title, organization or institution
+<i>99</i>&nbsp;     * Optional fields: author, language, howpublished, type, number, revision, address, month, year, note, url
+<i>100</i>&nbsp;     */
+<b class="nc"><i>101</i>&nbsp;    public static final EntryType STANDARD = new BibtexEntryType() {</b>
+<i>102</i>&nbsp;
+<i>103</i>&nbsp;        {
+<b class="nc"><i>104</i>&nbsp;            addAllRequired(FieldName.TITLE, FieldName.orFields(FieldName.ORGANIZATION, FieldName.INSTITUTION));</b>
+<b class="nc"><i>105</i>&nbsp;            addAllOptional(FieldName.AUTHOR, FieldName.LANGUAGE, FieldName.HOWPUBLISHED, FieldName.TYPE,</b>
+<i>106</i>&nbsp;                    FieldName.NUMBER, FieldName.REVISION, FieldName.ADDRESS, FieldName.MONTH, FieldName.YEAR,
+<i>107</i>&nbsp;                    FieldName.NOTE, FieldName.URL);
+<b class="nc"><i>108</i>&nbsp;        }</b>
+<i>109</i>&nbsp;
+<i>110</i>&nbsp;        @Override
+<i>111</i>&nbsp;        public String getName() {
+<b class="nc"><i>112</i>&nbsp;            return &quot;Standard&quot;;</b>
+<i>113</i>&nbsp;        }
+<i>114</i>&nbsp;    };
+<i>115</i>&nbsp;
+<b class="nc"><i>116</i>&nbsp;    public static final List&lt;EntryType&gt; ALL = Arrays.asList(ELECTRONIC, IEEETRANBSTCTL, PERIODICAL, PATENT, STANDARD);</b>
+<i>117</i>&nbsp;
+<i>118</i>&nbsp;    public static Optional&lt;EntryType&gt; getType(String name) {
+<b class="nc"><i>119</i>&nbsp;        return ALL.stream().filter(e -&gt; e.getName().equalsIgnoreCase(name)).findFirst();</b>
+<i>120</i>&nbsp;    }
+<i>121</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

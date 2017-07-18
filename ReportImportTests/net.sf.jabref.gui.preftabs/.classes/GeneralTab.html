@@ -1,0 +1,373 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: GeneralTab</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.preftabs</a> ]
+</div>
+
+<h1>Coverage Summary for Class: GeneralTab (net.sf.jabref.gui.preftabs)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GeneralTab</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 142)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">GeneralTab$DefaultBibModeRenderer</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 146)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.preftabs;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.BorderLayout;
+<i>4</i>&nbsp;import java.awt.Component;
+<i>5</i>&nbsp;import java.nio.charset.Charset;
+<i>6</i>&nbsp;import java.time.format.DateTimeFormatter;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import javax.swing.BorderFactory;
+<i>9</i>&nbsp;import javax.swing.DefaultComboBoxModel;
+<i>10</i>&nbsp;import javax.swing.DefaultListCellRenderer;
+<i>11</i>&nbsp;import javax.swing.JButton;
+<i>12</i>&nbsp;import javax.swing.JCheckBox;
+<i>13</i>&nbsp;import javax.swing.JComboBox;
+<i>14</i>&nbsp;import javax.swing.JLabel;
+<i>15</i>&nbsp;import javax.swing.JList;
+<i>16</i>&nbsp;import javax.swing.JOptionPane;
+<i>17</i>&nbsp;import javax.swing.JPanel;
+<i>18</i>&nbsp;import javax.swing.JTextField;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;import net.sf.jabref.Globals;
+<i>21</i>&nbsp;import net.sf.jabref.gui.help.HelpAction;
+<i>22</i>&nbsp;import net.sf.jabref.logic.help.HelpFile;
+<i>23</i>&nbsp;import net.sf.jabref.logic.l10n.Encodings;
+<i>24</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>25</i>&nbsp;import net.sf.jabref.model.database.BibDatabaseMode;
+<i>26</i>&nbsp;import net.sf.jabref.model.entry.InternalBibtexFields;
+<i>27</i>&nbsp;import net.sf.jabref.preferences.JabRefPreferences;
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;import com.jgoodies.forms.builder.DefaultFormBuilder;
+<i>30</i>&nbsp;import com.jgoodies.forms.layout.FormLayout;
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;import static net.sf.jabref.logic.l10n.Languages.LANGUAGES;
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;class GeneralTab extends JPanel implements PrefsTab {
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;    private final JCheckBox useOwner;
+<i>37</i>&nbsp;    private final JCheckBox overwriteOwner;
+<i>38</i>&nbsp;    private final JCheckBox enforceLegalKeys;
+<i>39</i>&nbsp;    private final JCheckBox confirmDelete;
+<i>40</i>&nbsp;    private final JCheckBox memoryStick;
+<i>41</i>&nbsp;    private final JCheckBox inspectionWarnDupli;
+<i>42</i>&nbsp;    private final JCheckBox useTimeStamp;
+<i>43</i>&nbsp;    private final JCheckBox updateTimeStamp;
+<i>44</i>&nbsp;    private final JCheckBox overwriteTimeStamp;
+<i>45</i>&nbsp;    private final JCheckBox markImportedEntries;
+<i>46</i>&nbsp;    private final JCheckBox unmarkAllEntriesBeforeImporting;
+<i>47</i>&nbsp;    private final JTextField defOwnerField;
+<i>48</i>&nbsp;
+<i>49</i>&nbsp;    private final JTextField timeStampFormat;
+<i>50</i>&nbsp;    private final JTextField timeStampField;
+<i>51</i>&nbsp;    private final JabRefPreferences prefs;
+<b class="nc"><i>52</i>&nbsp;    private final JComboBox&lt;String&gt; language = new JComboBox&lt;&gt;(LANGUAGES.keySet().toArray(new String[LANGUAGES.keySet().size()]));</b>
+<i>53</i>&nbsp;    private final JComboBox&lt;Charset&gt; encodings;
+<i>54</i>&nbsp;    private final JComboBox&lt;BibDatabaseMode&gt; biblatexMode;
+<i>55</i>&nbsp;
+<b class="nc"><i>56</i>&nbsp;    public class DefaultBibModeRenderer extends DefaultListCellRenderer {</b>
+<i>57</i>&nbsp;        @Override
+<i>58</i>&nbsp;        public Component getListCellRendererComponent(JList&lt;?&gt; list, Object value, int index, boolean isSelected,
+<i>59</i>&nbsp;                boolean cellHasFocus) {
+<b class="nc"><i>60</i>&nbsp;            super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);</b>
+<b class="nc"><i>61</i>&nbsp;            setText(((BibDatabaseMode) value).getFormattedName());</b>
+<b class="nc"><i>62</i>&nbsp;            return this;</b>
+<i>63</i>&nbsp;        }
+<i>64</i>&nbsp;    }
+<i>65</i>&nbsp;
+<i>66</i>&nbsp;
+<b class="nc"><i>67</i>&nbsp;    public GeneralTab(JabRefPreferences prefs) {</b>
+<b class="nc"><i>68</i>&nbsp;        this.prefs = prefs;</b>
+<b class="nc"><i>69</i>&nbsp;        setLayout(new BorderLayout());</b>
+<i>70</i>&nbsp;
+<b class="nc"><i>71</i>&nbsp;        biblatexMode = new JComboBox&lt;&gt;(BibDatabaseMode.values());</b>
+<b class="nc"><i>72</i>&nbsp;        biblatexMode.setRenderer(new DefaultBibModeRenderer());</b>
+<i>73</i>&nbsp;
+<b class="nc"><i>74</i>&nbsp;        memoryStick = new JCheckBox(Localization.lang(&quot;Load and Save preferences from/to jabref.xml on start-up (memory stick mode)&quot;));</b>
+<b class="nc"><i>75</i>&nbsp;        useOwner = new JCheckBox(Localization.lang(&quot;Mark new entries with owner name&quot;) + &#39;:&#39;);</b>
+<b class="nc"><i>76</i>&nbsp;        updateTimeStamp = new JCheckBox(Localization.lang(&quot;Update timestamp on modification&quot;));</b>
+<b class="nc"><i>77</i>&nbsp;        useTimeStamp = new JCheckBox(Localization.lang(&quot;Mark new entries with addition date&quot;) + &quot;. &quot;</b>
+<b class="nc"><i>78</i>&nbsp;                + Localization.lang(&quot;Date format&quot;) + &#39;:&#39;);</b>
+<b class="nc"><i>79</i>&nbsp;        useTimeStamp.addChangeListener(e -&gt; updateTimeStamp.setEnabled(useTimeStamp.isSelected()));</b>
+<b class="nc"><i>80</i>&nbsp;        overwriteOwner = new JCheckBox(Localization.lang(&quot;Overwrite&quot;));</b>
+<b class="nc"><i>81</i>&nbsp;        overwriteTimeStamp = new JCheckBox(Localization.lang(&quot;Overwrite&quot;));</b>
+<b class="nc"><i>82</i>&nbsp;        overwriteOwner.setToolTipText(Localization.lang(&quot;If a pasted or imported entry already has &quot;</b>
+<i>83</i>&nbsp;                + &quot;the field set, overwrite.&quot;));
+<b class="nc"><i>84</i>&nbsp;        overwriteTimeStamp.setToolTipText(Localization.lang(&quot;If a pasted or imported entry already has &quot;</b>
+<i>85</i>&nbsp;                + &quot;the field set, overwrite.&quot;));
+<b class="nc"><i>86</i>&nbsp;        enforceLegalKeys = new JCheckBox(Localization.lang(&quot;Enforce legal characters in BibTeX keys&quot;));</b>
+<b class="nc"><i>87</i>&nbsp;        confirmDelete = new JCheckBox(Localization.lang(&quot;Show confirmation dialog when deleting entries&quot;));</b>
+<i>88</i>&nbsp;
+<b class="nc"><i>89</i>&nbsp;        markImportedEntries = new JCheckBox(Localization.lang(&quot;Mark entries imported into an existing database&quot;));</b>
+<b class="nc"><i>90</i>&nbsp;        unmarkAllEntriesBeforeImporting = new JCheckBox(Localization.lang(&quot;Unmark all entries before importing new entries into an existing database&quot;));</b>
+<b class="nc"><i>91</i>&nbsp;        defOwnerField = new JTextField();</b>
+<b class="nc"><i>92</i>&nbsp;        timeStampFormat = new JTextField();</b>
+<b class="nc"><i>93</i>&nbsp;        timeStampField = new JTextField();</b>
+<b class="nc"><i>94</i>&nbsp;        inspectionWarnDupli = new JCheckBox(Localization.lang(&quot;Warn about unresolved duplicates when closing inspection window&quot;));</b>
+<i>95</i>&nbsp;
+<b class="nc"><i>96</i>&nbsp;        encodings = new JComboBox&lt;&gt;();</b>
+<b class="nc"><i>97</i>&nbsp;        encodings.setModel(new DefaultComboBoxModel&lt;&gt;(Encodings.ENCODINGS));</b>
+<i>98</i>&nbsp;
+<b class="nc"><i>99</i>&nbsp;        FormLayout layout = new FormLayout(</b>
+<i>100</i>&nbsp;                &quot;8dlu, 1dlu, left:pref:grow, 4dlu, fill:pref, 4dlu, fill:pref, 4dlu, left:pref, 1dlu, left:pref, 4dlu, left:pref&quot;,
+<i>101</i>&nbsp;                &quot;&quot;);
+<b class="nc"><i>102</i>&nbsp;        DefaultFormBuilder builder = new DefaultFormBuilder(layout);</b>
+<i>103</i>&nbsp;
+<b class="nc"><i>104</i>&nbsp;        builder.appendSeparator(Localization.lang(&quot;General&quot;));</b>
+<b class="nc"><i>105</i>&nbsp;        builder.nextLine();</b>
+<b class="nc"><i>106</i>&nbsp;        builder.append(inspectionWarnDupli, 13);</b>
+<b class="nc"><i>107</i>&nbsp;        builder.nextLine();</b>
+<b class="nc"><i>108</i>&nbsp;        builder.append(confirmDelete, 13);</b>
+<b class="nc"><i>109</i>&nbsp;        builder.nextLine();</b>
+<b class="nc"><i>110</i>&nbsp;        builder.append(enforceLegalKeys, 13);</b>
+<b class="nc"><i>111</i>&nbsp;        builder.nextLine();</b>
+<b class="nc"><i>112</i>&nbsp;        builder.append(memoryStick, 13);</b>
+<i>113</i>&nbsp;
+<i>114</i>&nbsp;        // Create a new panel with its own FormLayout for the last items:
+<b class="nc"><i>115</i>&nbsp;        builder.append(useOwner, 3);</b>
+<b class="nc"><i>116</i>&nbsp;        builder.append(defOwnerField);</b>
+<b class="nc"><i>117</i>&nbsp;        builder.append(overwriteOwner);</b>
+<b class="nc"><i>118</i>&nbsp;        builder.append(new JPanel(), 3);</b>
+<i>119</i>&nbsp;
+<b class="nc"><i>120</i>&nbsp;        JButton help = new HelpAction(HelpFile.OWNER).getHelpButton();</b>
+<b class="nc"><i>121</i>&nbsp;        builder.append(help);</b>
+<b class="nc"><i>122</i>&nbsp;        builder.nextLine();</b>
+<i>123</i>&nbsp;
+<b class="nc"><i>124</i>&nbsp;        builder.append(useTimeStamp, 3);</b>
+<b class="nc"><i>125</i>&nbsp;        builder.append(timeStampFormat);</b>
+<b class="nc"><i>126</i>&nbsp;        builder.append(overwriteTimeStamp);</b>
+<b class="nc"><i>127</i>&nbsp;        builder.append(Localization.lang(&quot;Field name&quot;) + &#39;:&#39;);</b>
+<b class="nc"><i>128</i>&nbsp;        builder.append(timeStampField);</b>
+<i>129</i>&nbsp;
+<b class="nc"><i>130</i>&nbsp;        help = new HelpAction(HelpFile.TIMESTAMP).getHelpButton();</b>
+<b class="nc"><i>131</i>&nbsp;        builder.append(help);</b>
+<b class="nc"><i>132</i>&nbsp;        builder.nextLine();</b>
+<i>133</i>&nbsp;
+<b class="nc"><i>134</i>&nbsp;        builder.append(new JPanel());</b>
+<b class="nc"><i>135</i>&nbsp;        builder.append(updateTimeStamp, 11);</b>
+<b class="nc"><i>136</i>&nbsp;        builder.nextLine();</b>
+<i>137</i>&nbsp;
+<b class="nc"><i>138</i>&nbsp;        builder.append(markImportedEntries, 13);</b>
+<b class="nc"><i>139</i>&nbsp;        builder.nextLine();</b>
+<b class="nc"><i>140</i>&nbsp;        builder.append(unmarkAllEntriesBeforeImporting, 13);</b>
+<b class="nc"><i>141</i>&nbsp;        builder.nextLine();</b>
+<i>142</i>&nbsp;        JLabel lab;
+<b class="nc"><i>143</i>&nbsp;        lab = new JLabel(Localization.lang(&quot;Language&quot;) + &#39;:&#39;);</b>
+<b class="nc"><i>144</i>&nbsp;        builder.append(lab, 3);</b>
+<b class="nc"><i>145</i>&nbsp;        builder.append(language);</b>
+<b class="nc"><i>146</i>&nbsp;        builder.nextLine();</b>
+<b class="nc"><i>147</i>&nbsp;        lab = new JLabel(Localization.lang(&quot;Default encoding&quot;) + &#39;:&#39;);</b>
+<b class="nc"><i>148</i>&nbsp;        builder.append(lab, 3);</b>
+<b class="nc"><i>149</i>&nbsp;        builder.append(encodings);</b>
+<i>150</i>&nbsp;
+<b class="nc"><i>151</i>&nbsp;        builder.nextLine();</b>
+<b class="nc"><i>152</i>&nbsp;        builder.appendSeparator(Localization.lang(&quot;Default bibliography mode&quot;));</b>
+<b class="nc"><i>153</i>&nbsp;        builder.append(new JPanel());</b>
+<b class="nc"><i>154</i>&nbsp;        builder.append(biblatexMode);</b>
+<i>155</i>&nbsp;
+<b class="nc"><i>156</i>&nbsp;        JPanel pan = builder.getPanel();</b>
+<b class="nc"><i>157</i>&nbsp;        pan.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));</b>
+<b class="nc"><i>158</i>&nbsp;        add(pan, BorderLayout.CENTER);</b>
+<i>159</i>&nbsp;
+<b class="nc"><i>160</i>&nbsp;    }</b>
+<i>161</i>&nbsp;
+<i>162</i>&nbsp;    @Override
+<i>163</i>&nbsp;    public void setValues() {
+<b class="nc"><i>164</i>&nbsp;        useOwner.setSelected(prefs.getBoolean(JabRefPreferences.USE_OWNER));</b>
+<b class="nc"><i>165</i>&nbsp;        overwriteOwner.setSelected(prefs.getBoolean(JabRefPreferences.OVERWRITE_OWNER));</b>
+<b class="nc"><i>166</i>&nbsp;        useTimeStamp.setSelected(prefs.getBoolean(JabRefPreferences.USE_TIME_STAMP));</b>
+<b class="nc"><i>167</i>&nbsp;        overwriteTimeStamp.setSelected(prefs.getBoolean(JabRefPreferences.OVERWRITE_TIME_STAMP));</b>
+<b class="nc"><i>168</i>&nbsp;        updateTimeStamp.setSelected(prefs.getBoolean(JabRefPreferences.UPDATE_TIMESTAMP));</b>
+<b class="nc"><i>169</i>&nbsp;        updateTimeStamp.setEnabled(useTimeStamp.isSelected());</b>
+<b class="nc"><i>170</i>&nbsp;        enforceLegalKeys.setSelected(prefs.getBoolean(JabRefPreferences.ENFORCE_LEGAL_BIBTEX_KEY));</b>
+<b class="nc"><i>171</i>&nbsp;        memoryStick.setSelected(prefs.getBoolean(JabRefPreferences.MEMORY_STICK_MODE));</b>
+<b class="nc"><i>172</i>&nbsp;        confirmDelete.setSelected(prefs.getBoolean(JabRefPreferences.CONFIRM_DELETE));</b>
+<b class="nc"><i>173</i>&nbsp;        defOwnerField.setText(prefs.get(JabRefPreferences.DEFAULT_OWNER));</b>
+<b class="nc"><i>174</i>&nbsp;        timeStampFormat.setText(prefs.get(JabRefPreferences.TIME_STAMP_FORMAT));</b>
+<b class="nc"><i>175</i>&nbsp;        timeStampField.setText(prefs.get(JabRefPreferences.TIME_STAMP_FIELD));</b>
+<b class="nc"><i>176</i>&nbsp;        inspectionWarnDupli.setSelected(prefs.getBoolean(JabRefPreferences.WARN_ABOUT_DUPLICATES_IN_INSPECTION));</b>
+<b class="nc"><i>177</i>&nbsp;        markImportedEntries.setSelected(prefs.getBoolean(JabRefPreferences.MARK_IMPORTED_ENTRIES));</b>
+<b class="nc"><i>178</i>&nbsp;        unmarkAllEntriesBeforeImporting.setSelected(prefs.getBoolean(JabRefPreferences.UNMARK_ALL_ENTRIES_BEFORE_IMPORTING));</b>
+<b class="nc"><i>179</i>&nbsp;        if(Globals.prefs.getBoolean(JabRefPreferences.BIBLATEX_DEFAULT_MODE)) {</b>
+<b class="nc"><i>180</i>&nbsp;            biblatexMode.setSelectedItem(BibDatabaseMode.BIBLATEX);</b>
+<i>181</i>&nbsp;        } else {
+<b class="nc"><i>182</i>&nbsp;            biblatexMode.setSelectedItem(BibDatabaseMode.BIBTEX);</b>
+<i>183</i>&nbsp;        }
+<i>184</i>&nbsp;
+<b class="nc"><i>185</i>&nbsp;        Charset enc = Globals.prefs.getDefaultEncoding();</b>
+<b class="nc"><i>186</i>&nbsp;        encodings.setSelectedItem(enc);</b>
+<i>187</i>&nbsp;
+<b class="nc"><i>188</i>&nbsp;        String oldLan = prefs.get(JabRefPreferences.LANGUAGE);</b>
+<i>189</i>&nbsp;
+<i>190</i>&nbsp;        // Language choice
+<b class="nc"><i>191</i>&nbsp;        int ilk = 0;</b>
+<b class="nc"><i>192</i>&nbsp;        for (String lan : LANGUAGES.values()) {</b>
+<b class="nc"><i>193</i>&nbsp;            if (lan.equals(oldLan)) {</b>
+<b class="nc"><i>194</i>&nbsp;                language.setSelectedIndex(ilk);</b>
+<i>195</i>&nbsp;            }
+<b class="nc"><i>196</i>&nbsp;            ilk++;</b>
+<b class="nc"><i>197</i>&nbsp;        }</b>
+<i>198</i>&nbsp;
+<b class="nc"><i>199</i>&nbsp;    }</b>
+<i>200</i>&nbsp;
+<i>201</i>&nbsp;    @Override
+<i>202</i>&nbsp;    public void storeSettings() {
+<b class="nc"><i>203</i>&nbsp;        prefs.putBoolean(JabRefPreferences.USE_OWNER, useOwner.isSelected());</b>
+<b class="nc"><i>204</i>&nbsp;        prefs.putBoolean(JabRefPreferences.OVERWRITE_OWNER, overwriteOwner.isSelected());</b>
+<b class="nc"><i>205</i>&nbsp;        prefs.putBoolean(JabRefPreferences.USE_TIME_STAMP, useTimeStamp.isSelected());</b>
+<b class="nc"><i>206</i>&nbsp;        prefs.putBoolean(JabRefPreferences.OVERWRITE_TIME_STAMP, overwriteTimeStamp.isSelected());</b>
+<b class="nc"><i>207</i>&nbsp;        prefs.putBoolean(JabRefPreferences.UPDATE_TIMESTAMP, updateTimeStamp.isSelected());</b>
+<b class="nc"><i>208</i>&nbsp;        prefs.putBoolean(JabRefPreferences.ENFORCE_LEGAL_BIBTEX_KEY, enforceLegalKeys.isSelected());</b>
+<b class="nc"><i>209</i>&nbsp;        if (prefs.getBoolean(JabRefPreferences.MEMORY_STICK_MODE) &amp;&amp; !memoryStick.isSelected()) {</b>
+<b class="nc"><i>210</i>&nbsp;            JOptionPane.showMessageDialog(null, Localization.lang(&quot;To disable the memory stick mode&quot;</b>
+<i>211</i>&nbsp;                            + &quot; rename or remove the jabref.xml file in the same folder as JabRef.&quot;),
+<b class="nc"><i>212</i>&nbsp;                    Localization.lang(&quot;Memory stick mode&quot;),</b>
+<i>213</i>&nbsp;                    JOptionPane.INFORMATION_MESSAGE);
+<i>214</i>&nbsp;        }
+<b class="nc"><i>215</i>&nbsp;        prefs.putBoolean(JabRefPreferences.MEMORY_STICK_MODE, memoryStick.isSelected());</b>
+<b class="nc"><i>216</i>&nbsp;        prefs.putBoolean(JabRefPreferences.CONFIRM_DELETE, confirmDelete.isSelected());</b>
+<b class="nc"><i>217</i>&nbsp;        prefs.putBoolean(JabRefPreferences.WARN_ABOUT_DUPLICATES_IN_INSPECTION, inspectionWarnDupli.isSelected());</b>
+<b class="nc"><i>218</i>&nbsp;        String owner = defOwnerField.getText().trim();</b>
+<b class="nc"><i>219</i>&nbsp;        prefs.put(JabRefPreferences.DEFAULT_OWNER, owner);</b>
+<b class="nc"><i>220</i>&nbsp;        prefs.put(JabRefPreferences.TIME_STAMP_FORMAT, timeStampFormat.getText().trim());</b>
+<b class="nc"><i>221</i>&nbsp;        prefs.put(JabRefPreferences.TIME_STAMP_FIELD, timeStampField.getText().trim());</b>
+<i>222</i>&nbsp;        // Update name of the time stamp field based on preferences
+<b class="nc"><i>223</i>&nbsp;        InternalBibtexFields.updateTimeStampField(Globals.prefs.get(JabRefPreferences.TIME_STAMP_FIELD));</b>
+<b class="nc"><i>224</i>&nbsp;        prefs.setDefaultEncoding((Charset) encodings.getSelectedItem());</b>
+<b class="nc"><i>225</i>&nbsp;        prefs.putBoolean(JabRefPreferences.MARK_IMPORTED_ENTRIES, markImportedEntries.isSelected());</b>
+<b class="nc"><i>226</i>&nbsp;        prefs.putBoolean(JabRefPreferences.UNMARK_ALL_ENTRIES_BEFORE_IMPORTING, unmarkAllEntriesBeforeImporting.isSelected());</b>
+<b class="nc"><i>227</i>&nbsp;        prefs.putBoolean(JabRefPreferences.BIBLATEX_DEFAULT_MODE, biblatexMode.getSelectedItem() == BibDatabaseMode.BIBLATEX);</b>
+<i>228</i>&nbsp;
+<b class="nc"><i>229</i>&nbsp;        if (!LANGUAGES.get(language.getSelectedItem()).equals(prefs.get(JabRefPreferences.LANGUAGE))) {</b>
+<b class="nc"><i>230</i>&nbsp;            prefs.put(JabRefPreferences.LANGUAGE, LANGUAGES.get(language.getSelectedItem()));</b>
+<b class="nc"><i>231</i>&nbsp;            Localization.setLanguage(LANGUAGES.get(language.getSelectedItem()));</b>
+<i>232</i>&nbsp;            // Update any defaults that might be language dependent:
+<b class="nc"><i>233</i>&nbsp;            Globals.prefs.setLanguageDependentDefaultValues();</b>
+<i>234</i>&nbsp;            // Warn about restart needed:
+<b class="nc"><i>235</i>&nbsp;            JOptionPane.showMessageDialog(null,</b>
+<b class="nc"><i>236</i>&nbsp;                    Localization.lang(&quot;You have changed the language setting.&quot;)</b>
+<b class="nc"><i>237</i>&nbsp;                            .concat(&quot; &quot;)</b>
+<b class="nc"><i>238</i>&nbsp;                            .concat(Localization.lang(&quot;You must restart JabRef for this to come into effect.&quot;)),</b>
+<b class="nc"><i>239</i>&nbsp;                    Localization.lang(&quot;Changed language settings&quot;),</b>
+<i>240</i>&nbsp;                    JOptionPane.WARNING_MESSAGE);
+<i>241</i>&nbsp;        }
+<b class="nc"><i>242</i>&nbsp;    }</b>
+<i>243</i>&nbsp;
+<i>244</i>&nbsp;    @Override
+<i>245</i>&nbsp;    public boolean validateSettings() {
+<i>246</i>&nbsp;        try {
+<i>247</i>&nbsp;            // Test if date format is legal:
+<b class="nc"><i>248</i>&nbsp;            DateTimeFormatter.ofPattern(timeStampFormat.getText());</b>
+<i>249</i>&nbsp;
+<b class="nc"><i>250</i>&nbsp;        } catch (IllegalArgumentException ex2) {</b>
+<b class="nc"><i>251</i>&nbsp;            JOptionPane.showMessageDialog</b>
+<b class="nc"><i>252</i>&nbsp;                    (null, Localization.lang(&quot;The chosen date format for new entries is not valid&quot;),</b>
+<b class="nc"><i>253</i>&nbsp;                            Localization.lang(&quot;Invalid date format&quot;),</b>
+<i>254</i>&nbsp;                            JOptionPane.ERROR_MESSAGE);
+<b class="nc"><i>255</i>&nbsp;            return false;</b>
+<b class="nc"><i>256</i>&nbsp;        }</b>
+<b class="nc"><i>257</i>&nbsp;        return true;</b>
+<i>258</i>&nbsp;    }
+<i>259</i>&nbsp;
+<i>260</i>&nbsp;    @Override
+<i>261</i>&nbsp;    public String getTabName() {
+<b class="nc"><i>262</i>&nbsp;        return Localization.lang(&quot;General&quot;);</b>
+<i>263</i>&nbsp;    }
+<i>264</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

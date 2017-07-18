@@ -1,0 +1,206 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: FileBasedLock</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.util.io</a> ]
+</div>
+
+<h1>Coverage Summary for Class: FileBasedLock (net.sf.jabref.logic.util.io)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">FileBasedLock</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 37)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.util.io;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.IOException;
+<i>4</i>&nbsp;import java.nio.file.Files;
+<i>5</i>&nbsp;import java.nio.file.Path;
+<i>6</i>&nbsp;import java.nio.file.attribute.BasicFileAttributes;
+<i>7</i>&nbsp;import java.nio.file.attribute.FileTime;
+<i>8</i>&nbsp;import java.util.Optional;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;import org.apache.commons.logging.Log;
+<i>11</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>12</i>&nbsp;
+<b class="nc"><i>13</i>&nbsp;public class FileBasedLock {</b>
+<b class="nc"><i>14</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(FileBasedLock.class);</b>
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;    private static final String LOCKFILE_SUFFIX = &quot;.lock&quot;;
+<i>17</i>&nbsp;    // default retry count for aquiring file lock
+<i>18</i>&nbsp;    private static final int AQUIRE_LOCK_RETRY = 10;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;    /**
+<i>21</i>&nbsp;     * The age in ms of a lockfile before JabRef will offer to &quot;steal&quot; the locked file.
+<i>22</i>&nbsp;     */
+<i>23</i>&nbsp;    public static final long LOCKFILE_CRITICAL_AGE = 60000;
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;    /**
+<i>26</i>&nbsp;     * This method checks whether there is a lock file for the given file. If
+<i>27</i>&nbsp;     * there is, it waits for 500 ms. This is repeated until the lock is gone
+<i>28</i>&nbsp;     * or we have waited the maximum number of times.
+<i>29</i>&nbsp;     *
+<i>30</i>&nbsp;     * @param file The file to check the lock for.
+<i>31</i>&nbsp;     * @param maxWaitCount The maximum number of times to wait.
+<i>32</i>&nbsp;     * @return true if the lock file is gone, false if it is still there.
+<i>33</i>&nbsp;     */
+<i>34</i>&nbsp;    private static boolean waitForFileLock(Path file, int maxWaitCount) {
+<i>35</i>&nbsp;        // Check if the file is locked by another JabRef user:
+<b class="nc"><i>36</i>&nbsp;        int lockCheckCount = 0;</b>
+<b class="nc"><i>37</i>&nbsp;        while (hasLockFile(file)) {</b>
+<i>38</i>&nbsp;
+<b class="nc"><i>39</i>&nbsp;            if (lockCheckCount++ == maxWaitCount) {</b>
+<b class="nc"><i>40</i>&nbsp;                return false;</b>
+<i>41</i>&nbsp;            }
+<i>42</i>&nbsp;            try {
+<b class="nc"><i>43</i>&nbsp;                Thread.sleep(500);</b>
+<b class="nc"><i>44</i>&nbsp;            } catch (InterruptedException ignored) {</b>
+<i>45</i>&nbsp;                // Ignored
+<b class="nc"><i>46</i>&nbsp;            }</b>
+<i>47</i>&nbsp;        }
+<b class="nc"><i>48</i>&nbsp;        return true;</b>
+<i>49</i>&nbsp;    }
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;    public static boolean waitForFileLock(Path file) {
+<b class="nc"><i>52</i>&nbsp;        return waitForFileLock(file, AQUIRE_LOCK_RETRY);</b>
+<i>53</i>&nbsp;    }
+<i>54</i>&nbsp;
+<i>55</i>&nbsp;    /**
+<i>56</i>&nbsp;     * Check whether a lock file exists for this file.
+<i>57</i>&nbsp;     * @param file The file to check.
+<i>58</i>&nbsp;     * @return true if a lock file exists, false otherwise.
+<i>59</i>&nbsp;     */
+<i>60</i>&nbsp;    public static boolean hasLockFile(Path file) {
+<b class="nc"><i>61</i>&nbsp;        Path lockFile = getLockFilePath(file);</b>
+<b class="nc"><i>62</i>&nbsp;        return Files.exists(lockFile);</b>
+<i>63</i>&nbsp;    }
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;    /**
+<i>66</i>&nbsp;     * Find the lock file&#39;s last modified time, if it has a lock file.
+<i>67</i>&nbsp;     * @param file The file to check.
+<i>68</i>&nbsp;     * @return the last modified time if lock file exists, empty optional otherwise.
+<i>69</i>&nbsp;     */
+<i>70</i>&nbsp;    public static Optional&lt;FileTime&gt; getLockFileTimeStamp(Path file) {
+<b class="nc"><i>71</i>&nbsp;        Path lockFile = getLockFilePath(file);</b>
+<i>72</i>&nbsp;        try {
+<b class="nc"><i>73</i>&nbsp;            return Files.exists(lockFile) ?</b>
+<b class="nc"><i>74</i>&nbsp;                    Optional.of(Files.readAttributes(lockFile, BasicFileAttributes.class).lastModifiedTime()) :</b>
+<b class="nc"><i>75</i>&nbsp;                    Optional.empty();</b>
+<b class="nc"><i>76</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i>77</i>&nbsp;            return Optional.empty();</b>
+<i>78</i>&nbsp;        }
+<i>79</i>&nbsp;    }
+<i>80</i>&nbsp;
+<i>81</i>&nbsp;    /**
+<i>82</i>&nbsp;     * Check if a lock file exists, and delete it if it does.
+<i>83</i>&nbsp;     *
+<i>84</i>&nbsp;     * @return true if the lock file existed, false otherwise.
+<i>85</i>&nbsp;     */
+<i>86</i>&nbsp;    public static boolean deleteLockFile(Path file) {
+<b class="nc"><i>87</i>&nbsp;        Path lockFile = getLockFilePath(file);</b>
+<b class="nc"><i>88</i>&nbsp;        if (!Files.exists(lockFile)) {</b>
+<b class="nc"><i>89</i>&nbsp;            return false;</b>
+<i>90</i>&nbsp;        }
+<i>91</i>&nbsp;        try {
+<b class="nc"><i>92</i>&nbsp;            Files.delete(lockFile);</b>
+<b class="nc"><i>93</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i>94</i>&nbsp;            LOGGER.warn(&quot;Cannot delete lock file&quot;, e);</b>
+<b class="nc"><i>95</i>&nbsp;        }</b>
+<b class="nc"><i>96</i>&nbsp;        return true;</b>
+<i>97</i>&nbsp;    }
+<i>98</i>&nbsp;
+<i>99</i>&nbsp;    /**
+<i>100</i>&nbsp;     * Check if a lock file exists, and create it if it doesn&#39;t.
+<i>101</i>&nbsp;     *
+<i>102</i>&nbsp;     * @return true if the lock file already existed
+<i>103</i>&nbsp;     * @throws IOException if something happens during creation.
+<i>104</i>&nbsp;     */
+<i>105</i>&nbsp;    public static boolean createLockFile(Path file) throws IOException {
+<b class="nc"><i>106</i>&nbsp;        Path lockFile = getLockFilePath(file);</b>
+<b class="nc"><i>107</i>&nbsp;        if (Files.exists(lockFile)) {</b>
+<b class="nc"><i>108</i>&nbsp;            return true;</b>
+<i>109</i>&nbsp;        }
+<i>110</i>&nbsp;
+<i>111</i>&nbsp;        try {
+<b class="nc"><i>112</i>&nbsp;            Files.write(lockFile, &quot;0&quot;.getBytes());</b>
+<b class="nc"><i>113</i>&nbsp;        } catch (IOException ex) {</b>
+<b class="nc"><i>114</i>&nbsp;            LOGGER.error(&quot;Error when creating lock file.&quot;, ex);</b>
+<b class="nc"><i>115</i>&nbsp;        }</b>
+<b class="nc"><i>116</i>&nbsp;        lockFile.toFile().deleteOnExit();</b>
+<b class="nc"><i>117</i>&nbsp;        return false;</b>
+<i>118</i>&nbsp;    }
+<i>119</i>&nbsp;
+<i>120</i>&nbsp;    private static Path getLockFilePath(Path file) {
+<b class="nc"><i>121</i>&nbsp;        return file.resolveSibling(file.getFileName() + LOCKFILE_SUFFIX);</b>
+<i>122</i>&nbsp;    }
+<i>123</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

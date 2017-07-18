@@ -1,0 +1,780 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: MedlineImporter</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.importer.fileformat</a> ]
+</div>
+
+<h1>Coverage Summary for Class: MedlineImporter (net.sf.jabref.logic.importer.fileformat)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MedlineImporter</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 35)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 389)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.importer.fileformat;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.BufferedReader;
+<i>4</i>&nbsp;import java.io.IOException;
+<i>5</i>&nbsp;import java.io.InputStream;
+<i>6</i>&nbsp;import java.io.InputStreamReader;
+<i>7</i>&nbsp;import java.io.Serializable;
+<i>8</i>&nbsp;import java.nio.charset.StandardCharsets;
+<i>9</i>&nbsp;import java.util.ArrayList;
+<i>10</i>&nbsp;import java.util.Collections;
+<i>11</i>&nbsp;import java.util.HashMap;
+<i>12</i>&nbsp;import java.util.List;
+<i>13</i>&nbsp;import java.util.Locale;
+<i>14</i>&nbsp;import java.util.Map;
+<i>15</i>&nbsp;import java.util.Objects;
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;import javax.xml.bind.JAXBContext;
+<i>18</i>&nbsp;import javax.xml.bind.JAXBElement;
+<i>19</i>&nbsp;import javax.xml.bind.JAXBException;
+<i>20</i>&nbsp;import javax.xml.bind.Unmarshaller;
+<i>21</i>&nbsp;import javax.xml.stream.XMLInputFactory;
+<i>22</i>&nbsp;import javax.xml.stream.XMLStreamException;
+<i>23</i>&nbsp;import javax.xml.stream.XMLStreamReader;
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;import net.sf.jabref.logic.importer.Importer;
+<i>26</i>&nbsp;import net.sf.jabref.logic.importer.ParseException;
+<i>27</i>&nbsp;import net.sf.jabref.logic.importer.Parser;
+<i>28</i>&nbsp;import net.sf.jabref.logic.importer.ParserResult;
+<i>29</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.Abstract;
+<i>30</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.AbstractText;
+<i>31</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.AffiliationInfo;
+<i>32</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.ArticleId;
+<i>33</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.ArticleIdList;
+<i>34</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.ArticleTitle;
+<i>35</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.Author;
+<i>36</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.AuthorList;
+<i>37</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.Book;
+<i>38</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.BookDocument;
+<i>39</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.BookTitle;
+<i>40</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.Chemical;
+<i>41</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.ContributionDate;
+<i>42</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.DateCompleted;
+<i>43</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.DateCreated;
+<i>44</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.DateRevised;
+<i>45</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.ELocationID;
+<i>46</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.GeneSymbolList;
+<i>47</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.GeneralNote;
+<i>48</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.ISSN;
+<i>49</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.Investigator;
+<i>50</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.InvestigatorList;
+<i>51</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.Journal;
+<i>52</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.JournalIssue;
+<i>53</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.Keyword;
+<i>54</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.KeywordList;
+<i>55</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.MedlineCitation;
+<i>56</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.MedlineJournalInfo;
+<i>57</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.MeshHeading;
+<i>58</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.MeshHeadingList;
+<i>59</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.OtherID;
+<i>60</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.Pagination;
+<i>61</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.PersonalNameSubject;
+<i>62</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.PersonalNameSubjectList;
+<i>63</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.PubDate;
+<i>64</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.PublicationType;
+<i>65</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.Publisher;
+<i>66</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.PubmedArticle;
+<i>67</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.PubmedArticleSet;
+<i>68</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.PubmedBookArticle;
+<i>69</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.PubmedBookArticleSet;
+<i>70</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.PubmedBookData;
+<i>71</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.QualifierName;
+<i>72</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.Section;
+<i>73</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.Sections;
+<i>74</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.medline.Text;
+<i>75</i>&nbsp;import net.sf.jabref.logic.util.FileExtensions;
+<i>76</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>77</i>&nbsp;import net.sf.jabref.model.entry.FieldName;
+<i>78</i>&nbsp;import net.sf.jabref.model.strings.StringUtil;
+<i>79</i>&nbsp;
+<i>80</i>&nbsp;import com.google.common.base.Joiner;
+<i>81</i>&nbsp;import org.apache.commons.logging.Log;
+<i>82</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>83</i>&nbsp;
+<i>84</i>&nbsp;/**
+<i>85</i>&nbsp; * Importer for the Medline/Pubmed format.
+<i>86</i>&nbsp; * &lt;p&gt;
+<i>87</i>&nbsp; * check here for details on the format
+<i>88</i>&nbsp; * https://www.nlm.nih.gov/bsd/licensee/elements_descriptions.html
+<i>89</i>&nbsp; */
+<b class="nc"><i>90</i>&nbsp;public class MedlineImporter extends Importer implements Parser {</b>
+<i>91</i>&nbsp;
+<b class="nc"><i>92</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(MedlineImporter.class);</b>
+<i>93</i>&nbsp;    private static final String KEYWORD_SEPARATOR = &quot;; &quot;;
+<i>94</i>&nbsp;
+<b class="nc"><i>95</i>&nbsp;    private static final Locale ENGLISH = Locale.ENGLISH;</b>
+<i>96</i>&nbsp;
+<i>97</i>&nbsp;    private static String join(List&lt;String&gt; list, String string) {
+<b class="nc"><i>98</i>&nbsp;        return Joiner.on(string).join(list);</b>
+<i>99</i>&nbsp;    }
+<i>100</i>&nbsp;
+<i>101</i>&nbsp;    @Override
+<i>102</i>&nbsp;    public String getName() {
+<b class="nc"><i>103</i>&nbsp;        return &quot;Medline&quot;;</b>
+<i>104</i>&nbsp;    }
+<i>105</i>&nbsp;
+<i>106</i>&nbsp;    @Override
+<i>107</i>&nbsp;    public FileExtensions getExtensions() {
+<b class="nc"><i>108</i>&nbsp;        return FileExtensions.MEDLINE;</b>
+<i>109</i>&nbsp;    }
+<i>110</i>&nbsp;
+<i>111</i>&nbsp;    @Override
+<i>112</i>&nbsp;    public String getId() {
+<b class="nc"><i>113</i>&nbsp;        return &quot;medline&quot;;</b>
+<i>114</i>&nbsp;    }
+<i>115</i>&nbsp;
+<i>116</i>&nbsp;    @Override
+<i>117</i>&nbsp;    public String getDescription() {
+<b class="nc"><i>118</i>&nbsp;        return &quot;Importer for the Medline format.&quot;;</b>
+<i>119</i>&nbsp;    }
+<i>120</i>&nbsp;
+<i>121</i>&nbsp;    @Override
+<i>122</i>&nbsp;    public boolean isRecognizedFormat(BufferedReader reader) throws IOException {
+<i>123</i>&nbsp;        String str;
+<b class="nc"><i>124</i>&nbsp;        int i = 0;</b>
+<b class="nc"><i>125</i>&nbsp;        while (((str = reader.readLine()) != null) &amp;&amp; (i &lt; 50)) {</b>
+<i>126</i>&nbsp;
+<b class="nc"><i>127</i>&nbsp;            if (str.toLowerCase(ENGLISH).contains(&quot;&lt;pubmedarticle&gt;&quot;)</b>
+<b class="nc"><i>128</i>&nbsp;                    || str.toLowerCase(ENGLISH).contains(&quot;&lt;pubmedbookarticle&gt;&quot;)) {</b>
+<b class="nc"><i>129</i>&nbsp;                return true;</b>
+<i>130</i>&nbsp;            }
+<i>131</i>&nbsp;
+<b class="nc"><i>132</i>&nbsp;            i++;</b>
+<i>133</i>&nbsp;        }
+<b class="nc"><i>134</i>&nbsp;        return false;</b>
+<i>135</i>&nbsp;    }
+<i>136</i>&nbsp;
+<i>137</i>&nbsp;    @Override
+<i>138</i>&nbsp;    public ParserResult importDatabase(BufferedReader reader) throws IOException {
+<b class="nc"><i>139</i>&nbsp;        Objects.requireNonNull(reader);</b>
+<i>140</i>&nbsp;
+<b class="nc"><i>141</i>&nbsp;        List&lt;BibEntry&gt; bibItems = new ArrayList&lt;&gt;();</b>
+<i>142</i>&nbsp;
+<i>143</i>&nbsp;        try {
+<b class="nc"><i>144</i>&nbsp;            JAXBContext context = JAXBContext.newInstance(&quot;net.sf.jabref.logic.csv_importer.fileformat.medline&quot;);</b>
+<b class="nc"><i>145</i>&nbsp;            XMLInputFactory xmlInputFactory = XMLInputFactory.newFactory();</b>
+<b class="nc"><i>146</i>&nbsp;            XMLStreamReader xmlStreamReader = xmlInputFactory.createXMLStreamReader(reader);</b>
+<i>147</i>&nbsp;
+<i>148</i>&nbsp;            //go to the root element
+<b class="nc"><i>149</i>&nbsp;            while (!xmlStreamReader.isStartElement()) {</b>
+<b class="nc"><i>150</i>&nbsp;                xmlStreamReader.next();</b>
+<i>151</i>&nbsp;            }
+<i>152</i>&nbsp;
+<b class="nc"><i>153</i>&nbsp;            Unmarshaller unmarshaller = context.createUnmarshaller();</b>
+<b class="nc"><i>154</i>&nbsp;            Object unmarshalledObject = unmarshaller.unmarshal(xmlStreamReader);</b>
+<i>155</i>&nbsp;
+<i>156</i>&nbsp;            //check whether we have an article set, an article, a book article or a book article set
+<b class="nc"><i>157</i>&nbsp;            if (unmarshalledObject instanceof PubmedArticleSet) {</b>
+<b class="nc"><i>158</i>&nbsp;                PubmedArticleSet articleSet = (PubmedArticleSet) unmarshalledObject;</b>
+<b class="nc"><i>159</i>&nbsp;                for (Object article : articleSet.getPubmedArticleOrPubmedBookArticle()) {</b>
+<b class="nc"><i>160</i>&nbsp;                    if (article instanceof PubmedArticle) {</b>
+<b class="nc"><i>161</i>&nbsp;                        PubmedArticle currentArticle = (PubmedArticle) article;</b>
+<b class="nc"><i>162</i>&nbsp;                        parseArticle(currentArticle, bibItems);</b>
+<i>163</i>&nbsp;                    }
+<b class="nc"><i>164</i>&nbsp;                    if (article instanceof PubmedBookArticle) {</b>
+<b class="nc"><i>165</i>&nbsp;                        PubmedBookArticle currentArticle = (PubmedBookArticle) article;</b>
+<b class="nc"><i>166</i>&nbsp;                        parseBookArticle(currentArticle, bibItems);</b>
+<i>167</i>&nbsp;                    }
+<b class="nc"><i>168</i>&nbsp;                }</b>
+<b class="nc"><i>169</i>&nbsp;            } else if (unmarshalledObject instanceof PubmedArticle) {</b>
+<b class="nc"><i>170</i>&nbsp;                PubmedArticle article = (PubmedArticle) unmarshalledObject;</b>
+<b class="nc"><i>171</i>&nbsp;                parseArticle(article, bibItems);</b>
+<b class="nc"><i>172</i>&nbsp;            } else if (unmarshalledObject instanceof PubmedBookArticle) {</b>
+<b class="nc"><i>173</i>&nbsp;                PubmedBookArticle currentArticle = (PubmedBookArticle) unmarshalledObject;</b>
+<b class="nc"><i>174</i>&nbsp;                parseBookArticle(currentArticle, bibItems);</b>
+<b class="nc"><i>175</i>&nbsp;            } else {</b>
+<b class="nc"><i>176</i>&nbsp;                PubmedBookArticleSet bookArticleSet = (PubmedBookArticleSet) unmarshalledObject;</b>
+<b class="nc"><i>177</i>&nbsp;                for (PubmedBookArticle bookArticle : bookArticleSet.getPubmedBookArticle()) {</b>
+<b class="nc"><i>178</i>&nbsp;                    parseBookArticle(bookArticle, bibItems);</b>
+<b class="nc"><i>179</i>&nbsp;                }</b>
+<i>180</i>&nbsp;            }
+<b class="nc"><i>181</i>&nbsp;        } catch (JAXBException | XMLStreamException e) {</b>
+<b class="nc"><i>182</i>&nbsp;            LOGGER.debug(&quot;could not parse document&quot;, e);</b>
+<b class="nc"><i>183</i>&nbsp;            return ParserResult.fromError(e);</b>
+<b class="nc"><i>184</i>&nbsp;        }</b>
+<b class="nc"><i>185</i>&nbsp;        return new ParserResult(bibItems);</b>
+<i>186</i>&nbsp;    }
+<i>187</i>&nbsp;
+<i>188</i>&nbsp;    private void parseBookArticle(PubmedBookArticle currentArticle, List&lt;BibEntry&gt; bibItems) {
+<b class="nc"><i>189</i>&nbsp;        Map&lt;String, String&gt; fields = new HashMap&lt;&gt;();</b>
+<b class="nc"><i>190</i>&nbsp;        if (currentArticle.getBookDocument() != null) {</b>
+<b class="nc"><i>191</i>&nbsp;            BookDocument bookDocument = currentArticle.getBookDocument();</b>
+<b class="nc"><i>192</i>&nbsp;            fields.put(FieldName.PMID, bookDocument.getPMID().getContent());</b>
+<b class="nc"><i>193</i>&nbsp;            if (bookDocument.getDateRevised() != null) {</b>
+<b class="nc"><i>194</i>&nbsp;                DateRevised dateRevised = bookDocument.getDateRevised();</b>
+<b class="nc"><i>195</i>&nbsp;                addDateRevised(fields, dateRevised);</b>
+<i>196</i>&nbsp;            }
+<b class="nc"><i>197</i>&nbsp;            if (bookDocument.getAbstract() != null) {</b>
+<b class="nc"><i>198</i>&nbsp;                Abstract abs = bookDocument.getAbstract();</b>
+<b class="nc"><i>199</i>&nbsp;                addAbstract(fields, abs);</b>
+<i>200</i>&nbsp;            }
+<b class="nc"><i>201</i>&nbsp;            if (bookDocument.getPagination() != null) {</b>
+<b class="nc"><i>202</i>&nbsp;                Pagination pagination = bookDocument.getPagination();</b>
+<b class="nc"><i>203</i>&nbsp;                addPagination(fields, pagination);</b>
+<i>204</i>&nbsp;            }
+<b class="nc"><i>205</i>&nbsp;            if (bookDocument.getSections() != null) {</b>
+<b class="nc"><i>206</i>&nbsp;                ArrayList&lt;String&gt; result = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>207</i>&nbsp;                Sections sections = bookDocument.getSections();</b>
+<b class="nc"><i>208</i>&nbsp;                for (Section section : sections.getSection()) {</b>
+<b class="nc"><i>209</i>&nbsp;                    for (Serializable content : section.getSectionTitle().getContent()) {</b>
+<b class="nc"><i>210</i>&nbsp;                        if (content instanceof String) {</b>
+<b class="nc"><i>211</i>&nbsp;                            result.add((String) content);</b>
+<i>212</i>&nbsp;                        }
+<b class="nc"><i>213</i>&nbsp;                    }</b>
+<b class="nc"><i>214</i>&nbsp;                }</b>
+<b class="nc"><i>215</i>&nbsp;                fields.put(&quot;sections&quot;, join(result, &quot;; &quot;));</b>
+<i>216</i>&nbsp;            }
+<b class="nc"><i>217</i>&nbsp;            if (bookDocument.getKeywordList() != null) {</b>
+<b class="nc"><i>218</i>&nbsp;                addKeyWords(fields, bookDocument.getKeywordList());</b>
+<i>219</i>&nbsp;            }
+<b class="nc"><i>220</i>&nbsp;            if (bookDocument.getContributionDate() != null) {</b>
+<b class="nc"><i>221</i>&nbsp;                addContributionDate(fields, bookDocument.getContributionDate());</b>
+<i>222</i>&nbsp;            }
+<b class="nc"><i>223</i>&nbsp;            if (bookDocument.getPublicationType() != null) {</b>
+<b class="nc"><i>224</i>&nbsp;                List&lt;String&gt; result = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>225</i>&nbsp;                for (PublicationType type : bookDocument.getPublicationType()) {</b>
+<b class="nc"><i>226</i>&nbsp;                    if (type.getContent() != null) {</b>
+<b class="nc"><i>227</i>&nbsp;                        result.add(type.getContent());</b>
+<i>228</i>&nbsp;                    }
+<b class="nc"><i>229</i>&nbsp;                }</b>
+<b class="nc"><i>230</i>&nbsp;                fields.put(&quot;pubtype&quot;, join(result, &quot;, &quot;));</b>
+<i>231</i>&nbsp;            }
+<b class="nc"><i>232</i>&nbsp;            if (bookDocument.getArticleTitle() != null) {</b>
+<b class="nc"><i>233</i>&nbsp;                ArticleTitle articleTitle = bookDocument.getArticleTitle();</b>
+<b class="nc"><i>234</i>&nbsp;                ArrayList&lt;String&gt; titles = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>235</i>&nbsp;                for (Serializable content : articleTitle.getContent()) {</b>
+<b class="nc"><i>236</i>&nbsp;                    if (content instanceof String) {</b>
+<b class="nc"><i>237</i>&nbsp;                        titles.add((String) content);</b>
+<i>238</i>&nbsp;                    }
+<b class="nc"><i>239</i>&nbsp;                }</b>
+<b class="nc"><i>240</i>&nbsp;                fields.put(&quot;article&quot;, join(titles, &quot;, &quot;));</b>
+<i>241</i>&nbsp;            }
+<b class="nc"><i>242</i>&nbsp;            if (bookDocument.getBook() != null) {</b>
+<b class="nc"><i>243</i>&nbsp;                addBookInformation(fields, bookDocument.getBook());</b>
+<i>244</i>&nbsp;            }
+<i>245</i>&nbsp;        }
+<i>246</i>&nbsp;
+<b class="nc"><i>247</i>&nbsp;        if (currentArticle.getPubmedBookData() != null) {</b>
+<b class="nc"><i>248</i>&nbsp;            PubmedBookData bookData = currentArticle.getPubmedBookData();</b>
+<b class="nc"><i>249</i>&nbsp;            putIfValueNotNull(fields, &quot;pubstatus&quot;, bookData.getPublicationStatus());</b>
+<i>250</i>&nbsp;        }
+<i>251</i>&nbsp;
+<b class="nc"><i>252</i>&nbsp;        BibEntry entry = new BibEntry(&quot;article&quot;);</b>
+<b class="nc"><i>253</i>&nbsp;        entry.setField(fields);</b>
+<i>254</i>&nbsp;
+<b class="nc"><i>255</i>&nbsp;        bibItems.add(entry);</b>
+<b class="nc"><i>256</i>&nbsp;    }</b>
+<i>257</i>&nbsp;
+<i>258</i>&nbsp;    private void addBookInformation(Map&lt;String, String&gt; fields, Book book) {
+<b class="nc"><i>259</i>&nbsp;        if (book.getPublisher() != null) {</b>
+<b class="nc"><i>260</i>&nbsp;            Publisher publisher = book.getPublisher();</b>
+<b class="nc"><i>261</i>&nbsp;            putIfValueNotNull(fields, &quot;publocation&quot;, publisher.getPublisherLocation());</b>
+<b class="nc"><i>262</i>&nbsp;            putStringFromSerializableList(fields, FieldName.PUBLISHER, publisher.getPublisherName().getContent());</b>
+<i>263</i>&nbsp;        }
+<b class="nc"><i>264</i>&nbsp;        if (book.getBookTitle() != null) {</b>
+<b class="nc"><i>265</i>&nbsp;            BookTitle title = book.getBookTitle();</b>
+<b class="nc"><i>266</i>&nbsp;            putStringFromSerializableList(fields, FieldName.TITLE, title.getContent());</b>
+<i>267</i>&nbsp;        }
+<b class="nc"><i>268</i>&nbsp;        if (book.getPubDate() != null) {</b>
+<b class="nc"><i>269</i>&nbsp;            addPubDate(fields, book.getPubDate());</b>
+<i>270</i>&nbsp;        }
+<b class="nc"><i>271</i>&nbsp;        if (book.getAuthorList() != null) {</b>
+<b class="nc"><i>272</i>&nbsp;            List&lt;AuthorList&gt; authorLists = book.getAuthorList();</b>
+<i>273</i>&nbsp;            //authorLists size should be one
+<b class="nc"><i>274</i>&nbsp;            if (authorLists.size() == 1) {</b>
+<b class="nc"><i>275</i>&nbsp;                for (AuthorList authorList : authorLists) {</b>
+<b class="nc"><i>276</i>&nbsp;                    handleAuthors(fields, authorList);</b>
+<b class="nc"><i>277</i>&nbsp;                }</b>
+<i>278</i>&nbsp;            } else {
+<b class="nc"><i>279</i>&nbsp;                LOGGER.info(String.format(&quot;Size of authorlist was %s&quot;, authorLists.size()));</b>
+<i>280</i>&nbsp;            }
+<i>281</i>&nbsp;        }
+<i>282</i>&nbsp;
+<b class="nc"><i>283</i>&nbsp;        putIfValueNotNull(fields, FieldName.VOLUME, book.getVolume());</b>
+<b class="nc"><i>284</i>&nbsp;        putIfValueNotNull(fields, FieldName.EDITION, book.getEdition());</b>
+<b class="nc"><i>285</i>&nbsp;        putIfValueNotNull(fields, &quot;medium&quot;, book.getMedium());</b>
+<b class="nc"><i>286</i>&nbsp;        putIfValueNotNull(fields, &quot;reportnumber&quot;, book.getReportNumber());</b>
+<i>287</i>&nbsp;
+<b class="nc"><i>288</i>&nbsp;        if (book.getELocationID() != null) {</b>
+<b class="nc"><i>289</i>&nbsp;            for (ELocationID id : book.getELocationID()) {</b>
+<b class="nc"><i>290</i>&nbsp;                addElocationID(fields, id);</b>
+<b class="nc"><i>291</i>&nbsp;            }</b>
+<i>292</i>&nbsp;        }
+<b class="nc"><i>293</i>&nbsp;        if (book.getIsbn() != null) {</b>
+<b class="nc"><i>294</i>&nbsp;            fields.put(FieldName.ISBN, join(book.getIsbn(), &quot;, &quot;));</b>
+<i>295</i>&nbsp;        }
+<b class="nc"><i>296</i>&nbsp;    }</b>
+<i>297</i>&nbsp;
+<i>298</i>&nbsp;    private void putStringFromSerializableList(Map&lt;String, String&gt; fields, String medlineKey,
+<i>299</i>&nbsp;            List&lt;Serializable&gt; contentList) {
+<b class="nc"><i>300</i>&nbsp;        StringBuilder result = new StringBuilder();</b>
+<b class="nc"><i>301</i>&nbsp;        for (Serializable content : contentList) {</b>
+<b class="nc"><i>302</i>&nbsp;            if (content instanceof String) {</b>
+<b class="nc"><i>303</i>&nbsp;                result.append((String) content);</b>
+<i>304</i>&nbsp;            }
+<b class="nc"><i>305</i>&nbsp;        }</b>
+<b class="nc"><i>306</i>&nbsp;        if (result.length() &gt; 0) {</b>
+<b class="nc"><i>307</i>&nbsp;            fields.put(medlineKey, result.toString());</b>
+<i>308</i>&nbsp;        }
+<b class="nc"><i>309</i>&nbsp;    }</b>
+<i>310</i>&nbsp;
+<i>311</i>&nbsp;    private void addContributionDate(Map&lt;String, String&gt; fields, ContributionDate contributionDate) {
+<b class="nc"><i>312</i>&nbsp;        if ((contributionDate.getDay() != null) &amp;&amp; (contributionDate.getMonth() != null)</b>
+<b class="nc"><i>313</i>&nbsp;                &amp;&amp; (contributionDate.getYear() != null)) {</b>
+<b class="nc"><i>314</i>&nbsp;            String result = convertToDateFormat(contributionDate.getYear(), contributionDate.getMonth(),</b>
+<b class="nc"><i>315</i>&nbsp;                    contributionDate.getDay());</b>
+<b class="nc"><i>316</i>&nbsp;            fields.put(&quot;contribution&quot;, result);</b>
+<i>317</i>&nbsp;        }
+<b class="nc"><i>318</i>&nbsp;    }</b>
+<i>319</i>&nbsp;
+<i>320</i>&nbsp;    private String convertToDateFormat(String year, String month, String day) {
+<b class="nc"><i>321</i>&nbsp;        return String.format(&quot;%s-%s-%s&quot;, year, month, day);</b>
+<i>322</i>&nbsp;    }
+<i>323</i>&nbsp;
+<i>324</i>&nbsp;    private void parseArticle(PubmedArticle article, List&lt;BibEntry&gt; bibItems) {
+<b class="nc"><i>325</i>&nbsp;        Map&lt;String, String&gt; fields = new HashMap&lt;&gt;();</b>
+<i>326</i>&nbsp;
+<b class="nc"><i>327</i>&nbsp;        if (article.getPubmedData() != null) {</b>
+<b class="nc"><i>328</i>&nbsp;            if (article.getMedlineCitation().getDateRevised() != null) {</b>
+<b class="nc"><i>329</i>&nbsp;                DateRevised dateRevised = article.getMedlineCitation().getDateRevised();</b>
+<b class="nc"><i>330</i>&nbsp;                addDateRevised(fields, dateRevised);</b>
+<b class="nc"><i>331</i>&nbsp;                putIfValueNotNull(fields, &quot;pubstatus&quot;, article.getPubmedData().getPublicationStatus());</b>
+<b class="nc"><i>332</i>&nbsp;                if (article.getPubmedData().getArticleIdList() != null) {</b>
+<b class="nc"><i>333</i>&nbsp;                    ArticleIdList articleIdList = article.getPubmedData().getArticleIdList();</b>
+<b class="nc"><i>334</i>&nbsp;                    addArticleIdList(fields, articleIdList);</b>
+<i>335</i>&nbsp;                }
+<i>336</i>&nbsp;            }
+<i>337</i>&nbsp;        }
+<b class="nc"><i>338</i>&nbsp;        if (article.getMedlineCitation() != null) {</b>
+<b class="nc"><i>339</i>&nbsp;            MedlineCitation medlineCitation = article.getMedlineCitation();</b>
+<i>340</i>&nbsp;
+<b class="nc"><i>341</i>&nbsp;            fields.put(&quot;status&quot;, medlineCitation.getStatus());</b>
+<b class="nc"><i>342</i>&nbsp;            DateCreated dateCreated = medlineCitation.getDateCreated();</b>
+<b class="nc"><i>343</i>&nbsp;            fields.put(&quot;created&quot;,</b>
+<b class="nc"><i>344</i>&nbsp;                    convertToDateFormat(dateCreated.getYear(), dateCreated.getMonth(), dateCreated.getDay()));</b>
+<b class="nc"><i>345</i>&nbsp;            fields.put(&quot;pubmodel&quot;, medlineCitation.getArticle().getPubModel());</b>
+<i>346</i>&nbsp;
+<b class="nc"><i>347</i>&nbsp;            if (medlineCitation.getDateCompleted() != null) {</b>
+<b class="nc"><i>348</i>&nbsp;                DateCompleted dateCompleted = medlineCitation.getDateCompleted();</b>
+<b class="nc"><i>349</i>&nbsp;                fields.put(&quot;completed&quot;,</b>
+<b class="nc"><i>350</i>&nbsp;                        convertToDateFormat(dateCompleted.getYear(), dateCompleted.getMonth(), dateCompleted.getDay()));</b>
+<i>351</i>&nbsp;            }
+<i>352</i>&nbsp;
+<b class="nc"><i>353</i>&nbsp;            fields.put(FieldName.PMID, medlineCitation.getPMID().getContent());</b>
+<b class="nc"><i>354</i>&nbsp;            fields.put(FieldName.OWNER, medlineCitation.getOwner());</b>
+<i>355</i>&nbsp;
+<b class="nc"><i>356</i>&nbsp;            addArticleInformation(fields, medlineCitation.getArticle().getContent());</b>
+<i>357</i>&nbsp;
+<b class="nc"><i>358</i>&nbsp;            MedlineJournalInfo medlineJournalInfo = medlineCitation.getMedlineJournalInfo();</b>
+<b class="nc"><i>359</i>&nbsp;            putIfValueNotNull(fields, &quot;country&quot;, medlineJournalInfo.getCountry());</b>
+<b class="nc"><i>360</i>&nbsp;            putIfValueNotNull(fields, &quot;journal-abbreviation&quot;, medlineJournalInfo.getMedlineTA());</b>
+<b class="nc"><i>361</i>&nbsp;            putIfValueNotNull(fields, &quot;nlm-id&quot;, medlineJournalInfo.getNlmUniqueID());</b>
+<b class="nc"><i>362</i>&nbsp;            putIfValueNotNull(fields, &quot;issn-linking&quot;, medlineJournalInfo.getISSNLinking());</b>
+<b class="nc"><i>363</i>&nbsp;            if (medlineCitation.getChemicalList() != null) {</b>
+<b class="nc"><i>364</i>&nbsp;                if (medlineCitation.getChemicalList().getChemical() != null) {</b>
+<b class="nc"><i>365</i>&nbsp;                    addChemicals(fields, medlineCitation.getChemicalList().getChemical());</b>
+<i>366</i>&nbsp;                }
+<i>367</i>&nbsp;            }
+<b class="nc"><i>368</i>&nbsp;            if (medlineCitation.getCitationSubset() != null) {</b>
+<b class="nc"><i>369</i>&nbsp;                fields.put(&quot;citation-subset&quot;, join(medlineCitation.getCitationSubset(), &quot;, &quot;));</b>
+<i>370</i>&nbsp;            }
+<b class="nc"><i>371</i>&nbsp;            if (medlineCitation.getGeneSymbolList() != null) {</b>
+<b class="nc"><i>372</i>&nbsp;                addGeneSymbols(fields, medlineCitation.getGeneSymbolList());</b>
+<i>373</i>&nbsp;            }
+<b class="nc"><i>374</i>&nbsp;            if (medlineCitation.getMeshHeadingList() != null) {</b>
+<b class="nc"><i>375</i>&nbsp;                addMeashHeading(fields, medlineCitation.getMeshHeadingList());</b>
+<i>376</i>&nbsp;            }
+<b class="nc"><i>377</i>&nbsp;            putIfValueNotNull(fields, &quot;references&quot;, medlineCitation.getNumberOfReferences());</b>
+<b class="nc"><i>378</i>&nbsp;            if (medlineCitation.getPersonalNameSubjectList() != null) {</b>
+<b class="nc"><i>379</i>&nbsp;                addPersonalNames(fields, medlineCitation.getPersonalNameSubjectList());</b>
+<i>380</i>&nbsp;            }
+<b class="nc"><i>381</i>&nbsp;            if (medlineCitation.getOtherID() != null) {</b>
+<b class="nc"><i>382</i>&nbsp;                addOtherId(fields, medlineCitation.getOtherID());</b>
+<i>383</i>&nbsp;            }
+<b class="nc"><i>384</i>&nbsp;            if (medlineCitation.getKeywordList() != null) {</b>
+<b class="nc"><i>385</i>&nbsp;                addKeyWords(fields, medlineCitation.getKeywordList());</b>
+<i>386</i>&nbsp;            }
+<b class="nc"><i>387</i>&nbsp;            if (medlineCitation.getSpaceFlightMission() != null) {</b>
+<b class="nc"><i>388</i>&nbsp;                fields.put(&quot;space-flight-mission&quot;, join(medlineCitation.getSpaceFlightMission(), &quot;, &quot;));</b>
+<i>389</i>&nbsp;            }
+<b class="nc"><i>390</i>&nbsp;            if (medlineCitation.getInvestigatorList() != null) {</b>
+<b class="nc"><i>391</i>&nbsp;                addInvestigators(fields, medlineCitation.getInvestigatorList());</b>
+<i>392</i>&nbsp;            }
+<b class="nc"><i>393</i>&nbsp;            if (medlineCitation.getGeneralNote() != null) {</b>
+<b class="nc"><i>394</i>&nbsp;                addNotes(fields, medlineCitation.getGeneralNote());</b>
+<i>395</i>&nbsp;            }
+<i>396</i>&nbsp;        }
+<i>397</i>&nbsp;
+<b class="nc"><i>398</i>&nbsp;        BibEntry entry = new BibEntry(&quot;article&quot;);</b>
+<b class="nc"><i>399</i>&nbsp;        entry.setField(fields);</b>
+<i>400</i>&nbsp;
+<b class="nc"><i>401</i>&nbsp;        bibItems.add(entry);</b>
+<b class="nc"><i>402</i>&nbsp;    }</b>
+<i>403</i>&nbsp;
+<i>404</i>&nbsp;    private void addArticleIdList(Map&lt;String, String&gt; fields, ArticleIdList articleIdList) {
+<b class="nc"><i>405</i>&nbsp;        for (ArticleId id : articleIdList.getArticleId()) {</b>
+<b class="nc"><i>406</i>&nbsp;            if (id.getIdType() != null) {</b>
+<b class="nc"><i>407</i>&nbsp;                if (&quot;pubmed&quot;.equals(id.getIdType())) {</b>
+<b class="nc"><i>408</i>&nbsp;                    fields.put(&quot;pmid&quot;, id.getContent());</b>
+<i>409</i>&nbsp;                } else {
+<b class="nc"><i>410</i>&nbsp;                    fields.put(id.getIdType(), id.getContent());</b>
+<i>411</i>&nbsp;                }
+<i>412</i>&nbsp;            }
+<b class="nc"><i>413</i>&nbsp;        }</b>
+<b class="nc"><i>414</i>&nbsp;    }</b>
+<i>415</i>&nbsp;
+<i>416</i>&nbsp;    private void addNotes(Map&lt;String, String&gt; fields, List&lt;GeneralNote&gt; generalNote) {
+<b class="nc"><i>417</i>&nbsp;        List&lt;String&gt; notes = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>418</i>&nbsp;        for (GeneralNote note : generalNote) {</b>
+<b class="nc"><i>419</i>&nbsp;            if (note != null) {</b>
+<b class="nc"><i>420</i>&nbsp;                notes.add(note.getContent());</b>
+<i>421</i>&nbsp;            }
+<b class="nc"><i>422</i>&nbsp;        }</b>
+<b class="nc"><i>423</i>&nbsp;        fields.put(FieldName.NOTE, join(notes, &quot;, &quot;));</b>
+<b class="nc"><i>424</i>&nbsp;    }</b>
+<i>425</i>&nbsp;
+<i>426</i>&nbsp;    private void addInvestigators(Map&lt;String, String&gt; fields, InvestigatorList investigatorList) {
+<b class="nc"><i>427</i>&nbsp;        List&lt;String&gt; investigatorNames = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>428</i>&nbsp;        List&lt;String&gt; affiliationInfos = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>429</i>&nbsp;        String name = &quot;&quot;;</b>
+<i>430</i>&nbsp;        // add the investigators like the authors
+<b class="nc"><i>431</i>&nbsp;        if (investigatorList.getInvestigator() != null) {</b>
+<b class="nc"><i>432</i>&nbsp;            List&lt;Investigator&gt; investigators = investigatorList.getInvestigator();</b>
+<b class="nc"><i>433</i>&nbsp;            for (Investigator investigator : investigators) {</b>
+<b class="nc"><i>434</i>&nbsp;                name = investigator.getLastName();</b>
+<b class="nc"><i>435</i>&nbsp;                if (investigator.getForeName() != null) {</b>
+<b class="nc"><i>436</i>&nbsp;                    name += &quot;, &quot; + investigator.getForeName();</b>
+<i>437</i>&nbsp;                }
+<b class="nc"><i>438</i>&nbsp;                investigatorNames.add(name);</b>
+<i>439</i>&nbsp;
+<i>440</i>&nbsp;                //now add the affiliation info
+<b class="nc"><i>441</i>&nbsp;                if (investigator.getAffiliationInfo() != null) {</b>
+<b class="nc"><i>442</i>&nbsp;                    for (AffiliationInfo info : investigator.getAffiliationInfo()) {</b>
+<b class="nc"><i>443</i>&nbsp;                        for (Serializable affiliation : info.getAffiliation().getContent()) {</b>
+<b class="nc"><i>444</i>&nbsp;                            if (affiliation instanceof String) {</b>
+<b class="nc"><i>445</i>&nbsp;                                affiliationInfos.add((String) affiliation);</b>
+<i>446</i>&nbsp;                            }
+<b class="nc"><i>447</i>&nbsp;                        }</b>
+<b class="nc"><i>448</i>&nbsp;                    }</b>
+<b class="nc"><i>449</i>&nbsp;                    fields.put(&quot;affiliation&quot;, join(affiliationInfos, &quot;, &quot;));</b>
+<i>450</i>&nbsp;                }
+<b class="nc"><i>451</i>&nbsp;            }</b>
+<b class="nc"><i>452</i>&nbsp;            fields.put(&quot;investigator&quot;, join(investigatorNames, &quot; and &quot;));</b>
+<i>453</i>&nbsp;        }
+<b class="nc"><i>454</i>&nbsp;    }</b>
+<i>455</i>&nbsp;
+<i>456</i>&nbsp;    private void addKeyWords(Map&lt;String, String&gt; fields, List&lt;KeywordList&gt; allKeywordLists) {
+<b class="nc"><i>457</i>&nbsp;        List&lt;String&gt; keywordStrings = new ArrayList&lt;&gt;();</b>
+<i>458</i>&nbsp;        //add keywords to the list
+<b class="nc"><i>459</i>&nbsp;        for (KeywordList keywordList : allKeywordLists) {</b>
+<b class="nc"><i>460</i>&nbsp;            for (Keyword keyword : keywordList.getKeyword()) {</b>
+<b class="nc"><i>461</i>&nbsp;                for (Serializable content : keyword.getContent()) {</b>
+<b class="nc"><i>462</i>&nbsp;                    if (content instanceof String) {</b>
+<b class="nc"><i>463</i>&nbsp;                        keywordStrings.add((String) content);</b>
+<i>464</i>&nbsp;                    }
+<b class="nc"><i>465</i>&nbsp;                }</b>
+<b class="nc"><i>466</i>&nbsp;            }</b>
+<b class="nc"><i>467</i>&nbsp;        }</b>
+<i>468</i>&nbsp;        //Check whether MeshHeadingList exist or not
+<b class="nc"><i>469</i>&nbsp;        if (fields.get(FieldName.KEYWORDS) == null) {</b>
+<b class="nc"><i>470</i>&nbsp;            fields.put(FieldName.KEYWORDS, join(keywordStrings, KEYWORD_SEPARATOR));</b>
+<i>471</i>&nbsp;        } else {
+<b class="nc"><i>472</i>&nbsp;            if (keywordStrings.size() &gt; 0) {</b>
+<i>473</i>&nbsp;                //if it exists, combine the MeshHeading with the keywords
+<b class="nc"><i>474</i>&nbsp;                String result = join(keywordStrings, &quot;; &quot;);</b>
+<b class="nc"><i>475</i>&nbsp;                result = fields.get(FieldName.KEYWORDS) + KEYWORD_SEPARATOR + result;</b>
+<b class="nc"><i>476</i>&nbsp;                fields.put(FieldName.KEYWORDS, result);</b>
+<i>477</i>&nbsp;            }
+<i>478</i>&nbsp;        }
+<b class="nc"><i>479</i>&nbsp;    }</b>
+<i>480</i>&nbsp;
+<i>481</i>&nbsp;    private void addOtherId(Map&lt;String, String&gt; fields, List&lt;OtherID&gt; otherID) {
+<b class="nc"><i>482</i>&nbsp;        for (OtherID id : otherID) {</b>
+<b class="nc"><i>483</i>&nbsp;            if ((id.getSource() != null) &amp;&amp; (id.getContent() != null)) {</b>
+<b class="nc"><i>484</i>&nbsp;                fields.put(id.getSource(), id.getContent());</b>
+<i>485</i>&nbsp;            }
+<b class="nc"><i>486</i>&nbsp;        }</b>
+<b class="nc"><i>487</i>&nbsp;    }</b>
+<i>488</i>&nbsp;
+<i>489</i>&nbsp;    private void addPersonalNames(Map&lt;String, String&gt; fields, PersonalNameSubjectList personalNameSubjectList) {
+<b class="nc"><i>490</i>&nbsp;        if (fields.get(FieldName.AUTHOR) == null) {</b>
+<i>491</i>&nbsp;            //if no authors appear, then add the personal names as authors
+<b class="nc"><i>492</i>&nbsp;            List&lt;String&gt; personalNames = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>493</i>&nbsp;            if (personalNameSubjectList.getPersonalNameSubject() != null) {</b>
+<b class="nc"><i>494</i>&nbsp;                List&lt;PersonalNameSubject&gt; personalNameSubject = personalNameSubjectList.getPersonalNameSubject();</b>
+<b class="nc"><i>495</i>&nbsp;                for (PersonalNameSubject personalName : personalNameSubject) {</b>
+<b class="nc"><i>496</i>&nbsp;                    String name = personalName.getLastName();</b>
+<b class="nc"><i>497</i>&nbsp;                    if (personalName.getForeName() != null) {</b>
+<b class="nc"><i>498</i>&nbsp;                        name += &quot;, &quot; + personalName.getForeName().toString();</b>
+<i>499</i>&nbsp;                    }
+<b class="nc"><i>500</i>&nbsp;                    personalNames.add(name);</b>
+<b class="nc"><i>501</i>&nbsp;                }</b>
+<b class="nc"><i>502</i>&nbsp;                fields.put(FieldName.AUTHOR, join(personalNames, &quot; and &quot;));</b>
+<i>503</i>&nbsp;            }
+<i>504</i>&nbsp;        }
+<b class="nc"><i>505</i>&nbsp;    }</b>
+<i>506</i>&nbsp;
+<i>507</i>&nbsp;    private void addMeashHeading(Map&lt;String, String&gt; fields, MeshHeadingList meshHeadingList) {
+<b class="nc"><i>508</i>&nbsp;        ArrayList&lt;String&gt; keywords = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>509</i>&nbsp;        for (MeshHeading keyword : meshHeadingList.getMeshHeading()) {</b>
+<b class="nc"><i>510</i>&nbsp;            String result = keyword.getDescriptorName().getContent();</b>
+<b class="nc"><i>511</i>&nbsp;            if (keyword.getQualifierName() != null) {</b>
+<b class="nc"><i>512</i>&nbsp;                for (QualifierName qualifier : keyword.getQualifierName()) {</b>
+<b class="nc"><i>513</i>&nbsp;                    result += &quot;, &quot; + qualifier.getContent();</b>
+<b class="nc"><i>514</i>&nbsp;                }</b>
+<i>515</i>&nbsp;            }
+<b class="nc"><i>516</i>&nbsp;            keywords.add(result);</b>
+<b class="nc"><i>517</i>&nbsp;        }</b>
+<b class="nc"><i>518</i>&nbsp;        fields.put(FieldName.KEYWORDS, join(keywords, KEYWORD_SEPARATOR));</b>
+<b class="nc"><i>519</i>&nbsp;    }</b>
+<i>520</i>&nbsp;
+<i>521</i>&nbsp;    private void addGeneSymbols(Map&lt;String, String&gt; fields, GeneSymbolList geneSymbolList) {
+<b class="nc"><i>522</i>&nbsp;        List&lt;String&gt; geneSymbols = geneSymbolList.getGeneSymbol();</b>
+<b class="nc"><i>523</i>&nbsp;        fields.put(&quot;gene-symbols&quot;, join(geneSymbols, &quot;, &quot;));</b>
+<b class="nc"><i>524</i>&nbsp;    }</b>
+<i>525</i>&nbsp;
+<i>526</i>&nbsp;    private void addChemicals(Map&lt;String, String&gt; fields, List&lt;Chemical&gt; chemicals) {
+<b class="nc"><i>527</i>&nbsp;        List&lt;String&gt; chemicalNames = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>528</i>&nbsp;        for (Chemical chemical : chemicals) {</b>
+<b class="nc"><i>529</i>&nbsp;            if (chemical != null) {</b>
+<b class="nc"><i>530</i>&nbsp;                chemicalNames.add(chemical.getNameOfSubstance().getContent());</b>
+<i>531</i>&nbsp;            }
+<b class="nc"><i>532</i>&nbsp;        }</b>
+<b class="nc"><i>533</i>&nbsp;        fields.put(&quot;chemicals&quot;, join(chemicalNames, &quot;, &quot;));</b>
+<b class="nc"><i>534</i>&nbsp;    }</b>
+<i>535</i>&nbsp;
+<i>536</i>&nbsp;    private void addArticleInformation(Map&lt;String, String&gt; fields, List&lt;Object&gt; content) {
+<b class="nc"><i>537</i>&nbsp;        for (Object object : content) {</b>
+<b class="nc"><i>538</i>&nbsp;            if (object instanceof Journal) {</b>
+<b class="nc"><i>539</i>&nbsp;                Journal journal = (Journal) object;</b>
+<b class="nc"><i>540</i>&nbsp;                putIfValueNotNull(fields, FieldName.JOURNAL, journal.getTitle());</b>
+<i>541</i>&nbsp;
+<b class="nc"><i>542</i>&nbsp;                ISSN issn = journal.getISSN();</b>
+<b class="nc"><i>543</i>&nbsp;                if (issn != null) {</b>
+<b class="nc"><i>544</i>&nbsp;                    putIfValueNotNull(fields, FieldName.ISSN, issn.getContent());</b>
+<i>545</i>&nbsp;                }
+<i>546</i>&nbsp;
+<b class="nc"><i>547</i>&nbsp;                JournalIssue journalIssue = journal.getJournalIssue();</b>
+<b class="nc"><i>548</i>&nbsp;                putIfValueNotNull(fields, FieldName.VOLUME, journalIssue.getVolume());</b>
+<b class="nc"><i>549</i>&nbsp;                putIfValueNotNull(fields, FieldName.ISSUE, journalIssue.getIssue());</b>
+<i>550</i>&nbsp;
+<b class="nc"><i>551</i>&nbsp;                addPubDate(fields, journalIssue.getPubDate());</b>
+<b class="nc"><i>552</i>&nbsp;            } else if (object instanceof ArticleTitle) {</b>
+<b class="nc"><i>553</i>&nbsp;                ArticleTitle articleTitle = (ArticleTitle) object;</b>
+<b class="nc"><i>554</i>&nbsp;                fields.put(FieldName.TITLE, StringUtil.stripBrackets(articleTitle.getContent().toString()));</b>
+<b class="nc"><i>555</i>&nbsp;            } else if (object instanceof Pagination) {</b>
+<b class="nc"><i>556</i>&nbsp;                Pagination pagination = (Pagination) object;</b>
+<b class="nc"><i>557</i>&nbsp;                addPagination(fields, pagination);</b>
+<b class="nc"><i>558</i>&nbsp;            } else if (object instanceof ELocationID) {</b>
+<b class="nc"><i>559</i>&nbsp;                ELocationID eLocationID = (ELocationID) object;</b>
+<b class="nc"><i>560</i>&nbsp;                addElocationID(fields, eLocationID);</b>
+<b class="nc"><i>561</i>&nbsp;            } else if (object instanceof Abstract) {</b>
+<b class="nc"><i>562</i>&nbsp;                Abstract abs = (Abstract) object;</b>
+<b class="nc"><i>563</i>&nbsp;                addAbstract(fields, abs);</b>
+<b class="nc"><i>564</i>&nbsp;            } else if (object instanceof AuthorList) {</b>
+<b class="nc"><i>565</i>&nbsp;                AuthorList authors = (AuthorList) object;</b>
+<b class="nc"><i>566</i>&nbsp;                handleAuthors(fields, authors);</b>
+<i>567</i>&nbsp;            }
+<b class="nc"><i>568</i>&nbsp;        }</b>
+<b class="nc"><i>569</i>&nbsp;    }</b>
+<i>570</i>&nbsp;
+<i>571</i>&nbsp;    private void addElocationID(Map&lt;String, String&gt; fields, ELocationID eLocationID) {
+<b class="nc"><i>572</i>&nbsp;        if (FieldName.DOI.equals(eLocationID.getEIdType())) {</b>
+<b class="nc"><i>573</i>&nbsp;            fields.put(FieldName.DOI, eLocationID.getContent());</b>
+<i>574</i>&nbsp;        }
+<b class="nc"><i>575</i>&nbsp;        if (&quot;pii&quot;.equals(eLocationID.getEIdType())) {</b>
+<b class="nc"><i>576</i>&nbsp;            fields.put(&quot;pii&quot;, eLocationID.getContent());</b>
+<i>577</i>&nbsp;        }
+<b class="nc"><i>578</i>&nbsp;    }</b>
+<i>579</i>&nbsp;
+<i>580</i>&nbsp;    private void addPubDate(Map&lt;String, String&gt; fields, PubDate pubDate) {
+<b class="nc"><i>581</i>&nbsp;        if (pubDate.getYear() == null) {</b>
+<i>582</i>&nbsp;            //if year of the pubdate is null, the medlineDate shouldn&#39;t be null
+<b class="nc"><i>583</i>&nbsp;            fields.put(FieldName.YEAR, extractYear(pubDate.getMedlineDate()));</b>
+<i>584</i>&nbsp;        } else {
+<b class="nc"><i>585</i>&nbsp;            fields.put(FieldName.YEAR, pubDate.getYear());</b>
+<b class="nc"><i>586</i>&nbsp;            if (pubDate.getMonth() != null) {</b>
+<b class="nc"><i>587</i>&nbsp;                fields.put(FieldName.MONTH, pubDate.getMonth());</b>
+<b class="nc"><i>588</i>&nbsp;            } else if (pubDate.getSeason() != null) {</b>
+<b class="nc"><i>589</i>&nbsp;                fields.put(&quot;season&quot;, pubDate.getSeason());</b>
+<i>590</i>&nbsp;            }
+<i>591</i>&nbsp;        }
+<b class="nc"><i>592</i>&nbsp;    }</b>
+<i>593</i>&nbsp;
+<i>594</i>&nbsp;    private void addAbstract(Map&lt;String, String&gt; fields, Abstract abs) {
+<b class="nc"><i>595</i>&nbsp;        putIfValueNotNull(fields, &quot;copyright&quot;, abs.getCopyrightInformation());</b>
+<b class="nc"><i>596</i>&nbsp;        List&lt;String&gt; abstractText = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>597</i>&nbsp;        for (AbstractText text : abs.getAbstractText()) {</b>
+<b class="nc"><i>598</i>&nbsp;            for (Serializable textContent : text.getContent()) {</b>
+<b class="nc"><i>599</i>&nbsp;                if (textContent instanceof String) {</b>
+<b class="nc"><i>600</i>&nbsp;                    abstractText.add((String) textContent);</b>
+<i>601</i>&nbsp;                }
+<b class="nc"><i>602</i>&nbsp;            }</b>
+<b class="nc"><i>603</i>&nbsp;        }</b>
+<b class="nc"><i>604</i>&nbsp;        fields.put(FieldName.ABSTRACT, join(abstractText, &quot; &quot;));</b>
+<b class="nc"><i>605</i>&nbsp;    }</b>
+<i>606</i>&nbsp;
+<i>607</i>&nbsp;    private void addPagination(Map&lt;String, String&gt; fields, Pagination pagination) {
+<b class="nc"><i>608</i>&nbsp;        String startPage = &quot;&quot;;</b>
+<b class="nc"><i>609</i>&nbsp;        String endPage = &quot;&quot;;</b>
+<b class="nc"><i>610</i>&nbsp;        for (JAXBElement&lt;String&gt; element : pagination.getContent()) {</b>
+<b class="nc"><i>611</i>&nbsp;            if (&quot;MedlinePgn&quot;.equals(element.getName().getLocalPart())) {</b>
+<b class="nc"><i>612</i>&nbsp;                putIfValueNotNull(fields, FieldName.PAGES, fixPageRange(element.getValue()));</b>
+<b class="nc"><i>613</i>&nbsp;            } else if (&quot;StartPage&quot;.equals(element.getName().getLocalPart())) {</b>
+<i>614</i>&nbsp;                //it could happen, that the article has only a start page
+<b class="nc"><i>615</i>&nbsp;                startPage = element.getValue() + endPage;</b>
+<b class="nc"><i>616</i>&nbsp;                putIfValueNotNull(fields, FieldName.PAGES, startPage);</b>
+<b class="nc"><i>617</i>&nbsp;            } else if (&quot;EndPage&quot;.equals(element.getName().getLocalPart())) {</b>
+<b class="nc"><i>618</i>&nbsp;                endPage = element.getValue();</b>
+<i>619</i>&nbsp;                //but it should not happen, that a endpage appears without startpage
+<b class="nc"><i>620</i>&nbsp;                fields.put(FieldName.PAGES, fixPageRange(startPage + &quot;-&quot; + endPage));</b>
+<i>621</i>&nbsp;            }
+<b class="nc"><i>622</i>&nbsp;        }</b>
+<b class="nc"><i>623</i>&nbsp;    }</b>
+<i>624</i>&nbsp;
+<i>625</i>&nbsp;    private String extractYear(String medlineDate) {
+<i>626</i>&nbsp;        //The year of the medlineDate should be the first 4 digits
+<b class="nc"><i>627</i>&nbsp;        return medlineDate.substring(0, 4);</b>
+<i>628</i>&nbsp;    }
+<i>629</i>&nbsp;
+<i>630</i>&nbsp;    private void handleAuthors(Map&lt;String, String&gt; fields, AuthorList authors) {
+<b class="nc"><i>631</i>&nbsp;        List&lt;String&gt; authorNames = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>632</i>&nbsp;        for (Author author : authors.getAuthor()) {</b>
+<b class="nc"><i>633</i>&nbsp;            if (author.getCollectiveName() != null) {</b>
+<b class="nc"><i>634</i>&nbsp;                Text collectiveNames = author.getCollectiveName();</b>
+<b class="nc"><i>635</i>&nbsp;                for (Serializable content : collectiveNames.getContent()) {</b>
+<b class="nc"><i>636</i>&nbsp;                    if (content instanceof String) {</b>
+<b class="nc"><i>637</i>&nbsp;                        authorNames.add((String) content);</b>
+<i>638</i>&nbsp;                    }
+<b class="nc"><i>639</i>&nbsp;                }</b>
+<b class="nc"><i>640</i>&nbsp;            } else {</b>
+<b class="nc"><i>641</i>&nbsp;                String authorName = author.getLastName();</b>
+<b class="nc"><i>642</i>&nbsp;                if (author.getForeName() != null) {</b>
+<b class="nc"><i>643</i>&nbsp;                    authorName += &quot;, &quot; + author.getForeName();</b>
+<i>644</i>&nbsp;                }
+<b class="nc"><i>645</i>&nbsp;                authorNames.add(authorName);</b>
+<i>646</i>&nbsp;            }
+<b class="nc"><i>647</i>&nbsp;        }</b>
+<b class="nc"><i>648</i>&nbsp;        fields.put(FieldName.AUTHOR, join(authorNames, &quot; and &quot;));</b>
+<b class="nc"><i>649</i>&nbsp;    }</b>
+<i>650</i>&nbsp;
+<i>651</i>&nbsp;    private void addDateRevised(Map&lt;String, String&gt; fields, DateRevised dateRevised) {
+<b class="nc"><i>652</i>&nbsp;        if ((dateRevised.getDay() != null) &amp;&amp; (dateRevised.getMonth() != null) &amp;&amp; (dateRevised.getYear() != null)) {</b>
+<b class="nc"><i>653</i>&nbsp;            fields.put(&quot;revised&quot;,</b>
+<b class="nc"><i>654</i>&nbsp;                    convertToDateFormat(dateRevised.getYear(), dateRevised.getMonth(), dateRevised.getDay()));</b>
+<i>655</i>&nbsp;        }
+<b class="nc"><i>656</i>&nbsp;    }</b>
+<i>657</i>&nbsp;
+<i>658</i>&nbsp;    private void putIfValueNotNull(Map&lt;String, String&gt; fields, String medlineKey, String value) {
+<b class="nc"><i>659</i>&nbsp;        if (value != null) {</b>
+<b class="nc"><i>660</i>&nbsp;            fields.put(medlineKey, value);</b>
+<i>661</i>&nbsp;        }
+<b class="nc"><i>662</i>&nbsp;    }</b>
+<i>663</i>&nbsp;
+<i>664</i>&nbsp;    /**
+<i>665</i>&nbsp;     * Convert medline page ranges from short form to full form.
+<i>666</i>&nbsp;     * Medline reports page ranges in a shorthand format.
+<i>667</i>&nbsp;     * The last page is reported using only the digits which
+<i>668</i>&nbsp;     * differ from the first page.
+<i>669</i>&nbsp;     * i.e. 12345-51 refers to the actual range 12345-12351
+<i>670</i>&nbsp;     */
+<i>671</i>&nbsp;    private String fixPageRange(String pageRange) {
+<b class="nc"><i>672</i>&nbsp;        int minusPos = pageRange.indexOf(&#39;-&#39;);</b>
+<b class="nc"><i>673</i>&nbsp;        if (minusPos &lt; 0) {</b>
+<b class="nc"><i>674</i>&nbsp;            return pageRange;</b>
+<i>675</i>&nbsp;        }
+<b class="nc"><i>676</i>&nbsp;        String startPage = pageRange.substring(0, minusPos).trim();</b>
+<b class="nc"><i>677</i>&nbsp;        String endPage = pageRange.substring(minusPos + 1).trim();</b>
+<b class="nc"><i>678</i>&nbsp;        int lengthOfEndPage = endPage.length();</b>
+<b class="nc"><i>679</i>&nbsp;        int lengthOfStartPage = startPage.length();</b>
+<b class="nc"><i>680</i>&nbsp;        if (lengthOfEndPage &lt; lengthOfStartPage) {</b>
+<b class="nc"><i>681</i>&nbsp;            endPage = startPage.substring(0, lengthOfStartPage - lengthOfEndPage) + endPage;</b>
+<i>682</i>&nbsp;        }
+<b class="nc"><i>683</i>&nbsp;        return startPage + &quot;--&quot; + endPage;</b>
+<i>684</i>&nbsp;    }
+<i>685</i>&nbsp;
+<i>686</i>&nbsp;    @Override
+<i>687</i>&nbsp;    public List&lt;BibEntry&gt; parseEntries(InputStream inputStream) throws ParseException {
+<i>688</i>&nbsp;        try {
+<b class="nc"><i>689</i>&nbsp;            return importDatabase(</b>
+<b class="nc"><i>690</i>&nbsp;                    new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))).getDatabase().getEntries();</b>
+<i>691</i>&nbsp;
+<b class="nc"><i>692</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i>693</i>&nbsp;            LOGGER.error(e.getLocalizedMessage(), e);</b>
+<i>694</i>&nbsp;        }
+<b class="nc"><i>695</i>&nbsp;        return Collections.emptyList();</b>
+<i>696</i>&nbsp;    }
+<i>697</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

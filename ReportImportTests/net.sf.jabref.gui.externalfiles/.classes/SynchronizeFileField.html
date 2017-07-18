@@ -1,0 +1,529 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: SynchronizeFileField</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.externalfiles</a> ]
+</div>
+
+<h1>Coverage Summary for Class: SynchronizeFileField (net.sf.jabref.gui.externalfiles)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SynchronizeFileField</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 134)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">SynchronizeFileField$OptionsDialog</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 68)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">SynchronizeFileField$OptionsDialog$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 205)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.externalfiles;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.BorderLayout;
+<i>4</i>&nbsp;import java.awt.event.ActionEvent;
+<i>5</i>&nbsp;import java.io.File;
+<i>6</i>&nbsp;import java.util.ArrayList;
+<i>7</i>&nbsp;import java.util.Collection;
+<i>8</i>&nbsp;import java.util.Collections;
+<i>9</i>&nbsp;import java.util.HashSet;
+<i>10</i>&nbsp;import java.util.List;
+<i>11</i>&nbsp;import java.util.Locale;
+<i>12</i>&nbsp;import java.util.Optional;
+<i>13</i>&nbsp;import java.util.Set;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;import javax.swing.AbstractAction;
+<i>16</i>&nbsp;import javax.swing.Action;
+<i>17</i>&nbsp;import javax.swing.ActionMap;
+<i>18</i>&nbsp;import javax.swing.BorderFactory;
+<i>19</i>&nbsp;import javax.swing.ButtonGroup;
+<i>20</i>&nbsp;import javax.swing.InputMap;
+<i>21</i>&nbsp;import javax.swing.JButton;
+<i>22</i>&nbsp;import javax.swing.JCheckBox;
+<i>23</i>&nbsp;import javax.swing.JComponent;
+<i>24</i>&nbsp;import javax.swing.JDialog;
+<i>25</i>&nbsp;import javax.swing.JFrame;
+<i>26</i>&nbsp;import javax.swing.JLabel;
+<i>27</i>&nbsp;import javax.swing.JOptionPane;
+<i>28</i>&nbsp;import javax.swing.JPanel;
+<i>29</i>&nbsp;import javax.swing.JRadioButton;
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;import net.sf.jabref.Globals;
+<i>32</i>&nbsp;import net.sf.jabref.JabRefExecutorService;
+<i>33</i>&nbsp;import net.sf.jabref.gui.BasePanel;
+<i>34</i>&nbsp;import net.sf.jabref.gui.IconTheme;
+<i>35</i>&nbsp;import net.sf.jabref.gui.externalfiletype.ExternalFileType;
+<i>36</i>&nbsp;import net.sf.jabref.gui.externalfiletype.ExternalFileTypeEntryEditor;
+<i>37</i>&nbsp;import net.sf.jabref.gui.externalfiletype.ExternalFileTypes;
+<i>38</i>&nbsp;import net.sf.jabref.gui.externalfiletype.UnknownExternalFileType;
+<i>39</i>&nbsp;import net.sf.jabref.gui.filelist.FileListEntry;
+<i>40</i>&nbsp;import net.sf.jabref.gui.filelist.FileListEntryEditor;
+<i>41</i>&nbsp;import net.sf.jabref.gui.filelist.FileListTableModel;
+<i>42</i>&nbsp;import net.sf.jabref.gui.keyboard.KeyBinding;
+<i>43</i>&nbsp;import net.sf.jabref.gui.undo.NamedCompound;
+<i>44</i>&nbsp;import net.sf.jabref.gui.undo.UndoableFieldChange;
+<i>45</i>&nbsp;import net.sf.jabref.gui.worker.AbstractWorker;
+<i>46</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>47</i>&nbsp;import net.sf.jabref.logic.util.io.FileUtil;
+<i>48</i>&nbsp;import net.sf.jabref.model.database.BibDatabaseContext;
+<i>49</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>50</i>&nbsp;import net.sf.jabref.model.entry.FieldName;
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;import com.jgoodies.forms.builder.ButtonBarBuilder;
+<i>53</i>&nbsp;import com.jgoodies.forms.builder.FormBuilder;
+<i>54</i>&nbsp;import com.jgoodies.forms.layout.FormLayout;
+<i>55</i>&nbsp;
+<i>56</i>&nbsp;/**
+<i>57</i>&nbsp; * This action goes through all selected entries in the BasePanel, and attempts to autoset the
+<i>58</i>&nbsp; * given external file (pdf, ps, ...) based on the same algorithm used for the &quot;Auto&quot; button in
+<i>59</i>&nbsp; * EntryEditor.
+<i>60</i>&nbsp; */
+<i>61</i>&nbsp;public class SynchronizeFileField extends AbstractWorker {
+<i>62</i>&nbsp;
+<i>63</i>&nbsp;    private final BasePanel panel;
+<i>64</i>&nbsp;    private List&lt;BibEntry&gt; sel;
+<i>65</i>&nbsp;    private SynchronizeFileField.OptionsDialog optDiag;
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;    private int entriesChangedCount;
+<i>68</i>&nbsp;
+<b class="nc"><i>69</i>&nbsp;    private final Object[] brokenLinkOptions = {Localization.lang(&quot;Ignore&quot;), Localization.lang(&quot;Assign new file&quot;),</b>
+<b class="nc"><i>70</i>&nbsp;            Localization.lang(&quot;Remove link&quot;), Localization.lang(&quot;Remove all broken links&quot;),</b>
+<b class="nc"><i>71</i>&nbsp;            Localization.lang(&quot;Quit synchronization&quot;)};</b>
+<i>72</i>&nbsp;
+<b class="nc"><i>73</i>&nbsp;    private boolean goOn = true;</b>
+<b class="nc"><i>74</i>&nbsp;    private boolean autoSet = true;</b>
+<b class="nc"><i>75</i>&nbsp;    private boolean checkExisting = true;</b>
+<i>76</i>&nbsp;
+<i>77</i>&nbsp;
+<b class="nc"><i>78</i>&nbsp;    public SynchronizeFileField(BasePanel panel) {</b>
+<b class="nc"><i>79</i>&nbsp;        this.panel = panel;</b>
+<b class="nc"><i>80</i>&nbsp;    }</b>
+<i>81</i>&nbsp;
+<i>82</i>&nbsp;    @Override
+<i>83</i>&nbsp;    public void init() {
+<b class="nc"><i>84</i>&nbsp;        Collection&lt;BibEntry&gt; col = panel.getDatabase().getEntries();</b>
+<b class="nc"><i>85</i>&nbsp;        goOn = true;</b>
+<b class="nc"><i>86</i>&nbsp;        sel = new ArrayList&lt;&gt;(col);</b>
+<i>87</i>&nbsp;
+<i>88</i>&nbsp;        // Ask about rules for the operation:
+<b class="nc"><i>89</i>&nbsp;        if (optDiag == null) {</b>
+<b class="nc"><i>90</i>&nbsp;            optDiag = new SynchronizeFileField.OptionsDialog(panel.frame(), panel.getBibDatabaseContext());</b>
+<i>91</i>&nbsp;        }
+<b class="nc"><i>92</i>&nbsp;        optDiag.setLocationRelativeTo(panel.frame());</b>
+<b class="nc"><i>93</i>&nbsp;        optDiag.setVisible(true);</b>
+<b class="nc"><i>94</i>&nbsp;        if (optDiag.canceled()) {</b>
+<b class="nc"><i>95</i>&nbsp;            goOn = false;</b>
+<b class="nc"><i>96</i>&nbsp;            return;</b>
+<i>97</i>&nbsp;        }
+<b class="nc"><i>98</i>&nbsp;        autoSet = !optDiag.isAutoSetNone();</b>
+<b class="nc"><i>99</i>&nbsp;        checkExisting = optDiag.isCheckLinks();</b>
+<i>100</i>&nbsp;
+<b class="nc"><i>101</i>&nbsp;        panel.output(Localization.lang(&quot;Synchronizing file links...&quot;));</b>
+<b class="nc"><i>102</i>&nbsp;    }</b>
+<i>103</i>&nbsp;
+<i>104</i>&nbsp;    @Override
+<i>105</i>&nbsp;    public void run() {
+<b class="nc"><i>106</i>&nbsp;        if (!goOn) {</b>
+<b class="nc"><i>107</i>&nbsp;            panel.output(Localization.lang(&quot;This operation requires one or more entries to be selected.&quot;));</b>
+<b class="nc"><i>108</i>&nbsp;            return;</b>
+<i>109</i>&nbsp;        }
+<b class="nc"><i>110</i>&nbsp;        entriesChangedCount = 0;</b>
+<b class="nc"><i>111</i>&nbsp;        panel.frame().setProgressBarValue(0);</b>
+<b class="nc"><i>112</i>&nbsp;        panel.frame().setProgressBarVisible(true);</b>
+<b class="nc"><i>113</i>&nbsp;        int weightAutoSet = 10; // autoSet takes 10 (?) times longer than checkExisting</b>
+<b class="nc"><i>114</i>&nbsp;        int progressBarMax = (autoSet ? weightAutoSet * sel.size() : 0) + (checkExisting ? sel.size() : 0);</b>
+<b class="nc"><i>115</i>&nbsp;        panel.frame().setProgressBarMaximum(progressBarMax);</b>
+<b class="nc"><i>116</i>&nbsp;        int progress = 0;</b>
+<b class="nc"><i>117</i>&nbsp;        final NamedCompound ce = new NamedCompound(Localization.lang(&quot;Automatically set file links&quot;));</b>
+<i>118</i>&nbsp;
+<b class="nc"><i>119</i>&nbsp;        Set&lt;BibEntry&gt; changedEntries = new HashSet&lt;&gt;();</b>
+<i>120</i>&nbsp;
+<i>121</i>&nbsp;        // First we try to autoset fields
+<b class="nc"><i>122</i>&nbsp;        if (autoSet) {</b>
+<b class="nc"><i>123</i>&nbsp;            List&lt;BibEntry&gt; entries = new ArrayList&lt;&gt;(sel);</b>
+<i>124</i>&nbsp;
+<i>125</i>&nbsp;            // Start the automatically setting process:
+<b class="nc"><i>126</i>&nbsp;            Runnable r = AutoSetLinks.autoSetLinks(entries, ce, changedEntries, null, panel.getBibDatabaseContext(), null, null);</b>
+<b class="nc"><i>127</i>&nbsp;            JabRefExecutorService.INSTANCE.executeAndWait(r);</b>
+<i>128</i>&nbsp;        }
+<b class="nc"><i>129</i>&nbsp;        progress += sel.size() * weightAutoSet;</b>
+<b class="nc"><i>130</i>&nbsp;        panel.frame().setProgressBarValue(progress);</b>
+<i>131</i>&nbsp;        // The following loop checks all external links that are already set.
+<b class="nc"><i>132</i>&nbsp;        if (checkExisting) {</b>
+<b class="nc"><i>133</i>&nbsp;            boolean removeAllBroken = false;</b>
+<b class="nc"><i>134</i>&nbsp;            mainLoop: for (BibEntry aSel : sel) {</b>
+<b class="nc"><i>135</i>&nbsp;                panel.frame().setProgressBarValue(progress++);</b>
+<b class="nc"><i>136</i>&nbsp;                final Optional&lt;String&gt; old = aSel.getField(FieldName.FILE);</b>
+<i>137</i>&nbsp;                // Check if a extension is set:
+<b class="nc"><i>138</i>&nbsp;                if (old.isPresent() &amp;&amp; !(old.get().isEmpty())) {</b>
+<b class="nc"><i>139</i>&nbsp;                    FileListTableModel tableModel = new FileListTableModel();</b>
+<b class="nc"><i>140</i>&nbsp;                    tableModel.setContentDontGuessTypes(old.get());</b>
+<i>141</i>&nbsp;
+<i>142</i>&nbsp;                    // We need to specify which directories to search in for Util.expandFilename:
+<b class="nc"><i>143</i>&nbsp;                    List&lt;String&gt; dirsS = panel.getBibDatabaseContext()</b>
+<b class="nc"><i>144</i>&nbsp;                            .getFileDirectories(Globals.prefs.getFileDirectoryPreferences());</b>
+<b class="nc"><i>145</i>&nbsp;                    List&lt;File&gt; dirs = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>146</i>&nbsp;                    for (String dirs1 : dirsS) {</b>
+<b class="nc"><i>147</i>&nbsp;                        dirs.add(new File(dirs1));</b>
+<b class="nc"><i>148</i>&nbsp;                    }</b>
+<i>149</i>&nbsp;
+<b class="nc"><i>150</i>&nbsp;                    for (int j = 0; j &lt; tableModel.getRowCount(); j++) {</b>
+<b class="nc"><i>151</i>&nbsp;                        FileListEntry flEntry = tableModel.getEntry(j);</b>
+<i>152</i>&nbsp;                        // See if the link looks like an URL:
+<b class="nc"><i>153</i>&nbsp;                        boolean httpLink = flEntry.link.toLowerCase(Locale.ENGLISH).startsWith(&quot;http&quot;);</b>
+<b class="nc"><i>154</i>&nbsp;                        if (httpLink) {</b>
+<b class="nc"><i>155</i>&nbsp;                            continue; // Don&#39;t check the remote file.</b>
+<i>156</i>&nbsp;                            // TODO: should there be an option to check remote links?
+<i>157</i>&nbsp;                        }
+<i>158</i>&nbsp;
+<i>159</i>&nbsp;                        // A variable to keep track of whether this link gets deleted:
+<b class="nc"><i>160</i>&nbsp;                        boolean deleted = false;</b>
+<i>161</i>&nbsp;
+<i>162</i>&nbsp;                        // Get an absolute path representation:
+<b class="nc"><i>163</i>&nbsp;                        Optional&lt;File&gt; file = FileUtil.expandFilename(flEntry.link, dirsS);</b>
+<b class="nc"><i>164</i>&nbsp;                        if ((!file.isPresent()) || !file.get().exists()) {</b>
+<i>165</i>&nbsp;                            int answer;
+<b class="nc"><i>166</i>&nbsp;                            if (removeAllBroken) {</b>
+<b class="nc"><i>167</i>&nbsp;                                answer = 2; // We should delete this link.</b>
+<i>168</i>&nbsp;                            } else {
+<b class="nc"><i>169</i>&nbsp;                                answer = JOptionPane.showOptionDialog(panel.frame(),</b>
+<b class="nc"><i>170</i>&nbsp;                                        Localization.lang(&quot;&lt;HTML&gt;Could not find file &#39;%0&#39;&lt;BR&gt;linked from entry &#39;%1&#39;&lt;/HTML&gt;&quot;,</b>
+<i>171</i>&nbsp;                                                flEntry.link,
+<b class="nc"><i>172</i>&nbsp;                                                aSel.getCiteKeyOptional().orElse(Localization.lang(&quot;undefined&quot;))),</b>
+<b class="nc"><i>173</i>&nbsp;                                        Localization.lang(&quot;Broken link&quot;),</b>
+<i>174</i>&nbsp;                                        JOptionPane.YES_NO_CANCEL_OPTION,
+<i>175</i>&nbsp;                                        JOptionPane.QUESTION_MESSAGE, null, brokenLinkOptions, brokenLinkOptions[0]
+<i>176</i>&nbsp;                                        );
+<i>177</i>&nbsp;                            }
+<b class="nc"><i>178</i>&nbsp;                            switch (answer) {</b>
+<i>179</i>&nbsp;                            case 1:
+<i>180</i>&nbsp;                                // Assign new file.
+<b class="nc"><i>181</i>&nbsp;                                FileListEntryEditor flEditor = new FileListEntryEditor</b>
+<b class="nc"><i>182</i>&nbsp;                                (panel.frame(), flEntry, false, true, panel.getBibDatabaseContext());</b>
+<b class="nc"><i>183</i>&nbsp;                                flEditor.setVisible(true, true);</b>
+<b class="nc"><i>184</i>&nbsp;                                break;</b>
+<i>185</i>&nbsp;                            case 2:
+<i>186</i>&nbsp;                                // Clear field:
+<b class="nc"><i>187</i>&nbsp;                                tableModel.removeEntry(j);</b>
+<b class="nc"><i>188</i>&nbsp;                                deleted = true; // Make sure we don&#39;t investigate this link further.</b>
+<b class="nc"><i>189</i>&nbsp;                                j--; // Step back in the iteration, because we removed an entry.</b>
+<b class="nc"><i>190</i>&nbsp;                                break;</b>
+<i>191</i>&nbsp;                            case 3:
+<i>192</i>&nbsp;                                // Clear field:
+<b class="nc"><i>193</i>&nbsp;                                tableModel.removeEntry(j);</b>
+<b class="nc"><i>194</i>&nbsp;                                deleted = true; // Make sure we don&#39;t investigate this link further.</b>
+<b class="nc"><i>195</i>&nbsp;                                j--; // Step back in the iteration, because we removed an entry.</b>
+<b class="nc"><i>196</i>&nbsp;                                removeAllBroken = true; // Notify for further cases.</b>
+<b class="nc"><i>197</i>&nbsp;                                break;</b>
+<i>198</i>&nbsp;                            default:
+<i>199</i>&nbsp;                                // Cancel
+<b class="nc"><i>200</i>&nbsp;                                break mainLoop;</b>
+<i>201</i>&nbsp;                            }
+<i>202</i>&nbsp;                        }
+<i>203</i>&nbsp;
+<i>204</i>&nbsp;                        // Unless we deleted this link, see if its file type is recognized:
+<b class="nc"><i>205</i>&nbsp;                        if (!deleted &amp;&amp; flEntry.type.isPresent()</b>
+<b class="nc"><i>206</i>&nbsp;                                &amp;&amp; (flEntry.type.get() instanceof UnknownExternalFileType)) {</b>
+<b class="nc"><i>207</i>&nbsp;                            String[] options = new String[] {</b>
+<b class="nc"><i>208</i>&nbsp;                                    Localization.lang(&quot;Define &#39;%0&#39;&quot;, flEntry.type.get().getName()),</b>
+<b class="nc"><i>209</i>&nbsp;                                    Localization.lang(&quot;Change file type&quot;),</b>
+<b class="nc"><i>210</i>&nbsp;                                    Localization.lang(&quot;Cancel&quot;)};</b>
+<b class="nc"><i>211</i>&nbsp;                            String defOption = options[0];</b>
+<b class="nc"><i>212</i>&nbsp;                            int answer = JOptionPane.showOptionDialog(panel.frame(), Localization.lang(&quot;One or more file links are of the type &#39;%0&#39;, which is undefined. What do you want to do?&quot;,</b>
+<b class="nc"><i>213</i>&nbsp;                                    flEntry.type.get().getName()),</b>
+<b class="nc"><i>214</i>&nbsp;                                    Localization.lang(&quot;Undefined file type&quot;), JOptionPane.YES_NO_CANCEL_OPTION,</b>
+<i>215</i>&nbsp;                                    JOptionPane.QUESTION_MESSAGE, null, options, defOption
+<i>216</i>&nbsp;                                    );
+<b class="nc"><i>217</i>&nbsp;                            if (answer == JOptionPane.CANCEL_OPTION) {</b>
+<i>218</i>&nbsp;                                // User doesn&#39;t want to handle this unknown link type.
+<b class="nc"><i>219</i>&nbsp;                            } else if (answer == JOptionPane.YES_OPTION) {</b>
+<i>220</i>&nbsp;                                // User wants to define the new file type. Show the dialog:
+<b class="nc"><i>221</i>&nbsp;                                ExternalFileType newType = new ExternalFileType(flEntry.type.get().getName(), &quot;&quot;, &quot;&quot;,</b>
+<b class="nc"><i>222</i>&nbsp;                                        &quot;&quot;, &quot;new&quot;, IconTheme.JabRefIcon.FILE.getSmallIcon());</b>
+<b class="nc"><i>223</i>&nbsp;                                ExternalFileTypeEntryEditor editor = new ExternalFileTypeEntryEditor(panel.frame(), newType);</b>
+<b class="nc"><i>224</i>&nbsp;                                editor.setVisible(true);</b>
+<b class="nc"><i>225</i>&nbsp;                                if (editor.okPressed()) {</b>
+<i>226</i>&nbsp;                                    // Get the old list of types, add this one, and update the list in prefs:
+<b class="nc"><i>227</i>&nbsp;                                    List&lt;ExternalFileType&gt; fileTypes = new ArrayList&lt;&gt;(</b>
+<b class="nc"><i>228</i>&nbsp;                                            ExternalFileTypes.getInstance().getExternalFileTypeSelection());</b>
+<b class="nc"><i>229</i>&nbsp;                                    fileTypes.add(newType);</b>
+<b class="nc"><i>230</i>&nbsp;                                    Collections.sort(fileTypes);</b>
+<b class="nc"><i>231</i>&nbsp;                                    ExternalFileTypes.getInstance().setExternalFileTypes(fileTypes);</b>
+<b class="nc"><i>232</i>&nbsp;                                    panel.getMainTable().repaint();</b>
+<i>233</i>&nbsp;                                }
+<b class="nc"><i>234</i>&nbsp;                            } else {</b>
+<i>235</i>&nbsp;                                // User wants to change the type of this link.
+<i>236</i>&nbsp;                                // First get a model of all file links for this entry:
+<b class="nc"><i>237</i>&nbsp;                                FileListEntryEditor editor = new FileListEntryEditor</b>
+<b class="nc"><i>238</i>&nbsp;                                        (panel.frame(), flEntry, false, true, panel.getBibDatabaseContext());</b>
+<b class="nc"><i>239</i>&nbsp;                                editor.setVisible(true, false);</b>
+<i>240</i>&nbsp;                            }
+<i>241</i>&nbsp;                        }
+<i>242</i>&nbsp;                    }
+<i>243</i>&nbsp;
+<b class="nc"><i>244</i>&nbsp;                    if (!tableModel.getStringRepresentation().equals(old.orElse(null))) {</b>
+<i>245</i>&nbsp;                        // The table has been modified. Store the change:
+<b class="nc"><i>246</i>&nbsp;                        String toSet = tableModel.getStringRepresentation();</b>
+<b class="nc"><i>247</i>&nbsp;                        if (toSet.isEmpty()) {</b>
+<b class="nc"><i>248</i>&nbsp;                            ce.addEdit(new UndoableFieldChange(aSel, FieldName.FILE, old.orElse(null), null));</b>
+<b class="nc"><i>249</i>&nbsp;                            aSel.clearField(FieldName.FILE);</b>
+<i>250</i>&nbsp;                        } else {
+<b class="nc"><i>251</i>&nbsp;                            ce.addEdit(new UndoableFieldChange(aSel, FieldName.FILE, old.orElse(null), toSet));</b>
+<b class="nc"><i>252</i>&nbsp;                            aSel.setField(FieldName.FILE, toSet);</b>
+<i>253</i>&nbsp;                        }
+<b class="nc"><i>254</i>&nbsp;                        changedEntries.add(aSel);</b>
+<i>255</i>&nbsp;                    }
+<i>256</i>&nbsp;
+<i>257</i>&nbsp;                }
+<b class="nc"><i>258</i>&nbsp;            }</b>
+<i>259</i>&nbsp;        }
+<i>260</i>&nbsp;
+<b class="nc"><i>261</i>&nbsp;        if (!changedEntries.isEmpty()) {</b>
+<i>262</i>&nbsp;            // Add the undo edit:
+<b class="nc"><i>263</i>&nbsp;            ce.end();</b>
+<b class="nc"><i>264</i>&nbsp;            panel.getUndoManager().addEdit(ce);</b>
+<b class="nc"><i>265</i>&nbsp;            panel.markBaseChanged();</b>
+<b class="nc"><i>266</i>&nbsp;            entriesChangedCount = changedEntries.size();</b>
+<i>267</i>&nbsp;        }
+<b class="nc"><i>268</i>&nbsp;    }</b>
+<i>269</i>&nbsp;
+<i>270</i>&nbsp;    @Override
+<i>271</i>&nbsp;    public void update() {
+<b class="nc"><i>272</i>&nbsp;        if (!goOn) {</b>
+<b class="nc"><i>273</i>&nbsp;            return;</b>
+<i>274</i>&nbsp;        }
+<i>275</i>&nbsp;
+<b class="nc"><i>276</i>&nbsp;        panel.output(Localization.lang(&quot;Finished synchronizing file links. Entries changed: %0.&quot;,</b>
+<b class="nc"><i>277</i>&nbsp;                String.valueOf(entriesChangedCount)));</b>
+<b class="nc"><i>278</i>&nbsp;        panel.frame().setProgressBarVisible(false);</b>
+<b class="nc"><i>279</i>&nbsp;        if (entriesChangedCount &gt; 0) {</b>
+<b class="nc"><i>280</i>&nbsp;            panel.markBaseChanged();</b>
+<i>281</i>&nbsp;        }
+<b class="nc"><i>282</i>&nbsp;    }</b>
+<i>283</i>&nbsp;
+<i>284</i>&nbsp;
+<i>285</i>&nbsp;    static class OptionsDialog extends JDialog {
+<i>286</i>&nbsp;
+<i>287</i>&nbsp;
+<b class="nc"><i>288</i>&nbsp;        private final JButton ok = new JButton(Localization.lang(&quot;OK&quot;));</b>
+<b class="nc"><i>289</i>&nbsp;        private final JButton cancel = new JButton(Localization.lang(&quot;Cancel&quot;));</b>
+<b class="nc"><i>290</i>&nbsp;        private boolean canceled = true;</b>
+<i>291</i>&nbsp;        private final BibDatabaseContext databaseContext;
+<b class="nc"><i>292</i>&nbsp;        private final JRadioButton autoSetUnset = new JRadioButton(Localization.lang(&quot;Automatically set file links&quot;)</b>
+<b class="nc"><i>293</i>&nbsp;                + &quot;. &quot; + Localization.lang(&quot;Do not overwrite existing links.&quot;), true);</b>
+<b class="nc"><i>294</i>&nbsp;        private final JRadioButton autoSetAll = new JRadioButton(Localization.lang(&quot;Automatically set file links&quot;)</b>
+<b class="nc"><i>295</i>&nbsp;                + &quot;. &quot; + Localization.lang(&quot;Allow overwriting existing links.&quot;), false);</b>
+<b class="nc"><i>296</i>&nbsp;        private final JRadioButton autoSetNone = new JRadioButton(Localization.lang(&quot;Do not automatically set&quot;), false);</b>
+<b class="nc"><i>297</i>&nbsp;        private final JCheckBox checkLinks = new JCheckBox(Localization.lang(&quot;Check existing file links&quot;), true);</b>
+<i>298</i>&nbsp;
+<i>299</i>&nbsp;
+<i>300</i>&nbsp;        public OptionsDialog(JFrame parent, BibDatabaseContext databaseContext) {
+<b class="nc"><i>301</i>&nbsp;            super(parent, Localization.lang(&quot;Synchronize file links&quot;), true);</b>
+<b class="nc"><i>302</i>&nbsp;            this.databaseContext = databaseContext;</b>
+<b class="nc"><i>303</i>&nbsp;            ok.addActionListener(e -&gt; {</b>
+<b class="nc"><i>304</i>&nbsp;                canceled = false;</b>
+<b class="nc"><i>305</i>&nbsp;                dispose();</b>
+<b class="nc"><i>306</i>&nbsp;            });</b>
+<i>307</i>&nbsp;
+<b class="nc"><i>308</i>&nbsp;            Action closeAction = new AbstractAction() {</b>
+<i>309</i>&nbsp;
+<i>310</i>&nbsp;                @Override
+<i>311</i>&nbsp;                public void actionPerformed(ActionEvent e) {
+<b class="nc"><i>312</i>&nbsp;                    dispose();</b>
+<b class="nc"><i>313</i>&nbsp;                }</b>
+<i>314</i>&nbsp;            };
+<i>315</i>&nbsp;
+<b class="nc"><i>316</i>&nbsp;            cancel.addActionListener(closeAction);</b>
+<i>317</i>&nbsp;
+<b class="nc"><i>318</i>&nbsp;            InputMap im = cancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);</b>
+<b class="nc"><i>319</i>&nbsp;            ActionMap am = cancel.getActionMap();</b>
+<b class="nc"><i>320</i>&nbsp;            im.put(Globals.getKeyPrefs().getKey(KeyBinding.CLOSE_DIALOG), &quot;close&quot;);</b>
+<b class="nc"><i>321</i>&nbsp;            am.put(&quot;close&quot;, closeAction);</b>
+<i>322</i>&nbsp;
+<b class="nc"><i>323</i>&nbsp;            ButtonGroup bg = new ButtonGroup();</b>
+<b class="nc"><i>324</i>&nbsp;            bg.add(autoSetUnset);</b>
+<b class="nc"><i>325</i>&nbsp;            bg.add(autoSetNone);</b>
+<b class="nc"><i>326</i>&nbsp;            bg.add(autoSetAll);</b>
+<i>327</i>&nbsp;
+<b class="nc"><i>328</i>&nbsp;            FormLayout layout = new FormLayout(&quot;fill:pref&quot;,</b>
+<i>329</i>&nbsp;                    &quot;pref, 2dlu, pref, 2dlu, pref, pref, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref&quot;);
+<b class="nc"><i>330</i>&nbsp;            FormBuilder builder = FormBuilder.create().layout(layout);</b>
+<b class="nc"><i>331</i>&nbsp;            JLabel description = new JLabel(&quot;&lt;HTML&gt;&quot;</b>
+<i>332</i>&nbsp;                    + Localization
+<b class="nc"><i>333</i>&nbsp;                            .lang(&quot;Attempt to automatically set file links for your entries. Automatically setting works if &quot;</b>
+<i>334</i>&nbsp;                                    + &quot;a file in your file directory&lt;BR&gt;or a subdirectory is named identically to an entry&#39;s BibTeX key, plus extension.&quot;)
+<i>335</i>&nbsp;                    + &quot;&lt;/HTML&gt;&quot;);
+<i>336</i>&nbsp;
+<b class="nc"><i>337</i>&nbsp;            builder.addSeparator(Localization.lang(&quot;Automatically set file links&quot;)).xy(1, 1);</b>
+<b class="nc"><i>338</i>&nbsp;            builder.add(description).xy(1, 3);</b>
+<b class="nc"><i>339</i>&nbsp;            builder.add(autoSetUnset).xy(1, 5);</b>
+<b class="nc"><i>340</i>&nbsp;            builder.add(autoSetAll).xy(1, 6);</b>
+<b class="nc"><i>341</i>&nbsp;            builder.add(autoSetNone).xy(1, 7);</b>
+<b class="nc"><i>342</i>&nbsp;            builder.addSeparator(Localization.lang(&quot;Check links&quot;)).xy(1, 9);</b>
+<i>343</i>&nbsp;
+<b class="nc"><i>344</i>&nbsp;            description = new JLabel(&quot;&lt;HTML&gt;&quot;</b>
+<i>345</i>&nbsp;                    + Localization
+<b class="nc"><i>346</i>&nbsp;                            .lang(&quot;This makes JabRef look up each file link and check if the file exists. If not, you will be given options&lt;BR&gt;to resolve the problem.&quot;)</b>
+<i>347</i>&nbsp;                    + &quot;&lt;/HTML&gt;&quot;);
+<b class="nc"><i>348</i>&nbsp;            builder.add(description).xy(1, 11);</b>
+<b class="nc"><i>349</i>&nbsp;            builder.add(checkLinks).xy(1, 13);</b>
+<b class="nc"><i>350</i>&nbsp;            builder.addSeparator(&quot;&quot;).xy(1, 15);</b>
+<i>351</i>&nbsp;
+<b class="nc"><i>352</i>&nbsp;            JPanel main = builder.getPanel();</b>
+<b class="nc"><i>353</i>&nbsp;            main.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));</b>
+<i>354</i>&nbsp;
+<b class="nc"><i>355</i>&nbsp;            ButtonBarBuilder bb = new ButtonBarBuilder();</b>
+<b class="nc"><i>356</i>&nbsp;            bb.addGlue();</b>
+<b class="nc"><i>357</i>&nbsp;            bb.addButton(ok);</b>
+<b class="nc"><i>358</i>&nbsp;            bb.addButton(cancel);</b>
+<b class="nc"><i>359</i>&nbsp;            bb.addGlue();</b>
+<b class="nc"><i>360</i>&nbsp;            getContentPane().add(main, BorderLayout.CENTER);</b>
+<b class="nc"><i>361</i>&nbsp;            getContentPane().add(bb.getPanel(), BorderLayout.SOUTH);</b>
+<i>362</i>&nbsp;
+<b class="nc"><i>363</i>&nbsp;            pack();</b>
+<b class="nc"><i>364</i>&nbsp;        }</b>
+<i>365</i>&nbsp;
+<i>366</i>&nbsp;        @Override
+<i>367</i>&nbsp;        public void setVisible(boolean visible) {
+<b class="nc"><i>368</i>&nbsp;            if (visible) {</b>
+<b class="nc"><i>369</i>&nbsp;                canceled = true;</b>
+<i>370</i>&nbsp;            }
+<i>371</i>&nbsp;
+<b class="nc"><i>372</i>&nbsp;            List&lt;String&gt; dirs = databaseContext.getFileDirectories(Globals.prefs.getFileDirectoryPreferences());</b>
+<b class="nc"><i>373</i>&nbsp;            if (dirs.isEmpty()) {</b>
+<b class="nc"><i>374</i>&nbsp;                autoSetNone.setSelected(true);</b>
+<b class="nc"><i>375</i>&nbsp;                autoSetNone.setEnabled(false);</b>
+<b class="nc"><i>376</i>&nbsp;                autoSetAll.setEnabled(false);</b>
+<b class="nc"><i>377</i>&nbsp;                autoSetUnset.setEnabled(false);</b>
+<i>378</i>&nbsp;            } else {
+<b class="nc"><i>379</i>&nbsp;                autoSetNone.setEnabled(true);</b>
+<b class="nc"><i>380</i>&nbsp;                autoSetAll.setEnabled(true);</b>
+<b class="nc"><i>381</i>&nbsp;                autoSetUnset.setEnabled(true);</b>
+<i>382</i>&nbsp;            }
+<i>383</i>&nbsp;
+<b class="nc"><i>384</i>&nbsp;            ok.requestFocus();</b>
+<b class="nc"><i>385</i>&nbsp;            super.setVisible(visible);</b>
+<i>386</i>&nbsp;
+<b class="nc"><i>387</i>&nbsp;        }</b>
+<i>388</i>&nbsp;
+<i>389</i>&nbsp;        public boolean isAutoSetNone() {
+<b class="nc"><i>390</i>&nbsp;            return autoSetNone.isSelected();</b>
+<i>391</i>&nbsp;        }
+<i>392</i>&nbsp;
+<i>393</i>&nbsp;        public boolean isCheckLinks() {
+<b class="nc"><i>394</i>&nbsp;            return checkLinks.isSelected();</b>
+<i>395</i>&nbsp;        }
+<i>396</i>&nbsp;
+<i>397</i>&nbsp;        public boolean canceled() {
+<b class="nc"><i>398</i>&nbsp;            return canceled;</b>
+<i>399</i>&nbsp;        }
+<i>400</i>&nbsp;    }
+<i>401</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

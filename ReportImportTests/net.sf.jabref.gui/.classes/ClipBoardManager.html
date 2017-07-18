@@ -1,0 +1,206 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ClipBoardManager</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ClipBoardManager (net.sf.jabref.gui)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ClipBoardManager</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 47)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.Toolkit;
+<i>4</i>&nbsp;import java.awt.datatransfer.Clipboard;
+<i>5</i>&nbsp;import java.awt.datatransfer.ClipboardOwner;
+<i>6</i>&nbsp;import java.awt.datatransfer.DataFlavor;
+<i>7</i>&nbsp;import java.awt.datatransfer.StringSelection;
+<i>8</i>&nbsp;import java.awt.datatransfer.Transferable;
+<i>9</i>&nbsp;import java.awt.datatransfer.UnsupportedFlavorException;
+<i>10</i>&nbsp;import java.io.IOException;
+<i>11</i>&nbsp;import java.io.StringReader;
+<i>12</i>&nbsp;import java.util.ArrayList;
+<i>13</i>&nbsp;import java.util.List;
+<i>14</i>&nbsp;import java.util.Optional;
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;import net.sf.jabref.Globals;
+<i>17</i>&nbsp;import net.sf.jabref.logic.importer.FetcherException;
+<i>18</i>&nbsp;import net.sf.jabref.logic.importer.fetcher.DoiFetcher;
+<i>19</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.BibtexParser;
+<i>20</i>&nbsp;import net.sf.jabref.logic.util.DOI;
+<i>21</i>&nbsp;import net.sf.jabref.model.database.BibDatabase;
+<i>22</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;import org.apache.commons.logging.Log;
+<i>25</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>26</i>&nbsp;
+<b class="nc"><i>27</i>&nbsp;public class ClipBoardManager implements ClipboardOwner {</b>
+<b class="nc"><i>28</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(ClipBoardManager.class);</b>
+<i>29</i>&nbsp;
+<b class="nc"><i>30</i>&nbsp;    private static final Clipboard CLIPBOARD = Toolkit.getDefaultToolkit().getSystemClipboard();</b>
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;    /**
+<i>33</i>&nbsp;     * Empty implementation of the ClipboardOwner interface.
+<i>34</i>&nbsp;     */
+<i>35</i>&nbsp;    @Override
+<i>36</i>&nbsp;    public void lostOwnership(Clipboard aClipboard, Transferable aContents) {
+<i>37</i>&nbsp;        //do nothing
+<b class="nc"><i>38</i>&nbsp;    }</b>
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;    /**
+<i>41</i>&nbsp;     * Place a String on the clipboard, and make this class the
+<i>42</i>&nbsp;     * owner of the Clipboard&#39;s contents.
+<i>43</i>&nbsp;     */
+<i>44</i>&nbsp;    public void setClipboardContents(String aString) {
+<b class="nc"><i>45</i>&nbsp;        StringSelection stringSelection = new StringSelection(aString);</b>
+<b class="nc"><i>46</i>&nbsp;        CLIPBOARD.setContents(stringSelection, this);</b>
+<b class="nc"><i>47</i>&nbsp;    }</b>
+<i>48</i>&nbsp;
+<i>49</i>&nbsp;    /**
+<i>50</i>&nbsp;     * Places the string into the clipboard using a {@link Transferable}.
+<i>51</i>&nbsp;     */
+<i>52</i>&nbsp;    public void setTransferableClipboardContents(Transferable transferable){
+<b class="nc"><i>53</i>&nbsp;        CLIPBOARD.setContents(transferable, this);</b>
+<b class="nc"><i>54</i>&nbsp;    }</b>
+<i>55</i>&nbsp;
+<i>56</i>&nbsp;    /**
+<i>57</i>&nbsp;     * Get the String residing on the clipboard.
+<i>58</i>&nbsp;     *
+<i>59</i>&nbsp;     * @return any text found on the Clipboard; if none found, return an
+<i>60</i>&nbsp;     * empty String.
+<i>61</i>&nbsp;     */
+<i>62</i>&nbsp;    public String getClipboardContents() {
+<b class="nc"><i>63</i>&nbsp;        String result = &quot;&quot;;</b>
+<i>64</i>&nbsp;        //odd: the Object param of getContents is not currently used
+<b class="nc"><i>65</i>&nbsp;        Transferable contents = CLIPBOARD.getContents(null);</b>
+<b class="nc"><i>66</i>&nbsp;        if ((contents != null) &amp;&amp; contents.isDataFlavorSupported(DataFlavor.stringFlavor)) {</b>
+<i>67</i>&nbsp;            try {
+<b class="nc"><i>68</i>&nbsp;                result = (String) contents.getTransferData(DataFlavor.stringFlavor);</b>
+<b class="nc"><i>69</i>&nbsp;            } catch (UnsupportedFlavorException | IOException e) {</b>
+<i>70</i>&nbsp;                //highly unlikely since we are using a standard DataFlavor
+<b class="nc"><i>71</i>&nbsp;                LOGGER.info(&quot;problem with getting clipboard contents&quot;, e);</b>
+<b class="nc"><i>72</i>&nbsp;            }</b>
+<i>73</i>&nbsp;        }
+<b class="nc"><i>74</i>&nbsp;        return result;</b>
+<i>75</i>&nbsp;    }
+<i>76</i>&nbsp;
+<i>77</i>&nbsp;
+<i>78</i>&nbsp;    public List&lt;BibEntry&gt; extractBibEntriesFromClipboard() {
+<i>79</i>&nbsp;        // Get clipboard contents, and see if TransferableBibtexEntry is among the content flavors offered
+<b class="nc"><i>80</i>&nbsp;        Transferable content = CLIPBOARD.getContents(null);</b>
+<b class="nc"><i>81</i>&nbsp;        List&lt;BibEntry&gt; result = new ArrayList&lt;&gt;();</b>
+<i>82</i>&nbsp;
+<i>83</i>&nbsp;
+<b class="nc"><i>84</i>&nbsp;        if (content.isDataFlavorSupported(TransferableBibtexEntry.entryFlavor)) {</b>
+<i>85</i>&nbsp;            // We have determined that the clipboard data is a set of entries.
+<i>86</i>&nbsp;            try  {
+<i>87</i>&nbsp;                @SuppressWarnings(&quot;unchecked&quot;)
+<b class="nc"><i>88</i>&nbsp;                List&lt;BibEntry&gt; contents = (List&lt;BibEntry&gt;) content.getTransferData(TransferableBibtexEntry.entryFlavor);</b>
+<b class="nc"><i>89</i>&nbsp;                result = contents;</b>
+<b class="nc"><i>90</i>&nbsp;            } catch (UnsupportedFlavorException | ClassCastException ex) {</b>
+<b class="nc"><i>91</i>&nbsp;                LOGGER.warn(&quot;Could not paste this type&quot;, ex);</b>
+<b class="nc"><i>92</i>&nbsp;            } catch (IOException ex) {</b>
+<b class="nc"><i>93</i>&nbsp;                LOGGER.warn(&quot;Could not paste&quot;, ex);</b>
+<b class="nc"><i>94</i>&nbsp;            }</b>
+<b class="nc"><i>95</i>&nbsp;        } else if (content.isDataFlavorSupported(DataFlavor.stringFlavor)) {</b>
+<i>96</i>&nbsp;            try {
+<b class="nc"><i>97</i>&nbsp;                String data = (String) content.getTransferData(DataFlavor.stringFlavor);</b>
+<i>98</i>&nbsp;                // fetch from doi
+<b class="nc"><i>99</i>&nbsp;                if (DOI.build(data).isPresent()) {</b>
+<b class="nc"><i>100</i>&nbsp;                    LOGGER.info(&quot;Found DOI in clipboard&quot;);</b>
+<b class="nc"><i>101</i>&nbsp;                    Optional&lt;BibEntry&gt; entry = new DoiFetcher(Globals.prefs.getImportFormatPreferences()).performSearchById(new DOI(data).getDOI());</b>
+<b class="nc"><i>102</i>&nbsp;                    entry.ifPresent(result::add);</b>
+<b class="nc"><i>103</i>&nbsp;                } else {</b>
+<i>104</i>&nbsp;                    // parse bibtex string
+<b class="nc"><i>105</i>&nbsp;                    BibtexParser bp = new BibtexParser(Globals.prefs.getImportFormatPreferences());</b>
+<b class="nc"><i>106</i>&nbsp;                    BibDatabase db = bp.parse(new StringReader(data)).getDatabase();</b>
+<b class="nc"><i>107</i>&nbsp;                    LOGGER.info(&quot;Parsed &quot; + db.getEntryCount() + &quot; entries from clipboard text&quot;);</b>
+<b class="nc"><i>108</i>&nbsp;                    if (db.hasEntries()) {</b>
+<b class="nc"><i>109</i>&nbsp;                        result = db.getEntries();</b>
+<i>110</i>&nbsp;                    }
+<i>111</i>&nbsp;                }
+<b class="nc"><i>112</i>&nbsp;            } catch (UnsupportedFlavorException ex) {</b>
+<b class="nc"><i>113</i>&nbsp;                LOGGER.warn(&quot;Could not parse this type&quot;, ex);</b>
+<b class="nc"><i>114</i>&nbsp;            } catch (IOException ex) {</b>
+<b class="nc"><i>115</i>&nbsp;                LOGGER.warn(&quot;Data is no longer available in the requested flavor&quot;, ex);</b>
+<b class="nc"><i>116</i>&nbsp;            } catch (FetcherException ex) {</b>
+<b class="nc"><i>117</i>&nbsp;                LOGGER.error(&quot;Error while fetching&quot;, ex);</b>
+<b class="nc"><i>118</i>&nbsp;            }</b>
+<i>119</i>&nbsp;
+<i>120</i>&nbsp;        }
+<b class="nc"><i>121</i>&nbsp;        return result;</b>
+<i>122</i>&nbsp;    }
+<i>123</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

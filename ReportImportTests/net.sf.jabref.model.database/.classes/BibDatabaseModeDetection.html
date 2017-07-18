@@ -1,0 +1,117 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: BibDatabaseModeDetection</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.model.database</a> ]
+</div>
+
+<h1>Coverage Summary for Class: BibDatabaseModeDetection (net.sf.jabref.model.database)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">BibDatabaseModeDetection</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.model.database;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.Locale;
+<i>4</i>&nbsp;import java.util.stream.Stream;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import net.sf.jabref.model.EntryTypes;
+<i>7</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>8</i>&nbsp;
+<b class="nc"><i>9</i>&nbsp;public class BibDatabaseModeDetection {</b>
+<i>10</i>&nbsp;    /**
+<i>11</i>&nbsp;     * Tries to infer the database type by examining a BibDatabase database.
+<i>12</i>&nbsp;     *
+<i>13</i>&nbsp;     * All checks are based on the case-insensitive comparison of entry tag names.
+<i>14</i>&nbsp;     * Only standard BibTex and Biblatex entry types are considered in the decision process.
+<i>15</i>&nbsp;     *
+<i>16</i>&nbsp;     * 1. Check if any of the entries is a type exclusive to Biblatex
+<i>17</i>&nbsp;     * 2. Check if any exclusive Biblatex fields are present
+<i>18</i>&nbsp;     * 3. Otherwise return BibTex
+<i>19</i>&nbsp;     *
+<i>20</i>&nbsp;     * @param database a BibDatabase database
+<i>21</i>&nbsp;     * @return the inferred database type
+<i>22</i>&nbsp;     */
+<i>23</i>&nbsp;    public static BibDatabaseMode inferMode(BibDatabase database) {
+<b class="nc"><i>24</i>&nbsp;        final Stream&lt;String&gt; entryTypes = database.getEntries().stream().map(BibEntry::getType);</b>
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;        // type-based check
+<b class="nc"><i>27</i>&nbsp;        if (entryTypes.anyMatch(type -&gt; EntryTypes.isExclusiveBibLatex(type.toLowerCase(Locale.ENGLISH)))) {</b>
+<b class="nc"><i>28</i>&nbsp;            return BibDatabaseMode.BIBLATEX;</b>
+<i>29</i>&nbsp;        } else {
+<i>30</i>&nbsp;            // field-based check
+<b class="nc"><i>31</i>&nbsp;            return BibDatabaseMode.BIBTEX;</b>
+<i>32</i>&nbsp;        }
+<i>33</i>&nbsp;    }
+<i>34</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

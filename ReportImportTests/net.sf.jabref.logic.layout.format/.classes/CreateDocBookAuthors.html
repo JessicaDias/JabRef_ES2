@@ -1,0 +1,134 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: CreateDocBookAuthors</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.layout.format</a> ]
+</div>
+
+<h1>Coverage Summary for Class: CreateDocBookAuthors (net.sf.jabref.logic.layout.format)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CreateDocBookAuthors</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 23)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.layout.format;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import net.sf.jabref.logic.layout.LayoutFormatter;
+<i>4</i>&nbsp;import net.sf.jabref.model.entry.Author;
+<i>5</i>&nbsp;import net.sf.jabref.model.entry.AuthorList;
+<i>6</i>&nbsp;import net.sf.jabref.model.entry.FieldName;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;/**
+<i>9</i>&nbsp; * Create DocBook authors formatter.
+<i>10</i>&nbsp; */
+<b class="nc"><i>11</i>&nbsp;public class CreateDocBookAuthors implements LayoutFormatter {</b>
+<i>12</i>&nbsp;
+<b class="nc"><i>13</i>&nbsp;    private static final XMLChars XML_CHARS = new XMLChars();</b>
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;    @Override
+<i>17</i>&nbsp;    public String format(String fieldText) {
+<i>18</i>&nbsp;
+<b class="nc"><i>19</i>&nbsp;        StringBuilder sb = new StringBuilder(100);</b>
+<i>20</i>&nbsp;
+<b class="nc"><i>21</i>&nbsp;        AuthorList al = AuthorList.parse(fieldText);</b>
+<i>22</i>&nbsp;
+<b class="nc"><i>23</i>&nbsp;        addBody(sb, al, FieldName.AUTHOR);</b>
+<b class="nc"><i>24</i>&nbsp;        return sb.toString();</b>
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    }
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;    public void addBody(StringBuilder sb, AuthorList al, String tagName) {
+<b class="nc"><i>29</i>&nbsp;        for (int i = 0; i &lt; al.getNumberOfAuthors(); i++) {</b>
+<b class="nc"><i>30</i>&nbsp;            sb.append(&#39;&lt;&#39;).append(tagName).append(&#39;&gt;&#39;);</b>
+<b class="nc"><i>31</i>&nbsp;            Author a = al.getAuthor(i);</b>
+<b class="nc"><i>32</i>&nbsp;            a.getFirst().filter(first -&gt; !first.isEmpty()).ifPresent(first -&gt; sb.append(&quot;&lt;firstname&gt;&quot;)</b>
+<b class="nc"><i>33</i>&nbsp;                    .append(CreateDocBookAuthors.XML_CHARS.format(first)).append(&quot;&lt;/firstname&gt;&quot;));</b>
+<b class="nc"><i>34</i>&nbsp;            a.getVon().filter(von -&gt; !von.isEmpty()).ifPresent(von -&gt; sb.append(&quot;&lt;othername&gt;&quot;)</b>
+<b class="nc"><i>35</i>&nbsp;                    .append(CreateDocBookAuthors.XML_CHARS.format(von)).append(&quot;&lt;/othername&gt;&quot;));</b>
+<b class="nc"><i>36</i>&nbsp;            a.getLast().filter(last -&gt; !last.isEmpty()).ifPresent(last -&gt; {</b>
+<b class="nc"><i>37</i>&nbsp;                sb.append(&quot;&lt;surname&gt;&quot;).append(CreateDocBookAuthors.XML_CHARS.format(last));</b>
+<b class="nc"><i>38</i>&nbsp;                a.getJr().filter(jr -&gt; !jr.isEmpty())</b>
+<b class="nc"><i>39</i>&nbsp;                        .ifPresent(jr -&gt; sb.append(&#39; &#39;).append(CreateDocBookAuthors.XML_CHARS.format(jr)));</b>
+<b class="nc"><i>40</i>&nbsp;                sb.append(&quot;&lt;/surname&gt;&quot;);</b>
+<b class="nc"><i>41</i>&nbsp;            });</b>
+<i>42</i>&nbsp;
+<b class="nc"><i>43</i>&nbsp;            if (i &lt; (al.getNumberOfAuthors() - 1)) {</b>
+<b class="nc"><i>44</i>&nbsp;                sb.append(&quot;&lt;/&quot;).append(tagName).append(&quot;&gt;\n       &quot;);</b>
+<i>45</i>&nbsp;            } else {
+<b class="nc"><i>46</i>&nbsp;                sb.append(&quot;&lt;/&quot;).append(tagName).append(&#39;&gt;&#39;);</b>
+<i>47</i>&nbsp;            }
+<i>48</i>&nbsp;        }
+<b class="nc"><i>49</i>&nbsp;    }</b>
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

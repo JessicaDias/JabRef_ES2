@@ -1,0 +1,156 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: EntryType</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.model.entry</a> ]
+</div>
+
+<h1>Coverage Summary for Class: EntryType (net.sf.jabref.model.entry)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">EntryType</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 8)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.model.entry;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.Arrays;
+<i>4</i>&nbsp;import java.util.Collections;
+<i>5</i>&nbsp;import java.util.List;
+<i>6</i>&nbsp;import java.util.stream.Collectors;
+<i>7</i>&nbsp;import java.util.stream.Stream;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;/**
+<i>10</i>&nbsp; * Interface for all EntryTypes.
+<i>11</i>&nbsp; */
+<i>12</i>&nbsp;public interface EntryType extends Comparable&lt;EntryType&gt; {
+<i>13</i>&nbsp;    /**
+<i>14</i>&nbsp;     * Returns the tag name of the entry type.
+<i>15</i>&nbsp;     *
+<i>16</i>&nbsp;     * @return tag name of the entry type.
+<i>17</i>&nbsp;     */
+<i>18</i>&nbsp;    String getName();
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;    /**
+<i>21</i>&nbsp;     * Returns all supported optional field names.
+<i>22</i>&nbsp;     *
+<i>23</i>&nbsp;     * @return a List of optional field name Strings
+<i>24</i>&nbsp;     */
+<i>25</i>&nbsp;    List&lt;String&gt; getOptionalFields();
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    /**
+<i>28</i>&nbsp;     * Returns all required field names.
+<i>29</i>&nbsp;     * If fields have an OR relationship the name includes both field names divided by /, e.g. author/editor.
+<i>30</i>&nbsp;     * If you need all required fields as sole entities use @see{getRequiredFieldsFlat} .
+<i>31</i>&nbsp;     *
+<i>32</i>&nbsp;     * @return a List of required field name Strings
+<i>33</i>&nbsp;     */
+<i>34</i>&nbsp;    List&lt;String&gt; getRequiredFields();
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;    /**
+<i>37</i>&nbsp;     * Returns all required field names.
+<i>38</i>&nbsp;     * No OR relationships are captured here.
+<i>39</i>&nbsp;     *
+<i>40</i>&nbsp;     * @return a List of required field name Strings
+<i>41</i>&nbsp;     */
+<i>42</i>&nbsp;    default List&lt;String&gt; getRequiredFieldsFlat() {
+<b class="nc"><i>43</i>&nbsp;        List&lt;String&gt; requiredFlat = getRequiredFields().stream()</b>
+<b class="nc"><i>44</i>&nbsp;                .map(field -&gt; field.split(FieldName.FIELD_SEPARATOR))</b>
+<b class="nc"><i>45</i>&nbsp;                .flatMap(Arrays::stream)</b>
+<b class="nc"><i>46</i>&nbsp;                .collect(Collectors.toList());</b>
+<i>47</i>&nbsp;
+<b class="nc"><i>48</i>&nbsp;        return Collections.unmodifiableList(requiredFlat);</b>
+<i>49</i>&nbsp;    }
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;    /**
+<i>52</i>&nbsp;     * Returns all defined (required &amp; optional) fields.
+<i>53</i>&nbsp;     * No OR relationships are captured here.
+<i>54</i>&nbsp;     *
+<i>55</i>&nbsp;     * @return a List of all defined field name Strings
+<i>56</i>&nbsp;     */
+<i>57</i>&nbsp;    default List&lt;String&gt; getAllFields() {
+<b class="nc"><i>58</i>&nbsp;        List&lt;String&gt; allFields = Stream.concat(getRequiredFieldsFlat().stream(), getOptionalFields().stream())</b>
+<b class="nc"><i>59</i>&nbsp;                .collect(Collectors.toList());</b>
+<i>60</i>&nbsp;
+<b class="nc"><i>61</i>&nbsp;        return Collections.unmodifiableList(allFields);</b>
+<i>62</i>&nbsp;    }
+<i>63</i>&nbsp;
+<i>64</i>&nbsp;    /**
+<i>65</i>&nbsp;     * TODO: move inside GUI
+<i>66</i>&nbsp;     */
+<i>67</i>&nbsp;    List&lt;String&gt; getPrimaryOptionalFields();
+<i>68</i>&nbsp;
+<i>69</i>&nbsp;    /**
+<i>70</i>&nbsp;     * TODO: move inside GUI
+<i>71</i>&nbsp;     */
+<i>72</i>&nbsp;    List&lt;String&gt; getSecondaryOptionalFields();
+<i>73</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

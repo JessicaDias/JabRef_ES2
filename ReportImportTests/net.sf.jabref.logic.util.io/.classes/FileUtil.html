@@ -1,0 +1,529 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: FileUtil</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.util.io</a> ]
+</div>
+
+<h1>Coverage Summary for Class: FileUtil (net.sf.jabref.logic.util.io)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">FileUtil</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 19)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 160)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.util.io;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.File;
+<i>4</i>&nbsp;import java.io.IOException;
+<i>5</i>&nbsp;import java.io.StringReader;
+<i>6</i>&nbsp;import java.nio.file.FileSystems;
+<i>7</i>&nbsp;import java.nio.file.Files;
+<i>8</i>&nbsp;import java.nio.file.Path;
+<i>9</i>&nbsp;import java.nio.file.StandardCopyOption;
+<i>10</i>&nbsp;import java.util.ArrayList;
+<i>11</i>&nbsp;import java.util.Arrays;
+<i>12</i>&nbsp;import java.util.Collections;
+<i>13</i>&nbsp;import java.util.HashMap;
+<i>14</i>&nbsp;import java.util.List;
+<i>15</i>&nbsp;import java.util.Map;
+<i>16</i>&nbsp;import java.util.Objects;
+<i>17</i>&nbsp;import java.util.Optional;
+<i>18</i>&nbsp;import java.util.Set;
+<i>19</i>&nbsp;import java.util.Stack;
+<i>20</i>&nbsp;import java.util.Vector;
+<i>21</i>&nbsp;import java.util.regex.Pattern;
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;import net.sf.jabref.logic.layout.Layout;
+<i>24</i>&nbsp;import net.sf.jabref.logic.layout.LayoutFormatterPreferences;
+<i>25</i>&nbsp;import net.sf.jabref.logic.layout.LayoutHelper;
+<i>26</i>&nbsp;import net.sf.jabref.logic.util.OS;
+<i>27</i>&nbsp;import net.sf.jabref.model.database.BibDatabase;
+<i>28</i>&nbsp;import net.sf.jabref.model.database.BibDatabaseContext;
+<i>29</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>30</i>&nbsp;import net.sf.jabref.model.entry.FieldName;
+<i>31</i>&nbsp;import net.sf.jabref.model.entry.FileField;
+<i>32</i>&nbsp;import net.sf.jabref.model.entry.ParsedFileField;
+<i>33</i>&nbsp;import net.sf.jabref.model.metadata.FileDirectoryPreferences;
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;import org.apache.commons.logging.Log;
+<i>36</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>37</i>&nbsp;
+<b class="nc"><i>38</i>&nbsp;public class FileUtil {</b>
+<i>39</i>&nbsp;
+<b class="nc"><i>40</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(FileUtil.class);</b>
+<i>41</i>&nbsp;
+<b class="nc"><i>42</i>&nbsp;    private static final Pattern SLASH = Pattern.compile(&quot;/&quot;);</b>
+<b class="nc"><i>43</i>&nbsp;    private static final Pattern BACKSLASH = Pattern.compile(&quot;\\\\&quot;);</b>
+<i>44</i>&nbsp;
+<b class="nc"><i>45</i>&nbsp;    public static final boolean isPosixCompilant = FileSystems.getDefault().supportedFileAttributeViews().contains(</b>
+<i>46</i>&nbsp;            &quot;posix&quot;);
+<i>47</i>&nbsp;
+<i>48</i>&nbsp;    /**
+<i>49</i>&nbsp;     * Returns the extension of a file or Optional.empty() if the file does not have one (no . in name).
+<i>50</i>&nbsp;     *
+<i>51</i>&nbsp;     * @param file
+<i>52</i>&nbsp;     * @return The extension, trimmed and in lowercase.
+<i>53</i>&nbsp;     */
+<i>54</i>&nbsp;    public static Optional&lt;String&gt; getFileExtension(File file) {
+<b class="nc"><i>55</i>&nbsp;        return getFileExtension(file.getName());</b>
+<i>56</i>&nbsp;    }
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;    /**
+<i>59</i>&nbsp;     * Returns the extension of a file name or Optional.empty() if the file does not have one (no &quot;.&quot; in name).
+<i>60</i>&nbsp;     *
+<i>61</i>&nbsp;     * @param fileName
+<i>62</i>&nbsp;     * @return The extension (without leading dot), trimmed and in lowercase.
+<i>63</i>&nbsp;     */
+<i>64</i>&nbsp;    public static Optional&lt;String&gt; getFileExtension(String fileName) {
+<b class="nc"><i>65</i>&nbsp;        int dotPosition = fileName.lastIndexOf(&#39;.&#39;);</b>
+<b class="nc"><i>66</i>&nbsp;        if ((dotPosition &gt; 0) &amp;&amp; (dotPosition &lt; (fileName.length() - 1))) {</b>
+<b class="nc"><i>67</i>&nbsp;            return Optional.of(fileName.substring(dotPosition + 1).trim().toLowerCase());</b>
+<i>68</i>&nbsp;        } else {
+<b class="nc"><i>69</i>&nbsp;            return Optional.empty();</b>
+<i>70</i>&nbsp;        }
+<i>71</i>&nbsp;    }
+<i>72</i>&nbsp;
+<i>73</i>&nbsp;    /**
+<i>74</i>&nbsp;     * Returns the name part of a file name (i.e., everything in front of last &quot;.&quot;).
+<i>75</i>&nbsp;     */
+<i>76</i>&nbsp;    public static String getFileName(String fileNameWithExtension) {
+<b class="nc"><i>77</i>&nbsp;        int dotPosition = fileNameWithExtension.lastIndexOf(&#39;.&#39;);</b>
+<b class="nc"><i>78</i>&nbsp;        if (dotPosition &gt;= 0) {</b>
+<b class="nc"><i>79</i>&nbsp;            return fileNameWithExtension.substring(0, dotPosition);</b>
+<i>80</i>&nbsp;        } else {
+<b class="nc"><i>81</i>&nbsp;            return fileNameWithExtension;</b>
+<i>82</i>&nbsp;        }
+<i>83</i>&nbsp;    }
+<i>84</i>&nbsp;
+<i>85</i>&nbsp;    /**
+<i>86</i>&nbsp;     * Adds an extension to the given file name. The original extension is not replaced. That means,
+<i>87</i>&nbsp;     * &quot;demo.bib&quot;, &quot;.sav&quot; gets &quot;demo.bib.sav&quot; and not &quot;demo.sav&quot;
+<i>88</i>&nbsp;     *
+<i>89</i>&nbsp;     * @param path the path to add the extension to
+<i>90</i>&nbsp;     * @param extension the extension to add
+<i>91</i>&nbsp;     * @return the with the modified file name
+<i>92</i>&nbsp;     */
+<i>93</i>&nbsp;    public static Path addExtension(Path path, String extension) {
+<b class="nc"><i>94</i>&nbsp;        Path fileName = path.getFileName();</b>
+<b class="nc"><i>95</i>&nbsp;        return path.resolveSibling(fileName + extension);</b>
+<i>96</i>&nbsp;    }
+<i>97</i>&nbsp;
+<i>98</i>&nbsp;    /**
+<i>99</i>&nbsp;     * Creates the minimal unique path substring for each file among multiple file paths.
+<i>100</i>&nbsp;     *
+<i>101</i>&nbsp;     * @param paths the file paths
+<i>102</i>&nbsp;     * @return the minimal unique path substring for each file path
+<i>103</i>&nbsp;     */
+<i>104</i>&nbsp;    public static List&lt;String&gt; uniquePathSubstrings(List&lt;String&gt; paths) {
+<b class="nc"><i>105</i>&nbsp;        List&lt;Stack&lt;String&gt;&gt; stackList = new ArrayList&lt;&gt;(paths.size());</b>
+<i>106</i>&nbsp;        // prepare data structures
+<b class="nc"><i>107</i>&nbsp;        for (String path : paths) {</b>
+<b class="nc"><i>108</i>&nbsp;            List&lt;String&gt; directories = Arrays.asList(path.split(Pattern.quote(File.separator)));</b>
+<b class="nc"><i>109</i>&nbsp;            Stack&lt;String&gt; stack = new Stack&lt;&gt;();</b>
+<b class="nc"><i>110</i>&nbsp;            stack.addAll(directories);</b>
+<b class="nc"><i>111</i>&nbsp;            stackList.add(stack);</b>
+<b class="nc"><i>112</i>&nbsp;        }</b>
+<i>113</i>&nbsp;
+<b class="nc"><i>114</i>&nbsp;        List&lt;String&gt; pathSubstrings = new ArrayList&lt;&gt;(Collections.nCopies(paths.size(), &quot;&quot;));</b>
+<i>115</i>&nbsp;
+<i>116</i>&nbsp;        // compute shortest folder substrings
+<b class="nc"><i>117</i>&nbsp;        while (!stackList.stream().allMatch(Vector::isEmpty)) {</b>
+<b class="nc"><i>118</i>&nbsp;            for (int i = 0; i &lt; stackList.size(); i++) {</b>
+<b class="nc"><i>119</i>&nbsp;                String tempString = pathSubstrings.get(i);</b>
+<i>120</i>&nbsp;
+<b class="nc"><i>121</i>&nbsp;                if (tempString.isEmpty() &amp;&amp; !stackList.get(i).isEmpty()) {</b>
+<b class="nc"><i>122</i>&nbsp;                    pathSubstrings.set(i, stackList.get(i).pop());</b>
+<b class="nc"><i>123</i>&nbsp;                } else if (!stackList.get(i).isEmpty()) {</b>
+<b class="nc"><i>124</i>&nbsp;                    pathSubstrings.set(i, stackList.get(i).pop() + File.separator + tempString);</b>
+<i>125</i>&nbsp;                }
+<i>126</i>&nbsp;            }
+<i>127</i>&nbsp;
+<b class="nc"><i>128</i>&nbsp;            for (int i = 0; i &lt; stackList.size(); i++) {</b>
+<b class="nc"><i>129</i>&nbsp;                String tempString = pathSubstrings.get(i);</b>
+<i>130</i>&nbsp;
+<b class="nc"><i>131</i>&nbsp;                if (Collections.frequency(pathSubstrings, tempString) == 1) {</b>
+<b class="nc"><i>132</i>&nbsp;                    stackList.get(i).clear();</b>
+<i>133</i>&nbsp;                }
+<i>134</i>&nbsp;            }
+<i>135</i>&nbsp;        }
+<b class="nc"><i>136</i>&nbsp;        return pathSubstrings;</b>
+<i>137</i>&nbsp;    }
+<i>138</i>&nbsp;
+<i>139</i>&nbsp;    /**
+<i>140</i>&nbsp;     * Copies a file.
+<i>141</i>&nbsp;     *
+<i>142</i>&nbsp;     * @param pathToSourceFile      Path Source file
+<i>143</i>&nbsp;     * @param pathToDestinationFile Path Destination file
+<i>144</i>&nbsp;     * @param replaceExisting       boolean Determines whether the copy goes on even if the file exists.
+<i>145</i>&nbsp;     * @return boolean Whether the copy succeeded, or was stopped due to the file already existing.
+<i>146</i>&nbsp;     * @throws IOException
+<i>147</i>&nbsp;     */
+<i>148</i>&nbsp;    public static boolean copyFile(Path pathToSourceFile, Path pathToDestinationFile, boolean replaceExisting) {
+<i>149</i>&nbsp;        // Check if the file already exists.
+<b class="nc"><i>150</i>&nbsp;        if (!Files.exists(pathToSourceFile)) {</b>
+<b class="nc"><i>151</i>&nbsp;            LOGGER.error(&quot;Path to the source file doesn&#39;t exist.&quot;);</b>
+<b class="nc"><i>152</i>&nbsp;            return false;</b>
+<i>153</i>&nbsp;        }
+<b class="nc"><i>154</i>&nbsp;        if (Files.exists(pathToDestinationFile) &amp;&amp; !replaceExisting) {</b>
+<b class="nc"><i>155</i>&nbsp;            LOGGER.error(&quot;Path to the destination file is not exists and the file shouldn&#39;t be replace.&quot;);</b>
+<b class="nc"><i>156</i>&nbsp;            return false;</b>
+<i>157</i>&nbsp;        }
+<i>158</i>&nbsp;        try {
+<b class="nc"><i>159</i>&nbsp;            return Files.copy(pathToSourceFile, pathToDestinationFile, StandardCopyOption.REPLACE_EXISTING) != null;</b>
+<b class="nc"><i>160</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i>161</i>&nbsp;            LOGGER.error(&quot;Copying Files failed.&quot;, e);</b>
+<b class="nc"><i>162</i>&nbsp;            return false;</b>
+<i>163</i>&nbsp;        }
+<i>164</i>&nbsp;    }
+<i>165</i>&nbsp;
+<i>166</i>&nbsp;    /**
+<i>167</i>&nbsp;     * Renames a given file
+<i>168</i>&nbsp;     *
+<i>169</i>&nbsp;     * @param fromFile The source filename to rename
+<i>170</i>&nbsp;     * @param toFile   The target fileName
+<i>171</i>&nbsp;     * @return True if the rename was successful, false if an exception occurred
+<i>172</i>&nbsp;     */
+<i>173</i>&nbsp;    public static boolean renameFile(Path fromFile, Path toFile) {
+<b class="nc"><i>174</i>&nbsp;        return renameFile(fromFile, toFile, false);</b>
+<i>175</i>&nbsp;    }
+<i>176</i>&nbsp;
+<i>177</i>&nbsp;    /**
+<i>178</i>&nbsp;     * Renames a given file
+<i>179</i>&nbsp;     *
+<i>180</i>&nbsp;     * @param fromFile The source filename to rename
+<i>181</i>&nbsp;     * @param toFile   The target fileName
+<i>182</i>&nbsp;     * @param replaceExisting Wether to replace existing files or not
+<i>183</i>&nbsp;     * @return True if the rename was successful, false if an exception occurred
+<i>184</i>&nbsp;     *
+<i>185</i>&nbsp;     */
+<i>186</i>&nbsp;    public static boolean renameFile(Path fromFile, Path toFile, boolean replaceExisting) {
+<i>187</i>&nbsp;        try {
+<b class="nc"><i>188</i>&nbsp;            if (replaceExisting) {</b>
+<b class="nc"><i>189</i>&nbsp;                return Files.move(fromFile, fromFile.resolveSibling(toFile),</b>
+<i>190</i>&nbsp;                        StandardCopyOption.REPLACE_EXISTING) != null;
+<i>191</i>&nbsp;            } else {
+<b class="nc"><i>192</i>&nbsp;                return Files.move(fromFile, fromFile.resolveSibling(toFile)) != null;</b>
+<i>193</i>&nbsp;            }
+<b class="nc"><i>194</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i>195</i>&nbsp;            LOGGER.error(&quot;Renaming Files failed&quot;, e);</b>
+<b class="nc"><i>196</i>&nbsp;            return false;</b>
+<i>197</i>&nbsp;        }
+<i>198</i>&nbsp;    }
+<i>199</i>&nbsp;
+<i>200</i>&nbsp;    /**
+<i>201</i>&nbsp;     * Converts a relative filename to an absolute one, if necessary. Returns
+<i>202</i>&nbsp;     * null if the file does not exist.&lt;br/&gt;
+<i>203</i>&nbsp;     * &lt;p&gt;
+<i>204</i>&nbsp;     * Uses &lt;ul&gt;
+<i>205</i>&nbsp;     * &lt;li&gt;the default directory associated with the extension of the file&lt;/li&gt;
+<i>206</i>&nbsp;     * &lt;li&gt;the standard file directory&lt;/li&gt;
+<i>207</i>&nbsp;     * &lt;li&gt;the directory of the BIB file&lt;/li&gt;
+<i>208</i>&nbsp;     * &lt;/ul&gt;
+<i>209</i>&nbsp;     *
+<i>210</i>&nbsp;     * @param databaseContext The database this file belongs to.
+<i>211</i>&nbsp;     * @param name     The filename, may also be a relative path to the file
+<i>212</i>&nbsp;     */
+<i>213</i>&nbsp;    public static Optional&lt;File&gt; expandFilename(final BibDatabaseContext databaseContext, String name,
+<i>214</i>&nbsp;            FileDirectoryPreferences fileDirectoryPreferences) {
+<b class="nc"><i>215</i>&nbsp;        Optional&lt;String&gt; extension = getFileExtension(name);</b>
+<i>216</i>&nbsp;        // Find the default directory for this field type, if any:
+<b class="nc"><i>217</i>&nbsp;        List&lt;String&gt; directories = databaseContext.getFileDirectories(extension.orElse(null), fileDirectoryPreferences);</b>
+<i>218</i>&nbsp;        // Include the standard &quot;file&quot; directory:
+<b class="nc"><i>219</i>&nbsp;        List&lt;String&gt; fileDir = databaseContext.getFileDirectories(fileDirectoryPreferences);</b>
+<i>220</i>&nbsp;        // Include the directory of the BIB file:
+<b class="nc"><i>221</i>&nbsp;        List&lt;String&gt; al = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>222</i>&nbsp;        for (String dir : directories) {</b>
+<b class="nc"><i>223</i>&nbsp;            if (!al.contains(dir)) {</b>
+<b class="nc"><i>224</i>&nbsp;                al.add(dir);</b>
+<i>225</i>&nbsp;            }
+<b class="nc"><i>226</i>&nbsp;        }</b>
+<b class="nc"><i>227</i>&nbsp;        for (String aFileDir : fileDir) {</b>
+<b class="nc"><i>228</i>&nbsp;            if (!al.contains(aFileDir)) {</b>
+<b class="nc"><i>229</i>&nbsp;                al.add(aFileDir);</b>
+<i>230</i>&nbsp;            }
+<b class="nc"><i>231</i>&nbsp;        }</b>
+<i>232</i>&nbsp;
+<b class="nc"><i>233</i>&nbsp;        return expandFilename(name, al);</b>
+<i>234</i>&nbsp;    }
+<i>235</i>&nbsp;
+<i>236</i>&nbsp;    /**
+<i>237</i>&nbsp;     * Converts a relative filename to an absolute one, if necessary. Returns
+<i>238</i>&nbsp;     * null if the file does not exist.
+<i>239</i>&nbsp;     * &lt;p&gt;
+<i>240</i>&nbsp;     * Will look in each of the given dirs starting from the beginning and
+<i>241</i>&nbsp;     * returning the first found file to match if any.
+<i>242</i>&nbsp;     */
+<i>243</i>&nbsp;    public static Optional&lt;File&gt; expandFilename(String name, List&lt;String&gt; directories) {
+<b class="nc"><i>244</i>&nbsp;        for (String dir : directories) {</b>
+<b class="nc"><i>245</i>&nbsp;            if (dir != null) {</b>
+<b class="nc"><i>246</i>&nbsp;                Optional&lt;File&gt; result = expandFilename(name, dir);</b>
+<b class="nc"><i>247</i>&nbsp;                if (result.isPresent()) {</b>
+<b class="nc"><i>248</i>&nbsp;                    return result;</b>
+<i>249</i>&nbsp;                }
+<i>250</i>&nbsp;            }
+<b class="nc"><i>251</i>&nbsp;        }</b>
+<i>252</i>&nbsp;
+<b class="nc"><i>253</i>&nbsp;        return Optional.empty();</b>
+<i>254</i>&nbsp;    }
+<i>255</i>&nbsp;
+<i>256</i>&nbsp;    /**
+<i>257</i>&nbsp;     * Converts a relative filename to an absolute one, if necessary. Returns
+<i>258</i>&nbsp;     * null if the file does not exist.
+<i>259</i>&nbsp;     */
+<i>260</i>&nbsp;    private static Optional&lt;File&gt; expandFilename(String filename, String dir) {
+<i>261</i>&nbsp;
+<b class="nc"><i>262</i>&nbsp;        if ((filename == null) || filename.isEmpty()) {</b>
+<b class="nc"><i>263</i>&nbsp;            return Optional.empty();</b>
+<i>264</i>&nbsp;        }
+<i>265</i>&nbsp;
+<b class="nc"><i>266</i>&nbsp;        String name = filename;</b>
+<i>267</i>&nbsp;
+<b class="nc"><i>268</i>&nbsp;        File file = new File(name);</b>
+<b class="nc"><i>269</i>&nbsp;        if (file.exists() || (dir == null)) {</b>
+<b class="nc"><i>270</i>&nbsp;            return Optional.of(file);</b>
+<i>271</i>&nbsp;        }
+<i>272</i>&nbsp;
+<b class="nc"><i>273</i>&nbsp;        if (dir.endsWith(OS.FILE_SEPARATOR)) {</b>
+<b class="nc"><i>274</i>&nbsp;            name = dir + name;</b>
+<i>275</i>&nbsp;        } else {
+<b class="nc"><i>276</i>&nbsp;            name = dir + OS.FILE_SEPARATOR + name;</b>
+<i>277</i>&nbsp;        }
+<i>278</i>&nbsp;
+<i>279</i>&nbsp;        // fix / and \ problems:
+<b class="nc"><i>280</i>&nbsp;        if (OS.WINDOWS) {</b>
+<b class="nc"><i>281</i>&nbsp;            name = SLASH.matcher(name).replaceAll(&quot;\\\\&quot;);</b>
+<i>282</i>&nbsp;        } else {
+<b class="nc"><i>283</i>&nbsp;            name = BACKSLASH.matcher(name).replaceAll(&quot;/&quot;);</b>
+<i>284</i>&nbsp;        }
+<i>285</i>&nbsp;
+<b class="nc"><i>286</i>&nbsp;        File fileInDir = new File(name);</b>
+<b class="nc"><i>287</i>&nbsp;        if (fileInDir.exists()) {</b>
+<b class="nc"><i>288</i>&nbsp;            return Optional.of(fileInDir);</b>
+<i>289</i>&nbsp;        } else {
+<b class="nc"><i>290</i>&nbsp;            return Optional.empty();</b>
+<i>291</i>&nbsp;        }
+<i>292</i>&nbsp;    }
+<i>293</i>&nbsp;
+<i>294</i>&nbsp;    /**
+<i>295</i>&nbsp;     * Converts an absolute filename to a relative one, if necessary.
+<i>296</i>&nbsp;     * Returns the parameter fileName itself if no shortening is possible
+<i>297</i>&nbsp;     * &lt;p&gt;
+<i>298</i>&nbsp;     * This method works correctly only if dirs are sorted decent in their length
+<i>299</i>&nbsp;     * i.e. /home/user/literature/important before /home/user/literature
+<i>300</i>&nbsp;     *
+<i>301</i>&nbsp;     * @param fileName the filename to be shortened
+<i>302</i>&nbsp;     * @param dirs     directories to check.
+<i>303</i>&nbsp;     */
+<i>304</i>&nbsp;    public static File shortenFileName(File fileName, List&lt;String&gt; dirs) {
+<b class="nc"><i>305</i>&nbsp;        if ((fileName == null) || !fileName.isAbsolute() || (dirs == null)) {</b>
+<b class="nc"><i>306</i>&nbsp;            return fileName;</b>
+<i>307</i>&nbsp;        }
+<i>308</i>&nbsp;
+<b class="nc"><i>309</i>&nbsp;        for (String dir : dirs) {</b>
+<b class="nc"><i>310</i>&nbsp;            if (dir != null) {</b>
+<b class="nc"><i>311</i>&nbsp;                File result = shortenFileName(fileName, dir);</b>
+<b class="nc"><i>312</i>&nbsp;                if ((result != null) &amp;&amp; !result.equals(fileName)) {</b>
+<b class="nc"><i>313</i>&nbsp;                    return result;</b>
+<i>314</i>&nbsp;                }
+<i>315</i>&nbsp;            }
+<b class="nc"><i>316</i>&nbsp;        }</b>
+<b class="nc"><i>317</i>&nbsp;        return fileName;</b>
+<i>318</i>&nbsp;    }
+<i>319</i>&nbsp;
+<i>320</i>&nbsp;    private static File shortenFileName(File fileName, String directory) {
+<b class="nc"><i>321</i>&nbsp;        if ((fileName == null) || !fileName.isAbsolute() || (directory == null)) {</b>
+<b class="nc"><i>322</i>&nbsp;            return fileName;</b>
+<i>323</i>&nbsp;        }
+<i>324</i>&nbsp;
+<b class="nc"><i>325</i>&nbsp;        String dir = directory;</b>
+<i>326</i>&nbsp;        String longName;
+<b class="nc"><i>327</i>&nbsp;        if (OS.WINDOWS) {</b>
+<i>328</i>&nbsp;            // case-insensitive matching on Windows
+<b class="nc"><i>329</i>&nbsp;            longName = fileName.toString().toLowerCase();</b>
+<b class="nc"><i>330</i>&nbsp;            dir = dir.toLowerCase();</b>
+<i>331</i>&nbsp;        } else {
+<b class="nc"><i>332</i>&nbsp;            longName = fileName.toString();</b>
+<i>333</i>&nbsp;        }
+<i>334</i>&nbsp;
+<b class="nc"><i>335</i>&nbsp;        if (!dir.endsWith(OS.FILE_SEPARATOR)) {</b>
+<b class="nc"><i>336</i>&nbsp;            dir = dir.concat(OS.FILE_SEPARATOR);</b>
+<i>337</i>&nbsp;        }
+<i>338</i>&nbsp;
+<b class="nc"><i>339</i>&nbsp;        if (longName.startsWith(dir)) {</b>
+<i>340</i>&nbsp;            // result is based on original name, not on lower-cased name
+<b class="nc"><i>341</i>&nbsp;            String newName = fileName.toString().substring(dir.length());</b>
+<b class="nc"><i>342</i>&nbsp;            return new File(newName);</b>
+<i>343</i>&nbsp;        } else {
+<b class="nc"><i>344</i>&nbsp;            return fileName;</b>
+<i>345</i>&nbsp;        }
+<i>346</i>&nbsp;    }
+<i>347</i>&nbsp;
+<i>348</i>&nbsp;    public static Map&lt;BibEntry, List&lt;File&gt;&gt; findAssociatedFiles(List&lt;BibEntry&gt; entries, List&lt;String&gt; extensions,
+<i>349</i>&nbsp;            List&lt;File&gt; directories, boolean autolinkExactKeyOnly) {
+<b class="nc"><i>350</i>&nbsp;        Map&lt;BibEntry, List&lt;File&gt;&gt; result = new HashMap&lt;&gt;();</b>
+<i>351</i>&nbsp;
+<i>352</i>&nbsp;        // First scan directories
+<b class="nc"><i>353</i>&nbsp;        Set&lt;File&gt; filesWithExtension = FileFinder.findFiles(extensions, directories);</b>
+<i>354</i>&nbsp;
+<i>355</i>&nbsp;        // Initialize Result-Set
+<b class="nc"><i>356</i>&nbsp;        for (BibEntry entry : entries) {</b>
+<b class="nc"><i>357</i>&nbsp;            result.put(entry, new ArrayList&lt;&gt;());</b>
+<b class="nc"><i>358</i>&nbsp;        }</b>
+<i>359</i>&nbsp;
+<i>360</i>&nbsp;        // Now look for keys
+<b class="nc"><i>361</i>&nbsp;        nextFile: for (File file : filesWithExtension) {</b>
+<i>362</i>&nbsp;
+<b class="nc"><i>363</i>&nbsp;            String name = file.getName();</b>
+<b class="nc"><i>364</i>&nbsp;            int dot = name.lastIndexOf(&#39;.&#39;);</b>
+<i>365</i>&nbsp;            // First, look for exact matches:
+<b class="nc"><i>366</i>&nbsp;            for (BibEntry entry : entries) {</b>
+<b class="nc"><i>367</i>&nbsp;                Optional&lt;String&gt; citeKey = entry.getCiteKeyOptional();</b>
+<b class="nc"><i>368</i>&nbsp;                if ((citeKey.isPresent()) &amp;&amp; !citeKey.get().isEmpty() &amp;&amp; (dot &gt; 0)</b>
+<b class="nc"><i>369</i>&nbsp;                        &amp;&amp; name.substring(0, dot).equals(citeKey.get())) {</b>
+<b class="nc"><i>370</i>&nbsp;                    result.get(entry).add(file);</b>
+<b class="nc"><i>371</i>&nbsp;                    continue nextFile;</b>
+<i>372</i>&nbsp;                }
+<b class="nc"><i>373</i>&nbsp;            }</b>
+<i>374</i>&nbsp;            // If we get here, we did not find any exact matches. If non-exact
+<i>375</i>&nbsp;            // matches are allowed, try to find one:
+<b class="nc"><i>376</i>&nbsp;            if (!autolinkExactKeyOnly) {</b>
+<b class="nc"><i>377</i>&nbsp;                for (BibEntry entry : entries) {</b>
+<b class="nc"><i>378</i>&nbsp;                    Optional&lt;String&gt; citeKey = entry.getCiteKeyOptional();</b>
+<b class="nc"><i>379</i>&nbsp;                    if ((citeKey.isPresent()) &amp;&amp; !citeKey.get().isEmpty() &amp;&amp; name.startsWith(citeKey.get())) {</b>
+<b class="nc"><i>380</i>&nbsp;                        result.get(entry).add(file);</b>
+<b class="nc"><i>381</i>&nbsp;                        continue nextFile;</b>
+<i>382</i>&nbsp;                    }
+<b class="nc"><i>383</i>&nbsp;                }</b>
+<i>384</i>&nbsp;            }
+<b class="nc"><i>385</i>&nbsp;        }</b>
+<i>386</i>&nbsp;
+<b class="nc"><i>387</i>&nbsp;        return result;</b>
+<i>388</i>&nbsp;    }
+<i>389</i>&nbsp;
+<i>390</i>&nbsp;    /**
+<i>391</i>&nbsp;     * Returns the list of linked files. The files have the absolute filename
+<i>392</i>&nbsp;     *
+<i>393</i>&nbsp;     * @param bes list of BibTeX entries
+<i>394</i>&nbsp;     * @param fileDirs list of directories to try for expansion
+<i>395</i>&nbsp;     *
+<i>396</i>&nbsp;     * @return list of files. May be empty
+<i>397</i>&nbsp;     */
+<i>398</i>&nbsp;    public static List&lt;File&gt; getListOfLinkedFiles(List&lt;BibEntry&gt; bes, List&lt;String&gt; fileDirs) {
+<b class="nc"><i>399</i>&nbsp;        Objects.requireNonNull(bes);</b>
+<b class="nc"><i>400</i>&nbsp;        Objects.requireNonNull(fileDirs);</b>
+<i>401</i>&nbsp;
+<b class="nc"><i>402</i>&nbsp;        List&lt;File&gt; result = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>403</i>&nbsp;        for (BibEntry entry : bes) {</b>
+<b class="nc"><i>404</i>&nbsp;            entry.getField(FieldName.FILE).ifPresent(fileField -&gt; {</b>
+<b class="nc"><i>405</i>&nbsp;                List&lt;ParsedFileField&gt; fileList = FileField.parse(fileField);</b>
+<b class="nc"><i>406</i>&nbsp;                for (ParsedFileField file : fileList) {</b>
+<b class="nc"><i>407</i>&nbsp;                    expandFilename(file.getLink(), fileDirs).ifPresent(result::add);</b>
+<b class="nc"><i>408</i>&nbsp;                }</b>
+<b class="nc"><i>409</i>&nbsp;            });</b>
+<b class="nc"><i>410</i>&nbsp;        }</b>
+<i>411</i>&nbsp;
+<b class="nc"><i>412</i>&nbsp;        return result;</b>
+<i>413</i>&nbsp;    }
+<i>414</i>&nbsp;
+<i>415</i>&nbsp;    /**
+<i>416</i>&nbsp;     * Determines filename provided by an entry in a database
+<i>417</i>&nbsp;     *
+<i>418</i>&nbsp;     * @param database        the database, where the entry is located
+<i>419</i>&nbsp;     * @param entry           the entry to which the file should be linked to
+<i>420</i>&nbsp;     * @param fileNamePattern the filename pattern
+<i>421</i>&nbsp;     * @param prefs           the layout preferences
+<i>422</i>&nbsp;     * @return a suggested fileName
+<i>423</i>&nbsp;     */
+<i>424</i>&nbsp;    public static String createFileNameFromPattern(BibDatabase database, BibEntry entry, String fileNamePattern,
+<i>425</i>&nbsp;            LayoutFormatterPreferences prefs) {
+<b class="nc"><i>426</i>&nbsp;        String targetName = null;</b>
+<i>427</i>&nbsp;
+<b class="nc"><i>428</i>&nbsp;        StringReader sr = new StringReader(fileNamePattern);</b>
+<b class="nc"><i>429</i>&nbsp;        Layout layout = null;</b>
+<i>430</i>&nbsp;        try {
+<b class="nc"><i>431</i>&nbsp;            layout = new LayoutHelper(sr, prefs).getLayoutFromText();</b>
+<b class="nc"><i>432</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i>433</i>&nbsp;            LOGGER.info(&quot;Wrong format &quot; + e.getMessage(), e);</b>
+<b class="nc"><i>434</i>&nbsp;        }</b>
+<b class="nc"><i>435</i>&nbsp;        if (layout != null) {</b>
+<b class="nc"><i>436</i>&nbsp;            targetName = layout.doLayout(entry, database);</b>
+<i>437</i>&nbsp;        }
+<i>438</i>&nbsp;
+<b class="nc"><i>439</i>&nbsp;        if ((targetName == null) || targetName.isEmpty()) {</b>
+<b class="nc"><i>440</i>&nbsp;            targetName = entry.getCiteKeyOptional().orElse(&quot;default&quot;);</b>
+<i>441</i>&nbsp;        }
+<i>442</i>&nbsp;        //Removes illegal characters from filename
+<b class="nc"><i>443</i>&nbsp;        targetName = FileNameCleaner.cleanFileName(targetName);</b>
+<b class="nc"><i>444</i>&nbsp;        return targetName;</b>
+<i>445</i>&nbsp;    }
+<i>446</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

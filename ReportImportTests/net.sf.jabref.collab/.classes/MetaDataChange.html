@@ -1,0 +1,132 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: MetaDataChange</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.collab</a> ]
+</div>
+
+<h1>Coverage Summary for Class: MetaDataChange (net.sf.jabref.collab)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MetaDataChange</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 10)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.collab;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import javax.swing.JComponent;
+<i>4</i>&nbsp;import javax.swing.JScrollPane;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import net.sf.jabref.gui.BasePanel;
+<i>7</i>&nbsp;import net.sf.jabref.gui.undo.NamedCompound;
+<i>8</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>9</i>&nbsp;import net.sf.jabref.model.database.BibDatabase;
+<i>10</i>&nbsp;import net.sf.jabref.model.metadata.MetaData;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;/**
+<i>13</i>&nbsp; *
+<i>14</i>&nbsp; */
+<i>15</i>&nbsp;class MetaDataChange extends Change {
+<i>16</i>&nbsp;
+<b class="nc"><i>17</i>&nbsp;    private final InfoPane infoPane = new InfoPane();</b>
+<b class="nc"><i>18</i>&nbsp;    private final JScrollPane sp = new JScrollPane(infoPane);</b>
+<i>19</i>&nbsp;    private final MetaData originalMetaData;
+<i>20</i>&nbsp;    private final MetaData newMetaData;
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;    public MetaDataChange(MetaData originalMetaData, MetaData newMetaData) {
+<b class="nc"><i>23</i>&nbsp;        super(Localization.lang(&quot;Metadata change&quot;));</b>
+<b class="nc"><i>24</i>&nbsp;        this.originalMetaData = originalMetaData;</b>
+<b class="nc"><i>25</i>&nbsp;        this.newMetaData = newMetaData;</b>
+<i>26</i>&nbsp;
+<b class="nc"><i>27</i>&nbsp;        infoPane.setText(&quot;&lt;html&gt;&quot; + Localization.lang(&quot;Metadata change&quot;) + &quot;&lt;/html&gt;&quot;);</b>
+<b class="nc"><i>28</i>&nbsp;    }</b>
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;    @Override
+<i>31</i>&nbsp;    public JComponent description() {
+<i>32</i>&nbsp;        /*
+<i>33</i>&nbsp;        // TODO: Show detailed description of the changes
+<i>34</i>&nbsp;        StringBuilder sb = new StringBuilder(
+<i>35</i>&nbsp;                &quot;&lt;html&gt;&quot; + Localization.lang(&quot;Changes have been made to the following metadata elements&quot;)
+<i>36</i>&nbsp;                        + &quot;:&lt;p&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;&quot;);
+<i>37</i>&nbsp;        sb.append(changes.stream().map(unit -&gt; unit.key).collect(Collectors.joining(&quot;&lt;br&gt;&amp;nbsp;&amp;nbsp;&quot;)));
+<i>38</i>&nbsp;        sb.append(&quot;&lt;/html&gt;&quot;);
+<i>39</i>&nbsp;        infoPane.setText(sb.toString());
+<i>40</i>&nbsp;        */
+<b class="nc"><i>41</i>&nbsp;        return sp;</b>
+<i>42</i>&nbsp;    }
+<i>43</i>&nbsp;
+<i>44</i>&nbsp;    @Override
+<i>45</i>&nbsp;    public boolean makeChange(BasePanel panel, BibDatabase secondary, NamedCompound undoEdit) {
+<b class="nc"><i>46</i>&nbsp;        panel.getBibDatabaseContext().setMetaData(newMetaData);</b>
+<b class="nc"><i>47</i>&nbsp;        return true;</b>
+<i>48</i>&nbsp;    }
+<i>49</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

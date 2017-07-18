@@ -1,0 +1,125 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: EntryAddChange</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.collab</a> ]
+</div>
+
+<h1>Coverage Summary for Class: EntryAddChange (net.sf.jabref.collab)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">EntryAddChange</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 11)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.collab;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import javax.swing.JComponent;
+<i>4</i>&nbsp;import javax.swing.JScrollPane;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import net.sf.jabref.gui.BasePanel;
+<i>7</i>&nbsp;import net.sf.jabref.gui.PreviewPanel;
+<i>8</i>&nbsp;import net.sf.jabref.gui.undo.NamedCompound;
+<i>9</i>&nbsp;import net.sf.jabref.gui.undo.UndoableInsertEntry;
+<i>10</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>11</i>&nbsp;import net.sf.jabref.model.database.BibDatabase;
+<i>12</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>13</i>&nbsp;import net.sf.jabref.model.entry.IdGenerator;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;class EntryAddChange extends Change {
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;    private final BibEntry diskEntry;
+<i>18</i>&nbsp;    private final JScrollPane sp;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;    public EntryAddChange(BibEntry diskEntry) {
+<b class="nc"><i>22</i>&nbsp;        super(Localization.lang(&quot;Added entry&quot;));</b>
+<b class="nc"><i>23</i>&nbsp;        this.diskEntry = diskEntry;</b>
+<i>24</i>&nbsp;
+<b class="nc"><i>25</i>&nbsp;        PreviewPanel pp = new PreviewPanel(null, diskEntry, null);</b>
+<b class="nc"><i>26</i>&nbsp;        sp = new JScrollPane(pp);</b>
+<b class="nc"><i>27</i>&nbsp;    }</b>
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;    @Override
+<i>30</i>&nbsp;    public boolean makeChange(BasePanel panel, BibDatabase secondary, NamedCompound undoEdit) {
+<b class="nc"><i>31</i>&nbsp;        diskEntry.setId(IdGenerator.next());</b>
+<b class="nc"><i>32</i>&nbsp;        panel.getDatabase().insertEntry(diskEntry);</b>
+<b class="nc"><i>33</i>&nbsp;        secondary.insertEntry(diskEntry);</b>
+<b class="nc"><i>34</i>&nbsp;        undoEdit.addEdit(new UndoableInsertEntry(panel.getDatabase(), diskEntry, panel));</b>
+<b class="nc"><i>35</i>&nbsp;        return true;</b>
+<i>36</i>&nbsp;    }
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;    @Override
+<i>39</i>&nbsp;    public JComponent description() {
+<b class="nc"><i>40</i>&nbsp;        return sp;</b>
+<i>41</i>&nbsp;    }
+<i>42</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

@@ -473,6 +473,7 @@ public class BibEntry implements Cloneable {
             throw new IllegalArgumentException("The field name '" + name + "' is reserved");
         }
 
+
         if ("year".equals(name)) {
             try {
                 if (!value.matches("^[0-9]+")) {
@@ -485,6 +486,13 @@ public class BibEntry implements Cloneable {
 
             } catch (ParseException e) {
                 throw new IllegalArgumentException("Ano invalido!");
+
+        /*Validação do nome do autor*/
+        if ("author".equals(name)) {
+            if (!value.matches("[a-zA-Z]+(\\.)?(\\,)?(\\;)?(\\s+[a-zA-Z]+(\\.)?(\\,)?(\\;)?)*")) {
+                JOptionPane.showMessageDialog(new JFrame(), "Nome do autor inválido");
+                return Optional.empty();
+
             }
         }
 

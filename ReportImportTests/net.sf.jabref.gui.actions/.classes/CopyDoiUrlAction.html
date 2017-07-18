@@ -1,0 +1,128 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: CopyDoiUrlAction</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.actions</a> ]
+</div>
+
+<h1>Coverage Summary for Class: CopyDoiUrlAction (net.sf.jabref.gui.actions)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CopyDoiUrlAction</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 16)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.actions;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.event.ActionEvent;
+<i>4</i>&nbsp;import java.util.Optional;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import javax.swing.AbstractAction;
+<i>7</i>&nbsp;import javax.swing.text.JTextComponent;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;import net.sf.jabref.JabRefGUI;
+<i>10</i>&nbsp;import net.sf.jabref.gui.ClipBoardManager;
+<i>11</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>12</i>&nbsp;import net.sf.jabref.logic.util.DOI;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;/**
+<i>15</i>&nbsp; * Copies the doi url to the clipboard
+<i>16</i>&nbsp; */
+<i>17</i>&nbsp;public class CopyDoiUrlAction extends AbstractAction {
+<i>18</i>&nbsp;
+<b class="nc"><i>19</i>&nbsp;    private JTextComponent component = null;</b>
+<i>20</i>&nbsp;    private String identifier;
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;    public CopyDoiUrlAction(String identifier) {
+<b class="nc"><i>23</i>&nbsp;        super(Localization.menuTitle(&quot;Copy DOI url&quot;));</b>
+<b class="nc"><i>24</i>&nbsp;        this.identifier = identifier;</b>
+<b class="nc"><i>25</i>&nbsp;    }</b>
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    public CopyDoiUrlAction(JTextComponent component) {
+<b class="nc"><i>28</i>&nbsp;        this(component.getText());</b>
+<b class="nc"><i>29</i>&nbsp;        this.component = component;</b>
+<b class="nc"><i>30</i>&nbsp;    }</b>
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;    @Override
+<i>33</i>&nbsp;    public void actionPerformed(ActionEvent e) {
+<b class="nc"><i>34</i>&nbsp;        identifier = component == null ? identifier : component.getText();</b>
+<i>35</i>&nbsp;
+<b class="nc"><i>36</i>&nbsp;        Optional&lt;String&gt; urlOptional = DOI.build(identifier).map(DOI::getURIAsASCIIString);</b>
+<b class="nc"><i>37</i>&nbsp;        if (urlOptional.isPresent()) {</b>
+<b class="nc"><i>38</i>&nbsp;            ClipBoardManager clipBoard = new ClipBoardManager();</b>
+<b class="nc"><i>39</i>&nbsp;            clipBoard.setClipboardContents(urlOptional.get());</b>
+<b class="nc"><i>40</i>&nbsp;            JabRefGUI.getMainFrame().output(Localization.lang(&quot;The link has been copied to the clipboard.&quot;));</b>
+<b class="nc"><i>41</i>&nbsp;        } else {</b>
+<b class="nc"><i>42</i>&nbsp;            JabRefGUI.getMainFrame().output(Localization.lang(&quot;Invalid DOI: &#39;%0&#39;.&quot;, identifier));</b>
+<i>43</i>&nbsp;        }
+<b class="nc"><i>44</i>&nbsp;    }</b>
+<i>45</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

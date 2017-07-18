@@ -1,0 +1,791 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: StringUtil</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.model.strings</a> ]
+</div>
+
+<h1>Coverage Summary for Class: StringUtil (net.sf.jabref.model.strings)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">StringUtil</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    5.1%
+  </span>
+  <span class="absValue">
+    (2/ 39)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    4.8%
+  </span>
+  <span class="absValue">
+    (12/ 252)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.model.strings;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.ArrayList;
+<i>4</i>&nbsp;import java.util.Arrays;
+<i>5</i>&nbsp;import java.util.List;
+<i>6</i>&nbsp;import java.util.Map;
+<i>7</i>&nbsp;import java.util.Optional;
+<i>8</i>&nbsp;import java.util.StringTokenizer;
+<i>9</i>&nbsp;import java.util.regex.Matcher;
+<i>10</i>&nbsp;import java.util.regex.Pattern;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;import com.google.common.base.CharMatcher;
+<i>13</i>&nbsp;import org.apache.commons.lang3.StringUtils;
+<i>14</i>&nbsp;
+<b class="nc"><i>15</i>&nbsp;public class StringUtil {</b>
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;    // Non-letters which are used to denote accents in LaTeX-commands, e.g., in {\&quot;{a}}
+<i>18</i>&nbsp;    public static final String SPECIAL_COMMAND_CHARS = &quot;\&quot;`^~&#39;=.|&quot;;
+<i>19</i>&nbsp;    // contains all possible line breaks, not omitting any break such as &quot;\\n&quot;
+<b class="fc"><i>20</i>&nbsp;    private static final Pattern LINE_BREAKS = Pattern.compile(&quot;\\r\\n|\\r|\\n&quot;);</b>
+<b class="fc"><i>21</i>&nbsp;    private static final Pattern BRACED_TITLE_CAPITAL_PATTERN = Pattern.compile(&quot;\\{[A-Z]+\\}&quot;);</b>
+<b class="fc"><i>22</i>&nbsp;    private static final UnicodeToReadableCharMap UNICODE_CHAR_MAP = new UnicodeToReadableCharMap();</b>
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;    public static String booleanToBinaryString(boolean expression) {
+<b class="nc"><i>25</i>&nbsp;        return expression ? &quot;1&quot; : &quot;0&quot;;</b>
+<i>26</i>&nbsp;    }
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;    /**
+<i>29</i>&nbsp;     * Quote special characters.
+<i>30</i>&nbsp;     *
+<i>31</i>&nbsp;     * @param toQuote         The String which may contain special characters.
+<i>32</i>&nbsp;     * @param specials  A String containing all special characters except the quoting
+<i>33</i>&nbsp;     *                  character itself, which is automatically quoted.
+<i>34</i>&nbsp;     * @param quoteChar The quoting character.
+<i>35</i>&nbsp;     * @return A String with every special character (including the quoting
+<i>36</i>&nbsp;     * character itself) quoted.
+<i>37</i>&nbsp;     */
+<i>38</i>&nbsp;    public static String quote(String toQuote, String specials, char quoteChar) {
+<b class="fc"><i>39</i>&nbsp;        if (toQuote == null) {</b>
+<b class="nc"><i>40</i>&nbsp;            return &quot;&quot;;</b>
+<i>41</i>&nbsp;        }
+<i>42</i>&nbsp;
+<b class="fc"><i>43</i>&nbsp;        StringBuilder result = new StringBuilder();</b>
+<i>44</i>&nbsp;        char c;
+<i>45</i>&nbsp;        boolean isSpecial;
+<b class="fc"><i>46</i>&nbsp;        for (int i = 0; i &lt; toQuote.length(); ++i) {</b>
+<b class="fc"><i>47</i>&nbsp;            c = toQuote.charAt(i);</b>
+<i>48</i>&nbsp;
+<b class="fc"><i>49</i>&nbsp;            isSpecial = (c == quoteChar);</b>
+<i>50</i>&nbsp;            // If non-null specials performs logic-or with specials.indexOf(c) &gt;= 0
+<b class="fc"><i>51</i>&nbsp;            isSpecial |= ((specials != null) &amp;&amp; (specials.indexOf(c) &gt;= 0));</b>
+<i>52</i>&nbsp;
+<b class="fc"><i>53</i>&nbsp;            if (isSpecial) {</b>
+<b class="nc"><i>54</i>&nbsp;                result.append(quoteChar);</b>
+<i>55</i>&nbsp;            }
+<b class="fc"><i>56</i>&nbsp;            result.append(c);</b>
+<i>57</i>&nbsp;        }
+<b class="fc"><i>58</i>&nbsp;        return result.toString();</b>
+<i>59</i>&nbsp;    }
+<i>60</i>&nbsp;
+<i>61</i>&nbsp;    /**
+<i>62</i>&nbsp;     * Creates a substring from a text
+<i>63</i>&nbsp;     *
+<i>64</i>&nbsp;     * @param text
+<i>65</i>&nbsp;     * @param startIndex
+<i>66</i>&nbsp;     * @param terminateOnEndBraceOnly
+<i>67</i>&nbsp;     * @return
+<i>68</i>&nbsp;     */
+<i>69</i>&nbsp;    public static String getPart(String text, int startIndex, boolean terminateOnEndBraceOnly) {
+<i>70</i>&nbsp;        char c;
+<b class="nc"><i>71</i>&nbsp;        int count = 0;</b>
+<i>72</i>&nbsp;    
+<b class="nc"><i>73</i>&nbsp;        StringBuilder part = new StringBuilder();</b>
+<i>74</i>&nbsp;    
+<i>75</i>&nbsp;        // advance to first char and skip whitespace
+<b class="nc"><i>76</i>&nbsp;        int index = startIndex + 1;</b>
+<b class="nc"><i>77</i>&nbsp;        while ((index &lt; text.length()) &amp;&amp; Character.isWhitespace(text.charAt(index))) {</b>
+<b class="nc"><i>78</i>&nbsp;            index++;</b>
+<i>79</i>&nbsp;        }
+<i>80</i>&nbsp;    
+<i>81</i>&nbsp;        // then grab whatever is the first token (counting braces)
+<b class="nc"><i>82</i>&nbsp;        while (index &lt; text.length()) {</b>
+<b class="nc"><i>83</i>&nbsp;            c = text.charAt(index);</b>
+<b class="nc"><i>84</i>&nbsp;            if (!terminateOnEndBraceOnly &amp;&amp; (count == 0) &amp;&amp; Character.isWhitespace(c)) {</b>
+<i>85</i>&nbsp;                // end argument and leave whitespace for further processing
+<b class="nc"><i>86</i>&nbsp;                break;</b>
+<i>87</i>&nbsp;            }
+<b class="nc"><i>88</i>&nbsp;            if ((c == &#39;}&#39;) &amp;&amp; (--count &lt; 0)) {</b>
+<b class="nc"><i>89</i>&nbsp;                break;</b>
+<b class="nc"><i>90</i>&nbsp;            } else if (c == &#39;{&#39;) {</b>
+<b class="nc"><i>91</i>&nbsp;                count++;</b>
+<i>92</i>&nbsp;            }
+<b class="nc"><i>93</i>&nbsp;            part.append(c);</b>
+<b class="nc"><i>94</i>&nbsp;            index++;</b>
+<i>95</i>&nbsp;        }
+<b class="nc"><i>96</i>&nbsp;        return part.toString();</b>
+<i>97</i>&nbsp;    }
+<i>98</i>&nbsp;
+<i>99</i>&nbsp;    /**
+<i>100</i>&nbsp;     * Returns the string, after shaving off whitespace at the beginning and end,
+<i>101</i>&nbsp;     * and removing (at most) one pair of braces or &quot; surrounding it.
+<i>102</i>&nbsp;     *
+<i>103</i>&nbsp;     * @param toShave
+<i>104</i>&nbsp;     * @return
+<i>105</i>&nbsp;     */
+<i>106</i>&nbsp;
+<i>107</i>&nbsp;    public static String shaveString(String toShave) {
+<b class="nc"><i>108</i>&nbsp;        if ((toShave == null) || (toShave.isEmpty())) {</b>
+<b class="nc"><i>109</i>&nbsp;            return &quot;&quot;;</b>
+<i>110</i>&nbsp;        }
+<b class="nc"><i>111</i>&nbsp;        String shaved = toShave.trim();</b>
+<b class="nc"><i>112</i>&nbsp;        if (isInCurlyBrackets(shaved) || isInCitationMarks(shaved)) {</b>
+<b class="nc"><i>113</i>&nbsp;            return shaved.substring(1, shaved.length() - 1);</b>
+<i>114</i>&nbsp;        }
+<b class="nc"><i>115</i>&nbsp;        return shaved;</b>
+<i>116</i>&nbsp;    }
+<i>117</i>&nbsp;
+<i>118</i>&nbsp;    /**
+<i>119</i>&nbsp;     * Concatenate all strings in the array from index &#39;from&#39; to &#39;to&#39; (excluding
+<i>120</i>&nbsp;     * to) with the given separator.
+<i>121</i>&nbsp;     * &lt;p&gt;
+<i>122</i>&nbsp;     * Example:
+<i>123</i>&nbsp;     * &lt;p&gt;
+<i>124</i>&nbsp;     * String[] s = &quot;ab/cd/ed&quot;.split(&quot;/&quot;); join(s, &quot;\\&quot;, 0, s.length) -&gt;
+<i>125</i>&nbsp;     * &quot;ab\\cd\\ed&quot;
+<i>126</i>&nbsp;     *
+<i>127</i>&nbsp;     * @param strings
+<i>128</i>&nbsp;     * @param separator
+<i>129</i>&nbsp;     * @param from
+<i>130</i>&nbsp;     * @param to        Excluding strings[to]
+<i>131</i>&nbsp;     * @return
+<i>132</i>&nbsp;     */
+<i>133</i>&nbsp;    public static String join(String[] strings, String separator, int from, int to) {
+<b class="nc"><i>134</i>&nbsp;        if ((strings.length == 0) || (from &gt;= to)) {</b>
+<b class="nc"><i>135</i>&nbsp;            return &quot;&quot;;</b>
+<i>136</i>&nbsp;        }
+<i>137</i>&nbsp;
+<b class="nc"><i>138</i>&nbsp;        int updatedFrom = Math.max(from, 0);</b>
+<b class="nc"><i>139</i>&nbsp;        int updatedTo = Math.min(strings.length, to);</b>
+<i>140</i>&nbsp;
+<b class="nc"><i>141</i>&nbsp;        StringBuilder stringBuilder = new StringBuilder();</b>
+<b class="nc"><i>142</i>&nbsp;        for (int i = updatedFrom; i &lt; (updatedTo - 1); i++) {</b>
+<b class="nc"><i>143</i>&nbsp;            stringBuilder.append(strings[i]).append(separator);</b>
+<i>144</i>&nbsp;        }
+<b class="nc"><i>145</i>&nbsp;        return stringBuilder.append(strings[updatedTo - 1]).toString();</b>
+<i>146</i>&nbsp;    }
+<i>147</i>&nbsp;
+<i>148</i>&nbsp;    /**
+<i>149</i>&nbsp;     * Removes optional square brackets from the string s
+<i>150</i>&nbsp;     *
+<i>151</i>&nbsp;     * @param toStrip
+<i>152</i>&nbsp;     * @return
+<i>153</i>&nbsp;     */
+<i>154</i>&nbsp;    public static String stripBrackets(String toStrip) {
+<b class="nc"><i>155</i>&nbsp;        if (isInSquareBrackets(toStrip)) {</b>
+<b class="nc"><i>156</i>&nbsp;            return toStrip.substring(1, toStrip.length() - 1);</b>
+<i>157</i>&nbsp;        }
+<b class="nc"><i>158</i>&nbsp;        return toStrip;</b>
+<i>159</i>&nbsp;    }
+<i>160</i>&nbsp;
+<i>161</i>&nbsp;    /**
+<i>162</i>&nbsp;     * extends the filename with a default Extension, if no Extension &#39;.x&#39; could
+<i>163</i>&nbsp;     * be found
+<i>164</i>&nbsp;     */
+<i>165</i>&nbsp;    public static String getCorrectFileName(String orgName, String defaultExtension) {
+<b class="nc"><i>166</i>&nbsp;        if (orgName == null) {</b>
+<b class="nc"><i>167</i>&nbsp;            return &quot;&quot;;</b>
+<i>168</i>&nbsp;        }
+<i>169</i>&nbsp;
+<i>170</i>&nbsp;
+<b class="nc"><i>171</i>&nbsp;        if (orgName.toLowerCase().endsWith(&quot;.&quot; + defaultExtension.toLowerCase())) {</b>
+<b class="nc"><i>172</i>&nbsp;            return orgName;</b>
+<i>173</i>&nbsp;        }
+<i>174</i>&nbsp;
+<b class="nc"><i>175</i>&nbsp;        int hiddenChar = orgName.indexOf(&#39;.&#39;, 1); // hidden files Linux/Unix (?)</b>
+<b class="nc"><i>176</i>&nbsp;        if (hiddenChar &lt; 1) {</b>
+<b class="nc"><i>177</i>&nbsp;            return orgName + &quot;.&quot; + defaultExtension;</b>
+<i>178</i>&nbsp;        }
+<i>179</i>&nbsp;
+<b class="nc"><i>180</i>&nbsp;        return orgName;</b>
+<i>181</i>&nbsp;    }
+<i>182</i>&nbsp;
+<i>183</i>&nbsp;    /**
+<i>184</i>&nbsp;     * Formats field contents for output. Must be &quot;symmetric&quot; with the parse method above,
+<i>185</i>&nbsp;     * so stored and reloaded fields are not mangled.
+<i>186</i>&nbsp;     *
+<i>187</i>&nbsp;     * @param in
+<i>188</i>&nbsp;     * @param wrapAmount
+<i>189</i>&nbsp;     * @param newline
+<i>190</i>&nbsp;     * @return the wrapped String.
+<i>191</i>&nbsp;     */
+<i>192</i>&nbsp;    public static String wrap(String in, int wrapAmount, String newline) {
+<i>193</i>&nbsp;
+<b class="nc"><i>194</i>&nbsp;        String[] lines = in.split(&quot;\n&quot;);</b>
+<b class="nc"><i>195</i>&nbsp;        StringBuilder result = new StringBuilder();</b>
+<i>196</i>&nbsp;        // remove all whitespace at the end of the string, this especially includes \r created when the field content has \r\n as line separator
+<b class="nc"><i>197</i>&nbsp;        addWrappedLine(result, CharMatcher.WHITESPACE.trimTrailingFrom(lines[0]), wrapAmount, newline); // See</b>
+<b class="nc"><i>198</i>&nbsp;        for (int i = 1; i &lt; lines.length; i++) {</b>
+<i>199</i>&nbsp;
+<b class="nc"><i>200</i>&nbsp;            if (lines[i].trim().isEmpty()) {</b>
+<b class="nc"><i>201</i>&nbsp;                result.append(newline);</b>
+<b class="nc"><i>202</i>&nbsp;                result.append(&#39;\t&#39;);</b>
+<i>203</i>&nbsp;            } else {
+<b class="nc"><i>204</i>&nbsp;                result.append(newline);</b>
+<b class="nc"><i>205</i>&nbsp;                result.append(&#39;\t&#39;);</b>
+<b class="nc"><i>206</i>&nbsp;                result.append(newline);</b>
+<b class="nc"><i>207</i>&nbsp;                result.append(&#39;\t&#39;);</b>
+<i>208</i>&nbsp;                // remove all whitespace at the end of the string, this especially includes \r created when the field content has \r\n as line separator
+<b class="nc"><i>209</i>&nbsp;                String line = CharMatcher.WHITESPACE.trimTrailingFrom(lines[i]);</b>
+<b class="nc"><i>210</i>&nbsp;                addWrappedLine(result, line, wrapAmount, newline);</b>
+<i>211</i>&nbsp;            }
+<i>212</i>&nbsp;        }
+<b class="nc"><i>213</i>&nbsp;        return result.toString();</b>
+<i>214</i>&nbsp;    }
+<i>215</i>&nbsp;
+<i>216</i>&nbsp;    private static void addWrappedLine(StringBuilder result, String line, int wrapAmount, String newline) {
+<i>217</i>&nbsp;        // Set our pointer to the beginning of the new line in the StringBuffer:
+<b class="nc"><i>218</i>&nbsp;        int length = result.length();</b>
+<i>219</i>&nbsp;        // Add the line, unmodified:
+<b class="nc"><i>220</i>&nbsp;        result.append(line);</b>
+<i>221</i>&nbsp;
+<b class="nc"><i>222</i>&nbsp;        while (length &lt; result.length()) {</b>
+<b class="nc"><i>223</i>&nbsp;            int current = result.indexOf(&quot; &quot;, length + wrapAmount);</b>
+<b class="nc"><i>224</i>&nbsp;            if ((current &lt; 0) || (current &gt;= result.length())) {</b>
+<b class="nc"><i>225</i>&nbsp;                break;</b>
+<i>226</i>&nbsp;            }
+<i>227</i>&nbsp;
+<b class="nc"><i>228</i>&nbsp;            result.deleteCharAt(current);</b>
+<b class="nc"><i>229</i>&nbsp;            result.insert(current, newline + &quot;\t&quot;);</b>
+<b class="nc"><i>230</i>&nbsp;            length = current + newline.length();</b>
+<i>231</i>&nbsp;
+<b class="nc"><i>232</i>&nbsp;        }</b>
+<b class="nc"><i>233</i>&nbsp;    }</b>
+<i>234</i>&nbsp;
+<i>235</i>&nbsp;    /**
+<i>236</i>&nbsp;     * Quotes each and every character, e.g. &#39;!&#39; as &amp;#33;. Used for verbatim
+<i>237</i>&nbsp;     * display of arbitrary strings that may contain HTML entities.
+<i>238</i>&nbsp;     */
+<i>239</i>&nbsp;    public static String quoteForHTML(String toQuote) {
+<b class="nc"><i>240</i>&nbsp;        StringBuilder result = new StringBuilder();</b>
+<b class="nc"><i>241</i>&nbsp;        for (int i = 0; i &lt; toQuote.length(); ++i) {</b>
+<b class="nc"><i>242</i>&nbsp;            result.append(&quot;&amp;#&quot;).append((int) toQuote.charAt(i)).append(&#39;;&#39;);</b>
+<i>243</i>&nbsp;        }
+<b class="nc"><i>244</i>&nbsp;        return result.toString();</b>
+<i>245</i>&nbsp;    }
+<i>246</i>&nbsp;
+<i>247</i>&nbsp;    /**
+<i>248</i>&nbsp;     * Decodes an encoded double String array back into array form. The array
+<i>249</i>&nbsp;     * is assumed to be square, and delimited by the characters &#39;;&#39; (first dim) and
+<i>250</i>&nbsp;     * &#39;:&#39; (second dim).
+<i>251</i>&nbsp;     * @param value The encoded String to be decoded.
+<i>252</i>&nbsp;     * @return The decoded String array.
+<i>253</i>&nbsp;     */
+<i>254</i>&nbsp;    public static String[][] decodeStringDoubleArray(String value) {
+<b class="nc"><i>255</i>&nbsp;        List&lt;List&lt;String&gt;&gt; newList = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>256</i>&nbsp;        StringBuilder sb = new StringBuilder();</b>
+<b class="nc"><i>257</i>&nbsp;        List&lt;String&gt; thisEntry = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>258</i>&nbsp;        boolean escaped = false;</b>
+<b class="nc"><i>259</i>&nbsp;        for (int i = 0; i &lt; value.length(); i++) {</b>
+<b class="nc"><i>260</i>&nbsp;            char c = value.charAt(i);</b>
+<b class="nc"><i>261</i>&nbsp;            if (!escaped &amp;&amp; (c == &#39;\\&#39;)) {</b>
+<b class="nc"><i>262</i>&nbsp;                escaped = true;</b>
+<b class="nc"><i>263</i>&nbsp;                continue;</b>
+<b class="nc"><i>264</i>&nbsp;            } else if (!escaped &amp;&amp; (c == &#39;:&#39;)) {</b>
+<b class="nc"><i>265</i>&nbsp;                thisEntry.add(sb.toString());</b>
+<b class="nc"><i>266</i>&nbsp;                sb = new StringBuilder();</b>
+<b class="nc"><i>267</i>&nbsp;            } else if (!escaped &amp;&amp; (c == &#39;;&#39;)) {</b>
+<b class="nc"><i>268</i>&nbsp;                thisEntry.add(sb.toString());</b>
+<b class="nc"><i>269</i>&nbsp;                sb = new StringBuilder();</b>
+<b class="nc"><i>270</i>&nbsp;                newList.add(thisEntry);</b>
+<b class="nc"><i>271</i>&nbsp;                thisEntry = new ArrayList&lt;&gt;();</b>
+<i>272</i>&nbsp;            } else {
+<b class="nc"><i>273</i>&nbsp;                sb.append(c);</b>
+<i>274</i>&nbsp;            }
+<b class="nc"><i>275</i>&nbsp;            escaped = false;</b>
+<i>276</i>&nbsp;        }
+<b class="nc"><i>277</i>&nbsp;        if (sb.length() &gt; 0) {</b>
+<b class="nc"><i>278</i>&nbsp;            thisEntry.add(sb.toString());</b>
+<i>279</i>&nbsp;        }
+<b class="nc"><i>280</i>&nbsp;        if (!thisEntry.isEmpty()) {</b>
+<b class="nc"><i>281</i>&nbsp;            newList.add(thisEntry);</b>
+<i>282</i>&nbsp;        }
+<i>283</i>&nbsp;
+<i>284</i>&nbsp;        // Convert to String[][]:
+<b class="nc"><i>285</i>&nbsp;        String[][] res = new String[newList.size()][];</b>
+<b class="nc"><i>286</i>&nbsp;        for (int i = 0; i &lt; res.length; i++) {</b>
+<b class="nc"><i>287</i>&nbsp;            res[i] = new String[newList.get(i).size()];</b>
+<b class="nc"><i>288</i>&nbsp;            for (int j = 0; j &lt; res[i].length; j++) {</b>
+<b class="nc"><i>289</i>&nbsp;                res[i][j] = newList.get(i).get(j);</b>
+<i>290</i>&nbsp;            }
+<i>291</i>&nbsp;        }
+<b class="nc"><i>292</i>&nbsp;        return res;</b>
+<i>293</i>&nbsp;    }
+<i>294</i>&nbsp;
+<i>295</i>&nbsp;    /**
+<i>296</i>&nbsp;     * Wrap all uppercase letters, or sequences of uppercase letters, in curly
+<i>297</i>&nbsp;     * braces. Ignore letters within a pair of # character, as these are part of
+<i>298</i>&nbsp;     * a string label that should not be modified.
+<i>299</i>&nbsp;     *
+<i>300</i>&nbsp;     * @param s
+<i>301</i>&nbsp;     *            The string to modify.
+<i>302</i>&nbsp;     * @return The resulting string after wrapping capitals.
+<i>303</i>&nbsp;     */
+<i>304</i>&nbsp;    public static String putBracesAroundCapitals(String s) {
+<i>305</i>&nbsp;
+<b class="nc"><i>306</i>&nbsp;        boolean inString = false;</b>
+<b class="nc"><i>307</i>&nbsp;        boolean isBracing = false;</b>
+<b class="nc"><i>308</i>&nbsp;        boolean escaped = false;</b>
+<b class="nc"><i>309</i>&nbsp;        int inBrace = 0;</b>
+<b class="nc"><i>310</i>&nbsp;        StringBuilder buf = new StringBuilder();</b>
+<b class="nc"><i>311</i>&nbsp;        for (int i = 0; i &lt; s.length(); i++) {</b>
+<i>312</i>&nbsp;            // Update variables based on special characters:
+<b class="nc"><i>313</i>&nbsp;            int c = s.charAt(i);</b>
+<b class="nc"><i>314</i>&nbsp;            if (c == &#39;{&#39;) {</b>
+<b class="nc"><i>315</i>&nbsp;                inBrace++;</b>
+<b class="nc"><i>316</i>&nbsp;            } else if (c == &#39;}&#39;) {</b>
+<b class="nc"><i>317</i>&nbsp;                inBrace--;</b>
+<b class="nc"><i>318</i>&nbsp;            } else if (!escaped &amp;&amp; (c == &#39;#&#39;)) {</b>
+<b class="nc"><i>319</i>&nbsp;                inString = !inString;</b>
+<i>320</i>&nbsp;            }
+<i>321</i>&nbsp;
+<i>322</i>&nbsp;            // See if we should start bracing:
+<b class="nc"><i>323</i>&nbsp;            if ((inBrace == 0) &amp;&amp; !isBracing &amp;&amp; !inString &amp;&amp; Character.isLetter((char) c)</b>
+<b class="nc"><i>324</i>&nbsp;                    &amp;&amp; Character.isUpperCase((char) c)) {</b>
+<i>325</i>&nbsp;
+<b class="nc"><i>326</i>&nbsp;                buf.append(&#39;{&#39;);</b>
+<b class="nc"><i>327</i>&nbsp;                isBracing = true;</b>
+<i>328</i>&nbsp;            }
+<i>329</i>&nbsp;
+<i>330</i>&nbsp;            // See if we should close a brace set:
+<b class="nc"><i>331</i>&nbsp;            if (isBracing &amp;&amp; !(Character.isLetter((char) c) &amp;&amp; Character.isUpperCase((char) c))) {</b>
+<i>332</i>&nbsp;
+<b class="nc"><i>333</i>&nbsp;                buf.append(&#39;}&#39;);</b>
+<b class="nc"><i>334</i>&nbsp;                isBracing = false;</b>
+<i>335</i>&nbsp;            }
+<i>336</i>&nbsp;
+<i>337</i>&nbsp;            // Add the current character:
+<b class="nc"><i>338</i>&nbsp;            buf.append((char) c);</b>
+<i>339</i>&nbsp;
+<i>340</i>&nbsp;            // Check if we are entering an escape sequence:
+<b class="nc"><i>341</i>&nbsp;            escaped = (c == &#39;\\&#39;) &amp;&amp; !escaped;</b>
+<i>342</i>&nbsp;
+<i>343</i>&nbsp;        }
+<i>344</i>&nbsp;        // Check if we have an unclosed brace:
+<b class="nc"><i>345</i>&nbsp;        if (isBracing) {</b>
+<b class="nc"><i>346</i>&nbsp;            buf.append(&#39;}&#39;);</b>
+<i>347</i>&nbsp;        }
+<i>348</i>&nbsp;
+<b class="nc"><i>349</i>&nbsp;        return buf.toString();</b>
+<i>350</i>&nbsp;    }
+<i>351</i>&nbsp;
+<i>352</i>&nbsp;    /**
+<i>353</i>&nbsp;     * This method looks for occurrences of capital letters enclosed in an
+<i>354</i>&nbsp;     * arbitrary number of pairs of braces, e.g. &quot;{AB}&quot; or &quot;{{T}}&quot;. All of these
+<i>355</i>&nbsp;     * pairs of braces are removed.
+<i>356</i>&nbsp;     *
+<i>357</i>&nbsp;     * @param s
+<i>358</i>&nbsp;     *            The String to analyze.
+<i>359</i>&nbsp;     * @return A new String with braces removed.
+<i>360</i>&nbsp;     */
+<i>361</i>&nbsp;    public static String removeBracesAroundCapitals(String s) {
+<b class="nc"><i>362</i>&nbsp;        String current = s;</b>
+<b class="nc"><i>363</i>&nbsp;        String previous = s;</b>
+<b class="nc"><i>364</i>&nbsp;        while ((current = removeSingleBracesAroundCapitals(current)).length() &lt; previous.length()) {</b>
+<b class="nc"><i>365</i>&nbsp;            previous = current;</b>
+<i>366</i>&nbsp;        }
+<b class="nc"><i>367</i>&nbsp;        return current;</b>
+<i>368</i>&nbsp;    }
+<i>369</i>&nbsp;
+<i>370</i>&nbsp;    /**
+<i>371</i>&nbsp;     * This method looks for occurrences of capital letters enclosed in one pair
+<i>372</i>&nbsp;     * of braces, e.g. &quot;{AB}&quot;. All these are replaced by only the capitals in
+<i>373</i>&nbsp;     * between the braces.
+<i>374</i>&nbsp;     *
+<i>375</i>&nbsp;     * @param s
+<i>376</i>&nbsp;     *            The String to analyze.
+<i>377</i>&nbsp;     * @return A new String with braces removed.
+<i>378</i>&nbsp;     */
+<i>379</i>&nbsp;    private static String removeSingleBracesAroundCapitals(String s) {
+<i>380</i>&nbsp;
+<b class="nc"><i>381</i>&nbsp;        Matcher mcr = BRACED_TITLE_CAPITAL_PATTERN.matcher(s);</b>
+<b class="nc"><i>382</i>&nbsp;        StringBuffer buf = new StringBuffer();</b>
+<b class="nc"><i>383</i>&nbsp;        while (mcr.find()) {</b>
+<b class="nc"><i>384</i>&nbsp;            String replaceStr = mcr.group();</b>
+<b class="nc"><i>385</i>&nbsp;            mcr.appendReplacement(buf, replaceStr.substring(1, replaceStr.length() - 1));</b>
+<b class="nc"><i>386</i>&nbsp;        }</b>
+<b class="nc"><i>387</i>&nbsp;        mcr.appendTail(buf);</b>
+<b class="nc"><i>388</i>&nbsp;        return buf.toString();</b>
+<i>389</i>&nbsp;    }
+<i>390</i>&nbsp;
+<i>391</i>&nbsp;    /**
+<i>392</i>&nbsp;     * Replaces all platform-dependent line breaks by OS.NEWLINE line breaks.
+<i>393</i>&nbsp;     *
+<i>394</i>&nbsp;     * We do NOT use UNIX line breaks as the user explicitly configures its linebreaks and this method is used in bibtex field writing
+<i>395</i>&nbsp;     *
+<i>396</i>&nbsp;     * &lt;example&gt;
+<i>397</i>&nbsp;     * Legacy Macintosh \r -&gt; OS.NEWLINE
+<i>398</i>&nbsp;     * Windows \r\n -&gt; OS.NEWLINE
+<i>399</i>&nbsp;     * &lt;/example&gt;
+<i>400</i>&nbsp;     *
+<i>401</i>&nbsp;     * @return a String with only OS.NEWLINE as line breaks
+<i>402</i>&nbsp;     */
+<i>403</i>&nbsp;    public static String unifyLineBreaks(String s, String newline) {
+<b class="nc"><i>404</i>&nbsp;        return LINE_BREAKS.matcher(s).replaceAll(newline);</b>
+<i>405</i>&nbsp;    }
+<i>406</i>&nbsp;
+<i>407</i>&nbsp;    /**
+<i>408</i>&nbsp;     * Checks if the given String has exactly one pair of surrounding curly braces &lt;br&gt;
+<i>409</i>&nbsp;     * Strings with escaped characters in curly braces at the beginning and end are respected, too
+<i>410</i>&nbsp;     * @param toCheck The string to check
+<i>411</i>&nbsp;     * @return True, if the check was succesful. False otherwise.
+<i>412</i>&nbsp;     */
+<i>413</i>&nbsp;    public static boolean isInCurlyBrackets(String toCheck) {
+<b class="nc"><i>414</i>&nbsp;        int count = 0;</b>
+<b class="nc"><i>415</i>&nbsp;        int brackets = 0;</b>
+<b class="nc"><i>416</i>&nbsp;        if ((toCheck == null) || toCheck.isEmpty()) {</b>
+<b class="nc"><i>417</i>&nbsp;            return false;</b>
+<i>418</i>&nbsp;        } else {
+<b class="nc"><i>419</i>&nbsp;            if ((toCheck.charAt(0) == &#39;{&#39;) &amp;&amp; (toCheck.charAt(toCheck.length() - 1) == &#39;}&#39;)) {</b>
+<b class="nc"><i>420</i>&nbsp;                for (char c : toCheck.toCharArray()) {</b>
+<b class="nc"><i>421</i>&nbsp;                    if (c == &#39;{&#39;) {</b>
+<b class="nc"><i>422</i>&nbsp;                        if (brackets == 0) {</b>
+<b class="nc"><i>423</i>&nbsp;                            count++;</b>
+<i>424</i>&nbsp;                        }
+<b class="nc"><i>425</i>&nbsp;                        brackets++;</b>
+<b class="nc"><i>426</i>&nbsp;                    } else if (c == &#39;}&#39;) {</b>
+<b class="nc"><i>427</i>&nbsp;                        brackets--;</b>
+<i>428</i>&nbsp;                    }
+<i>429</i>&nbsp;                }
+<i>430</i>&nbsp;
+<b class="nc"><i>431</i>&nbsp;                return count == 1;</b>
+<i>432</i>&nbsp;            }
+<b class="nc"><i>433</i>&nbsp;            return false;</b>
+<i>434</i>&nbsp;        }
+<i>435</i>&nbsp;
+<i>436</i>&nbsp;    }
+<i>437</i>&nbsp;
+<i>438</i>&nbsp;    public static boolean isInSquareBrackets(String toCheck) {
+<b class="nc"><i>439</i>&nbsp;        if ((toCheck == null) || toCheck.isEmpty()) {</b>
+<b class="nc"><i>440</i>&nbsp;            return false; // In case of null or empty string</b>
+<i>441</i>&nbsp;        } else {
+<b class="nc"><i>442</i>&nbsp;            return (toCheck.charAt(0) == &#39;[&#39;) &amp;&amp; (toCheck.charAt(toCheck.length() - 1) == &#39;]&#39;);</b>
+<i>443</i>&nbsp;        }
+<i>444</i>&nbsp;    }
+<i>445</i>&nbsp;
+<i>446</i>&nbsp;    public static boolean isInCitationMarks(String toCheck) {
+<b class="nc"><i>447</i>&nbsp;        if ((toCheck == null) || (toCheck.length() &lt;= 1)) {</b>
+<b class="nc"><i>448</i>&nbsp;            return false; // In case of null, empty string, or a single citation mark</b>
+<i>449</i>&nbsp;        } else {
+<b class="nc"><i>450</i>&nbsp;            return (toCheck.charAt(0) == &#39;&quot;&#39;) &amp;&amp; (toCheck.charAt(toCheck.length() - 1) == &#39;&quot;&#39;);</b>
+<i>451</i>&nbsp;        }
+<i>452</i>&nbsp;    }
+<i>453</i>&nbsp;
+<i>454</i>&nbsp;    /**
+<i>455</i>&nbsp;     * Optimized method for converting a String into an Integer
+<i>456</i>&nbsp;     *
+<i>457</i>&nbsp;     * From http://stackoverflow.com/questions/1030479/most-efficient-way-of-converting-string-to-integer-in-java
+<i>458</i>&nbsp;     *
+<i>459</i>&nbsp;     * @param str the String holding an Integer value
+<i>460</i>&nbsp;     * @throws NumberFormatException if str cannot be parsed to an int
+<i>461</i>&nbsp;     * @return the int value of str
+<i>462</i>&nbsp;     */
+<i>463</i>&nbsp;    public static int intValueOf(String str) {
+<b class="nc"><i>464</i>&nbsp;        int idx = 0;</b>
+<i>465</i>&nbsp;        int end;
+<b class="nc"><i>466</i>&nbsp;        boolean sign = false;</b>
+<i>467</i>&nbsp;        char ch;
+<i>468</i>&nbsp;
+<b class="nc"><i>469</i>&nbsp;        if ((str == null) || ((end = str.length()) == 0) || ((((ch = str.charAt(0)) &lt; &#39;0&#39;) || (ch &gt; &#39;9&#39;)) &amp;&amp; (!(sign = ch == &#39;-&#39;) || (++idx == end) || ((ch = str.charAt(idx)) &lt; &#39;0&#39;) || (ch &gt; &#39;9&#39;)))) {</b>
+<b class="nc"><i>470</i>&nbsp;            throw new NumberFormatException(str);</b>
+<i>471</i>&nbsp;        }
+<i>472</i>&nbsp;
+<b class="nc"><i>473</i>&nbsp;        int ival = 0;</b>
+<b class="nc"><i>474</i>&nbsp;        for (;; ival *= 10) {</b>
+<b class="nc"><i>475</i>&nbsp;            ival += &#39;0&#39; - ch;</b>
+<b class="nc"><i>476</i>&nbsp;            if (++idx == end) {</b>
+<b class="nc"><i>477</i>&nbsp;                return sign ? ival : -ival;</b>
+<i>478</i>&nbsp;            }
+<b class="nc"><i>479</i>&nbsp;            if (((ch = str.charAt(idx)) &lt; &#39;0&#39;) || (ch &gt; &#39;9&#39;)) {</b>
+<b class="nc"><i>480</i>&nbsp;                throw new NumberFormatException(str);</b>
+<i>481</i>&nbsp;            }
+<i>482</i>&nbsp;        }
+<i>483</i>&nbsp;    }
+<i>484</i>&nbsp;
+<i>485</i>&nbsp;    /**
+<i>486</i>&nbsp;     * Optimized method for converting a String into an Integer
+<i>487</i>&nbsp;     *
+<i>488</i>&nbsp;     * From http://stackoverflow.com/questions/1030479/most-efficient-way-of-converting-string-to-integer-in-java
+<i>489</i>&nbsp;     *
+<i>490</i>&nbsp;     * @param str the String holding an Integer value
+<i>491</i>&nbsp;     * @return the int value of str or Optional.empty() if not possible
+<i>492</i>&nbsp;     */
+<i>493</i>&nbsp;    public static Optional&lt;Integer&gt; intValueOfOptional(String str) {
+<b class="nc"><i>494</i>&nbsp;        int idx = 0;</b>
+<i>495</i>&nbsp;        int end;
+<b class="nc"><i>496</i>&nbsp;        boolean sign = false;</b>
+<i>497</i>&nbsp;        char ch;
+<i>498</i>&nbsp;
+<b class="nc"><i>499</i>&nbsp;        if ((str == null) || ((end = str.length()) == 0) || ((((ch = str.charAt(0)) &lt; &#39;0&#39;) || (ch &gt; &#39;9&#39;)) &amp;&amp; (!(sign = ch == &#39;-&#39;) || (++idx == end) || ((ch = str.charAt(idx)) &lt; &#39;0&#39;) || (ch &gt; &#39;9&#39;)))) {</b>
+<b class="nc"><i>500</i>&nbsp;            return Optional.empty();</b>
+<i>501</i>&nbsp;        }
+<i>502</i>&nbsp;
+<b class="nc"><i>503</i>&nbsp;        int ival = 0;</b>
+<b class="nc"><i>504</i>&nbsp;        for (;; ival *= 10) {</b>
+<b class="nc"><i>505</i>&nbsp;            ival += &#39;0&#39; - ch;</b>
+<b class="nc"><i>506</i>&nbsp;            if (++idx == end) {</b>
+<b class="nc"><i>507</i>&nbsp;                return Optional.of(sign ? ival : -ival);</b>
+<i>508</i>&nbsp;            }
+<b class="nc"><i>509</i>&nbsp;            if (((ch = str.charAt(idx)) &lt; &#39;0&#39;) || (ch &gt; &#39;9&#39;)) {</b>
+<b class="nc"><i>510</i>&nbsp;                return Optional.empty();</b>
+<i>511</i>&nbsp;            }
+<i>512</i>&nbsp;        }
+<i>513</i>&nbsp;    }
+<i>514</i>&nbsp;
+<i>515</i>&nbsp;    /**
+<i>516</i>&nbsp;     * This method ensures that the output String has only
+<i>517</i>&nbsp;     * valid XML unicode characters as specified by the
+<i>518</i>&nbsp;     * XML 1.0 standard. For reference, please see
+<i>519</i>&nbsp;     * &lt;a href=&quot;http://www.w3.org/TR/2000/REC-xml-20001006#NT-Char&quot;&gt;the
+<i>520</i>&nbsp;     * standard&lt;/a&gt;. This method will return an empty
+<i>521</i>&nbsp;     * String if the input is null or empty.
+<i>522</i>&nbsp;     * &lt;p&gt;
+<i>523</i>&nbsp;     * URL: http://cse-mjmcl.cse.bris.ac.uk/blog/2007/02/14/1171465494443.html
+<i>524</i>&nbsp;     *
+<i>525</i>&nbsp;     * @param in The String whose non-valid characters we want to remove.
+<i>526</i>&nbsp;     * @return The in String, stripped of non-valid characters.
+<i>527</i>&nbsp;     */
+<i>528</i>&nbsp;    public static String stripNonValidXMLCharacters(String in) {
+<b class="nc"><i>529</i>&nbsp;        if ((in == null) || in.isEmpty()) {</b>
+<b class="nc"><i>530</i>&nbsp;            return &quot;&quot;; // vacancy test.</b>
+<i>531</i>&nbsp;        }
+<b class="nc"><i>532</i>&nbsp;        StringBuilder out = new StringBuilder(); // Used to hold the output.</b>
+<i>533</i>&nbsp;        char current; // Used to reference the current character.
+<i>534</i>&nbsp;
+<b class="nc"><i>535</i>&nbsp;        for (int i = 0; i &lt; in.length(); i++) {</b>
+<b class="nc"><i>536</i>&nbsp;            current = in.charAt(i); // NOTE: No IndexOutOfBoundsException caught here; it should not happen.</b>
+<b class="nc"><i>537</i>&nbsp;            if ((current == 0x9) || (current == 0xA) || (current == 0xD) || ((current &gt;= 0x20) &amp;&amp; (current &lt;= 0xD7FF))</b>
+<i>538</i>&nbsp;                    || ((current &gt;= 0xE000) &amp;&amp; (current &lt;= 0xFFFD))) {
+<b class="nc"><i>539</i>&nbsp;                out.append(current);</b>
+<i>540</i>&nbsp;            }
+<i>541</i>&nbsp;        }
+<b class="nc"><i>542</i>&nbsp;        return out.toString();</b>
+<i>543</i>&nbsp;    }
+<i>544</i>&nbsp;
+<i>545</i>&nbsp;    /*
+<i>546</i>&nbsp;         * @param  buf       String to be tokenized
+<i>547</i>&nbsp;         * @param  delimstr  Delimiter string
+<i>548</i>&nbsp;         * @return list      {@link java.util.List} of &lt;tt&gt;String&lt;/tt&gt;
+<i>549</i>&nbsp;         */
+<i>550</i>&nbsp;    public static List&lt;String&gt; tokenizeToList(String buf, String delimstr) {
+<b class="nc"><i>551</i>&nbsp;        List&lt;String&gt; list = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>552</i>&nbsp;        String buffer = buf + &#39;\n&#39;;</b>
+<i>553</i>&nbsp;
+<b class="nc"><i>554</i>&nbsp;        StringTokenizer st = new StringTokenizer(buffer, delimstr);</b>
+<i>555</i>&nbsp;
+<b class="nc"><i>556</i>&nbsp;        while (st.hasMoreTokens()) {</b>
+<b class="nc"><i>557</i>&nbsp;            list.add(st.nextToken());</b>
+<i>558</i>&nbsp;        }
+<i>559</i>&nbsp;
+<b class="nc"><i>560</i>&nbsp;        return list;</b>
+<i>561</i>&nbsp;    }
+<i>562</i>&nbsp;
+<i>563</i>&nbsp;    public static String limitStringLength(String s, int maxLength) {
+<b class="nc"><i>564</i>&nbsp;        if (s == null) {</b>
+<b class="nc"><i>565</i>&nbsp;            return &quot;&quot;;</b>
+<i>566</i>&nbsp;        }
+<i>567</i>&nbsp;
+<b class="nc"><i>568</i>&nbsp;        if (s.length() &lt;= maxLength) {</b>
+<b class="nc"><i>569</i>&nbsp;            return s;</b>
+<i>570</i>&nbsp;        }
+<i>571</i>&nbsp;
+<b class="nc"><i>572</i>&nbsp;        return s.substring(0, maxLength - 3) + &quot;...&quot;;</b>
+<i>573</i>&nbsp;    }
+<i>574</i>&nbsp;
+<i>575</i>&nbsp;    /**
+<i>576</i>&nbsp;     * Replace non-English characters like umlauts etc. with a sensible letter or letter combination that bibtex can
+<i>577</i>&nbsp;     * accept. The basis for replacement is the HashMap UnicodeToReadableCharMap.
+<i>578</i>&nbsp;     */
+<i>579</i>&nbsp;    public static String replaceSpecialCharacters(String s) {
+<b class="nc"><i>580</i>&nbsp;        String result = s;</b>
+<b class="nc"><i>581</i>&nbsp;        for (Map.Entry&lt;String, String&gt; chrAndReplace : UNICODE_CHAR_MAP.entrySet()) {</b>
+<b class="nc"><i>582</i>&nbsp;            result = result.replace(chrAndReplace.getKey(), chrAndReplace.getValue());</b>
+<b class="nc"><i>583</i>&nbsp;        }</b>
+<b class="nc"><i>584</i>&nbsp;        return result;</b>
+<i>585</i>&nbsp;    }
+<i>586</i>&nbsp;
+<i>587</i>&nbsp;    /**
+<i>588</i>&nbsp;     * Return a String with n spaces
+<i>589</i>&nbsp;     *
+<i>590</i>&nbsp;     * @param n Number of spaces
+<i>591</i>&nbsp;     * @return String with n spaces
+<i>592</i>&nbsp;     */
+<i>593</i>&nbsp;    public static String repeatSpaces(int n) {
+<b class="nc"><i>594</i>&nbsp;        return repeat(n, &#39; &#39;);</b>
+<i>595</i>&nbsp;    }
+<i>596</i>&nbsp;
+<i>597</i>&nbsp;    /**
+<i>598</i>&nbsp;     * Return a String with n copies of the char c
+<i>599</i>&nbsp;     *
+<i>600</i>&nbsp;     * @param n Number of copies
+<i>601</i>&nbsp;     * @param c char to copy
+<i>602</i>&nbsp;     * @return String with n copies of c
+<i>603</i>&nbsp;     */
+<i>604</i>&nbsp;    public static String repeat(int n, char c) {
+<b class="nc"><i>605</i>&nbsp;        StringBuilder resultSB = new StringBuilder(n);</b>
+<i>606</i>&nbsp;
+<b class="nc"><i>607</i>&nbsp;        for (int i = 0; i &lt; n; i++) {</b>
+<b class="nc"><i>608</i>&nbsp;            resultSB.append(c);</b>
+<i>609</i>&nbsp;        }
+<i>610</i>&nbsp;
+<b class="nc"><i>611</i>&nbsp;        return resultSB.toString();</b>
+<i>612</i>&nbsp;
+<i>613</i>&nbsp;    }
+<i>614</i>&nbsp;
+<i>615</i>&nbsp;    public static boolean isNullOrEmpty(String toTest) {
+<b class="nc"><i>616</i>&nbsp;        return ((toTest == null) || toTest.isEmpty());</b>
+<i>617</i>&nbsp;    }
+<i>618</i>&nbsp;
+<i>619</i>&nbsp;    public static boolean isBlank(String string) {
+<b class="nc"><i>620</i>&nbsp;        return !isNotBlank(string);</b>
+<i>621</i>&nbsp;    }
+<i>622</i>&nbsp;
+<i>623</i>&nbsp;    public static boolean isBlank(Optional&lt;String&gt; string) {
+<b class="nc"><i>624</i>&nbsp;        return !isNotBlank(string);</b>
+<i>625</i>&nbsp;    }
+<i>626</i>&nbsp;
+<i>627</i>&nbsp;    public static boolean isNotBlank(String string) {
+<b class="nc"><i>628</i>&nbsp;        return StringUtils.isNotBlank(string);</b>
+<i>629</i>&nbsp;    }
+<i>630</i>&nbsp;
+<i>631</i>&nbsp;    public static boolean isNotBlank(Optional&lt;String&gt; string) {
+<b class="nc"><i>632</i>&nbsp;        return string.isPresent() &amp;&amp; isNotBlank(string.get());</b>
+<i>633</i>&nbsp;    }
+<i>634</i>&nbsp;
+<i>635</i>&nbsp;    /**
+<i>636</i>&nbsp;     * Return string enclosed in HTML bold tags
+<i>637</i>&nbsp;     */
+<i>638</i>&nbsp;    public static String boldHTML(String input) {
+<b class="nc"><i>639</i>&nbsp;        return &quot;&lt;b&gt;&quot; + input + &quot;&lt;/b&gt;&quot;;</b>
+<i>640</i>&nbsp;    }
+<i>641</i>&nbsp;
+<i>642</i>&nbsp;    /**
+<i>643</i>&nbsp;     * Return string enclosed in HTML bold tags  if not null, otherwise return alternative text in HTML bold tags
+<i>644</i>&nbsp;     */
+<i>645</i>&nbsp;    public static String boldHTML(String input, String alternative) {
+<i>646</i>&nbsp;
+<b class="nc"><i>647</i>&nbsp;        if (input == null) {</b>
+<b class="nc"><i>648</i>&nbsp;            return &quot;&lt;b&gt;&quot; + alternative + &quot;&lt;/b&gt;&quot;;</b>
+<i>649</i>&nbsp;        }
+<b class="nc"><i>650</i>&nbsp;        return &quot;&lt;b&gt;&quot; + input + &quot;&lt;/b&gt;&quot;;</b>
+<i>651</i>&nbsp;    }
+<i>652</i>&nbsp;
+<i>653</i>&nbsp;    /**
+<i>654</i>&nbsp;     * Unquote special characters.
+<i>655</i>&nbsp;     *
+<i>656</i>&nbsp;     * @param toUnquote         The String which may contain quoted special characters.
+<i>657</i>&nbsp;     * @param quoteChar The quoting character.
+<i>658</i>&nbsp;     * @return A String with all quoted characters unquoted.
+<i>659</i>&nbsp;     */
+<i>660</i>&nbsp;    public static String unquote(String toUnquote, char quoteChar) {
+<b class="nc"><i>661</i>&nbsp;        StringBuilder result = new StringBuilder();</b>
+<i>662</i>&nbsp;        char c;
+<b class="nc"><i>663</i>&nbsp;        boolean quoted = false;</b>
+<b class="nc"><i>664</i>&nbsp;        for (int i = 0; i &lt; toUnquote.length(); ++i) {</b>
+<b class="nc"><i>665</i>&nbsp;            c = toUnquote.charAt(i);</b>
+<b class="nc"><i>666</i>&nbsp;            if (quoted) { // append literally...</b>
+<b class="nc"><i>667</i>&nbsp;                if (c != &#39;\n&#39;) {</b>
+<b class="nc"><i>668</i>&nbsp;                    result.append(c);</b>
+<i>669</i>&nbsp;                }
+<b class="nc"><i>670</i>&nbsp;                quoted = false;</b>
+<b class="nc"><i>671</i>&nbsp;            } else if (c == quoteChar) {</b>
+<i>672</i>&nbsp;                // quote char
+<b class="nc"><i>673</i>&nbsp;                quoted = true;</b>
+<i>674</i>&nbsp;            } else {
+<b class="nc"><i>675</i>&nbsp;                result.append(c);</b>
+<i>676</i>&nbsp;            }
+<i>677</i>&nbsp;        }
+<b class="nc"><i>678</i>&nbsp;        return result.toString();</b>
+<i>679</i>&nbsp;    }
+<i>680</i>&nbsp;    public static String stripAccents(String searchQuery) {
+<b class="nc"><i>681</i>&nbsp;        return StringUtils.stripAccents(searchQuery);</b>
+<i>682</i>&nbsp;    }
+<i>683</i>&nbsp;
+<i>684</i>&nbsp;    /**
+<i>685</i>&nbsp;     * Make first character of String uppercase, and the
+<i>686</i>&nbsp;     * rest lowercase.
+<i>687</i>&nbsp;     */
+<i>688</i>&nbsp;    public static String capitalizeFirst(String toCapitalize) {
+<b class="nc"><i>689</i>&nbsp;        if (toCapitalize.length() &gt; 1) {</b>
+<b class="nc"><i>690</i>&nbsp;            return toCapitalize.substring(0, 1).toUpperCase()</b>
+<b class="nc"><i>691</i>&nbsp;                    + toCapitalize.substring(1, toCapitalize.length()).toLowerCase();</b>
+<i>692</i>&nbsp;        } else {
+<b class="nc"><i>693</i>&nbsp;            return toCapitalize.toUpperCase();</b>
+<i>694</i>&nbsp;        }
+<i>695</i>&nbsp;
+<i>696</i>&nbsp;    }
+<i>697</i>&nbsp;
+<i>698</i>&nbsp;    /**
+<i>699</i>&nbsp;     * Returns a list of words contained in the given text.
+<i>700</i>&nbsp;     * Whitespace, comma and semicolon are considered as separator between words.
+<i>701</i>&nbsp;     *
+<i>702</i>&nbsp;     * @param text the input
+<i>703</i>&nbsp;     * @return a list of words
+<i>704</i>&nbsp;     */
+<i>705</i>&nbsp;    public static List&lt;String&gt; getStringAsWords(String text) {
+<b class="nc"><i>706</i>&nbsp;        return Arrays.asList(text.split(&quot;[\\s,;]+&quot;));</b>
+<i>707</i>&nbsp;    }
+<i>708</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

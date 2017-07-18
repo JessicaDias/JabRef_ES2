@@ -1,0 +1,242 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: INSPIREFetcher</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.importer.fetcher</a> ]
+</div>
+
+<h1>Coverage Summary for Class: INSPIREFetcher (net.sf.jabref.gui.importer.fetcher)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">INSPIREFetcher</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    33.3%
+  </span>
+  <span class="absValue">
+    (3/ 9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    9.4%
+  </span>
+  <span class="absValue">
+    (3/ 32)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.importer.fetcher;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.IOException;
+<i>4</i>&nbsp;import java.io.InputStream;
+<i>5</i>&nbsp;import java.io.InputStreamReader;
+<i>6</i>&nbsp;import java.io.UnsupportedEncodingException;
+<i>7</i>&nbsp;import java.net.HttpURLConnection;
+<i>8</i>&nbsp;import java.net.URL;
+<i>9</i>&nbsp;import java.net.URLEncoder;
+<i>10</i>&nbsp;import java.nio.charset.StandardCharsets;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;import javax.swing.JPanel;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;import net.sf.jabref.Globals;
+<i>15</i>&nbsp;import net.sf.jabref.gui.importer.ImportInspectionDialog;
+<i>16</i>&nbsp;import net.sf.jabref.logic.help.HelpFile;
+<i>17</i>&nbsp;import net.sf.jabref.logic.importer.ImportInspector;
+<i>18</i>&nbsp;import net.sf.jabref.logic.importer.OutputPrinter;
+<i>19</i>&nbsp;import net.sf.jabref.logic.importer.ParserResult;
+<i>20</i>&nbsp;import net.sf.jabref.logic.importer.fileformat.BibtexParser;
+<i>21</i>&nbsp;import net.sf.jabref.logic.importer.util.INSPIREBibtexFilterReader;
+<i>22</i>&nbsp;import net.sf.jabref.logic.l10n.Localization;
+<i>23</i>&nbsp;import net.sf.jabref.model.database.BibDatabase;
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;import org.apache.commons.logging.Log;
+<i>26</i>&nbsp;import org.apache.commons.logging.LogFactory;
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;/**
+<i>29</i>&nbsp; *
+<i>30</i>&nbsp; * This class allows to access the Slac INSPIRE database. It is just a port of the original SPIRES Fetcher.
+<i>31</i>&nbsp; *
+<i>32</i>&nbsp; * It can either be a GeneralFetcher to pose requests to the database or fetch individual entries.
+<i>33</i>&nbsp; *
+<i>34</i>&nbsp; * @author Fedor Bezrukov
+<i>35</i>&nbsp; * @author Sheer El-Showk
+<i>36</i>&nbsp; *
+<i>37</i>&nbsp; * @version $Id$
+<i>38</i>&nbsp; *
+<i>39</i>&nbsp; */
+<b class="fc"><i>40</i>&nbsp;public class INSPIREFetcher implements EntryFetcher {</b>
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;    private static final String INSPIRE_HOST = &quot;inspirehep.net&quot;;
+<i>43</i>&nbsp;
+<b class="fc"><i>44</i>&nbsp;    private static final Log LOGGER = LogFactory.getLog(INSPIREFetcher.class);</b>
+<i>45</i>&nbsp;    /**
+<i>46</i>&nbsp;     * Construct the query URL
+<i>47</i>&nbsp;     *
+<i>48</i>&nbsp;     * NOTE: we truncate at 1000 returned entries but its likely INSPIRE returns fewer anyway. This shouldn&#39;t be a
+<i>49</i>&nbsp;     * problem since users should probably do more specific searches.
+<i>50</i>&nbsp;     *
+<i>51</i>&nbsp;     * @param key The key of the OAI2 entry that the url should point to.
+<i>52</i>&nbsp;     *
+<i>53</i>&nbsp;     * @return a String denoting the query URL
+<i>54</i>&nbsp;     */
+<i>55</i>&nbsp;    private String constructUrl(String key) {
+<i>56</i>&nbsp;        String identifier;
+<i>57</i>&nbsp;        try {
+<b class="nc"><i>58</i>&nbsp;            identifier = URLEncoder.encode(key, StandardCharsets.UTF_8.name());</b>
+<b class="nc"><i>59</i>&nbsp;        } catch (UnsupportedEncodingException e) {</b>
+<b class="nc"><i>60</i>&nbsp;            return &quot;&quot;;</b>
+<b class="nc"><i>61</i>&nbsp;        }</b>
+<i>62</i>&nbsp;        // At least 87 characters
+<b class="nc"><i>63</i>&nbsp;        StringBuilder sb = new StringBuilder(87).append(&quot;http://&quot;).append(INSPIREFetcher.INSPIRE_HOST)</b>
+<b class="nc"><i>64</i>&nbsp;                .append(&quot;/search?ln=en&amp;ln=en&amp;p=find+&quot;).append(identifier)</b>
+<b class="nc"><i>65</i>&nbsp;                .append(&quot;&amp;action_search=Search&amp;sf=&amp;so=d&amp;rm=&amp;rg=1000&amp;sc=0&amp;of=hx&quot;);</b>
+<b class="nc"><i>66</i>&nbsp;        LOGGER.debug(&quot;Inspire URL: &quot; + sb + &quot;\n&quot;);</b>
+<b class="nc"><i>67</i>&nbsp;        return sb.toString();</b>
+<i>68</i>&nbsp;    }
+<i>69</i>&nbsp;
+<i>70</i>&nbsp;    /**
+<i>71</i>&nbsp;     * Constructs a INSPIRE query url from slaccitation field
+<i>72</i>&nbsp;     *
+<i>73</i>&nbsp;     * @param slaccitation
+<i>74</i>&nbsp;     * @return query string
+<i>75</i>&nbsp;     *
+<i>76</i>&nbsp;     *         public static String constructUrlFromSlaccitation(String slaccitation) { String cmd = &quot;j&quot;; String key =
+<i>77</i>&nbsp;     *         slaccitation.replaceAll(&quot;^%%CITATION = &quot;, &quot;&quot;).replaceAll( &quot;;%%$&quot;, &quot;&quot;); if (key.matches(&quot;^\\w*-\\w*[ /].*&quot;
+<i>78</i>&nbsp;     *         )) cmd = &quot;eprint&quot;; try { key = URLEncoder.encode(key, &quot;UTF-8&quot;); } catch (UnsupportedEncodingException e)
+<i>79</i>&nbsp;     *         { } StringBuffer sb = new StringBuffer(&quot;http://&quot;).append(INSPIRE_HOST) .append(&quot;/&quot;);
+<i>80</i>&nbsp;     *         sb.append(&quot;spires/find/hep/www&quot;).append(&quot;?&quot;); sb.append(&quot;rawcmd=find+&quot;).append(cmd).append(&quot;+&quot;);
+<i>81</i>&nbsp;     *         sb.append(key); return sb.toString(); }
+<i>82</i>&nbsp;     *
+<i>83</i>&nbsp;     *         /** Construct an INSPIRE query url from eprint field
+<i>84</i>&nbsp;     *
+<i>85</i>&nbsp;     * @param eprint
+<i>86</i>&nbsp;     * @return query string
+<i>87</i>&nbsp;     *
+<i>88</i>&nbsp;     *         public static String constructUrlFromEprint(String eprint) { String key = eprint.replaceAll(&quot; [.*]$&quot;,
+<i>89</i>&nbsp;     *         &quot;&quot;); try { key = URLEncoder.encode(key, &quot;UTF-8&quot;); } catch (UnsupportedEncodingException e) { return &quot;&quot;; }
+<i>90</i>&nbsp;     *         StringBuffer sb = new StringBuffer(&quot;http://&quot;).append(INSPIRE_HOST) .append(&quot;/&quot;);
+<i>91</i>&nbsp;     *         sb.append(&quot;spires/find/hep/www&quot;).append(&quot;?&quot;); sb.append(&quot;rawcmd=find+eprint+&quot;); sb.append(key); return
+<i>92</i>&nbsp;     *         sb.toString(); }
+<i>93</i>&nbsp;     */
+<i>94</i>&nbsp;
+<i>95</i>&nbsp;    /**
+<i>96</i>&nbsp;     * Import an entry from an OAI2 archive. The BibEntry provided has to have the field OAI2_IDENTIFIER_FIELD set to
+<i>97</i>&nbsp;     * the search string.
+<i>98</i>&nbsp;     *
+<i>99</i>&nbsp;     * @param key The OAI2 key to fetch from ArXiv.
+<i>100</i>&nbsp;     * @return The imported BibEntry or null if none.
+<i>101</i>&nbsp;     */
+<i>102</i>&nbsp;    private BibDatabase importInspireEntries(String key) throws IOException {
+<b class="nc"><i>103</i>&nbsp;        String url = constructUrl(key);</b>
+<b class="nc"><i>104</i>&nbsp;        HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();</b>
+<b class="nc"><i>105</i>&nbsp;        conn.setRequestProperty(&quot;User-Agent&quot;, &quot;JabRef&quot;);</b>
+<b class="nc"><i>106</i>&nbsp;        InputStream inputStream = conn.getInputStream();</b>
+<i>107</i>&nbsp;
+<b class="nc"><i>108</i>&nbsp;        try (INSPIREBibtexFilterReader reader = new INSPIREBibtexFilterReader(</b>
+<i>109</i>&nbsp;                new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+<b class="nc"><i>110</i>&nbsp;            ParserResult pr = new BibtexParser(Globals.prefs.getImportFormatPreferences()).parse(reader);</b>
+<b class="nc"><i>111</i>&nbsp;            return pr.getDatabase();</b>
+<b class="nc"><i>112</i>&nbsp;        }</b>
+<i>113</i>&nbsp;    }
+<i>114</i>&nbsp;
+<i>115</i>&nbsp;    /*
+<i>116</i>&nbsp;     * @see net.sf.jabref.imports.fetcher.EntryFetcher
+<i>117</i>&nbsp;     */
+<i>118</i>&nbsp;    @Override
+<i>119</i>&nbsp;    public HelpFile getHelpPage() {
+<b class="nc"><i>120</i>&nbsp;        return HelpFile.FETCHER_INSPIRE;</b>
+<i>121</i>&nbsp;    }
+<i>122</i>&nbsp;
+<i>123</i>&nbsp;    @Override
+<i>124</i>&nbsp;    public JPanel getOptionsPanel() {
+<i>125</i>&nbsp;        // we have no additional options
+<b class="nc"><i>126</i>&nbsp;        return null;</b>
+<i>127</i>&nbsp;    }
+<i>128</i>&nbsp;
+<i>129</i>&nbsp;    @Override
+<i>130</i>&nbsp;    public String getTitle() {
+<b class="fc"><i>131</i>&nbsp;        return &quot;INSPIRE&quot;;</b>
+<i>132</i>&nbsp;    }
+<i>133</i>&nbsp;
+<i>134</i>&nbsp;    @Override
+<i>135</i>&nbsp;    public void stopFetching() {
+<i>136</i>&nbsp;        // Do nothing
+<b class="nc"><i>137</i>&nbsp;    }</b>
+<i>138</i>&nbsp;
+<i>139</i>&nbsp;    /*
+<i>140</i>&nbsp;     * @see java.lang.Runnable
+<i>141</i>&nbsp;     */
+<i>142</i>&nbsp;    @Override
+<i>143</i>&nbsp;    public boolean processQuery(String query, ImportInspector dialog, OutputPrinter status) {
+<i>144</i>&nbsp;        try {
+<b class="nc"><i>145</i>&nbsp;            status.setStatus(Localization.lang(&quot;Fetching entries from Inspire&quot;));</b>
+<i>146</i>&nbsp;            /* query the archive and load the results into the BibEntry */
+<b class="nc"><i>147</i>&nbsp;            BibDatabase bd = importInspireEntries(query);</b>
+<i>148</i>&nbsp;
+<b class="nc"><i>149</i>&nbsp;            status.setStatus(Localization.lang(&quot;Adding fetched entries&quot;));</b>
+<i>150</i>&nbsp;            /* add the entry to the inspection dialog */
+<b class="nc"><i>151</i>&nbsp;            bd.getEntries().forEach(dialog::addEntry);</b>
+<b class="nc"><i>152</i>&nbsp;            return true;</b>
+<b class="nc"><i>153</i>&nbsp;        } catch (Exception e) {</b>
+<b class="nc"><i>154</i>&nbsp;            LOGGER.error(&quot;Error while fetching from &quot; + getTitle(), e);</b>
+<b class="nc"><i>155</i>&nbsp;            ((ImportInspectionDialog)dialog).showErrorMessage(this.getTitle(), e.getLocalizedMessage());</b>
+<i>156</i>&nbsp;        }
+<b class="nc"><i>157</i>&nbsp;        return false;</b>
+<i>158</i>&nbsp;    }
+<i>159</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

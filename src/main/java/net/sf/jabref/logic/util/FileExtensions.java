@@ -11,6 +11,7 @@ import net.sf.jabref.logic.l10n.Localization;
  */
 public enum FileExtensions {
     //important: No dot before the extension!
+    CSV(Localization.lang("%0 file", "Comma Separated Values"), "csv"),
     BIBTEX_DB(String.format("%1s %2s", "BibTex", Localization.lang("Database")), "bib"),
     BIBTEXML(Localization.lang("%0 file", "BibTeXML"), "bibx", "xml"),
     BILBIOSCAPE(Localization.lang("%0 file", "Biblioscape"), "txt"),
@@ -40,6 +41,7 @@ public enum FileExtensions {
     CLASS(Localization.lang("%0 file", "CLASS"), "class"),
     JAR(Localization.lang("%0 file", "JAR"), "jar"),
     XML(Localization.lang("%0 file", "XML"), "xml"),
+
     ZIP(Localization.lang("%0 file", "ZIP"), "zip");
 
     private final String[] extension;

@@ -1,0 +1,164 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: CleanupActionsListModel</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.cleanup</a> ]
+</div>
+
+<h1>Coverage Summary for Class: CleanupActionsListModel (net.sf.jabref.gui.cleanup)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CleanupActionsListModel</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 30)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.cleanup;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.ArrayList;
+<i>4</i>&nbsp;import java.util.List;
+<i>5</i>&nbsp;import java.util.Objects;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import javax.swing.ListModel;
+<i>8</i>&nbsp;import javax.swing.event.ListDataEvent;
+<i>9</i>&nbsp;import javax.swing.event.ListDataListener;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;import net.sf.jabref.model.cleanup.FieldFormatterCleanup;
+<i>12</i>&nbsp;import net.sf.jabref.model.cleanup.FieldFormatterCleanups;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;public class CleanupActionsListModel implements ListModel&lt;FieldFormatterCleanup&gt; {
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;    private List&lt;FieldFormatterCleanup&gt; cleanupActions;
+<b class="nc"><i>17</i>&nbsp;    private final List&lt;ListDataListener&gt; listeners = new ArrayList&lt;&gt;();</b>
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;
+<b class="nc"><i>20</i>&nbsp;    public CleanupActionsListModel(List&lt;FieldFormatterCleanup&gt; cleanupAction) {</b>
+<b class="nc"><i>21</i>&nbsp;        Objects.requireNonNull(cleanupAction);</b>
+<b class="nc"><i>22</i>&nbsp;        this.cleanupActions = cleanupAction;</b>
+<i>23</i>&nbsp;
+<b class="nc"><i>24</i>&nbsp;    }</b>
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    public void addCleanupAction(FieldFormatterCleanup action) {
+<b class="nc"><i>27</i>&nbsp;        if (!cleanupActions.contains(action)) {</b>
+<b class="nc"><i>28</i>&nbsp;            cleanupActions.add(action);</b>
+<b class="nc"><i>29</i>&nbsp;            for (ListDataListener listener : listeners) {</b>
+<b class="nc"><i>30</i>&nbsp;                listener.intervalAdded(new ListDataEvent(action, ListDataEvent.INTERVAL_ADDED, cleanupActions.size(),</b>
+<b class="nc"><i>31</i>&nbsp;                        cleanupActions.size()));</b>
+<b class="nc"><i>32</i>&nbsp;            }</b>
+<i>33</i>&nbsp;        }
+<b class="nc"><i>34</i>&nbsp;    }</b>
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;    /**
+<i>37</i>&nbsp;     * Removes the action at the specified index from the list.
+<i>38</i>&nbsp;     * Removal is only done when index {@code &gt;=0} and index {@code&lt;=} list size
+<i>39</i>&nbsp;     * @param index The index to remove
+<i>40</i>&nbsp;     */
+<i>41</i>&nbsp;    public void removeAtIndex(int index) {
+<i>42</i>&nbsp;
+<b class="nc"><i>43</i>&nbsp;        if ((index &gt;= 0) &amp;&amp; (index &lt; cleanupActions.size())) {</b>
+<b class="nc"><i>44</i>&nbsp;            FieldFormatterCleanup action = cleanupActions.remove(index);</b>
+<b class="nc"><i>45</i>&nbsp;            for (ListDataListener listener : listeners) {</b>
+<b class="nc"><i>46</i>&nbsp;                listener.intervalRemoved(new ListDataEvent(action, ListDataEvent.INTERVAL_REMOVED, index, index));</b>
+<b class="nc"><i>47</i>&nbsp;            }</b>
+<i>48</i>&nbsp;        }
+<b class="nc"><i>49</i>&nbsp;    }</b>
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;    public List&lt;FieldFormatterCleanup&gt; getAllActions() {
+<b class="nc"><i>52</i>&nbsp;        return cleanupActions;</b>
+<i>53</i>&nbsp;    }
+<i>54</i>&nbsp;
+<i>55</i>&nbsp;    @Override
+<i>56</i>&nbsp;    public int getSize() {
+<b class="nc"><i>57</i>&nbsp;        return cleanupActions.size();</b>
+<i>58</i>&nbsp;    }
+<i>59</i>&nbsp;
+<i>60</i>&nbsp;    @Override
+<i>61</i>&nbsp;    public FieldFormatterCleanup getElementAt(int index) {
+<b class="nc"><i>62</i>&nbsp;        return cleanupActions.get(index);</b>
+<i>63</i>&nbsp;    }
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;    @Override
+<i>66</i>&nbsp;    public void addListDataListener(ListDataListener l) {
+<b class="nc"><i>67</i>&nbsp;        listeners.add(l);</b>
+<b class="nc"><i>68</i>&nbsp;    }</b>
+<i>69</i>&nbsp;
+<i>70</i>&nbsp;    @Override
+<i>71</i>&nbsp;    public void removeListDataListener(ListDataListener l) {
+<b class="nc"><i>72</i>&nbsp;        listeners.remove(l);</b>
+<b class="nc"><i>73</i>&nbsp;    }</b>
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;    public void reset(FieldFormatterCleanups defaultFormatters) {
+<b class="nc"><i>76</i>&nbsp;        cleanupActions = new ArrayList&lt;&gt;(defaultFormatters.getConfiguredActions());</b>
+<b class="nc"><i>77</i>&nbsp;        for (ListDataListener listener : listeners) {</b>
+<b class="nc"><i>78</i>&nbsp;            listener.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, cleanupActions.size()));</b>
+<b class="nc"><i>79</i>&nbsp;        }</b>
+<b class="nc"><i>80</i>&nbsp;    }</b>
+<i>81</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

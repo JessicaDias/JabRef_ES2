@@ -1,0 +1,113 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: HitOrMissComparator</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.search</a> ]
+</div>
+
+<h1>Coverage Summary for Class: HitOrMissComparator (net.sf.jabref.gui.search)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">HitOrMissComparator</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 6)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.search;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.Comparator;
+<i>4</i>&nbsp;import java.util.Objects;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import net.sf.jabref.model.entry.BibEntry;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import ca.odell.glazedlists.matchers.Matcher;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;/**
+<i>11</i>&nbsp; * This Comparator compares two objects based on whether none, one of them, or both
+<i>12</i>&nbsp; * match a given Matcher. It is used to &quot;float&quot; group and search hits in the main table.
+<i>13</i>&nbsp; */
+<i>14</i>&nbsp;public class HitOrMissComparator implements Comparator&lt;BibEntry&gt; {
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;    private final Matcher&lt;BibEntry&gt; hitOrMiss;
+<i>17</i>&nbsp;
+<b class="nc"><i>18</i>&nbsp;    public HitOrMissComparator(Matcher&lt;BibEntry&gt; hitOrMiss) {</b>
+<b class="nc"><i>19</i>&nbsp;        this.hitOrMiss = Objects.requireNonNull(hitOrMiss);</b>
+<b class="nc"><i>20</i>&nbsp;    }</b>
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;    @Override
+<i>23</i>&nbsp;    public int compare(BibEntry o1, BibEntry o2) {
+<b class="nc"><i>24</i>&nbsp;        if (hitOrMiss == null) {</b>
+<b class="nc"><i>25</i>&nbsp;            return 0;</b>
+<i>26</i>&nbsp;        }
+<i>27</i>&nbsp;
+<b class="nc"><i>28</i>&nbsp;        return Boolean.compare(hitOrMiss.matches(o2), hitOrMiss.matches(o1));</b>
+<i>29</i>&nbsp;    }
+<i>30</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,194 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: KeyBindingsListener</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.gui.keyboard</a> ]
+</div>
+
+<h1>Coverage Summary for Class: KeyBindingsListener (net.sf.jabref.gui.keyboard)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">KeyBindingsListener</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 47)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.gui.keyboard;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.awt.event.KeyAdapter;
+<i>4</i>&nbsp;import java.awt.event.KeyEvent;
+<i>5</i>&nbsp;import java.util.ArrayList;
+<i>6</i>&nbsp;import java.util.Locale;
+<i>7</i>&nbsp;import java.util.stream.Collectors;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;/**
+<i>10</i>&nbsp; * respond to grabKey and display the key binding
+<i>11</i>&nbsp; */
+<i>12</i>&nbsp;public class KeyBindingsListener extends KeyAdapter {
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;    private final KeyBindingTable table;
+<i>15</i>&nbsp;
+<b class="nc"><i>16</i>&nbsp;    public KeyBindingsListener(KeyBindingTable table) {</b>
+<b class="nc"><i>17</i>&nbsp;        this.table = table;</b>
+<b class="nc"><i>18</i>&nbsp;    }</b>
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;    @Override
+<i>21</i>&nbsp;    public void keyPressed(KeyEvent evt) {
+<i>22</i>&nbsp;
+<b class="nc"><i>23</i>&nbsp;        boolean isFunctionKey = false;</b>
+<b class="nc"><i>24</i>&nbsp;        boolean isEscapeKey = false;</b>
+<b class="nc"><i>25</i>&nbsp;        boolean isDeleteKey = false;</b>
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;        // first check if anything is selected if not then return
+<b class="nc"><i>28</i>&nbsp;        final int selRow = table.getSelectedRow();</b>
+<b class="nc"><i>29</i>&nbsp;        boolean isAnyRowSelected = selRow &gt;= 0;</b>
+<b class="nc"><i>30</i>&nbsp;        if (!isAnyRowSelected) {</b>
+<b class="nc"><i>31</i>&nbsp;            return;</b>
+<i>32</i>&nbsp;        }
+<i>33</i>&nbsp;
+<b class="nc"><i>34</i>&nbsp;        final String modifier = getModifierText(evt);</b>
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;        // VALIDATE code and modifier
+<i>37</i>&nbsp;        // all key bindings must have a modifier: ctrl alt etc
+<b class="nc"><i>38</i>&nbsp;        if (&quot;&quot;.equals(modifier)) {</b>
+<b class="nc"><i>39</i>&nbsp;            int kc = evt.getKeyCode();</b>
+<b class="nc"><i>40</i>&nbsp;            isFunctionKey = (kc &gt;= KeyEvent.VK_F1) &amp;&amp; (kc &lt;= KeyEvent.VK_F12);</b>
+<b class="nc"><i>41</i>&nbsp;            isEscapeKey = kc == KeyEvent.VK_ESCAPE;</b>
+<b class="nc"><i>42</i>&nbsp;            isDeleteKey = kc == KeyEvent.VK_DELETE;</b>
+<b class="nc"><i>43</i>&nbsp;            if (!(isFunctionKey || isEscapeKey || isDeleteKey)) {</b>
+<i>44</i>&nbsp;                // need a modifier except for function, escape and delete keys
+<b class="nc"><i>45</i>&nbsp;                return;</b>
+<i>46</i>&nbsp;            }
+<i>47</i>&nbsp;        }
+<i>48</i>&nbsp;
+<b class="nc"><i>49</i>&nbsp;        int code = evt.getKeyCode();</b>
+<i>50</i>&nbsp;        String newKey;
+<i>51</i>&nbsp;        //skip the event triggered only by a modifier, tab, backspace or enter because these normally have preset
+<i>52</i>&nbsp;        // functionality if they alone are pressed
+<b class="nc"><i>53</i>&nbsp;        if (code == KeyEvent.VK_ALT ||</b>
+<i>54</i>&nbsp;                code == KeyEvent.VK_TAB ||
+<i>55</i>&nbsp;                code == KeyEvent.VK_BACK_SPACE ||
+<i>56</i>&nbsp;                code == KeyEvent.VK_ENTER ||
+<i>57</i>&nbsp;                code == KeyEvent.VK_SPACE ||
+<i>58</i>&nbsp;                code == KeyEvent.VK_CONTROL ||
+<i>59</i>&nbsp;                code == KeyEvent.VK_SHIFT ||
+<i>60</i>&nbsp;                code == KeyEvent.VK_META) {
+<b class="nc"><i>61</i>&nbsp;            return;</b>
+<i>62</i>&nbsp;        }
+<b class="nc"><i>63</i>&nbsp;        if (&quot;&quot;.equals(modifier)) {</b>
+<b class="nc"><i>64</i>&nbsp;            if (isFunctionKey) {</b>
+<b class="nc"><i>65</i>&nbsp;                newKey = KeyEvent.getKeyText(code);</b>
+<b class="nc"><i>66</i>&nbsp;            } else if (isEscapeKey) {</b>
+<b class="nc"><i>67</i>&nbsp;                newKey = &quot;ESCAPE&quot;;</b>
+<b class="nc"><i>68</i>&nbsp;            } else if (isDeleteKey) {</b>
+<b class="nc"><i>69</i>&nbsp;                newKey = &quot;DELETE&quot;;</b>
+<i>70</i>&nbsp;            } else {
+<b class="nc"><i>71</i>&nbsp;                return;</b>
+<i>72</i>&nbsp;            }
+<i>73</i>&nbsp;        } else {
+<b class="nc"><i>74</i>&nbsp;            newKey = modifier.toLowerCase(Locale.ENGLISH) + &quot; &quot; + KeyEvent.getKeyText(code);</b>
+<i>75</i>&nbsp;        }
+<i>76</i>&nbsp;        //SHOW new key binding
+<i>77</i>&nbsp;        //find which key is selected and set its value
+<b class="nc"><i>78</i>&nbsp;        table.setValueAt(newKey, selRow, 1);</b>
+<b class="nc"><i>79</i>&nbsp;        table.revalidate();</b>
+<b class="nc"><i>80</i>&nbsp;        table.repaint();</b>
+<b class="nc"><i>81</i>&nbsp;    }</b>
+<i>82</i>&nbsp;
+<i>83</i>&nbsp;    /**
+<i>84</i>&nbsp;     * Collects th English translations of all modifiers and returns them separated by a space
+<i>85</i>&nbsp;     *
+<i>86</i>&nbsp;     * @param evt the KeyEvent that was triggered to set the KeyBindings
+<i>87</i>&nbsp;     * @return a String containing the modifier keys text
+<i>88</i>&nbsp;     */
+<i>89</i>&nbsp;    private String getModifierText(KeyEvent evt) {
+<b class="nc"><i>90</i>&nbsp;        ArrayList&lt;String&gt; modifiersList = new ArrayList&lt;&gt;();</b>
+<i>91</i>&nbsp;
+<b class="nc"><i>92</i>&nbsp;        if (evt.isControlDown()) {</b>
+<b class="nc"><i>93</i>&nbsp;            modifiersList.add(&quot;ctrl&quot;);</b>
+<i>94</i>&nbsp;        }
+<b class="nc"><i>95</i>&nbsp;        if (evt.isAltDown()) {</b>
+<b class="nc"><i>96</i>&nbsp;            modifiersList.add(&quot;alt&quot;);</b>
+<i>97</i>&nbsp;        }
+<b class="nc"><i>98</i>&nbsp;        if (evt.isShiftDown()) {</b>
+<b class="nc"><i>99</i>&nbsp;            modifiersList.add(&quot;shift&quot;);</b>
+<i>100</i>&nbsp;        }
+<b class="nc"><i>101</i>&nbsp;        if (evt.isAltGraphDown()) {</b>
+<b class="nc"><i>102</i>&nbsp;            modifiersList.add(&quot;alt gr&quot;);</b>
+<i>103</i>&nbsp;        }
+<b class="nc"><i>104</i>&nbsp;        if (evt.isMetaDown()) {</b>
+<b class="nc"><i>105</i>&nbsp;            modifiersList.add(&quot;meta&quot;);</b>
+<i>106</i>&nbsp;        }
+<i>107</i>&nbsp;        //Now build the String with all the modifier texts
+<b class="nc"><i>108</i>&nbsp;        String modifiersAsString = modifiersList.stream().collect(Collectors.joining(&quot; &quot;));</b>
+<b class="nc"><i>109</i>&nbsp;        return modifiersAsString;</b>
+<i>110</i>&nbsp;    }
+<i>111</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>

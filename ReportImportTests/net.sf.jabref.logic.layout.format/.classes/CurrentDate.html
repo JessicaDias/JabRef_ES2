@@ -1,0 +1,118 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: CurrentDate</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">net.sf.jabref.logic.layout.format</a> ]
+</div>
+
+<h1>Coverage Summary for Class: CurrentDate (net.sf.jabref.logic.layout.format)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CurrentDate</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package net.sf.jabref.logic.layout.format;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.time.ZonedDateTime;
+<i>4</i>&nbsp;import java.time.format.DateTimeFormatter;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import net.sf.jabref.logic.layout.LayoutFormatter;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;/**
+<i>9</i>&nbsp; * Inserts the current date (the time a database is being exported).
+<i>10</i>&nbsp; *
+<i>11</i>&nbsp; * &lt;p&gt;If a fieldText is given, it must be a valid {@link DateTimeFormatter} pattern.
+<i>12</i>&nbsp; * If none is given, the format pattern will be &lt;code&gt;yyyy-MM-dd hh:mm:ss z&lt;/code&gt;.
+<i>13</i>&nbsp; * This follows ISO-8601. Reason: &lt;a href=&quot;https://xkcd.com/1179/&quot;&gt;https://xkcd.com/1179/&lt;/a&gt;.&lt;/p&gt;
+<i>14</i>&nbsp; *
+<i>15</i>&nbsp; * @author andreas_sf at rudert-home dot de
+<i>16</i>&nbsp; */
+<b class="nc"><i>17</i>&nbsp;public class CurrentDate implements LayoutFormatter {</b>
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;    // default time stamp follows ISO-8601. Reason: https://xkcd.com/1179/
+<i>20</i>&nbsp;    private static final String DEFAULT_FORMAT = &quot;yyyy-MM-dd hh:mm:ss z&quot;;
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;    /*
+<i>24</i>&nbsp;     *  (non-Javadoc)
+<i>25</i>&nbsp;     * @see net.sf.jabref.export.layout.LayoutFormatter#format(java.lang.String)
+<i>26</i>&nbsp;     */
+<i>27</i>&nbsp;    @Override
+<i>28</i>&nbsp;    public String format(String fieldText) {
+<b class="nc"><i>29</i>&nbsp;        String format = CurrentDate.DEFAULT_FORMAT;</b>
+<b class="nc"><i>30</i>&nbsp;        if ((fieldText != null) &amp;&amp; !fieldText.trim().isEmpty()) {</b>
+<b class="nc"><i>31</i>&nbsp;            format = fieldText;</b>
+<i>32</i>&nbsp;        }
+<b class="nc"><i>33</i>&nbsp;        return ZonedDateTime.now().format(DateTimeFormatter.ofPattern(format));</b>
+<i>34</i>&nbsp;    }
+<i>35</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-07-15 00:44</div>
+</div>
+</body>
+</html>
