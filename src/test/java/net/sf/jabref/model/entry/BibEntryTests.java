@@ -1,10 +1,7 @@
 package net.sf.jabref.model.entry;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.Map;
 
 import net.sf.jabref.model.FieldChange;
 
@@ -85,7 +82,7 @@ public class BibEntryTests {
         Assert.fail();
     }
 
-    @Test
+    @Test //(expected = StringIndexOutOfBoundsException.class)
     public void isEmptyCiteKey() {
         BibEntry e = new BibEntry(BibtexEntryTypes.ARTICLE.getName());
         Assert.assertFalse(e.hasCiteKey());
@@ -401,4 +398,5 @@ public class BibEntryTests {
         be.clearField("author");
         assertEquals(Optional.empty(), be.getField("author"));
     }
+
 }

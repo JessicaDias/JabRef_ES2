@@ -35,6 +35,8 @@ import com.google.common.eventbus.EventBus;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.swing.*;
+
 public class BibEntry implements Cloneable {
     private static final Log LOGGER = LogFactory.getLog(BibEntry.class);
 
@@ -195,7 +197,7 @@ public class BibEntry implements Cloneable {
      * @param newCiteKey The cite key to set. Must not be null; use {@link #clearCiteKey()} to remove the cite key.
      */
     public void setCiteKey(String newCiteKey) {
-        setField(KEY_FIELD, newCiteKey);
+            setField(KEY_FIELD, newCiteKey);
     }
 
     /**
@@ -459,6 +461,14 @@ public class BibEntry implements Cloneable {
 
         if (BibEntry.ID_FIELD.equals(fieldName)) {
             throw new IllegalArgumentException("The field name '" + name + "' is reserved");
+        }
+
+        /*Validação do nome do autor*/
+        if ("author".equals(name)) {
+            if (!value.matches("[a-zA-Z]+(\\.)?(\\,)?(\\;)?(\\s+[a-zA-Z]+(\\.)?(\\,)?(\\;)?)*")) {
+                JOptionPane.showMessageDialog(new JFrame(), "Nome do autor inválido");
+                return Optional.empty();
+            }
         }
 
         changed = true;
