@@ -41,7 +41,8 @@ public class BibEntryWriter {
      * @param bibDatabaseMode The database mode (bibtex or biblatex)
      * @param reformat        Should the entry be in any case, even if no change occurred?
      */
-    public void write(BibEntry entry, Writer out, BibDatabaseMode bibDatabaseMode, Boolean reformat) throws IOException {
+    public void write(BibEntry entry, Writer out, BibDatabaseMode bibDatabaseMode,
+                      Boolean reformat) throws IOException {
         // if the entry has not been modified, write it as it was
         if (!reformat && !entry.hasChanged()) {
             out.write(entry.getParsedSerialization());
@@ -62,7 +63,8 @@ public class BibEntryWriter {
         }
     }
 
-    public void writeWithoutPrependedNewlines(BibEntry entry, Writer out, BibDatabaseMode bibDatabaseMode) throws IOException {
+    public void writeWithoutPrependedNewlines(BibEntry entry, Writer out,
+                                              BibDatabaseMode bibDatabaseMode) throws IOException {
         // if the entry has not been modified, write it as it was
         if (!entry.hasChanged()) {
             out.write(entry.getParsedSerialization().trim());
@@ -143,7 +145,7 @@ public class BibEntryWriter {
      */
     private void writeField(BibEntry entry, Writer out, String name, int indentation) throws IOException {
         Optional<String> field = entry.getField(name);
-        // only write field if is is not empty
+        // only write field if it is not empty
         // field.ifPresent does not work as an IOException may be thrown
         if (field.isPresent() && !field.get().trim().isEmpty()) {
             out.write("  " + getFieldDisplayName(name, indentation));
